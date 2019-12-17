@@ -1,7 +1,7 @@
 import { relative, join } from 'path';
 import getFile from './getFile';
 
-const fixture = join(__dirname, './fixtures');
+const fixture = join(__dirname, './fixtures/normal');
 
 describe('getFile', () => {
   it('style file', () => {
