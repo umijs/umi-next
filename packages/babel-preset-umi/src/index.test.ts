@@ -1,4 +1,5 @@
 import { deepmerge, winPath } from '@umijs/utils';
+import path from 'path';
 import { transform } from '@babel/core';
 
 const DEFAULT_OPTS = {
@@ -167,7 +168,7 @@ test('transform runtime', () => {
     },
     transformRuntime: {},
   });
-  expect(winPath(code)).toContain(
-    winPath(`node_modules/@babel/runtime/helpers/classCallCheck"));`),
+  expect(winPath(path.join(code))).toContain(
+    `node_modules/@babel/runtime/helpers/classCallCheck"));`,
   );
 });
