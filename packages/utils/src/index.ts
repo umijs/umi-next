@@ -17,7 +17,7 @@ import isLernaPackage from './isLernaPackage/isLernaPackage';
 export { isLernaPackage };
 import isPlainObject from './isPlainObject/isPlainObject';
 export { isPlainObject };
-import getFile from './getFile/getFile';
+import getFile from './getFile';
 export { getFile };
 import winPath from './winPath/winPath';
 export { winPath };
