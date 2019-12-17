@@ -20,7 +20,7 @@ const getFile: GetFile = (option) => {
   const fileExtnames = type ? buildInExtnames[type] : extnames;
 
   for (const ext of fileExtnames) {
-    const path = filename ? join(base, `${filename}${ext}`) : `${base}${ext}`;
+    const path = filename ? join(base, `${filename}${ext}`) : join(`${base}${ext}`);
     console.log('path', path);
     if (existsSync(path)) {
       return {
