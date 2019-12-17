@@ -21,7 +21,6 @@ const getFile: GetFile = (option) => {
 
   for (const ext of fileExtnames) {
     const path = filename ? join(base, `${filename}${ext}`) : join(`${base}${ext}`);
-    console.log('path', path);
     if (existsSync(path)) {
       return {
         path,

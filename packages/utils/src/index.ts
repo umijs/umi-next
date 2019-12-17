@@ -18,3 +18,4 @@ export { yParser };
 export { mergeConfig };
 export { isLernaPackage };
 export { getFile };
+export { default as winPath } from './winPath';
