@@ -168,6 +168,6 @@ test('transform runtime', () => {
     transformRuntime: {},
   });
   expect(winPath(code)).toContain(
-    `node_modules/@babel/runtime/helpers/classCallCheck"));`,
+    winPath(`node_modules/@babel/runtime/helpers/classCallCheck"));`),
   );
 });
