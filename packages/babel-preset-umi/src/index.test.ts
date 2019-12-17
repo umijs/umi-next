@@ -167,7 +167,5 @@ test('transform runtime', () => {
     },
     transformRuntime: {},
   });
-  expect(code).toContain(
-    `node_modules/@babel/runtime/helpers/classCallCheck"));`,
-  );
+  expect(code).toMatchSnapshot();
 });
