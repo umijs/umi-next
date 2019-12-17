@@ -6,7 +6,7 @@ import yargs from 'yargs';
 import yParser from 'yargs-parser';
 import mergeConfig from './mergeConfig/mergeConfig';
 import isLernaPackage from './isLernaPackage/isLernaPackage';
-import getFile from './getFile/getFile';
+import getFile from './getFile';
 
 export { chalk };
 export { debug as createDebug };
