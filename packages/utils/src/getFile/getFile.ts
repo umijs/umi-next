@@ -1,28 +1,39 @@
-import { join } from 'path';
+import { join, basename } from 'path';
 import { existsSync } from 'fs';
 
-interface IOpts {
+interface Option {
   base: string;
-  type: 'javascript' | 'css';
-  fileNameWithoutExt: string;
+  type?: 'js' | 'css';
+  extnames?: string[];
+  filename?: boolean;
 }
 
-const extsMap = {
-  javascript: ['.ts', '.tsx', '.js', '.jsx'],
-  css: ['.less', '.sass', '.scss', '.stylus', '.css'],
-};
+export type GetFile = (
+  option: Option,
+) => { path: string; filename: string } | null;
 
-export default function(opts: IOpts) {
-  const exts = extsMap[opts.type];
-  for (const ext of exts) {
-    const filename = `${opts.fileNameWithoutExt}${ext}`;
-    const path = join(opts.base, filename);
+const getFile: GetFile = option => {
+  const { base, type, filename, extnames = [] } = option;
+  const buildInExtnames = {
+    // index.js > index.jsx > index.ts > index.tsx
+    js: ['.ts', '.tsx', '.js', '.jsx'],
+    css: ['.less', '.sass', '.scss', '.stylus', '.css'],
+  };
+  const fileExtnames = type ? buildInExtnames[type] : extnames;
+
+  for (const ext of fileExtnames) {
+    const path = filename
+      ? join(base, `${filename}${ext}`)
+      : join(`${base}${ext}`);
     if (existsSync(path)) {
       return {
         path,
-        filename,
+        filename: basename(path),
       };
     }
   }
+
   return null;
-}
+};
+
+export default getFile;
