@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { IncomingMessage, ServerResponse } from 'http';
 
 interface IComponent extends FunctionComponent {
   getInitialProps?: Function;
@@ -14,4 +15,14 @@ export interface IRoute {
   strict?: boolean;
   sensitive?: boolean;
   Routes?: any[];
+}
+
+export interface GetInitialProps {
+  req?: IncomingMessage;
+  res?: ServerResponse;
+  isServer?: boolean;
+}
+
+export interface SSRInitialProps {
+  [path: string]: object;
 }

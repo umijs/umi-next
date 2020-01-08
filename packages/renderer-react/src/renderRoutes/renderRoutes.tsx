@@ -16,9 +16,12 @@ interface IGetRouteElementOpts {
   opts: IOpts;
 }
 
-function wrapInitialPropsFetch(WrappedComponent: any) {
+function wrapInitialPropsFetch(
+  WrappedComponent: any,
+  WrappedComponentProps: object,
+) {
   return function Foo(props: object) {
-    const [initialProps, setInitialProps] = useState();
+    const [initialProps, setInitialProps] = useState(WrappedComponentProps);
     useEffect(() => {
       (async () => {
         const initialProps = await WrappedComponent!.getInitialProps!();
@@ -45,10 +48,11 @@ function render({
     routes: route.routes || [],
   });
 
-  let { component: Component, Routes } = route;
+  let { component: Component, Routes, path } = route;
   if (Component) {
     if (Component.getInitialProps) {
-      Component = wrapInitialPropsFetch(Component);
+      const initialProps = opts?.extraProps?.[path as string] || {};
+      Component = wrapInitialPropsFetch(Component, initialProps);
     }
 
     if (Routes) {

@@ -1,13 +1,14 @@
 import * as ReactDOM from 'react-dom';
 import React, { useEffect } from 'react';
 import { Plugin, ApplyPluginsType, Router } from '@umijs/runtime';
+import { History } from 'history';
 import { IRoute } from '../types';
 import renderRoutes from '../renderRoutes/renderRoutes';
 
 interface IRouterComponentProps {
   routes: IRoute[];
   plugin: Plugin;
-  history: any;
+  history: History;
   ssrProps?: object;
 }
 
