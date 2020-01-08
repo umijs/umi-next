@@ -1,8 +1,9 @@
 import { FunctionComponent } from 'react';
 import { IncomingMessage, ServerResponse } from 'http';
 
-interface IComponent extends FunctionComponent {
+export interface IComponent extends FunctionComponent {
   getInitialProps?: Function;
+  preload?: () => Promise<() => IComponent>;
 }
 
 export interface IRoute {
