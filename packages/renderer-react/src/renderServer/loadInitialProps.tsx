@@ -1,5 +1,5 @@
 import React from 'react';
-import { matchRoutes } from 'react-router-config';
+import { matchRoutes, match } from '@umijs/runtime';
 import { isPromise } from './utils';
 import { IRoute, SSRInitialProps, IComponent } from '../types';
 
@@ -8,12 +8,12 @@ export interface InitialProps {
   data: Promise<any>[];
 }
 
-interface Result {
+interface IResult {
   data: SSRInitialProps;
-  match: React.ReactElement;
+  match: match;
 }
 
-interface MatchRoute extends IRoute {
+interface IMatchRoute extends IRoute {
   component: IComponent;
 }
 
@@ -21,13 +21,16 @@ export default async function loadInitialProps(
   routes: IRoute[],
   pathname: string,
   ctx: any,
-): Promise<Result> {
+): Promise<IResult> {
   const promises: any[] = [];
   const data = {};
 
   const matchedComponents = matchRoutes(routes, pathname)
     .map(matchRoute => {
-      const { route, match } = matchRoute as { route: MatchRoute; match: any };
+      const { route, match } = matchRoute as {
+        route: IMatchRoute;
+        match: match;
+      };
       if (match && route.component?.getInitialProps) {
         const component = route.component;
         promises.push({
@@ -39,6 +42,7 @@ export default async function loadInitialProps(
             : component?.getInitialProps?.({ match, ...ctx }),
         });
       }
+      return match;
     })
     .filter(c => c);
 

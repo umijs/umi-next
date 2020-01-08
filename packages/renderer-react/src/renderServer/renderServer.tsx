@@ -1,6 +1,5 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
-import { Plugin } from '@umijs/runtime';
+import { Plugin, StaticRouter } from '@umijs/runtime';
 import { IncomingMessage, ServerResponse } from 'http';
 import * as urlUtils from 'url';
 import ReactDOMServer from 'react-dom/server';
@@ -9,19 +8,19 @@ import loadInitialProps from './loadInitialProps';
 
 import { IRoute } from '../types';
 
-interface RenderOpts<T> {
+interface IRenderOpts<T> {
   staticMarkup?: boolean;
   customRender?: (element: React.ReactElement<T>) => string;
 }
 
-export interface RenderServerOpts<T> {
+export interface IRenderServerOpts<T> {
   req: IncomingMessage;
   res: ServerResponse;
   url: string;
   routes: IRoute[];
   plugin: Plugin;
   initialProps?: object;
-  renderOpts?: RenderOpts<T>;
+  renderOpts?: IRenderOpts<T>;
 }
 
 /**
@@ -29,7 +28,7 @@ export interface RenderServerOpts<T> {
  * output rootContainer html string
  */
 export default async function renderServer<T = any>(
-  opts: RenderServerOpts<T>,
+  opts: IRenderServerOpts<T>,
 ): Promise<string> {
   const { req, res, initialProps, plugin, routes, url, renderOpts } = opts;
   const { staticMarkup = false } = renderOpts || {};

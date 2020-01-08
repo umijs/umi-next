@@ -4,7 +4,7 @@ import createDebug from 'debug';
 export { createDebug };
 import deepmerge from 'deepmerge';
 export { deepmerge };
-import lodash from 'lodash';
+import lodash from 'lodash-es';
 export { lodash };
 import resolve from 'resolve';
 export { resolve };

@@ -25,6 +25,7 @@
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "@umijs/runtime": "0.0.1-alpha.1",
+    "@umijs/utils": "0.0.1-alpha.1",
     "react-dom": "^16.12.0",
     "react": "^16.12.0"
   },

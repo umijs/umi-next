@@ -14,7 +14,9 @@ export {
   useLocation,
   useParams,
   useRouteMatch,
+  StaticRouter,
 } from 'react-router-dom';
+export { matchRoutes } from 'react-router-config';
 export { __RouterContext } from 'react-router';
 
 export {
