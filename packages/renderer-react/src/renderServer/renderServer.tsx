@@ -1,4 +1,3 @@
-'use strict';
 import React from 'react';
 import { StaticRouter } from 'react-router';
 import { Plugin } from '@umijs/runtime';
