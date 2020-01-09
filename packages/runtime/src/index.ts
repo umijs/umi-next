@@ -17,12 +17,14 @@ export {
   StaticRouter,
 } from 'react-router-dom';
 export { matchRoutes } from 'react-router-config';
-export { __RouterContext } from 'react-router';
+export { __RouterContext, RouteComponentProps } from 'react-router';
 
 export {
   createBrowserHistory,
   createHashHistory,
   createMemoryHistory,
+  Location,
+  History,
 } from 'history';
 
 export { default as Plugin, ApplyPluginsType } from './Plugin/Plugin';

@@ -1,7 +1,12 @@
 import React from 'react';
 import { matchRoutes, match } from '@umijs/runtime';
 import { isPromise } from './utils';
-import { IRoute, SSRInitialProps, IComponent } from '../types';
+import {
+  IRoute,
+  SSRInitialProps,
+  IComponent,
+  IGetInitialPropsServer,
+} from '../types';
 
 export interface InitialProps {
   match?: React.ComponentType<any>;
@@ -20,7 +25,7 @@ interface IMatchRoute extends IRoute {
 export default async function loadInitialProps(
   routes: IRoute[],
   pathname: string,
-  ctx: any,
+  ctx: Pick<IGetInitialPropsServer, 'req' | 'res' | 'isServer'>,
 ): Promise<IResult> {
   const promises: any[] = [];
   const data = {};
@@ -33,13 +38,17 @@ export default async function loadInitialProps(
       };
       if (match) {
         const component = route.component;
+        const getInitialProps: IGetInitialPropsServer = {
+          match,
+          ...ctx,
+        };
         promises.push({
           path: route.path,
           promise: component.preload
             ? component
                 .preload()
-                .then(() => component?.getInitialProps?.({ match, ...ctx }))
-            : component?.getInitialProps?.({ match, ...ctx }),
+                .then(() => component?.getInitialProps?.(getInitialProps))
+            : component?.getInitialProps?.(getInitialProps),
         });
       }
       return match;

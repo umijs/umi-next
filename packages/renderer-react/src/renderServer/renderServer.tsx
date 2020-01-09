@@ -34,15 +34,14 @@ export default async function renderServer<T = any>(
   const { req, res, initialProps, plugin, routes, url, renderOpts } = opts;
 
   const pathname = urlUtils.parse(url)?.pathname || '';
-  const getInitialProps: IGetInitialProps = {
+
+  // exec getInitialProps, load preload to get data
+  const { data } = await loadInitialProps(routes, pathname, {
     req,
     res,
     isServer: true,
     ...initialProps,
-  };
-
-  // exec getInitialProps, load preload to get data
-  const { data } = await loadInitialProps(routes, pathname, getInitialProps);
+  });
   const routeComponent = renderRoutes({ routes, plugin, extraProps: data });
 
   /** rendering */

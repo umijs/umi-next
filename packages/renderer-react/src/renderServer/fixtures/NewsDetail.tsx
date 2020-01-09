@@ -17,7 +17,8 @@ const NewsDetail: React.SFC<NewsDetailProps> = (props) => {
   );
 };
 
-NewsDetail.getInitialProps = async ({ match }) => {
+NewsDetail.getInitialProps = async (props) => {
+  const { match } = props;
   const { id } = match.params;
   const detail = list.find(item => Number(item.id) === Number(id));
   return Promise.resolve({

@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { Location, match, History } from '@umijs/runtime';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export interface IComponent extends FunctionComponent {
@@ -19,9 +20,17 @@ export interface IRoute {
 }
 
 export interface IGetInitialProps {
+  isServer: boolean;
+  match: match;
+}
+
+export interface IGetInitialPropsServer extends IGetInitialProps {
   req?: IncomingMessage;
   res?: ServerResponse;
-  isServer?: boolean;
+}
+
+export interface IGetInitialPropsClient extends IGetInitialProps {
+  location?: Location;
 }
 
 export interface SSRInitialProps {

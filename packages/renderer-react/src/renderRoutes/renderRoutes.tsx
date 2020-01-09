@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Plugin, Redirect } from '@umijs/runtime';
-import { IRoute } from '../types';
+import { Plugin, Redirect, RouteComponentProps } from '@umijs/runtime';
+import { IRoute, IGetInitialPropsClient, IComponent } from '../types';
 import Switch from './Switch';
 import Route from './Route';
 
@@ -19,12 +19,18 @@ interface IGetRouteElementOpts {
 function wrapInitialPropsFetch(
   WrappedComponent: any,
   WrappedComponentProps: object,
-) {
-  return function Foo(props: object) {
+): any {
+  return function Foo(props: RouteComponentProps) {
     const [initialProps, setInitialProps] = useState(WrappedComponentProps);
     useEffect(() => {
       (async () => {
-        const initialProps = await WrappedComponent!.getInitialProps!();
+        const getInitialProps: IGetInitialPropsClient = {
+          isServer: false,
+          ...props,
+        };
+        const initialProps = await WrappedComponent!.getInitialProps!(
+          getInitialProps,
+        );
         setInitialProps(initialProps);
       })();
     }, []);
@@ -41,7 +47,7 @@ function render({
 }: {
   route: IRoute;
   opts: IOpts;
-  props: object;
+  props: RouteComponentProps;
 }) {
   const routes = renderRoutes({
     ...opts,
@@ -52,7 +58,7 @@ function render({
   if (Component) {
     if (Component.getInitialProps) {
       const initialProps = opts?.extraProps?.[path as string] || {};
-      Component = wrapInitialPropsFetch(Component, initialProps);
+      Component = wrapInitialPropsFetch(Component, initialProps) as IComponent;
     }
 
     if (Routes) {
@@ -84,7 +90,7 @@ function getRouteElement({ route, index, opts }: IGetRouteElementOpts) {
     return (
       <Route
         {...routeProps}
-        render={(props: object) => {
+        render={(props: any) => {
           return render({ route, opts, props });
         }}
       />
