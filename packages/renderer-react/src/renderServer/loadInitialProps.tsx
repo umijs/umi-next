@@ -31,7 +31,7 @@ export default async function loadInitialProps(
         route: IMatchRoute;
         match: match;
       };
-      if (match && route.component?.getInitialProps) {
+      if (match) {
         const component = route.component;
         promises.push({
           path: route.path,
@@ -50,10 +50,8 @@ export default async function loadInitialProps(
 
   for (const promiseObj of promises) {
     const { path, promise } = promiseObj;
-    if (isPromise(promise)) {
-      const props = await promise;
-      data[path] = props;
-    }
+    const props = isPromise(promise) ? await promise : promise;
+    data[path] = props;
   }
 
   return {

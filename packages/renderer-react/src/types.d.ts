@@ -18,7 +18,7 @@ export interface IRoute {
   Routes?: any[];
 }
 
-export interface GetInitialProps {
+export interface IGetInitialProps {
   req?: IncomingMessage;
   res?: ServerResponse;
   isServer?: boolean;
