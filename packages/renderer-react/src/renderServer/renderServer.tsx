@@ -7,7 +7,7 @@ import renderRoutes from '../renderRoutes/renderRoutes';
 import { isPromise } from './utils';
 import loadInitialProps from './loadInitialProps';
 
-import { IRoute, IGetInitialProps } from '../types';
+import { IRoute } from '../types';
 
 interface IRenderOpts<T> {
   staticMarkup?: boolean;
