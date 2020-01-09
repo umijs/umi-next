@@ -1,6 +1,6 @@
 import React from 'react';
 
-const News: React.SFC<{}> = (props) => {
+const News: React.FunctionComponent<{}> = (props) => {
   const { list } = props;
   return (
     <ul>{list.map(item => <li key={item.id}>{item.title}</li>)}</ul>

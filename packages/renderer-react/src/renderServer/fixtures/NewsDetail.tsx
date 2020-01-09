@@ -6,7 +6,7 @@ export interface NewsDetailProps {
 
 }
 
-const NewsDetail: React.SFC<NewsDetailProps> = (props) => {
+const NewsDetail: React.FunctionComponent<NewsDetailProps> = (props) => {
   const { detail, match } = props;
   const { id } = match.params;
   return (
