@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { getFile, rimraf } from '@umijs/utils';
 import { Bundler } from './index';
+import { ConfigType } from './enums';
 
 const fixtures = join(__dirname, 'fixtures');
 
@@ -10,7 +11,12 @@ readdirSync(fixtures).forEach(fixture => {
   if (fixture.startsWith('.')) return;
   if (statSync(cwd).isFile()) return;
 
-  test(fixture, async () => {
+  const fn = fixture.includes('-only')
+    ? test.only
+    : fixture.startsWith('x-')
+    ? xtest
+    : test;
+  fn(fixture, async () => {
     // get user config
     let config = {};
     try {
@@ -24,9 +30,10 @@ readdirSync(fixtures).forEach(fixture => {
     });
 
     // get config
+    const env = fixture.includes('-production') ? 'production' : 'development';
     const webpackConfig = bundler.getConfig({
-      env: 'development',
-      type: 'umi-csr',
+      env,
+      type: ConfigType.csr,
     });
     webpackConfig.entry = {
       index: getFile({
@@ -44,8 +51,13 @@ readdirSync(fixtures).forEach(fixture => {
     });
 
     // expect
+    let indexCSS = '';
+    try {
+      indexCSS = readFileSync(join(cwd, 'dist/index.css'), 'utf-8');
+    } catch (e) {}
     require(join(cwd, 'expect.ts')).default({
-      indexContent: readFileSync(join(cwd, 'dist/index.js'), 'utf-8'),
+      indexJS: readFileSync(join(cwd, 'dist/index.js'), 'utf-8'),
+      indexCSS,
       files: readdirSync(join(cwd, 'dist')).filter(f => f.charAt(0) !== '.'),
       cwd,
     });

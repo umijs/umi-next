@@ -82,7 +82,11 @@ export interface IConfig {
   };
   ignoreMomentLocale?: boolean;
   inlineLimit?: number;
+  theme?: object;
+  styleLoader?: object;
   extraBabelPresets?: IPresetOrPlugin[];
   extraBabelPlugins?: IPresetOrPlugin[];
+  disableDynamicImport?: boolean;
+  terserOptions?: object;
   routes?: IRoute[];
 }

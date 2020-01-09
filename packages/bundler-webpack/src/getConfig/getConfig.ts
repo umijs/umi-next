@@ -1,6 +1,11 @@
 import { IConfig } from '@umijs/types';
 import Config from 'webpack-chain';
 import { join } from 'path';
+import { deepmerge } from '@umijs/utils';
+import { ConfigType } from '../enums';
+import css from './css';
+import { getBabelDepsOpts, getBabelOpts } from './getBabelOpts';
+import terserOptions from './terserOptions';
 
 export interface IOpts {
   cwd: string;
@@ -15,7 +20,7 @@ export default function({ cwd, config, type, env }: IOpts) {
   webpackConfig.mode(env);
 
   // TODO: 处理 entry
-  if (type === 'umi-csr') {
+  if (type === ConfigType.csr) {
     const tmpDir =
       process.env.NODE_ENV === 'development'
         ? '.umi'
@@ -81,14 +86,6 @@ export default function({ cwd, config, type, env }: IOpts) {
 
   // modules and loaders ---------------------------------------------
 
-  const basicBabelLoaderOpts = {
-    // Tell babel to guess the type, instead assuming all files are modules
-    // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
-    sourceType: 'unambiguous',
-    babelrc: false,
-    cacheDirectory: process.env.BABEL_CACHE !== 'none',
-  };
-
   // prettier-ignore
   webpackConfig.module
     .rule('js')
@@ -97,30 +94,10 @@ export default function({ cwd, config, type, env }: IOpts) {
       .exclude.add(/node_modules/).end()
       .use('babel-loader')
         .loader(require.resolve('babel-loader'))
-        .options({
-          ...basicBabelLoaderOpts,
-          presets: [
-            [require.resolve('@umijs/babel-preset-umi/app', {
-              // @ts-ignore
-              nodeEnv: env,
-            })],
-            ...(config.extraBabelPresets || []),
-          ],
-          plugins: [
-            [
-              require.resolve('babel-plugin-named-asset-import'),
-              {
-                loaderMap: {
-                  svg: {
-                    ReactComponent:
-                      `${require.resolve('@svgr/webpack')}?-svgo,+titleProp,+ref![path]`,
-                  },
-                },
-              },
-            ],
-            ...(config.extraBabelPlugins || []),
-          ],
-        });
+        .options(getBabelOpts({
+          config,
+          env,
+        }));
 
   // prettier-ignore
   webpackConfig.module
@@ -131,15 +108,10 @@ export default function({ cwd, config, type, env }: IOpts) {
       .exclude.add(/@babel(?:\/|\\{1,2})runtime/).end()
       .use('babel-loader')
         .loader(require.resolve('babel-loader'))
-        .options({
-          ...basicBabelLoaderOpts,
-          presets: [
-            [require.resolve('@umijs/babel-preset-umi/dependency', {
-              // @ts-ignore
-              nodeEnv: env,
-            })],
-          ],
-        });
+        .options(getBabelDepsOpts({
+          config,
+          env,
+        }));
 
   // TODO: 处理 opts.disableDynamicImport
 
@@ -156,6 +128,7 @@ export default function({ cwd, config, type, env }: IOpts) {
           loader: require.resolve('file-loader'),
           options: {
             name: 'static/[name].[hash:8].[ext]',
+            esModule: false,
           },
         }
       });
@@ -168,7 +141,11 @@ export default function({ cwd, config, type, env }: IOpts) {
       .loader(require.resolve('file-loader'))
       .options({
         name: 'static/[name].[hash:8].[ext]',
+        esModule: false,
       });
+
+  // css
+  css({ config, webpackConfig, isDev, disableCompress });
 
   // externals
   if (config.externals) {
@@ -219,7 +196,20 @@ export default function({ cwd, config, type, env }: IOpts) {
       if (disableCompress) {
         webpackConfig.optimization.minimize(false);
       } else {
-        // TODO
+        webpackConfig.optimization
+          .minimizer('terser')
+          .use(require.resolve('terser-webpack-plugin'), [
+            {
+              terserOptions: deepmerge(
+                terserOptions,
+                config.terserOptions || {},
+              ),
+              sourceMap: false,
+              cache: true,
+              parallel: true,
+              extractComments: false,
+            },
+          ]);
       }
     },
   );
@@ -227,7 +217,7 @@ export default function({ cwd, config, type, env }: IOpts) {
   let ret = webpackConfig.toConfig();
 
   // speed-measure-webpack-plugin
-  if (process.env.SPEED_MEASURE && type === 'umi-csr') {
+  if (process.env.SPEED_MEASURE && type === ConfigType.csr) {
     const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
     const smpOption =
       process.env.SPEED_MEASURE === 'CONSOLE'
