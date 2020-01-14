@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { yParser, chalk } from '@umijs/utils';
 import { Service } from '@umijs/core';
+import { existsSync } from 'fs';
 
 // process.argv: [node, umi.js, command, args]
 const args = yParser(process.argv.slice(2), {
@@ -16,15 +17,29 @@ if (process.env.APP_ROOT) {
   cwd = join(cwd, process.env.APP_ROOT);
 }
 
+if (args.version && !args._[0]) {
+  args._[0] = 'version';
+  const local = existsSync(join(__dirname, '../.local'))
+    ? chalk.cyan('@local')
+    : '';
+  console.log(`umi@${require('../package.json').version}${local}`);
+}
+
 (async () => {
   try {
     switch (args._[0]) {
       default:
+        const name = args._[0];
+        if (name === 'build') {
+          process.env.NODE_ENV = 'production';
+        } else if (name === 'dev') {
+          process.env.NODE_ENV = 'development';
+        }
         await new Service({
           cwd,
-          useBuiltIn: true,
+          presets: [require.resolve('@umijs/preset-built-in')],
         }).run({
-          name: args._[0],
+          name,
           args,
         });
         break;

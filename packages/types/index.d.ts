@@ -1,4 +1,11 @@
-import { PluginAPI, Service } from '@umijs/core';
+import {
+  PluginAPI,
+  Service,
+  IRoute,
+  IConfig as IConfigCore,
+} from '@umijs/core';
+import webpack from 'webpack';
+import { Request, Express, Response, NextFunction } from 'express';
 
 interface IEvent<T> {
   (fn: { (args: T): void }): void;
@@ -10,6 +17,11 @@ interface IModify<T, U> {
 
 interface IAdd<T, U> {
   (fn: { (args: T): U | U[] }): void;
+}
+
+export interface ITargets {
+  browsers?: any;
+  [key: string]: number | boolean;
 }
 
 type IPresetOrPlugin = string | [string, any];
@@ -38,8 +50,8 @@ export interface IApi extends PluginAPI {
   modifyPaths: IModify<string[], null>;
   modifyBundler: IModify<any, null>;
   modifyBundleConfig: IModify<
-    object,
-    { env: env; type: string; bundler: { id: string } }
+    webpack.Configuration,
+    { env: env; type: string; bundler: { id: string; version: number } }
   >;
   modifyBundleConfigs: IModify<
     any[],
@@ -67,19 +79,19 @@ export interface IApi extends PluginAPI {
   >;
 }
 
-export interface IRoute {
-  [key: string]: any;
-}
+export { IRoute };
 
-export interface IConfig {
-  outputPath?: string;
-  publicPath?: string;
+export interface IConfig extends IConfigCore {
   devtool?: string;
   hash?: boolean;
   externals?: any;
   alias?: {
     (key: string): string;
   };
+  define?: {
+    (key: string): any;
+  };
+  targets?: ITargets;
   ignoreMomentLocale?: boolean;
   inlineLimit?: number;
   theme?: object;
@@ -87,6 +99,9 @@ export interface IConfig {
   extraBabelPresets?: IPresetOrPlugin[];
   extraBabelPlugins?: IPresetOrPlugin[];
   disableDynamicImport?: boolean;
+  runtimePublicPath?: boolean;
   terserOptions?: object;
-  routes?: IRoute[];
 }
+
+export { webpack };
+export { Request, Express, Response, NextFunction };

@@ -1,5 +1,6 @@
 import { IConfig } from '@umijs/types';
 import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
 import getConfig, { IOpts as IGetConfigOpts } from './getConfig/getConfig';
 import { ConfigType } from './enums';
 
@@ -10,6 +11,7 @@ interface IOpts {
 
 class Bundler {
   static id = 'webpack';
+  static version = 4;
   cwd: string;
   config: IConfig;
 
@@ -19,8 +21,11 @@ class Bundler {
   }
 
   getConfig(opts: {
-    type: string;
+    type: ConfigType;
     env: 'development' | 'production';
+    entry: {
+      [key: string]: string;
+    };
   }): webpack.Configuration {
     return getConfig({
       ...opts,
@@ -44,6 +49,11 @@ class Bundler {
         resolve({ stats });
       });
     });
+  }
+
+  getMiddleware({ bundleConfigs }: { bundleConfigs: webpack.Configuration[] }) {
+    const compiler = webpack(bundleConfigs);
+    return webpackDevMiddleware(compiler as any);
   }
 
   async dev() {}

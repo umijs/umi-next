@@ -18,8 +18,10 @@ export default function() {
       require.resolve('./plugins/bundle/alias'),
 
       // commands
+      require.resolve('./plugins/commands/version/version'),
       require.resolve('./plugins/commands/dev/dev'),
       require.resolve('./plugins/commands/build/build'),
+      require.resolve('./plugins/commands/build/applyHtmlWebpackPlugin'),
     ],
   };
 }

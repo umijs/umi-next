@@ -3,6 +3,7 @@ import { IConfig } from '@umijs/types';
 interface IOpts {
   config: IConfig;
   env: 'development' | 'production';
+  targets?: object;
 }
 
 const basicBabelLoaderOpts = {
@@ -13,36 +14,26 @@ const basicBabelLoaderOpts = {
   cacheDirectory: process.env.BABEL_CACHE !== 'none',
 };
 
-export function getBabelOpts({ config, env }: IOpts) {
+export function getBabelOpts({ config, env, targets }: IOpts) {
   return {
     ...basicBabelLoaderOpts,
     presets: [
       [
-        require.resolve('@umijs/babel-preset-umi/app', {
+        require.resolve('@umijs/babel-preset-umi/app'),
+        {
           // @ts-ignore
           nodeEnv: env,
-        }),
-      ],
-      ...(config.extraBabelPresets || []),
-    ],
-    plugins: [
-      [
-        require.resolve('babel-plugin-named-asset-import'),
-        {
-          loaderMap: {
-            svg: {
-              ReactComponent: `${require.resolve(
-                '@svgr/webpack',
-              )}?-svgo,+titleProp,+ref![path]`,
-            },
+          dynamicImportNode: config.disableDynamicImport,
+          autoCSSModules: true,
+          svgr: true,
+          env: {
+            targets,
           },
         },
       ],
-      require.resolve('@umijs/babel-plugin-css-modules'),
-      config.disableDynamicImport &&
-        require.resolve('babel-plugin-dynamic-import-node'),
-      ...(config.extraBabelPlugins || []),
-    ].filter(Boolean),
+      ...(config.extraBabelPresets || []),
+    ],
+    plugins: [...(config.extraBabelPlugins || [])].filter(Boolean),
   };
 }
 

@@ -1,31 +1,45 @@
 import { IConfig } from '@umijs/types';
 import Config from 'webpack-chain';
+import webpack from 'webpack';
 import { join } from 'path';
 import { deepmerge } from '@umijs/utils';
 import { ConfigType } from '../enums';
 import css from './css';
 import { getBabelDepsOpts, getBabelOpts } from './getBabelOpts';
 import terserOptions from './terserOptions';
+import { objToStringified } from './utils';
+import getTargetsAndBrowsersList from './getTargetsAndBrowsersList';
 
 export interface IOpts {
   cwd: string;
   config: IConfig;
-  type: string;
+  type: ConfigType;
   env: 'development' | 'production';
+  entry?: {
+    [key: string]: string;
+  };
 }
 
-export default function({ cwd, config, type, env }: IOpts) {
+export default function({
+  cwd,
+  config,
+  type,
+  env,
+  entry,
+}: IOpts): webpack.Configuration {
   const webpackConfig = new Config();
 
   webpackConfig.mode(env);
 
-  // TODO: 处理 entry
-  if (type === ConfigType.csr) {
-    const tmpDir =
-      process.env.NODE_ENV === 'development'
-        ? '.umi'
-        : `.umi-${process.env.NODE_ENV}`;
-    webpackConfig.entry('umi').add(join(cwd, tmpDir, 'umi.ts'));
+  // entry
+  if (entry) {
+    Object.keys(entry).forEach(key => {
+      const e = webpackConfig.entry(key);
+      if (config.runtimePublicPath) {
+        e.add(require.resolve('./setPublicPath'));
+      }
+      e.add(entry[key]);
+    });
   }
 
   const isDev = env === 'development';
@@ -46,6 +60,7 @@ export default function({ cwd, config, type, env }: IOpts) {
     .chunkFilename(useHash ? `[name].[contenthash:8].async.js` : `[name].js`)
     .publicPath(config.publicPath!)
     // remove this after webpack@5
+    // free memory of assets after emitting
     .futureEmitAssets(true)
     .pathinfo(isDev || disableCompress);
 
@@ -86,6 +101,11 @@ export default function({ cwd, config, type, env }: IOpts) {
 
   // modules and loaders ---------------------------------------------
 
+  const { targets, browserslist } = getTargetsAndBrowsersList({
+    config,
+    type,
+  });
+
   // prettier-ignore
   webpackConfig.module
     .rule('js')
@@ -97,6 +117,7 @@ export default function({ cwd, config, type, env }: IOpts) {
         .options(getBabelOpts({
           config,
           env,
+          targets,
         }));
 
   // prettier-ignore
@@ -112,8 +133,6 @@ export default function({ cwd, config, type, env }: IOpts) {
           config,
           env,
         }));
-
-  // TODO: 处理 opts.disableDynamicImport
 
   // prettier-ignore
   webpackConfig.module
@@ -145,7 +164,7 @@ export default function({ cwd, config, type, env }: IOpts) {
       });
 
   // css
-  css({ config, webpackConfig, isDev, disableCompress });
+  css({ config, webpackConfig, isDev, disableCompress, browserslist });
 
   // externals
   if (config.externals) {
@@ -167,14 +186,23 @@ export default function({ cwd, config, type, env }: IOpts) {
   });
 
   // plugins -> ignore moment locale
-  if (config.ignoreMomentLocale) {
-    webpackConfig
-      .plugin('ignore-moment-locale')
-      .use(require('webpack/lib/IgnorePlugin'), [/^\.\/locale$/, /moment$/]);
-  }
+  webpackConfig
+    .plugin('ignore-moment-locale')
+    .use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/]);
 
   // copy
   // TODO
+
+  // define
+  webpackConfig.plugin('define').use(webpack.DefinePlugin, [
+    {
+      'process.env': objToStringified({
+        ...process.env,
+        NODE_ENV: env,
+      }),
+      ...objToStringified(config.define || {}),
+    },
+  ]);
 
   webpackConfig.when(
     isDev,
@@ -190,7 +218,10 @@ export default function({ cwd, config, type, env }: IOpts) {
       // TODO
 
       // webpack/lib/HashedModuleIdsPlugin
-      // TODO
+      // https://webpack.js.org/plugins/hashed-module-ids-plugin/
+      webpackConfig
+        .plugin('hash-module-ids')
+        .use(require.resolve('webpack/lib/HashedModuleIdsPlugin'));
 
       // compress
       if (disableCompress) {
@@ -214,7 +245,7 @@ export default function({ cwd, config, type, env }: IOpts) {
     },
   );
 
-  let ret = webpackConfig.toConfig();
+  let ret = webpackConfig.toConfig() as webpack.Configuration;
 
   // speed-measure-webpack-plugin
   if (process.env.SPEED_MEASURE && type === ConfigType.csr) {
