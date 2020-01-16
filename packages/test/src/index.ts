@@ -1,6 +1,6 @@
 import jest from 'jest';
 // @ts-ignore
-import { createDebug, lodash, mergeConfig } from '@umijs/utils';
+import { createDebug, mergeConfig } from '@umijs/utils';
 import { options as CliOptions } from 'jest-cli/build/cli/args';
 import assert from 'assert';
 import { join } from 'path';

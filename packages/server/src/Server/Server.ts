@@ -1,12 +1,14 @@
-import express, { Express, IRouterHandler } from 'express';
+// @ts-ignore
+import { PartialProps } from '@umijs/utils';
+import express, { Express, RequestHandler } from 'express';
 import http from 'http';
 import portfinder from 'portfinder';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 
-export interface IOpts {
-  compilerMiddleware?: any;
-  afterMiddlewares?: any[];
-  beforeMiddlewares?: any[];
+export interface IServerOpts {
+  compilerMiddleware: RequestHandler<any>;
+  afterMiddlewares?: RequestHandler<any>[];
+  beforeMiddlewares?: RequestHandler<any>[];
   onListening?: {
     ({
       port,
@@ -20,37 +22,43 @@ export interface IOpts {
       server: Server;
     }): void;
   };
-  onConnection?: {
-    ({ connection, server }: { connection: Connection; server: Server }): void;
-  };
-  onConnectionClose?: Function;
+  onConnection?: (param: { connection: Connection; server: Server }) => void;
+  onConnectionClose?: (param: { connection: Connection }) => void;
 }
+
+const defaultOpts: Required<PartialProps<IServerOpts>> = {
+  afterMiddlewares: [],
+  beforeMiddlewares: [],
+  onListening: argv => argv,
+  onConnection: () => {},
+  onConnectionClose: () => {},
+};
 
 class Server {
   app: Express;
-  opts: IOpts;
+  opts: Required<IServerOpts>;
   socketServer?: SocketServer;
   listeningApp?: http.Server;
   sockets: Connection[] = [];
 
-  constructor(opts: IOpts) {
-    this.opts = opts;
+  constructor(opts: IServerOpts) {
+    this.opts = { ...defaultOpts, ...opts };
     this.app = express();
     this.setupFeatures();
   }
 
   setupFeatures() {
-    (this.opts.beforeMiddlewares || []).forEach(middleware => {
+    this.opts.beforeMiddlewares.forEach(middleware => {
       this.app.use(middleware);
     });
     this.app.use(this.opts.compilerMiddleware);
-    (this.opts.afterMiddlewares || []).forEach(middleware => {
+    this.opts.afterMiddlewares.forEach(middleware => {
       this.app.use(middleware);
     });
   }
 
   sockWrite({
-    sockets,
+    sockets = this.sockets,
     type,
     data,
   }: {
@@ -58,7 +66,7 @@ class Server {
     type: string;
     data?: string | object;
   }) {
-    (sockets || this.sockets).forEach(socket => {
+    sockets.forEach(socket => {
       socket.write(JSON.stringify({ type, data }));
     });
   }
@@ -105,13 +113,13 @@ class Server {
       prefix: '/dev-server',
     });
     server.on('connection', connection => {
-      this.opts.onConnection?.({
+      this.opts.onConnection({
         connection,
         server: this,
       });
       this.sockets.push(connection);
       connection.on('close', () => {
-        this.opts.onConnectionClose?.({
+        this.opts.onConnectionClose({
           connection,
         });
         const index = this.sockets.indexOf(connection);

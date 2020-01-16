@@ -22,7 +22,7 @@ function initSocket({
 test('normal', async () => {
   const server = new Server({
     beforeMiddlewares: [
-      (req: Request, res: Response, next: NextFunction) => {
+      (req, res, next) => {
         if (req.path === '/before') {
           res.end('before');
         } else {
@@ -31,7 +31,7 @@ test('normal', async () => {
       },
     ],
     afterMiddlewares: [
-      (req: Request, res: Response, next: NextFunction) => {
+      (req, res, next) => {
         if (req.path === '/after') {
           res.end('after');
         } else {
@@ -39,7 +39,7 @@ test('normal', async () => {
         }
       },
     ],
-    compilerMiddleware: (req: Request, res: Response, next: NextFunction) => {
+    compilerMiddleware: (req, res, next) => {
       if (req.path === '/compiler') {
         res.end('compiler');
       } else {
