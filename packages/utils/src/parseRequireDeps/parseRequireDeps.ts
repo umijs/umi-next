@@ -2,15 +2,15 @@ import resolve from 'resolve';
 import { dirname } from 'path';
 // @ts-ignore
 import crequire from 'crequire';
-import { existsSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import winPath from '../winPath/winPath';
 
 function parse(filePath: string): string[] {
   const content = readFileSync(filePath, 'utf-8');
-  return crequire(content)
-    .map((o: any) => o.path)
-    .filter((path: string) => path.charAt(0) === '.')
-    .map((path: string) =>
+  return (crequire(content) as any[])
+    .map<string>(o => o.path)
+    .filter(path => path.charAt(0) === '.')
+    .map(path =>
       winPath(
         resolve.sync(path, {
           basedir: dirname(filePath),
@@ -20,14 +20,18 @@ function parse(filePath: string): string[] {
     );
 }
 
-export default function(filePath: string) {
-  const paths = [filePath];
+export default function parseRequireDeps(filePath: string): string[] {
+  const pathsQueue = [filePath];
   const ret = [winPath(filePath)];
 
-  while (paths.length) {
-    const extraPaths = parse(paths.shift()!);
+  for (
+    let current = pathsQueue.shift();
+    !!current;
+    current = pathsQueue.shift()
+  ) {
+    const extraPaths = parse(current);
     if (extraPaths.length) {
-      paths.push(...extraPaths);
+      pathsQueue.push(...extraPaths);
       ret.push(...extraPaths);
     }
   }
