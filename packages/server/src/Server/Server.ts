@@ -1,25 +1,37 @@
-import express, { Express, IRouterHandler, Request, Response } from 'express';
+import express, {
+  Express,
+  IRouterHandler,
+  Request,
+  Response,
+  NextFunction,
+} from 'express';
 import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 
-interface ProxyConfigMap {
+interface IProxyConfigMap {
   [url: string]: string | httpProxyMiddleware.Config;
 }
 
-type ProxyConfigArrayItem = {
+type IProxyConfigArrayItem = {
   path?: string | string[];
   context?: string | string[] | httpProxyMiddleware.Filter;
 } & httpProxyMiddleware.Config;
 
-type ProxyConfigArray = ProxyConfigArrayItem[];
+type IProxyConfigArray = IProxyConfigArrayItem[];
+
+type INextHandleFunction = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => void;
 
 export interface IOpts {
-  compilerMiddleware?: any;
-  afterMiddlewares?: any[];
-  beforeMiddlewares?: any[];
-  proxy?: ProxyConfigMap | ProxyConfigArray;
+  compilerMiddleware?: INextHandleFunction;
+  afterMiddlewares?: INextHandleFunction[];
+  beforeMiddlewares?: INextHandleFunction[];
+  proxy?: IProxyConfigMap | IProxyConfigArray;
   onListening?: {
     ({
       port,
@@ -98,7 +110,7 @@ class Server {
       }
     }
 
-    const getProxyMiddleware = (proxyConfig: ProxyConfigArrayItem): any => {
+    const getProxyMiddleware = (proxyConfig: IProxyConfigArrayItem): any => {
       const context = proxyConfig.context || proxyConfig.path;
 
       // It is possible to use the `bypass` method without a `target`.
