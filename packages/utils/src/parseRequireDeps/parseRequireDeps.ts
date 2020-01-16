@@ -21,17 +21,13 @@ function parse(filePath: string): string[] {
 }
 
 export default function parseRequireDeps(filePath: string): string[] {
-  const pathsQueue = [filePath];
+  const queue = [filePath];
   const ret = [winPath(filePath)];
 
-  for (
-    let current = pathsQueue.shift();
-    !!current;
-    current = pathsQueue.shift()
-  ) {
-    const extraPaths = parse(current);
+  for (let curr = queue.shift(); !!curr; curr = queue.shift()) {
+    const extraPaths = parse(curr);
     if (extraPaths.length) {
-      pathsQueue.push(...extraPaths);
+      queue.push(...extraPaths);
       ret.push(...extraPaths);
     }
   }
