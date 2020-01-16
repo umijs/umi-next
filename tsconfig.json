@@ -18,7 +18,6 @@
     "**/*.spec.ts",
     "lib",
     "fixtures",
-    "examples",
-    "jest.config.js"
+    "examples"
   ]
 }

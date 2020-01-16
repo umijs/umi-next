@@ -15,9 +15,10 @@ $ cd packages/umi
 $ yarn link
 ```
 
-Try the `umi` cli (need to [build](#common-tasks) first).
+Try the `umi` cli.
 
 ```bash
+$ yarn build
 $ umi -v
 umi@0.0.1-alpha.1@local
 ```
