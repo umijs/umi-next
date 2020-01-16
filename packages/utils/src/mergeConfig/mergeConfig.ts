@@ -21,7 +21,7 @@ export default function mergeConfig<
   const ret: Partial<CalculatedConfig<T, U>> = { ...defaultConfig };
   configs.forEach(config => {
     if (!config) return;
-    Object.keys(config).forEach((key: keyof typeof config) => {
+    (Object.keys(config) as (keyof typeof config)[]).forEach(key => {
       const val = config[key];
       if (typeof val === 'function') {
         ret[key] = val(ret[key]);
