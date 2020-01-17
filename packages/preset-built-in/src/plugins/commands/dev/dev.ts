@@ -24,7 +24,6 @@ export default (api: IApi) => {
       // dev
       const bundleConfig = await getBundleAndConfigs({ api });
       const { bundler, bundleConfigs } = bundleConfig;
-      console.log('bundleConfig', bundleConfig);
       const opts: IServerOpts = bundler.setupDevServerOpts({
         bundleConfigs: bundleConfigs,
       });
