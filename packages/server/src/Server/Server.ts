@@ -1,9 +1,7 @@
 import express, { Express, RequestHandler } from 'express';
 import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
-import https from 'https';
 import portfinder from 'portfinder';
-import semver from 'semver';
 import { Proxy } from 'http-proxy-middleware';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 import { lodash } from '@umijs/utils';
