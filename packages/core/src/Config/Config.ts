@@ -66,9 +66,7 @@ export default class Config {
         updateUserConfigWithKey({
           key,
           // TODO: 确认 deepmerge 是否可应用于任何类型，不能的话还得再封一层
-          value: config.default
-            ? deepmerge(config.default, value || {})
-            : value,
+          value: config.default ? deepmerge(config.default, value) : value,
           userConfig,
         });
       }
