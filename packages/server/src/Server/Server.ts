@@ -1,16 +1,15 @@
 // @ts-ignore
 import { PartialProps } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
-import httpProxyMiddleware from 'http-proxy-middleware';
+import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
-import { Proxy } from 'http-proxy-middleware';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 import { lodash } from '@umijs/utils';
 
-interface IServerProxyConfigItem extends httpProxyMiddleware.Config {
+interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
-  context?: string | string[] | httpProxyMiddleware.Filter;
+  context?: string | string[] | HttpProxyMiddleware.Filter;
   bypass?: (
     req: Express.Request,
     res: Express.Response,
@@ -64,7 +63,7 @@ class Server {
   listeningApp: http.Server;
   sockets: Connection[] = [];
   // Proxy sockets
-  socketProxies: Proxy[] = [];
+  socketProxies: HttpProxyMiddleware.Proxy[] = [];
 
   constructor(opts: IServerOpts) {
     this.opts = { ...defaultOpts, ...opts };
@@ -151,14 +150,14 @@ class Server {
       // It is possible to use the `bypass` method without a `target`.
       // However, the proxy middleware has no use in this case, and will fail to instantiate.
       if (proxyConfig.target) {
-        return httpProxyMiddleware(context!, proxyConfig);
+        return HttpProxyMiddleware(context!, proxyConfig);
       }
 
       return;
     };
 
     this.opts.proxy.forEach(proxyConfigOrCallback => {
-      let proxyMiddleware: httpProxyMiddleware.Proxy | undefined;
+      let proxyMiddleware: HttpProxyMiddleware.Proxy | undefined;
 
       let proxyConfig =
         typeof proxyConfigOrCallback === 'function'
@@ -167,8 +166,8 @@ class Server {
 
       proxyMiddleware = getProxyMiddleware(proxyConfig);
 
-      if (proxyConfig.ws) {
-        this.socketProxies.push(proxyMiddleware as any);
+      if (proxyConfig.ws && proxyMiddleware) {
+        this.socketProxies.push(proxyMiddleware);
       }
 
       this.app.use((req, res, next) => {
