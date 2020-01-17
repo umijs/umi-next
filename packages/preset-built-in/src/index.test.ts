@@ -75,6 +75,5 @@ test('dev', async () => {
   expect(existsSync(join(absTmpDir, 'core/plugin.ts'))).toEqual(true);
   expect(existsSync(join(absTmpDir, 'core/routes.ts'))).toEqual(true);
   expect(existsSync(join(absTmpDir, 'core/umiExports.ts'))).toEqual(true);
-  rimraf.sync(join(absTmpDir));
   listeningApp.close();
 });
