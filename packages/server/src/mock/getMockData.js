@@ -4,9 +4,8 @@ import assert from 'assert';
 import pathToRegexp from 'path-to-regexp';
 import multer from 'multer';
 import { join } from 'path';
-import { winPath } from 'umi-utils';
+import { winPath, glob } from '@umijs/utils';
 import signale from 'signale';
-import glob from 'glob';
 import getPaths from './getPaths';
 
 const debug = require('debug')('umi-mock:getMockData');

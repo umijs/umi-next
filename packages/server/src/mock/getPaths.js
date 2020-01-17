@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { winPath } from 'umi-utils';
+import { winPath } from '@umijs/utils';
 
 export default function(cwd) {
   const winCwd = winPath(cwd);
