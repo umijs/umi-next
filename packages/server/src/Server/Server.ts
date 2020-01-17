@@ -4,6 +4,7 @@ import express, { Express, RequestHandler } from 'express';
 import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
+import { Proxy } from 'http-proxy-middleware';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 import { lodash } from '@umijs/utils';
 
@@ -59,25 +60,49 @@ class Server {
   app: Express;
   opts: Required<IServerOpts>;
   socketServer?: SocketServer;
-  listeningApp?: http.Server;
+  // @ts-ignore
+  listeningApp: http.Server;
   sockets: Connection[] = [];
+  // Proxy sockets
+  socketProxies: Proxy[] = [];
 
   constructor(opts: IServerOpts) {
     this.opts = { ...defaultOpts, ...opts };
     this.app = express();
     this.setupFeatures();
+    this.createServer();
+
+    this.socketProxies.forEach(wsProxy => {
+      // subscribe to http 'upgrade'
+      // @ts-ignore
+      this.listeningApp.on('upgrade', wsProxy.upgrade);
+    }, this);
   }
 
   setupFeatures() {
-    this.opts.beforeMiddlewares.forEach(middleware => {
-      this.app.use(middleware);
-    });
-    this.setupProxy();
-    if (this.opts.compilerMiddleware) {
-      this.app.use(this.opts.compilerMiddleware);
-    }
-    this.opts.afterMiddlewares.forEach(middleware => {
-      this.app.use(middleware);
+    const features = {
+      proxy: () => {
+        this.setupProxy();
+      },
+      beforeMiddlewares: () => {
+        this.opts.beforeMiddlewares.forEach(middleware => {
+          this.app.use(middleware);
+        });
+      },
+      compilerMiddleware: () => {
+        if (this.opts.compilerMiddleware) {
+          this.app.use(this.opts.compilerMiddleware);
+        }
+      },
+      afterMiddlewares: () => {
+        this.opts.afterMiddlewares.forEach(middleware => {
+          this.app.use(middleware);
+        });
+      },
+    };
+
+    Object.keys(features).forEach(stage => {
+      features[stage]();
     });
   }
 
@@ -142,8 +167,8 @@ class Server {
 
       proxyMiddleware = getProxyMiddleware(proxyConfig);
 
-      if (proxyConfig.ws && proxyMiddleware) {
-        this.sockets.push(proxyMiddleware as any);
+      if (proxyConfig.ws) {
+        this.socketProxies.push(proxyMiddleware as any);
       }
 
       this.app.use((req, res, next) => {
@@ -192,6 +217,14 @@ class Server {
     sockets.forEach(socket => {
       socket.write(JSON.stringify({ type, data }));
     });
+  }
+
+  createServer() {
+    if (this.opts?.https) {
+      // TODO
+    } else {
+      this.listeningApp = http.createServer(this.app);
+    }
   }
 
   async listen({

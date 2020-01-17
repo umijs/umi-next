@@ -1,4 +1,4 @@
-export * from '@umijs/runtime';
+export * from './lib/cjs';
 
 // @ts-ignore
 export * from '@@/core/umiExports';
