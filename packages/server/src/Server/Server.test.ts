@@ -1,4 +1,5 @@
 import express from 'express';
+import { Server as NetServer } from 'net';
 import http from 'http';
 import { got } from '@umijs/utils';
 import portfinder from 'portfinder';
@@ -47,7 +48,7 @@ test('normal', async () => {
         }
       },
     ],
-    compilerMiddleware: (req, res, next: NextFunction) => {
+    compilerMiddleware: (req, res, next) => {
       if (req.path === '/compiler') {
         res.end('compiler');
       } else {
@@ -94,20 +95,20 @@ test('normal', async () => {
 
 describe('proxy', () => {
   const host = 'localhost';
-  let proxyServer1;
-  let proxyServer1Port;
-  let proxyServer2;
-  let proxyServer2Port;
-  let proxySocketServer;
+  let proxyServer1: http.Server;
+  let proxyServer1Port: number;
+  let proxyServer2: http.Server;
+  let proxyServer2Port: number;
+  let proxySocketServer: NetServer;
 
   beforeAll(async () => {
-    proxyServer1 = express();
-    proxyServer1.get('/api', (req, res) => {
+    const app = express();
+    app.get('/api', (req, res) => {
       res.json({
         hello: 'umi proxy',
       });
     });
-    proxyServer1.get('/users', (req, res) => {
+    app.get('/users', (req, res) => {
       res.json([
         {
           name: 'bar',
@@ -117,31 +118,31 @@ describe('proxy', () => {
     proxyServer1Port = await portfinder.getPortPromise({
       port: 3001,
     });
-    proxyServer1.listen(proxyServer1Port);
+    proxyServer1 = app.listen(proxyServer1Port);
 
-    proxyServer2 = express();
-    proxyServer2.get('/api2', (req, res) => {
+    const app2 = express();
+    app2.get('/api2', (req, res) => {
       res.json({
         hello: 'umi proxy2',
       });
     });
 
-    proxySocketServer = sockjs.createServer({ prefix: '/socket' });
-    proxySocketServer.on('connection', (conn: Connection) => {
+    const socket = sockjs.createServer({ prefix: '/socket' });
+    socket.on('connection', (conn: Connection) => {
       conn.on('data', message => {
         conn.write(message);
       });
       conn.on('close', () => {});
     });
-    const listeningApp = http.createServer(proxyServer2);
-    proxySocketServer.installHandlers(listeningApp, {
+    const listeningApp = http.createServer(app2);
+    socket.installHandlers(listeningApp, {
       prefix: '/socket',
     });
 
     proxyServer2Port = await portfinder.getPortPromise({
       port: 3002,
     });
-    listeningApp.listen(proxyServer2Port);
+    proxySocketServer = listeningApp.listen(proxyServer2Port);
   });
 
   afterAll(() => {
