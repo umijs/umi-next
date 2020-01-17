@@ -1,11 +1,10 @@
 // @ts-ignore
-import { PartialProps } from '@umijs/utils';
+import { PartialProps, lodash } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
-import { lodash } from '@umijs/utils';
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
@@ -24,9 +23,10 @@ type IServerProxyConfig =
   | null;
 
 export interface IServerOpts {
-  compilerMiddleware?: RequestHandler<any> | null;
   afterMiddlewares?: RequestHandler<any>[];
   beforeMiddlewares?: RequestHandler<any>[];
+  compilerMiddleware?: RequestHandler<any> | null;
+  https?: boolean;
   proxy?: IServerProxyConfig;
   onListening?: {
     ({
@@ -46,9 +46,10 @@ export interface IServerOpts {
 }
 
 const defaultOpts: Required<PartialProps<IServerOpts>> = {
-  compilerMiddleware: null,
   afterMiddlewares: [],
   beforeMiddlewares: [],
+  compilerMiddleware: null,
+  https: false,
   onListening: argv => argv,
   onConnection: () => {},
   onConnectionClose: () => {},
@@ -66,7 +67,10 @@ class Server {
   socketProxies: HttpProxyMiddleware.Proxy[] = [];
 
   constructor(opts: IServerOpts) {
-    this.opts = { ...defaultOpts, ...opts };
+    this.opts = {
+      ...defaultOpts,
+      ...lodash.omitBy(opts, lodash.isUndefined),
+    };
     this.app = express();
     this.setupFeatures();
     this.createServer();
@@ -219,7 +223,7 @@ class Server {
   }
 
   createServer() {
-    if (this.opts?.https) {
+    if (this.opts.https) {
       // TODO
     } else {
       this.listeningApp = http.createServer(this.app);
