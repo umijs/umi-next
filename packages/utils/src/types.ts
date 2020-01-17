@@ -12,3 +12,5 @@ export type PartialKeys<T> = Exclude<
 >;
 
 export type PartialProps<T> = Pick<T, PartialKeys<T>>;
+
+export type NodeEnv = 'development' | 'production' | 'test';

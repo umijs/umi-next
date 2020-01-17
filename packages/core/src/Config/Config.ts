@@ -81,50 +81,48 @@ export default class Config {
 
   getUserConfig() {
     const configFile = this.getConfigFile();
-    if (configFile) {
-      let envConfigFile;
-      if (process.env.UMI_ENV) {
-        envConfigFile = this.addAffix(configFile, process.env.UMI_ENV);
-        if (!existsSync(join(this.cwd, envConfigFile))) {
-          throw new Error(
-            `get user config failed, ${envConfigFile} does not exist, but process.env.UMI_ENV is set to ${process.env.UMI_ENV}.`,
-          );
-        }
-      }
-      const files = ([
-        configFile,
-        envConfigFile,
-        this.localConfig && this.addAffix(configFile, 'local'),
-      ].filter(Boolean) as string[])
-        .map((f: string) => join(this.cwd, f))
-        .filter(f => existsSync(f));
+    if (!configFile) return {};
 
-      // clear require cache and set babel register
-      const requireDeps = files.reduce((memo: string[], file) => {
-        memo = memo.concat(parseRequireDeps(file));
-        return memo;
-      }, []);
-      requireDeps.forEach(f => {
-        // TODO: potential windows path problem?
-        if (require.cache[f]) {
-          delete require.cache[f];
-        }
-      });
-      this.service.babelRegister.setOnlyMap({
-        key: 'config',
-        value: requireDeps,
-      });
-
-      // require config and merge
-      return this.mergeConfig(...this.requireConfigs(files));
-    } else {
-      return {};
+    const envConfigFile =
+      process.env.UMI_ENV && this.addAffix(configFile, process.env.UMI_ENV);
+    if (envConfigFile && !existsSync(join(this.cwd, envConfigFile))) {
+      throw new Error(
+        `get user config failed, ${envConfigFile} does not exist, but process.env.UMI_ENV is set to ${process.env.UMI_ENV}.`,
+      );
     }
+
+    const files = [
+      configFile,
+      envConfigFile,
+      this.localConfig && this.addAffix(configFile, 'local'),
+    ]
+      .filter((f): f is string => !!f)
+      .map(f => join(this.cwd, f))
+      .filter(f => existsSync(f));
+
+    // clear require cache and set babel register
+    const requireDeps = files.reduce<string[]>((memo, file) => {
+      return memo.concat(parseRequireDeps(file));
+    }, []);
+    requireDeps.forEach(f => {
+      // TODO: potential windows path problem?
+      if (require.cache[f]) {
+        delete require.cache[f];
+      }
+    });
+    this.service.babelRegister.setOnlyMap({
+      key: 'config',
+      value: requireDeps,
+    });
+
+    // require config and merge
+    return this.mergeConfig(...this.requireConfigs(files));
   }
 
   addAffix(file: string, affix: string) {
     const ext = extname(file);
-    return file.replace(new RegExp(`${ext}$`), `.${affix}${ext}`);
+    const extIndex = ext ? file.lastIndexOf(ext) : ext.length;
+    return `${file.slice(0, extIndex)}.${affix}${ext}`;
   }
 
   requireConfigs(configFiles: string[]) {
@@ -148,7 +146,7 @@ export default class Config {
       'config/config.ts',
       'config/config.js',
     ];
-    const configFile = configFiles.filter(f => existsSync(join(this.cwd, f)));
-    return configFile.length ? winPath(configFile[0]) : null;
+    const configFile = configFiles.find(f => existsSync(join(this.cwd, f)));
+    return configFile ? winPath(join(this.cwd, configFile)) : null;
   }
 }
