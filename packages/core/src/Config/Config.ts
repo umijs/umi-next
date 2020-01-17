@@ -11,6 +11,10 @@ import assert from 'assert';
 import joi from '@hapi/joi';
 import Service from '../Service/Service';
 import { ServiceStage } from '../Service/enums';
+import {
+  getUserConfigWithKey,
+  updateUserConfigWithKey,
+} from './utils/configUtils';
 
 interface IOpts {
   cwd: string;
@@ -42,7 +46,7 @@ export default class Config {
     const userConfig = this.getUserConfig();
     Object.keys(this.service.plugins).forEach(pluginId => {
       const { key, config = {} } = this.service.plugins[pluginId];
-      const value = lodash.get(userConfig, key, {});
+      const value = getUserConfigWithKey({ key, userConfig }) ?? {};
 
       // do validate if have schema config
       if (config.schema) {
@@ -59,11 +63,14 @@ export default class Config {
 
       // update userConfig with defaultConfig
       if (config.default) {
-        // TODO: 确认 deepmerge 是否可应用于任何类型，不能的话还得再封一层
-        const mergedValue = config.default
-          ? deepmerge(config.default, value)
-          : value;
-        lodash.set(userConfig, key, mergedValue);
+        updateUserConfigWithKey({
+          key,
+          // TODO: 确认 deepmerge 是否可应用于任何类型，不能的话还得再封一层
+          value: config.default
+            ? deepmerge(config.default, value || {})
+            : value,
+          userConfig,
+        });
       }
     });
 
