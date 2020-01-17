@@ -1,6 +1,6 @@
 import { join } from 'path';
 import assert from 'assert';
-import { createDebug, BabelRegister } from '@umijs/utils';
+import { createDebug, lodash, BabelRegister } from '@umijs/utils';
 import { AsyncSeriesWaterfallHook } from 'tapable';
 import { existsSync } from 'fs';
 import { pathToObj, resolvePlugins, resolvePresets } from './utils/pluginUtils';
@@ -8,7 +8,6 @@ import PluginAPI from './PluginAPI';
 import { ApplyPluginsType, PluginType, ServiceStage } from './enums';
 import { ICommand, IHook, IPackage, IPlugin, IPreset } from './types';
 import Config from '../Config/Config';
-import { getUserConfigWithKey } from '../Config/utils/configUtils';
 import getPaths from './getPaths';
 
 const debug = createDebug('umi:core:Service');
@@ -293,10 +292,7 @@ export default class Service {
   }
 
   getPluginOptsWithKey(key: string) {
-    return getUserConfigWithKey({
-      key,
-      userConfig: this.userConfig,
-    });
+    return lodash.get(this.userConfig, key);
   }
 
   registerPlugin(plugin: IPlugin) {
