@@ -4,6 +4,7 @@ import {
   IRoute,
   IConfig as IConfigCore,
 } from '@umijs/core';
+import { IOpts as IBabelPresetUmiOpts } from '@umijs/babel-preset-umi';
 import webpack from 'webpack';
 import { Request, Express, Response, NextFunction } from 'express';
 
@@ -64,7 +65,19 @@ export interface IApi extends PluginAPI {
     }
   >;
   modifyBabelOpts: IModify<
-    object,
+    {
+      sourceType: string;
+      babelrc: boolean;
+      cacheDirectory: boolean;
+      presets: any[];
+      plugins: any[];
+    },
+    {
+      env: env;
+    }
+  >;
+  modifyBabelPresetOpts: IModify<
+    IBabelPresetUmiOpts,
     {
       env: env;
     }
@@ -85,7 +98,9 @@ export interface IApi extends PluginAPI {
       exportAll?: boolean;
     }
   >;
-  addProjectFirstLibraries: IAdd<null, string>;
+  addProjectFirstLibraries: IAdd<null, { name: string; path: string }>;
+  addRuntimePlugin: IAdd<null, string>;
+  addRuntimePluginKey: IAdd<null, string>;
 }
 
 export { IRoute };
@@ -104,9 +119,12 @@ export interface IConfig extends IConfigCore {
   ignoreMomentLocale?: boolean;
   inlineLimit?: number;
   theme?: object;
+  singular?: boolean;
   styleLoader?: object;
   extraBabelPresets?: IPresetOrPlugin[];
   extraBabelPlugins?: IPresetOrPlugin[];
+  presets?: IPresetOrPlugin[];
+  plugins?: IPresetOrPlugin[];
   disableDynamicImport?: boolean;
   runtimePublicPath?: boolean;
   terserOptions?: object;

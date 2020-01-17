@@ -1,14 +1,33 @@
 // @ts-ignore
 import { PartialProps } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
+import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
+import { lodash } from '@umijs/utils';
+
+interface IServerProxyConfigItem extends httpProxyMiddleware.Config {
+  path?: string | string[];
+  context?: string | string[] | httpProxyMiddleware.Filter;
+  bypass?: (
+    req: Express.Request,
+    res: Express.Response,
+    proxyConfig: IServerProxyConfigItem,
+  ) => string | null;
+}
+
+type IServerProxyConfig =
+  | IServerProxyConfigItem
+  | Record<string, IServerProxyConfigItem>
+  | (IServerProxyConfigItem | (() => IServerProxyConfigItem))[]
+  | null;
 
 export interface IServerOpts {
-  compilerMiddleware: RequestHandler<any>;
+  compilerMiddleware?: RequestHandler<any> | null;
   afterMiddlewares?: RequestHandler<any>[];
   beforeMiddlewares?: RequestHandler<any>[];
+  proxy?: IServerProxyConfig;
   onListening?: {
     ({
       port,
@@ -27,11 +46,13 @@ export interface IServerOpts {
 }
 
 const defaultOpts: Required<PartialProps<IServerOpts>> = {
+  compilerMiddleware: null,
   afterMiddlewares: [],
   beforeMiddlewares: [],
   onListening: argv => argv,
   onConnection: () => {},
   onConnectionClose: () => {},
+  proxy: null,
 };
 
 class Server {
@@ -51,9 +72,111 @@ class Server {
     this.opts.beforeMiddlewares.forEach(middleware => {
       this.app.use(middleware);
     });
-    this.app.use(this.opts.compilerMiddleware);
+    this.setupProxy();
+    if (this.opts.compilerMiddleware) {
+      this.app.use(this.opts.compilerMiddleware);
+    }
     this.opts.afterMiddlewares.forEach(middleware => {
       this.app.use(middleware);
+    });
+  }
+
+  /**
+   * proxy middleware for dev
+   * not coupled with build tools (like webpack, rollup, ...)
+   */
+  setupProxy() {
+    if (!this.opts.proxy) {
+      return;
+    }
+
+    if (!Array.isArray(this.opts.proxy)) {
+      if ('target' in this.opts.proxy) {
+        this.opts.proxy = [this.opts.proxy];
+      } else {
+        this.opts.proxy = Object.keys(this.opts.proxy).map(context => {
+          let proxyOptions: IServerProxyConfigItem;
+          // For backwards compatibility reasons.
+          const correctedContext = context
+            .replace(/^\*$/, '**')
+            .replace(/\/\*$/, '');
+
+          if (typeof this.opts.proxy?.[context] === 'string') {
+            proxyOptions = {
+              context: correctedContext,
+              target: this.opts.proxy[context],
+            };
+          } else {
+            proxyOptions = {
+              ...(this.opts.proxy?.[context] || {}),
+              context: correctedContext,
+            };
+          }
+
+          proxyOptions.logLevel = proxyOptions.logLevel || 'warn';
+
+          return proxyOptions;
+        });
+      }
+    }
+
+    const getProxyMiddleware = (proxyConfig: IServerProxyConfigItem) => {
+      const context = proxyConfig.context || proxyConfig.path;
+
+      // It is possible to use the `bypass` method without a `target`.
+      // However, the proxy middleware has no use in this case, and will fail to instantiate.
+      if (proxyConfig.target) {
+        return httpProxyMiddleware(context!, proxyConfig);
+      }
+
+      return;
+    };
+
+    this.opts.proxy.forEach(proxyConfigOrCallback => {
+      let proxyMiddleware: httpProxyMiddleware.Proxy | undefined;
+
+      let proxyConfig =
+        typeof proxyConfigOrCallback === 'function'
+          ? proxyConfigOrCallback()
+          : proxyConfigOrCallback;
+
+      proxyMiddleware = getProxyMiddleware(proxyConfig);
+
+      if (proxyConfig.ws && proxyMiddleware) {
+        this.sockets.push(proxyMiddleware as any);
+      }
+
+      this.app.use((req, res, next) => {
+        if (typeof proxyConfigOrCallback === 'function') {
+          const newProxyConfig = proxyConfigOrCallback();
+
+          if (newProxyConfig !== proxyConfig) {
+            proxyConfig = newProxyConfig;
+            proxyMiddleware = getProxyMiddleware(proxyConfig);
+          }
+        }
+
+        // - Check if we have a bypass function defined
+        // - In case the bypass function is defined we'll retrieve the
+        // bypassUrl from it otherwise bypassUrl would be null
+        const bypassUrl = lodash.isFunction(proxyConfig.bypass)
+          ? proxyConfig.bypass(req, res, proxyConfig)
+          : null;
+        if (typeof bypassUrl === 'boolean') {
+          // skip the proxy
+          // @ts-ignore
+          req.url = null;
+          next();
+        } else if (typeof bypassUrl === 'string') {
+          // byPass to that url
+          req.url = bypassUrl;
+          next();
+        } else if (proxyMiddleware) {
+          return proxyMiddleware(req, res, next);
+        } else {
+          next();
+        }
+      });
     });
   }
 
@@ -72,10 +195,10 @@ class Server {
   }
 
   async listen({
-    port,
+    port = 8000,
     hostname,
   }: {
-    port: number;
+    port?: number;
     hostname: string;
   }): Promise<{
     port: number;
@@ -85,9 +208,7 @@ class Server {
   }> {
     const listeningApp = http.createServer(this.app);
     this.listeningApp = listeningApp;
-    const foundPort = await portfinder.getPortPromise({
-      port: port || 8000,
-    });
+    const foundPort = await portfinder.getPortPromise({ port });
     return new Promise(resolve => {
       listeningApp.listen(foundPort, hostname, 5, () => {
         this.createSocketServer();
@@ -97,7 +218,7 @@ class Server {
           listeningApp,
           server: this,
         };
-        this.opts.onListening?.(ret);
+        this.opts.onListening(ret);
         resolve(ret);
       });
     });
