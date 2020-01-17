@@ -3,23 +3,29 @@ import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
 import sockjs, { Server as SocketServer, Connection } from 'sockjs';
+import { lodash } from '@umijs/utils';
 
 interface IProxyConfigMap {
-  [url: string]: string | httpProxyMiddleware.Config;
+  [url: string]: IProxyConfigItem;
 }
 
-type IProxyConfigArrayItem = {
+type IProxyConfigItem = {
   path?: string | string[];
   context?: string | string[] | httpProxyMiddleware.Filter;
+  bypass?: (
+    req: Request,
+    res: Response,
+    proxyConfig: IProxyConfigItem,
+  ) => string | null;
 } & httpProxyMiddleware.Config;
 
-type IProxyConfigArray = IProxyConfigArrayItem[];
+type IProxyConfigArray = IProxyConfigItem[];
 
 export interface IOpts {
   compilerMiddleware?: RequestHandler;
   afterMiddlewares?: RequestHandler[];
   beforeMiddlewares?: RequestHandler[];
-  proxy?: IProxyConfigMap | IProxyConfigArray | IProxyConfigArrayItem;
+  proxy?: IProxyConfigMap | IProxyConfigArray | IProxyConfigItem;
   onListening?: {
     ({
       port,
@@ -141,14 +147,13 @@ class Server {
         // - Check if we have a bypass function defined
         // - In case the bypass function is defined we'll retrieve the
         // bypassUrl from it otherwise bypassUrl would be null
-        const isByPassFuncDefined = typeof proxyConfig.bypass === 'function';
+        const isByPassFuncDefined = lodash.isFunction(proxyConfig.bypass);
         const bypassUrl = isByPassFuncDefined
           ? proxyConfig.bypass(req, res, proxyConfig)
           : null;
-
         if (typeof bypassUrl === 'boolean') {
           // skip the proxy
-          req.url = '';
+          req.url = null;
           next();
         } else if (typeof bypassUrl === 'string') {
           // byPass to that url

@@ -221,6 +221,72 @@ describe('proxy', () => {
     server.listeningApp?.close();
   });
 
+  it('proxy multiple targets', async () => {
+    const server = new Server({
+      beforeMiddlewares: [],
+      afterMiddlewares: [],
+      compilerMiddleware: (req, res, next) => {
+        if (req.path === '/compiler') {
+          res.end('compiler');
+        } else {
+          next();
+        }
+      },
+      proxy: [
+        {
+          path: '/api2',
+          target: `http://${host}:${proxyServer2Port}`,
+          changeOrigin: true,
+        },
+        {
+          context: '/api/users',
+          target: `http://${host}:${proxyServer1Port}`,
+          changeOrigin: true,
+          headers: {
+            Authorization: 'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+          },
+          pathRewrite: { '^/api': '' },
+        },
+        {
+          path: '/api',
+          target: `http://${host}:${proxyServer1Port}`,
+          changeOrigin: true,
+        },
+      ],
+    });
+    const { port, hostname } = await server.listen({
+      port: 3000,
+      hostname: host,
+    });
+    const { body: compilerBody } = await got(
+      `http://${hostname}:${port}/compiler`,
+    );
+    expect(compilerBody).toEqual('compiler');
+
+    const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
+    expect(proxyBody).toEqual(
+      JSON.stringify({
+        hello: 'umi proxy',
+      }),
+    );
+
+    const { body: proxyRewriteBody, headers } = await got(
+      `http://${hostname}:${port}/api/users`,
+    );
+    expect(headers.authorization).toEqual(
+      'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+    );
+    expect(proxyRewriteBody).toEqual(JSON.stringify([{ name: 'bar' }]));
+
+    const { body: proxy2Body } = await got(`http://${hostname}:${port}/api2`);
+    expect(proxy2Body).toEqual(
+      JSON.stringify({
+        hello: 'umi proxy2',
+      }),
+    );
+    server.listeningApp?.close();
+  });
+
   it('proxy ws', async () => {
     const server = new Server({
       beforeMiddlewares: [],
@@ -297,38 +363,31 @@ describe('proxy', () => {
     server.listeningApp?.close();
   });
 
-  it('proxy multiple targets', async () => {
+  it('proxy bypass', async () => {
     const server = new Server({
       beforeMiddlewares: [],
       afterMiddlewares: [],
       compilerMiddleware: (req, res, next) => {
         if (req.path === '/compiler') {
           res.end('compiler');
+        } else if (req.path === '/bypass') {
+          res.end('bypass');
         } else {
           next();
         }
       },
-      proxy: [
-        {
-          path: '/api2',
-          target: `http://${host}:${proxyServer2Port}`,
-          changeOrigin: true,
-        },
-        {
-          context: '/api/users',
+      proxy: {
+        '/api': {
           target: `http://${host}:${proxyServer1Port}`,
           changeOrigin: true,
-          headers: {
-            Authorization: 'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+          bypass(req) {
+            if (req.url === '/api/compiler') {
+              return '/bypass';
+            }
+            return null;
           },
-          pathRewrite: { '^/api': '' },
         },
-        {
-          path: '/api',
-          target: `http://${host}:${proxyServer1Port}`,
-          changeOrigin: true,
-        },
-      ],
+      },
     });
     const { port, hostname } = await server.listen({
       port: 3000,
@@ -339,6 +398,11 @@ describe('proxy', () => {
     );
     expect(compilerBody).toEqual('compiler');
 
+    const { body: bypassBody } = await got(
+      `http://${hostname}:${port}/api/compiler`,
+    );
+    expect(bypassBody).toEqual('bypass');
+
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
@@ -346,20 +410,6 @@ describe('proxy', () => {
       }),
     );
 
-    const { body: proxyRewriteBody, headers } = await got(
-      `http://${hostname}:${port}/api/users`,
-    );
-    expect(headers.authorization).toEqual(
-      'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
-    );
-    expect(proxyRewriteBody).toEqual(JSON.stringify([{ name: 'bar' }]));
-
-    const { body: proxy2Body } = await got(`http://${hostname}:${port}/api2`);
-    expect(proxy2Body).toEqual(
-      JSON.stringify({
-        hello: 'umi proxy2',
-      }),
-    );
     server.listeningApp?.close();
   });
 });
