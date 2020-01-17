@@ -1,10 +1,4 @@
-import express, {
-  Express,
-  IRouterHandler,
-  Request,
-  Response,
-  NextFunction,
-} from 'express';
+import express, { Express, RequestHandler } from 'express';
 import httpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import portfinder from 'portfinder';
@@ -21,16 +15,10 @@ type IProxyConfigArrayItem = {
 
 type IProxyConfigArray = IProxyConfigArrayItem[];
 
-type INextHandleFunction = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => void;
-
 export interface IOpts {
-  compilerMiddleware?: INextHandleFunction;
-  afterMiddlewares?: INextHandleFunction[];
-  beforeMiddlewares?: INextHandleFunction[];
+  compilerMiddleware?: RequestHandler;
+  afterMiddlewares?: RequestHandler[];
+  beforeMiddlewares?: RequestHandler[];
   proxy?: IProxyConfigMap | IProxyConfigArray;
   onListening?: {
     ({
@@ -69,7 +57,9 @@ class Server {
       this.app.use(middleware);
     });
     this.setupProxy();
-    this.app.use(this.opts.compilerMiddleware);
+    if (this.opts.compilerMiddleware) {
+      this.app.use(this.opts.compilerMiddleware);
+    }
     (this.opts.afterMiddlewares || []).forEach(middleware => {
       this.app.use(middleware);
     });
@@ -134,7 +124,7 @@ class Server {
         this.sockets.push(proxyMiddleware);
       }
 
-      this.app.use((req: Request, res: Response, next) => {
+      this.app.use((req, res, next) => {
         if (typeof proxyConfigOrCallback === 'function') {
           const newProxyConfig = proxyConfigOrCallback();
 

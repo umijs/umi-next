@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import { got } from '@umijs/utils';
 import portfinder from 'portfinder';
 import SockJS from 'sockjs-client';
@@ -126,7 +126,7 @@ describe('proxy', () => {
     const server = new Server({
       beforeMiddlewares: [],
       afterMiddlewares: [],
-      compilerMiddleware: (req: Request, res: Response, next: NextFunction) => {
+      compilerMiddleware: (req, res, next) => {
         if (req.path === '/compiler') {
           res.end('compiler');
         } else {
