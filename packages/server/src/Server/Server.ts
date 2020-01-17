@@ -19,7 +19,7 @@ export interface IOpts {
   compilerMiddleware?: RequestHandler;
   afterMiddlewares?: RequestHandler[];
   beforeMiddlewares?: RequestHandler[];
-  proxy?: IProxyConfigMap | IProxyConfigArray;
+  proxy?: IProxyConfigMap | IProxyConfigArray | IProxyConfigArrayItem;
   onListening?: {
     ({
       port,
@@ -65,6 +65,10 @@ class Server {
     });
   }
 
+  /**
+   * proxy middleware for dev
+   * not coupled with build tools (like webpack, rollup, ...)
+   */
   setupProxy() {
     if (!this.opts.proxy) {
       return;
