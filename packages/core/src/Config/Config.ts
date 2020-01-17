@@ -98,7 +98,7 @@ export default class Config {
     const configAbsPaths = [
       defaultConfigPath,
       envConfigPath,
-      localConfigPath && existsSync(localConfigPath)
+      localConfigPath && existsSync(join(this.cwd, localConfigPath))
         ? localConfigPath
         : undefined,
     ]
