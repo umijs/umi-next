@@ -126,7 +126,7 @@ export default class Config {
 
   addAffix(file: string, affix: string) {
     const ext = extname(file);
-    const extIndex = ext ? file.lastIndexOf(ext) : ext.length;
+    const extIndex = ext ? file.lastIndexOf(ext) : file.length;
     return `${file.slice(0, extIndex)}.${affix}${ext}`;
   }
 
