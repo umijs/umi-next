@@ -8,6 +8,7 @@ import {
   getTargetsAndBrowsersList,
   getBabelDepsOpts,
   getBabelOpts,
+  getBabelPresetOpts,
 } from '@umijs/bundler-utils';
 import css from './css';
 import terserOptions from './terserOptions';
@@ -27,6 +28,7 @@ export interface IOpts {
   targets?: any;
   browserslist?: any;
   modifyBabelOpts?: (opts: object) => Promise<any>;
+  modifyBabelPresetOpts?: (opts: object) => Promise<any>;
 }
 
 export default async function({
@@ -37,6 +39,7 @@ export default async function({
   entry,
   hot,
   modifyBabelOpts,
+  modifyBabelPresetOpts,
 }: IOpts): Promise<webpack.Configuration> {
   const webpackConfig = new Config();
 
@@ -119,15 +122,22 @@ export default async function({
     config,
     type,
   });
-
-  let babelOpts = getBabelOpts({
+  let presetOpts = getBabelPresetOpts({
     config,
     env,
     targets,
   });
+  if (modifyBabelPresetOpts) {
+    presetOpts = await modifyBabelPresetOpts(presetOpts);
+  }
+  let babelOpts = getBabelOpts({
+    config,
+    presetOpts,
+  });
   if (modifyBabelOpts) {
     babelOpts = await modifyBabelOpts(babelOpts);
   }
+
   // prettier-ignore
   webpackConfig.module
     .rule('js')
@@ -148,7 +158,6 @@ export default async function({
       .use('babel-loader')
         .loader(require.resolve('babel-loader'))
         .options(getBabelDepsOpts({
-          config,
           env,
         }));
 

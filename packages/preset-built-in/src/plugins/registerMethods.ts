@@ -6,11 +6,15 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 export default function(api: IApi) {
   [
     'onGenerateFiles',
+    'addRuntimePlugin',
+    'addRuntimePluginKey',
     'addUmiExports',
+    'addProjectFirstLibraries',
     'modifyBundler',
     'modifyBundleConfig',
     'modifyBundleConfigs',
     'modifyBabelOpts',
+    'modifyBabelPresetOpts',
   ].forEach(name => {
     api.registerMethod({ name });
   });
