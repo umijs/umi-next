@@ -110,7 +110,7 @@ class Server {
       }
     }
 
-    const getProxyMiddleware = (proxyConfig: IProxyConfigArrayItem): any => {
+    const getProxyMiddleware = (proxyConfig: IProxyConfigItem): any => {
       const context = proxyConfig.context || proxyConfig.path;
 
       // It is possible to use the `bypass` method without a `target`.
@@ -153,6 +153,7 @@ class Server {
           : null;
         if (typeof bypassUrl === 'boolean') {
           // skip the proxy
+          // @ts-ignore
           req.url = null;
           next();
         } else if (typeof bypassUrl === 'string') {
