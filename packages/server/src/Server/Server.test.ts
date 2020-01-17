@@ -109,6 +109,7 @@ describe('proxy', () => {
       });
     });
     app.get('/users', (req, res) => {
+      res.set(req.headers);
       res.json([
         {
           name: 'bar',
@@ -170,6 +171,9 @@ describe('proxy', () => {
         '/api/users': {
           target: `http://${host}:${proxyServer1Port}`,
           changeOrigin: true,
+          headers: {
+            Authorization: 'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+          },
           pathRewrite: { '^/api': '' },
         },
         '/api': {
@@ -194,8 +198,11 @@ describe('proxy', () => {
       }),
     );
 
-    const { body: proxyRewriteBody } = await got(
+    const { body: proxyRewriteBody, headers } = await got(
       `http://${hostname}:${port}/api/users`,
+    );
+    expect(headers.authorization).toEqual(
+      'Bearer a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
     );
     expect(proxyRewriteBody).toEqual(JSON.stringify([{ name: 'bar' }]));
 
