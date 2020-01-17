@@ -1,22 +1,29 @@
 import express from 'express';
+import http from 'http';
 import { got } from '@umijs/utils';
 import portfinder from 'portfinder';
 import SockJS from 'sockjs-client';
+import sockjs, { Server as SocketServer, Connection } from 'sockjs';
 import Server from './Server';
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function initSocket({
   url,
   onMessage,
 }: {
   url: string;
-  onMessage: any;
+  onMessage?: any;
 }): Promise<WebSocket> {
   return new Promise(resolve => {
     const sock = new SockJS(url);
     sock.onopen = () => {
       resolve(sock);
     };
-    sock.onmessage = onMessage;
+    sock.onerror = e => {
+      console.log('sock error', e);
+    };
+    sock.onmessage = onMessage || (() => {});
   });
 }
 
@@ -76,7 +83,6 @@ test('normal', async () => {
     data: 'bar',
   });
 
-  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   await delay(100);
 
   expect(messages).toEqual(['{"type":"foo","data":"bar"}']);
@@ -92,6 +98,7 @@ describe('proxy', () => {
   let proxyServer1Port;
   let proxyServer2;
   let proxyServer2Port;
+  let proxySocketServer;
 
   beforeAll(async () => {
     proxyServer1 = express();
@@ -99,6 +106,13 @@ describe('proxy', () => {
       res.json({
         hello: 'umi proxy',
       });
+    });
+    proxyServer1.get('/users', (req, res) => {
+      res.json([
+        {
+          name: 'bar',
+        },
+      ]);
     });
     proxyServer1Port = await portfinder.getPortPromise({
       port: 3001,
@@ -111,15 +125,29 @@ describe('proxy', () => {
         hello: 'umi proxy2',
       });
     });
+
+    proxySocketServer = sockjs.createServer({ prefix: '/socket' });
+    proxySocketServer.on('connection', (conn: Connection) => {
+      conn.on('data', message => {
+        conn.write(message);
+      });
+      conn.on('close', () => {});
+    });
+    const listeningApp = http.createServer(proxyServer2);
+    proxySocketServer.installHandlers(listeningApp, {
+      prefix: '/socket',
+    });
+
     proxyServer2Port = await portfinder.getPortPromise({
       port: 3002,
     });
-    proxyServer2.listen(proxyServer2Port);
+    listeningApp.listen(proxyServer2Port);
   });
 
   afterAll(() => {
     proxyServer1?.close();
     proxyServer2?.close();
+    proxySocketServer?.close();
   });
 
   it('proxy normal', async () => {
@@ -137,6 +165,11 @@ describe('proxy', () => {
         '/api2': {
           target: `http://${host}:${proxyServer2Port}`,
           changeOrigin: true,
+        },
+        '/api/users': {
+          target: `http://${host}:${proxyServer1Port}`,
+          changeOrigin: true,
+          pathRewrite: { '^/api': '' },
         },
         '/api': {
           target: `http://${host}:${proxyServer1Port}`,
@@ -160,11 +193,56 @@ describe('proxy', () => {
       }),
     );
 
+    const { body: proxyRewriteBody } = await got(
+      `http://${hostname}:${port}/api/users`,
+    );
+    expect(proxyRewriteBody).toEqual(JSON.stringify([{ name: 'bar' }]));
+
     const { body: proxy2Body } = await got(`http://${hostname}:${port}/api2`);
     expect(proxy2Body).toEqual(
       JSON.stringify({
         hello: 'umi proxy2',
       }),
     );
+    server.listeningApp?.close();
+  });
+
+  it('proxy ws', async () => {
+    const server = new Server({
+      beforeMiddlewares: [],
+      afterMiddlewares: [],
+      compilerMiddleware: (req, res, next) => {
+        next();
+      },
+      proxy: {
+        '/socket': {
+          target: `http://${host}:${proxyServer2Port}`,
+          ws: true,
+        },
+      },
+    });
+
+    const { port, hostname } = await server.listen({
+      port: 3000,
+      hostname: host,
+    });
+
+    const messages: string[] = [];
+    const sock = await initSocket({
+      url: `http://${hostname}:${port}/socket`,
+      onMessage: (message: { data: string }) => {
+        messages.push(message.data);
+      },
+    });
+
+    sock.send('Hello umi');
+
+    await delay(100);
+
+    expect(messages).toEqual(['Hello umi']);
+    sock?.close();
+    await delay(100);
+
+    server.listeningApp?.close();
   });
 });
