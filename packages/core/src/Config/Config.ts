@@ -3,7 +3,6 @@ import { extname, join } from 'path';
 import {
   compatESModuleRequire,
   deepmerge,
-  lodash,
   parseRequireDeps,
   winPath,
 } from '@umijs/utils';
