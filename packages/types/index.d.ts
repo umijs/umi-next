@@ -101,6 +101,8 @@ export interface IApi extends PluginAPI {
   addProjectFirstLibraries: IAdd<null, { name: string; path: string }>;
   addRuntimePlugin: IAdd<null, string>;
   addRuntimePluginKey: IAdd<null, string>;
+  addEntryCode: IAdd<null, string>;
+  addEntryCodeAhead: IAdd<null, string>;
 }
 
 export { IRoute };
@@ -119,6 +121,7 @@ export interface IConfig extends IConfigCore {
   ignoreMomentLocale?: boolean;
   inlineLimit?: number;
   theme?: object;
+  singular?: boolean;
   styleLoader?: object;
   extraBabelPresets?: IPresetOrPlugin[];
   extraBabelPlugins?: IPresetOrPlugin[];
