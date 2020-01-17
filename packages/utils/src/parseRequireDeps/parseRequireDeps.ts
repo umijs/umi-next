@@ -5,7 +5,8 @@ import crequire from 'crequire';
 import { readFileSync } from 'fs';
 import winPath from '../winPath/winPath';
 
-function parse(filePath: string): string[] {
+function parse(filePath?: string): string[] {
+  if (!filePath) return [];
   const content = readFileSync(filePath, 'utf-8');
   return (crequire(content) as any[])
     .map<string>(o => o.path)
@@ -21,13 +22,13 @@ function parse(filePath: string): string[] {
 }
 
 export default function parseRequireDeps(filePath: string): string[] {
-  const queue = [filePath];
+  const paths = [filePath];
   const ret = [winPath(filePath)];
 
-  for (let curr = queue.shift(); !!curr; curr = queue.shift()) {
-    const extraPaths = parse(curr);
+  while (paths.length) {
+    const extraPaths = parse(paths.shift());
     if (extraPaths.length) {
-      queue.push(...extraPaths);
+      paths.push(...extraPaths);
       ret.push(...extraPaths);
     }
   }
