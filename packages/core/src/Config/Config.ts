@@ -77,54 +77,52 @@ export default class Config {
   }
 
   getUserConfig() {
-    const defaultConfigPath = this.getRelativePathOfConfigFile();
-    if (!defaultConfigPath) return {};
-
-    const envConfigPath =
-      process.env.UMI_ENV &&
-      this.addAffix(defaultConfigPath, process.env.UMI_ENV);
-    if (envConfigPath && !existsSync(join(this.cwd, envConfigPath))) {
-      throw new Error(
-        `get user config failed, ${envConfigPath} does not exist, but process.env.UMI_ENV is set to ${process.env.UMI_ENV}.`,
-      );
-    }
-
-    const localConfigPath =
-      this.localConfig && this.addAffix(defaultConfigPath, 'local');
-
-    const configAbsPaths = [
-      defaultConfigPath,
-      envConfigPath,
-      localConfigPath && existsSync(join(this.cwd, localConfigPath))
-        ? localConfigPath
-        : undefined,
-    ]
-      .filter((f): f is string => !!f)
-      .map(f => join(this.cwd, f));
-
-    // clear require cache and set babel register
-    const requireDeps = configAbsPaths.reduce<string[]>((memo, file) => {
-      return memo.concat(parseRequireDeps(file));
-    }, []);
-    requireDeps.forEach(f => {
-      // TODO: potential windows path problem?
-      if (require.cache[f]) {
-        delete require.cache[f];
+    const configFile = this.getConfigFile();
+    if (configFile) {
+      let envConfigFile;
+      if (process.env.UMI_ENV) {
+        envConfigFile = this.addAffix(configFile, process.env.UMI_ENV);
+        if (!existsSync(join(this.cwd, envConfigFile))) {
+          throw new Error(
+            `get user config failed, ${envConfigFile} does not exist, but process.env.UMI_ENV is set to ${process.env.UMI_ENV}.`,
+          );
+        }
       }
-    });
-    this.service.babelRegister.setOnlyMap({
-      key: 'config',
-      value: requireDeps,
-    });
+      const files = [
+        configFile,
+        envConfigFile,
+        this.localConfig && this.addAffix(configFile, 'local'),
+      ]
+        .filter((f): f is string => !!f)
+        .map(f => join(this.cwd, f))
+        .filter(f => existsSync(f));
 
-    // require config and merge
-    return this.mergeConfig(...this.requireConfigs(configAbsPaths));
+      // clear require cache and set babel register
+      const requireDeps = files.reduce((memo: string[], file) => {
+        memo = memo.concat(parseRequireDeps(file));
+        return memo;
+      }, []);
+      requireDeps.forEach(f => {
+        // TODO: potential windows path problem?
+        if (require.cache[f]) {
+          delete require.cache[f];
+        }
+      });
+      this.service.babelRegister.setOnlyMap({
+        key: 'config',
+        value: requireDeps,
+      });
+
+      // require config and merge
+      return this.mergeConfig(...this.requireConfigs(files));
+    } else {
+      return {};
+    }
   }
 
   addAffix(file: string, affix: string) {
     const ext = extname(file);
-    const extIndex = ext ? file.lastIndexOf(ext) : file.length;
-    return `${file.slice(0, extIndex)}.${affix}${ext}`;
+    return file.replace(new RegExp(`${ext}$`), `.${affix}${ext}`);
   }
 
   requireConfigs(configFiles: string[]) {
@@ -140,7 +138,7 @@ export default class Config {
     return ret;
   }
 
-  getRelativePathOfConfigFile(): string | null {
+  getConfigFile(): string | null {
     // TODO: support custom config file
     const configFiles = [
       '.umirc.ts',
