@@ -14,3 +14,5 @@ export type PartialKeys<T> = Exclude<
 export type PartialProps<T> = Pick<T, PartialKeys<T>>;
 
 export type NodeEnv = 'development' | 'production' | 'test';
+
+export type Omit<T, U> = Pick<T, Exclude<keyof T, U>>;
