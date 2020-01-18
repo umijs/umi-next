@@ -4,6 +4,7 @@ import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
+import createMockMiddleware from '../mock/createMiddleware';
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
@@ -27,6 +28,7 @@ export interface IServerOpts {
   compilerMiddleware?: RequestHandler<any> | null;
   https?: boolean;
   proxy?: IServerProxyConfig;
+  mock?: any;
   onListening?: {
     ({
       port,
@@ -85,6 +87,11 @@ class Server {
     const features = {
       proxy: () => {
         this.setupProxy();
+      },
+      mock: () => {
+        if (this.opts.mock) {
+          this.app.use(createMockMiddleware(this.opts.mock).middleware);
+        }
       },
       beforeMiddlewares: () => {
         this.opts.beforeMiddlewares.forEach(middleware => {

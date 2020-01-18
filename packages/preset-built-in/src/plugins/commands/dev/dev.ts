@@ -45,6 +45,9 @@ export default (api: IApi) => {
         ...opts,
         // @ts-ignore
         proxy: (api.config as IConfig)?.proxy,
+        mock: {
+          api,
+        },
         beforeMiddlewares: [],
         afterMiddlewares: [createRouteMiddleware({ api })],
       });
