@@ -24,7 +24,6 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
   });
   watcher.on('change', file => {
     debug(`${file}, reload mock data`);
-    console.log(`${file}, reload mock data`);
     errors.splice(0, errors.length);
     cleanRequireCache(mockWatcherPaths);
     // refresh data

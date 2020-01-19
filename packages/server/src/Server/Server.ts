@@ -242,7 +242,6 @@ class Server {
     const listeningApp = http.createServer(this.app);
     this.listeningApp = listeningApp;
     const foundPort = await portfinder.getPortPromise({ port });
-    console.log('foundPort', foundPort);
     return new Promise(resolve => {
       listeningApp.listen(foundPort, hostname, 5, () => {
         this.createSocketServer();
