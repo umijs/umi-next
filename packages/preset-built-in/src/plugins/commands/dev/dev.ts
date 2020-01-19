@@ -5,6 +5,7 @@ import assert from 'assert';
 import getBundleAndConfigs from '../getBundleAndConfigs';
 import createRouteMiddleware from './createRouteMiddleware';
 import generateFiles from '../generateFiles';
+import getMockData from './getMockData';
 
 export default (api: IApi) => {
   const {
@@ -45,11 +46,6 @@ export default (api: IApi) => {
         ...opts,
         // @ts-ignore
         proxy: (api.config as IConfig)?.proxy,
-        mock: {
-          mockData: {
-            'GET /api3/a': { a: 1 },
-          },
-        },
         beforeMiddlewares: [],
         afterMiddlewares: [createRouteMiddleware({ api })],
       });

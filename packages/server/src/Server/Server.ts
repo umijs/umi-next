@@ -4,7 +4,7 @@ import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
-import createMockMiddleware from '../mock/createMiddleware';
+import createMockMiddleware, { IMockOpts } from '../mock/createMiddleware';
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
@@ -28,7 +28,7 @@ export interface IServerOpts {
   compilerMiddleware?: RequestHandler<any> | null;
   https?: boolean;
   proxy?: IServerProxyConfig;
-  mock?: any;
+  mock?: IMockOpts | null;
   onListening?: {
     ({
       port,
@@ -54,6 +54,7 @@ const defaultOpts: Required<PartialProps<IServerOpts>> = {
   onListening: argv => argv,
   onConnection: () => {},
   onConnectionClose: () => {},
+  mock: null,
   proxy: null,
 };
 
@@ -86,11 +87,13 @@ class Server {
   setupFeatures() {
     const features = {
       proxy: () => {
-        this.setupProxy();
+        if (this.opts.proxy) {
+          this.setupProxy();
+        }
       },
       mock: () => {
         if (this.opts.mock) {
-          this.app.use(createMockMiddleware(this.opts.mock));
+          this.setupMock();
         }
       },
       beforeMiddlewares: () => {
@@ -115,20 +118,20 @@ class Server {
     });
   }
 
+  setupMock() {
+    this.app.use(createMockMiddleware(this.opts.mock as IMockOpts));
+  }
+
   /**
    * proxy middleware for dev
    * not coupled with build tools (like webpack, rollup, ...)
    */
   setupProxy() {
-    if (!this.opts.proxy) {
-      return;
-    }
-
     if (!Array.isArray(this.opts.proxy)) {
-      if ('target' in this.opts.proxy) {
+      if (this.opts.proxy && 'target' in this.opts.proxy) {
         this.opts.proxy = [this.opts.proxy];
       } else {
-        this.opts.proxy = Object.keys(this.opts.proxy).map(context => {
+        this.opts.proxy = Object.keys(this.opts.proxy || {}).map(context => {
           let proxyOptions: IServerProxyConfigItem;
           // For backwards compatibility reasons.
           const correctedContext = context
@@ -251,6 +254,7 @@ class Server {
     const listeningApp = http.createServer(this.app);
     this.listeningApp = listeningApp;
     const foundPort = await portfinder.getPortPromise({ port });
+    console.log('foundPort', foundPort);
     return new Promise(resolve => {
       listeningApp.listen(foundPort, hostname, 5, () => {
         this.createSocketServer();
