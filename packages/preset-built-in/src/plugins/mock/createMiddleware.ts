@@ -1,8 +1,6 @@
 import { RequestHandler } from 'express';
 import { chokidar, signale, createDebug } from '@umijs/utils';
-import matchMock from './matchMock';
-import normalizeConfig from './normalizeConfig';
-import { cleanRequireCache, IGetMockDataResult } from './utils';
+import { cleanRequireCache, IGetMockDataResult, matchMock } from './utils';
 
 const debug = createDebug('umi:preset-build-in:mock:createMiddleware');
 
@@ -10,34 +8,42 @@ export interface IMockOpts extends IGetMockDataResult {
   updateMockData: () => IGetMockDataResult;
 }
 
-export default function(opts = {} as IMockOpts): RequestHandler {
-  const { mockData, mockPaths, updateMockData } = opts;
-  let data = normalizeConfig(mockData);
+interface ICreateMiddleware {
+  middleware: RequestHandler;
+  watcher: chokidar.FSWatcher;
+}
+
+export default function(opts = {} as IMockOpts): ICreateMiddleware {
+  const { mockData, mockWatcherPaths, updateMockData } = opts;
+  let data = mockData;
 
   // watcher
-  const errors: any[] = [];
-  const watcher = chokidar.watch(mockPaths, {
+  const errors: Error[] = [];
+  const watcher = chokidar.watch(mockWatcherPaths, {
     ignoreInitial: true,
   });
   watcher.on('change', file => {
     debug(`${file}, reload mock data`);
     console.log(`${file}, reload mock data`);
     errors.splice(0, errors.length);
-    cleanRequireCache(mockPaths);
+    cleanRequireCache(mockWatcherPaths);
     // refresh data
-    data = normalizeConfig(updateMockData()?.mockData);
+    data = updateMockData()?.mockData;
     if (!errors.length) {
       signale.success(`Mock files parse success`);
     }
   });
 
-  return (req, res, next) => {
-    const match = data && matchMock(req, data);
-    if (match) {
-      // debug(`mock matched: [${match.method}] ${match.path}`);
-      return match.handler(req, res, next);
-    } else {
-      return next();
-    }
+  return {
+    middleware: (req, res, next) => {
+      const match = data && matchMock(req, data);
+      if (match) {
+        // debug(`mock matched: [${match.method}] ${match.path}`);
+        return match.handler(req, res, next);
+      } else {
+        return next();
+      }
+    },
+    watcher,
   };
 }

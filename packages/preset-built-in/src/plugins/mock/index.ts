@@ -24,22 +24,24 @@ export default function(api: IApi) {
     });
   };
 
+  const ignore = config?.mock?.ignore;
+
   // get all mock paths
-  const { mockPaths, mockData } = getMockData({
+  const mockResult = getMockData({
     cwd,
     paths,
-    config,
+    ignore,
     registerBabel,
   });
 
   api.addMiddlewareAhead(async () => {
-    return createMiddleware({
-      mockData,
-      mockPaths,
+    const { middleware } = createMiddleware({
+      ...mockResult,
       updateMockData: () => {
-        const result = getMockData({ cwd, paths, config, registerBabel });
+        const result = getMockData({ cwd, paths, ignore, registerBabel });
         return result;
       },
     });
+    return middleware;
   });
 }
