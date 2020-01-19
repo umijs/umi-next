@@ -93,7 +93,7 @@ describe('createMiddleware', () => {
   });
 
   it('watch', async () => {
-    const absTmpFile = join(cwd, 'mock/tmp.js');
+    const absTmpFile = winPath(join(cwd, 'mock/tmp.js'));
     writeFileSync(absTmpFile, `export default {'/api/tmp': {tmp:1}}`, 'utf-8');
     await delay(500);
     const { body } = await got(`http://localhost:${port}/api/tmp`);
@@ -102,7 +102,7 @@ describe('createMiddleware', () => {
   });
 
   it.skip('watch with error', async () => {
-    const absTmpFile = join(cwd, 'mock/tmp2.js');
+    const absTmpFile = winPath(join(cwd, 'mock/tmp2.js'));
     writeFileSync(absTmpFile, `export defaul;`, 'utf-8');
     await delay(500);
     rimraf.sync(absTmpFile);
