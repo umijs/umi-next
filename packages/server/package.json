@@ -25,15 +25,10 @@
     "@types/express": "4.17.2",
     "@types/http-proxy-middleware": "0.19.3",
     "@types/node": "13.1.6",
-    "@types/path-to-regexp": "^1.7.0",
-    "@types/signale": "^1.2.1",
     "@types/sockjs": "0.3.31",
-    "body-parser": "^1.19.0",
     "express": "4.17.1",
     "http-proxy-middleware": "0.20.0",
-    "path-to-regexp": "^6.1.0",
     "portfinder": "1.0.25",
-    "signale": "^1.4.0",
     "sockjs": "0.3.19"
   }
 }
