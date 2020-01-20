@@ -83,7 +83,7 @@ describe('createMiddleware', () => {
   it('get', async () => {
     const { body } = await got(`http://${hostname}:${port}/api/a`);
     console.log('bodybodybody', body);
-    expect(1 + 1).toEqual(2);
+    expect(body).toEqual(`{"a":1}`);
   });
 
   // it('post', async () => {
