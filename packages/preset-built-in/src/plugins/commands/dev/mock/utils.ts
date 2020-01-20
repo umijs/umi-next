@@ -63,15 +63,14 @@ export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
       ? paths.absSrcPath
       : paths.absPagesPath;
 
-  // src/**/_mock.(js|ts)
-  const childMockPaths = glob.sync(join(absPagesPath || '', '**/_mock.[jt]s'), {
-    ignore,
-  });
+  // src/**/_mock.(js|ts)，暂不支持
+  // const childMockPaths = glob.sync(join(absPagesPath || '', '**/_mock.[jt]s'), {
+  //   ignore,
+  // });
   const mockPaths = [
     ...(absMockPaths || []),
     absConfigPath,
     absConfigPathWithTS,
-    ...(childMockPaths || []),
   ]
     .filter(path => path && existsSync(path))
     .map(path => winPath(path));

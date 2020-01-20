@@ -24,7 +24,7 @@ export default function(api: IApi) {
     });
   };
 
-  const ignore = config?.mock?.ignore;
+  const ignore = config?.mock?.exclude;
 
   // get all mock paths
   const mockResult = getMockData({
