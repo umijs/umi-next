@@ -9,15 +9,15 @@ import rimraf from 'rimraf';
 import createMiddleware from './createMiddleware';
 import { getMockData } from './utils';
 
-let port;
-let server;
-const cwd = winPath(join(__dirname, 'fixtures/createMiddleware'));
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const HOME_PAGE = 'homepage';
-let watcher = null;
-
 describe('createMiddleware', () => {
+  let port;
+  let server;
+  const cwd = winPath(join(__dirname, 'fixtures/createMiddleware'));
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  const HOME_PAGE = 'homepage';
+  let watcher = null;
+
   beforeAll(async () => {
     portfinder.basePort = 3000;
     portfinder.highestPort = 8000;

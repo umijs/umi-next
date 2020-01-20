@@ -22,7 +22,7 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
   const watcher = chokidar.watch(mockWatcherPaths, {
     ignoreInitial: true,
   });
-  watcher.on('all', file => {
+  watcher.on('all', (event, file) => {
     debug(`${file}, reload mock data`);
     errors.splice(0, errors.length);
     cleanRequireCache(mockWatcherPaths);
