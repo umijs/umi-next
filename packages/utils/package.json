@@ -54,6 +54,7 @@
     "color": "3.1.2",
     "resolve": "1.14.2",
     "rimraf": "3.0.0",
+    "signale": "^1.4.0",
     "yargs": "15.1.0",
     "yargs-parser": "16.1.0"
   }
