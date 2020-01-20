@@ -19,18 +19,24 @@ describe('createMiddleware', () => {
   let watcher = null;
 
   beforeAll(async () => {
-    portfinder.basePort = 3000;
-    portfinder.highestPort = 8000;
-    port = await portfinder.getPortPromise();
+    port = await portfinder.getPortPromise({ port: 8000 });
     const service = new Service({
       cwd,
       plugins: [],
     });
     await service.init();
+    const registerBabel = (paths: string[]): void => {
+      // babel compiler
+      service.babelRegister.setOnlyMap({
+        key: 'test-mock',
+        value: paths,
+      });
+    };
     const mockOpts = getMockData({
       cwd,
       paths: service.paths,
       ignore: service.userConfig.mock?.exclude,
+      registerBabel,
     });
     const { middleware, watcher: middlewareWatcher } = createMiddleware({
       ...mockOpts,
