@@ -61,6 +61,7 @@ export interface IApi extends PluginAPI {
   // methods from dev command
   getPort: IGetter<number>;
   getServer: IGetter<Server>;
+  restartServer: Function;
 
   // ApplyPluginType.event
   onPluginReady: IEvent<null>;
@@ -128,29 +129,31 @@ export interface IApi extends PluginAPI {
 export { IRoute };
 
 export interface IConfig extends IConfigCore {
-  devtool?: string;
-  hash?: boolean;
-  externals?: any;
   alias?: {
     (key: string): string;
   };
+  cssLoader?: object;
   define?: {
     (key: string): any;
   };
-  proxy?: any;
-  targets?: ITargets;
+  devtool?: string;
+  disableDynamicImport?: boolean;
+  externals?: any;
+  extraBabelPlugins?: IPresetOrPlugin[];
+  extraBabelPresets?: IPresetOrPlugin[];
+  hash?: boolean;
   ignoreMomentLocale?: boolean;
   inlineLimit?: number;
-  theme?: object;
+  lessLoader?: object;
+  plugins?: IPresetOrPlugin[];
+  presets?: IPresetOrPlugin[];
+  proxy?: any;
+  runtimePublicPath?: boolean;
   singular?: boolean;
   styleLoader?: object;
-  extraBabelPresets?: IPresetOrPlugin[];
-  extraBabelPlugins?: IPresetOrPlugin[];
-  presets?: IPresetOrPlugin[];
-  plugins?: IPresetOrPlugin[];
-  disableDynamicImport?: boolean;
-  runtimePublicPath?: boolean;
+  targets?: ITargets;
   terserOptions?: object;
+  theme?: object;
 }
 
 export { webpack };

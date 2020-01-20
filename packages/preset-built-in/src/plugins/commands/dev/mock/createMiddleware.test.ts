@@ -76,11 +76,13 @@ describe('createMiddleware', () => {
   });
 
   afterAll(() => {
-    if (watcher) watcher.close();
+    watcher?.close?.();
+    server.listeningApp?.close();
   });
 
   it('get', async () => {
-    // const { body } = await got(`http://${hostname}:${port}/api/a`);
+    const { body } = await got(`http://${hostname}:${port}/api/a`);
+    console.log('bodybodybody', body);
     expect(1 + 1).toEqual(2);
   });
 
@@ -121,8 +123,4 @@ describe('createMiddleware', () => {
   //   await delay(500);
   //   rimraf.sync(absTmpFile);
   // });
-
-  afterAll(() => {
-    server.listeningApp?.close();
-  });
 });

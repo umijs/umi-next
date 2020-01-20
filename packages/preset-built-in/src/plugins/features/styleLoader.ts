@@ -1,11 +1,9 @@
+import { IApi } from '@umijs/types';
 
-module.exports = (api) => {
+export default (api: IApi) => {
   api.describe({
-    key: 'plugin',
+    key: 'styleLoader',
     config: {
-      default: {
-        foo: 'foo',
-      },
       schema(joi) {
         return joi.object();
       },
