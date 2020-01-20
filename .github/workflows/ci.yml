@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - run: yarn --ignore-engines
       - run: yarn build
-      - run: yarn test --forceExit
+      - run: yarn test --forceExit -t createMiddleware
         env:
           CI: true
           HEADLESS: false
