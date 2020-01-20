@@ -10,7 +10,7 @@ import { getMockData } from './utils';
 
 describe('createMiddleware', () => {
   const cwd = winPath(join(__dirname, 'fixtures/createMiddleware'));
-  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
 
   const HOME_PAGE = 'homepage';
   let watcher = null;
@@ -63,6 +63,10 @@ describe('createMiddleware', () => {
     });
     port = result.port;
     hostname = result.hostname;
+  });
+
+  afterEach(async () => {
+    await delay(100);
   });
 
   afterAll(() => {
