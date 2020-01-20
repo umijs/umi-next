@@ -10,7 +10,17 @@ import { getMockData } from './utils';
 
 describe('createMiddleware', () => {
   const cwd = winPath(join(__dirname, 'fixtures/createMiddleware'));
-  const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
+  const delay = ms =>
+    new Promise((resolve, reject) =>
+      setTimeout(() => {
+        try {
+          resolve();
+        } catch (e) {
+          console.error('delay error', e);
+          reject(e);
+        }
+      }, ms),
+    );
 
   const HOME_PAGE = 'homepage';
   let watcher = null;
