@@ -75,10 +75,6 @@ describe('createMiddleware', () => {
     hostname = result.hostname;
   });
 
-  afterEach(async () => {
-    await delay(100);
-  });
-
   afterAll(() => {
     if (watcher) watcher.close();
   });
