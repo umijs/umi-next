@@ -6,7 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 export default function(api: IApi) {
   [
     'onGenerateFiles',
-    'addMiddlewareAhead',
+    'addBeforeMiddewares',
     'addRuntimePlugin',
     'addRuntimePluginKey',
     'addUmiExports',

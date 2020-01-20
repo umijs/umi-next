@@ -43,7 +43,7 @@ export default (api: IApi) => {
       });
 
       const beforeMiddlewares = await api.applyPlugins({
-        key: 'addMiddlewareAhead',
+        key: 'addBeforeMiddewares',
         type: api.ApplyPluginsType.add,
         initialValue: [],
         args: {},

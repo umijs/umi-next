@@ -34,7 +34,7 @@ export default function(api: IApi) {
     registerBabel,
   });
 
-  api.addMiddlewareAhead(async () => {
+  api.addBeforeMiddewares(() => {
     const { middleware } = createMiddleware({
       ...mockResult,
       updateMockData: () => {
