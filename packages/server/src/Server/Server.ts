@@ -90,7 +90,7 @@ class Server {
       },
       mock: () => {
         if (this.opts.mock) {
-          this.app.use(createMockMiddleware(this.opts.mock).middleware);
+          this.app.use(createMockMiddleware(this.opts.mock));
         }
       },
       beforeMiddlewares: () => {

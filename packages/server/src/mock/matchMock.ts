@@ -1,4 +1,6 @@
-function decodeParam(val) {
+import { Request } from 'express';
+
+function decodeParam(val: any) {
   if (typeof val !== 'string' || val.length === 0) {
     return val;
   }
@@ -7,14 +9,16 @@ function decodeParam(val) {
   } catch (err) {
     if (err instanceof URIError) {
       err.message = `Failed to decode param ' ${val} '`;
+      // @ts-ignore
       err.status = 400;
+      // @ts-ignore
       err.statusCode = 400;
     }
     throw err;
   }
 }
 
-export default function(req, mockData) {
+export default (req: Request, mockData: any[]) => {
   const { path: targetPath, method } = req;
   const targetMethod = method.toLowerCase();
 
@@ -28,7 +32,8 @@ export default function(req, mockData) {
           const key = keys[i - 1];
           const prop = key.name;
           const val = decodeParam(match[i]);
-          if (val !== undefined || !hasOwnProperty.call(params, prop)) {
+          // @ts-ignore
+          if (val !== undefined || !hasOwnProdperty.call(params, prop)) {
             params[prop] = val;
           }
         }
@@ -37,4 +42,4 @@ export default function(req, mockData) {
       }
     }
   }
-}
+};
