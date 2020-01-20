@@ -412,96 +412,96 @@ describe('proxy', () => {
   });
 });
 
-describe('mock', () => {
-  const host = 'localhost';
+// describe('mock', () => {
+//   const host = 'localhost';
 
-  it('mock normal', async () => {
-    const server = new Server({
-      beforeMiddlewares: [],
-      afterMiddlewares: [],
-      compilerMiddleware: (req, res, next) => {
-        if (req.path === '/compiler') {
-          res.end('compiler');
-        } else {
-          next();
-        }
-      },
-      mock: {
-        data: {
-          'GET /api/users': {
-            hello: 'world',
-          },
-          'POST /api/login': (req, res) => {
-            const { username, password } = req.body;
-            if (username === 'umi' && password === 'umi') {
-              res.json({
-                username,
-                token: 'a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
-              });
-              return;
-            } else {
-              res.json({
-                status: 403,
-                msg: 'account error',
-              });
-            }
-          },
-        },
-      },
-    });
-    const { port, hostname } = await server.listen({
-      port: 3000,
-      hostname: host,
-    });
-    const { body: compilerBody } = await got(
-      `http://${hostname}:${port}/compiler`,
-    );
-    expect(compilerBody).toEqual('compiler');
+//   it('mock normal', async () => {
+//     const server = new Server({
+//       beforeMiddlewares: [],
+//       afterMiddlewares: [],
+//       compilerMiddleware: (req, res, next) => {
+//         if (req.path === '/compiler') {
+//           res.end('compiler');
+//         } else {
+//           next();
+//         }
+//       },
+//       mock: {
+//         data: {
+//           'GET /api/users': {
+//             hello: 'world',
+//           },
+//           'POST /api/login': (req, res) => {
+//             const { username, password } = req.body;
+//             if (username === 'umi' && password === 'umi') {
+//               res.json({
+//                 username,
+//                 token: 'a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+//               });
+//               return;
+//             } else {
+//               res.json({
+//                 status: 403,
+//                 msg: 'account error',
+//               });
+//             }
+//           },
+//         },
+//       },
+//     });
+//     const { port, hostname } = await server.listen({
+//       port: 3000,
+//       hostname: host,
+//     });
+//     const { body: compilerBody } = await got(
+//       `http://${hostname}:${port}/compiler`,
+//     );
+//     expect(compilerBody).toEqual('compiler');
 
-    const { body: mockBody } = await got(
-      `http://${hostname}:${port}/api/users`,
-    );
-    expect(mockBody).toEqual(
-      JSON.stringify({
-        hello: 'world',
-      }),
-    );
+//     const { body: mockBody } = await got(
+//       `http://${hostname}:${port}/api/users`,
+//     );
+//     expect(mockBody).toEqual(
+//       JSON.stringify({
+//         hello: 'world',
+//       }),
+//     );
 
-    const form = new FormData();
-    form.append('username', 'umi');
-    form.append('password', 'umi');
+//     const form = new FormData();
+//     form.append('username', 'umi');
+//     form.append('password', 'umi');
 
-    const { body: mockPOSTBodySuccess } = await got(
-      `http://${hostname}:${port}/api/login`,
-      {
-        method: 'POST',
-        json: true,
-        body: {
-          username: 'umi',
-          password: 'umi',
-        },
-      },
-    );
-    expect(mockPOSTBodySuccess).toEqual({
-      username: 'umi',
-      token: 'a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
-    });
+//     const { body: mockPOSTBodySuccess } = await got(
+//       `http://${hostname}:${port}/api/login`,
+//       {
+//         method: 'POST',
+//         json: true,
+//         body: {
+//           username: 'umi',
+//           password: 'umi',
+//         },
+//       },
+//     );
+//     expect(mockPOSTBodySuccess).toEqual({
+//       username: 'umi',
+//       token: 'a76eeafbdc77be849425f0dfe2d6a3b2058b1075',
+//     });
 
-    const { body: mockPOSTBodyFail } = await got(
-      `http://${hostname}:${port}/api/login`,
-      {
-        method: 'POST',
-        json: true,
-        body: {
-          username: 'umi',
-          passowrd: 'aaaa',
-        },
-      },
-    );
-    expect(mockPOSTBodyFail).toEqual({
-      status: 403,
-      msg: 'account error',
-    });
-    server.listeningApp?.close();
-  });
-});
+//     const { body: mockPOSTBodyFail } = await got(
+//       `http://${hostname}:${port}/api/login`,
+//       {
+//         method: 'POST',
+//         json: true,
+//         body: {
+//           username: 'umi',
+//           passowrd: 'aaaa',
+//         },
+//       },
+//     );
+//     expect(mockPOSTBodyFail).toEqual({
+//       status: 403,
+//       msg: 'account error',
+//     });
+//     server.listeningApp?.close();
+//   });
+// });

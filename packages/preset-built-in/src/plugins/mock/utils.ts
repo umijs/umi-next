@@ -1,9 +1,9 @@
 import { IApi } from '@umijs/types';
-import { chokidar, winPath, createDebug, glob } from '@umijs/utils';
+import { winPath, createDebug, glob } from '@umijs/utils';
 import { join, basename } from 'path';
 import { existsSync } from 'fs';
 
-const debug = createDebug('umi:preset-build-in:dev:getMockData');
+const debug = createDebug('umi:preset-build-in:mock:utils');
 
 export interface IOpts {
   api: IApi;
@@ -11,6 +11,12 @@ export interface IOpts {
 
 interface IGetMockPaths extends Required<Pick<IApi, 'paths' | 'config'>> {
   cwd: string;
+  registerBabel: (paths: string[]) => void;
+}
+
+export interface IGetMockDataResult {
+  mockData: object;
+  mockPaths: string[];
 }
 
 /**
@@ -21,10 +27,11 @@ interface IGetMockPaths extends Required<Pick<IApi, 'paths' | 'config'>> {
  *
  * @param param
  */
-export const getMockPaths: (opts: IGetMockPaths) => string[] = ({
+export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
   cwd,
   paths,
   config,
+  registerBabel,
 }) => {
   const absMockPaths = glob.sync(join(cwd, 'mock/**/*.[jt]s'), {
     ignore: config?.mock?.exclude || [],
@@ -42,7 +49,7 @@ export const getMockPaths: (opts: IGetMockPaths) => string[] = ({
   const childMockPaths = glob.sync(join(absPagesPath || '', '**/_mock.[jt]s'), {
     ignore: config?.mock?.exclude || [],
   });
-  const existedMockPaths = [
+  const mockPaths = [
     ...(absMockPaths || []),
     absConfigPath,
     absConfigPathWithTS,
@@ -51,16 +58,23 @@ export const getMockPaths: (opts: IGetMockPaths) => string[] = ({
     .filter(path => path && existsSync(path))
     .map(path => winPath(path));
 
-  debug(`load mock data including files ${JSON.stringify(existedMockPaths)}`);
-  console.log('existedMockPathsexistedMockPaths', existedMockPaths);
+  debug(`load mock data including files ${JSON.stringify(mockPaths)}`);
+  console.log('existedMockPathsexistedMockPaths', mockPaths);
 
-  return existedMockPaths;
+  // register babel
+  registerBabel(mockPaths);
+
+  // get mock data
+  const mockData = getMockConfig(mockPaths);
+  return {
+    mockData,
+    mockPaths,
+  };
 };
 
 export const getMockConfig = (files: string[]): object => {
   return files.reduce((memo, mockFile) => {
     try {
-      // TODO: registerBabel
       const m = require(mockFile); // eslint-disable-line
       memo = {
         ...memo,
@@ -73,21 +87,14 @@ export const getMockConfig = (files: string[]): object => {
   }, {});
 };
 
-export default (opts = {} as IOpts) => {
-  const { api } = opts;
-  const { paths, cwd, config } = api;
-
-  const mockPaths = getMockPaths({
-    cwd,
-    paths,
-    config,
+export const cleanRequireCache = (paths: string[]): void => {
+  Object.keys(require.cache).forEach(file => {
+    if (
+      paths.some(path => {
+        return winPath(file).indexOf(path) > -1;
+      })
+    ) {
+      delete require.cache[file];
+    }
   });
-
-  const data = getMockConfig(mockPaths);
-  if (Object.keys(data || {}).length > 0) {
-    return {
-      data,
-    };
-  }
-  return null;
 };

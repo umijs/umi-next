@@ -5,7 +5,6 @@ import assert from 'assert';
 import getBundleAndConfigs from '../getBundleAndConfigs';
 import createRouteMiddleware from './createRouteMiddleware';
 import generateFiles from '../generateFiles';
-import getMockData from './getMockData';
 
 export default (api: IApi) => {
   const {
@@ -42,11 +41,19 @@ export default (api: IApi) => {
       const opts: IServerOpts = bundler.setupDevServerOpts({
         bundleConfigs: bundleConfigs,
       });
-      server = new Server({
+
+      const beforeMiddlewares = await api.applyPlugins({
+        key: 'addMiddlewareAhead',
+        type: api.ApplyPluginsType.add,
+        initialValue: [],
+        args: {},
+      });
+
+      const server = new Server({
         ...opts,
         // @ts-ignore
         proxy: (api.config as IConfig)?.proxy,
-        beforeMiddlewares: [],
+        beforeMiddlewares,
         afterMiddlewares: [createRouteMiddleware({ api })],
       });
       return await server.listen({
