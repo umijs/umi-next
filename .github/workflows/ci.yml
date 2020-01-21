@@ -20,7 +20,6 @@ jobs:
       - run: yarn test --forceExit
         env:
           CI: true
-          DEBUG: umi:preset-build-in:mock*
           HEADLESS: false
           PROGRESS: none
           NODE_ENV: test
