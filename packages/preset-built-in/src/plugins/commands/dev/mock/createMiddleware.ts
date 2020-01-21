@@ -23,18 +23,21 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
   const watcher = chokidar.watch(mockWatcherPaths, {
     ignoreInitial: true,
   });
-  watcher.on('all', (event, file) => {
-    debug(`${file}, reload mock data`);
-    errors.splice(0, errors.length);
-    cleanRequireCache(mockWatcherPaths);
-    // refresh data
-    data = updateMockData()?.mockData;
-    if (!errors.length) {
-      signale.success(`Mock files parse success`);
-    }
-  });
+  watcher
+    .on('ready', () => debug('Initial scan complete. Ready for changes'))
+    .on('all', (event, file) => {
+      debug(`[${event}] ${file}, reload mock data`);
+      errors.splice(0, errors.length);
+      cleanRequireCache(mockWatcherPaths);
+      // refresh data
+      data = updateMockData()?.mockData;
+      if (!errors.length) {
+        signale.success(`Mock files parse success`);
+      }
+    });
   // close
   process.on('SIGINT', async () => {
+    debug(`[Close] Watcher ${watcher.getWatched()}`);
     await watcher.close();
   });
 
@@ -42,7 +45,7 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
     middleware: (req, res, next) => {
       const match = data && matchMock(req, data);
       if (match) {
-        // debug(`mock matched: [${match.method}] ${match.path}`);
+        debug(`mock matched: [${match.method}] ${match.path}`);
         return match.handler(req, res, next);
       } else {
         return next();

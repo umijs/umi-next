@@ -72,6 +72,11 @@ describe('createMiddleware', () => {
     server.listeningApp?.close();
   });
 
+  it('fallback to next', async () => {
+    const { body } = await got(`http://${hostname}:${port}`);
+    expect(body).toEqual(HOME_PAGE);
+  });
+
   it('get', async () => {
     const { body } = await got(`http://${hostname}:${port}/api/a`);
     expect(body).toEqual(`{"a":1}`);
@@ -87,11 +92,6 @@ describe('createMiddleware', () => {
   it('function handler', async () => {
     const { body } = await got(`http://${hostname}:${port}/api/b`);
     expect(body).toEqual(`{"b":1}`);
-  });
-
-  it('fallback to next', async () => {
-    const { body } = await got(`http://${hostname}:${port}/`);
-    expect(body).toEqual(HOME_PAGE);
   });
 
   it('params', async () => {
