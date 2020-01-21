@@ -34,8 +34,8 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
     }
   });
   // close
-  process.once('SIGINT', () => {
-    watcher.close();
+  process.once('SIGINT', async () => {
+    await watcher.close();
   });
 
   return {

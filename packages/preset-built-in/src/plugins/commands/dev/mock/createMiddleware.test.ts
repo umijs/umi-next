@@ -22,7 +22,7 @@ describe('createMiddleware', () => {
   let server;
   let hostname;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const service = new Service({
       cwd,
       plugins: [],
@@ -67,8 +67,8 @@ describe('createMiddleware', () => {
     hostname = result.hostname;
   });
 
-  afterEach(() => {
-    watcher?.close?.();
+  afterAll(async () => {
+    await watcher?.close?.();
     server.listeningApp?.close();
   });
 
