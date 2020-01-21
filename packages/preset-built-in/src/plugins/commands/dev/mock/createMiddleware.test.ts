@@ -43,7 +43,6 @@ describe('createMiddleware', () => {
     };
     const mockOpts = getMockData({
       cwd,
-      paths: service.paths,
       ignore: service.userConfig.mock?.exclude,
       registerBabel,
     });
@@ -52,7 +51,6 @@ describe('createMiddleware', () => {
       updateMockData: () =>
         getMockData({
           cwd,
-          paths: service.paths,
           ignore: service.userConfig.mock?.exclude,
         }),
     });

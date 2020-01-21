@@ -17,8 +17,7 @@ export interface IOpts {
   api: IApi;
 }
 
-interface IGetMockPaths extends Required<Pick<IApi, 'paths'>> {
-  cwd: string;
+interface IGetMockPaths extends Required<Pick<IApi, 'cwd'>> {
   ignore?: string[];
   registerBabel?: (paths: string[]) => void;
 }
@@ -47,7 +46,6 @@ export interface IGetMockDataResult {
  */
 export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
   cwd,
-  paths,
   ignore = [],
   registerBabel = () => {},
 }) => {
@@ -57,16 +55,6 @@ export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
   const absConfigPath = join(cwd, '.umirc.mock.js');
   const absConfigPathWithTS = join(cwd, '.umirc.mock.ts');
 
-  // src/* or <pages/>
-  const absPagesPath =
-    basename(paths.absSrcPath || '') === 'src'
-      ? paths.absSrcPath
-      : paths.absPagesPath;
-
-  // src/**/_mock.(js|ts)，暂不支持
-  // const childMockPaths = glob.sync(join(absPagesPath || '', '**/_mock.[jt]s'), {
-  //   ignore,
-  // });
   const mockPaths = [
     ...(absMockPaths || []),
     absConfigPath,
@@ -83,11 +71,7 @@ export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
   // get mock data
   const mockData = normalizeConfig(getMockConfig(mockPaths));
 
-  const mockWatcherPaths = [
-    ...(mockPaths || []),
-    // join(absPagesPath || '', '**/_mock'),
-    join(cwd, 'mock'),
-  ]
+  const mockWatcherPaths = [...(mockPaths || []), join(cwd, 'mock')]
     .filter(path => path && existsSync(path))
     .map(path => winPath(path));
 

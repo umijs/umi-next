@@ -3,7 +3,7 @@ import createMiddleware from './createMiddleware';
 import { getMockData } from './utils';
 
 export default function(api: IApi) {
-  const { paths, cwd, config } = api;
+  const { cwd, config } = api;
 
   api.describe({
     key: 'mock',
@@ -29,7 +29,6 @@ export default function(api: IApi) {
   // get all mock paths
   const mockResult = getMockData({
     cwd,
-    paths,
     ignore,
     registerBabel,
   });
