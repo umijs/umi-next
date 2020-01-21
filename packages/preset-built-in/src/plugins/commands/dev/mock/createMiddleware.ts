@@ -10,7 +10,7 @@ export interface IMockOpts extends IGetMockDataResult {
 
 interface ICreateMiddleware {
   middleware: RequestHandler;
-  watcher: any;
+  watcher: chokidar.FSWatcher;
 }
 
 export default function(opts = {} as IMockOpts): ICreateMiddleware {
@@ -18,20 +18,21 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
   let data = mockData;
 
   // watcher
-  // const errors: Error[] = [];
-  // const watcher = chokidar.watch(mockWatcherPaths, {
-  //   ignoreInitial: true,
-  // });
-  // watcher.on('all', (event, file) => {
-  //   debug(`${file}, reload mock data`);
-  //   errors.splice(0, errors.length);
-  //   cleanRequireCache(mockWatcherPaths);
-  //   // refresh data
-  //   data = updateMockData()?.mockData;
-  //   if (!errors.length) {
-  //     signale.success(`Mock files parse success`);
-  //   }
-  // });
+  const errors: Error[] = [];
+  console.log('mockWatcherPaths', mockWatcherPaths);
+  const watcher = chokidar.watch(mockWatcherPaths, {
+    ignoreInitial: true,
+  });
+  watcher.on('all', (event, file) => {
+    debug(`${file}, reload mock data`);
+    errors.splice(0, errors.length);
+    cleanRequireCache(mockWatcherPaths);
+    // refresh data
+    data = updateMockData()?.mockData;
+    if (!errors.length) {
+      signale.success(`Mock files parse success`);
+    }
+  });
 
   return {
     middleware: (req, res, next) => {
@@ -43,6 +44,6 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
         return next();
       }
     },
-    watcher: {},
+    watcher,
   };
 }

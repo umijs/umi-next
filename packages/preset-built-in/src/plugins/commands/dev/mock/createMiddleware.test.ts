@@ -81,53 +81,45 @@ describe('createMiddleware', () => {
   });
 
   it('get', async () => {
-    console.log(`http://${hostname}:${port}/api/a`)
-    try {
-      const { body } = await got(`http://${hostname}:${port}/api/a`, {
-        method: 'get',
-      });
-      console.log('bodybodybody', body);
-      expect(body).toEqual(`{"a":1}`);
-    } catch (e) {
-      console.log('got error', e);
-    }
+    const { body } = await got(`http://${hostname}:${port}/api/a`);
+    expect(body).toEqual(`{"a":1}`);
   });
 
-  // it('post', async () => {
-  //   const { body } = await got(`http://${hostname}:${port}/api/a`, {
-  //     method: 'post',
-  //   });
-  //   expect(body).toEqual(`{"a":1}`);
-  // });
+  it('post', async () => {
+    const { body } = await got(`http://${hostname}:${port}/api/a`, {
+      method: 'post',
+    });
+    expect(body).toEqual(`{"a":1}`);
+  });
 
-  // it('function handler', async () => {
-  //   const { body } = await got(`http://${hostname}:${port}/api/b`);
-  //   expect(body).toEqual(`{"b":1}`);
-  // });
+  it('function handler', async () => {
+    const { body } = await got(`http://${hostname}:${port}/api/b`);
+    expect(body).toEqual(`{"b":1}`);
+  });
 
-  // it('fallback to next', async () => {
-  //   const { body } = await got(`http://${hostname}:${port}/`);
-  //   expect(body).toEqual(HOME_PAGE);
-  // });
+  it('fallback to next', async () => {
+    const { body } = await got(`http://${hostname}:${port}/`);
+    expect(body).toEqual(HOME_PAGE);
+  });
 
-  // it('params', async () => {
-  //   const { body } = await got(`http://${hostname}:${port}/api/users/1`);
-  //   expect(body).toEqual(`{"a":1}`);
-  // });
+  it('params', async () => {
+    const { body } = await got(`http://${hostname}:${port}/api/users/1`);
+    expect(body).toEqual(`{"a":1}`);
+  });
 
-  // it('watch', async () => {
-  //   const absTmpFile = winPath(join(cwd, 'mock/tmp.js'));
-  //   writeFileSync(absTmpFile, `export default {'/api/tmp': {tmp:1}}`, 'utf-8');
-  //   await delay(500);
-  //   const { body } = await got(`http://${hostname}:${port}/api/tmp`);
-  //   expect(body).toEqual(`{"tmp":1}`);
-  //   rimraf.sync(absTmpFile);
-  // });
+  it('watch', async () => {
+    const absTmpFile = winPath(join(cwd, 'mock/tmp.js'));
+    writeFileSync(absTmpFile, `export default {'/api/tmp': {tmp:1}}`, 'utf-8');
+    await delay(500);
+    const { body } = await got(`http://${hostname}:${port}/api/tmp`);
+    expect(body).toEqual(`{"tmp":1}`);
+    rimraf.sync(absTmpFile);
+  });
 
-  // it.skip('watch with error', async () => {
-  //   const absTmpFile = winPath(join(cwd, 'mock/tmp2.js'));
-  //   writeFileSync(absTmpFile, `export defaul;`, 'utf-8');
-  //   await delay(500);
-  //   rimraf.sync(absTmpFile);
-  // });
+  it.skip('watch with error', async () => {
+    const absTmpFile = winPath(join(cwd, 'mock/tmp2.js'));
+    writeFileSync(absTmpFile, `export defaul;`, 'utf-8');
+    await delay(500);
+    rimraf.sync(absTmpFile);
+  });
 });
