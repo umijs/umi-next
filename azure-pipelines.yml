@@ -28,7 +28,7 @@ jobs:
         displayName: install
       - script: yarn build
         displayName: build
-      - script: yarn test -- --forceExit --detectOpenHandles --runInBand
+      - script: yarn test --forceExit --detectOpenHandles --runInBand
         env:
           PROGRESS: none
           CI: true
