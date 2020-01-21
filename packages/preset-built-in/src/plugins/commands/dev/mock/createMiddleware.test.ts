@@ -10,25 +10,19 @@ import { getMockData } from './utils';
 
 describe('createMiddleware', () => {
   const cwd = winPath(join(__dirname, 'fixtures/createMiddleware'));
-  const delay = ms =>
-    new Promise((resolve, reject) =>
-      setTimeout(() => {
-        try {
-          resolve();
-        } catch (e) {
-          console.error('delay error', e);
-          reject(e);
-        }
-      }, ms),
-    );
 
+  const delay = async (time: number) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, time || 20);
+    });
+  };
   const HOME_PAGE = 'homepage';
   let watcher = null;
   let port;
   let server;
   let hostname;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const service = new Service({
       cwd,
       plugins: [],
@@ -73,7 +67,7 @@ describe('createMiddleware', () => {
     hostname = result.hostname;
   });
 
-  afterAll(() => {
+  afterEach(() => {
     watcher?.close?.();
     server.listeningApp?.close();
   });
