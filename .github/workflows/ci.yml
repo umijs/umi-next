@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - run: yarn --ignore-engines
       - run: yarn build
-      - run: yarn test --forceExit -t createMiddleware
+      - run: yarn test --forceExit
         env:
           CI: true
           DEBUG: umi:preset-build-in:mock*
