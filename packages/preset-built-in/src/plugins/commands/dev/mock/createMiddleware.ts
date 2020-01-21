@@ -33,6 +33,10 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
       signale.success(`Mock files parse success`);
     }
   });
+  // close
+  process.once('SIGINT', () => {
+    watcher.close();
+  });
 
   return {
     middleware: (req, res, next) => {
