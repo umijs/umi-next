@@ -37,7 +37,7 @@ export default function(api: IApi) {
     const { middleware } = createMiddleware({
       ...mockResult,
       updateMockData: () => {
-        const result = getMockData({ cwd, paths, ignore, registerBabel });
+        const result = getMockData({ cwd, ignore, registerBabel });
         return result;
       },
     });
