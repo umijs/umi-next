@@ -85,9 +85,11 @@ export const getMockData: (opts: IGetMockPaths) => IGetMockDataResult = ({
 
   const mockWatcherPaths = [
     ...(mockPaths || []),
-    join(absPagesPath || '', '**/_mock'),
+    // join(absPagesPath || '', '**/_mock'),
     join(cwd, 'mock'),
-  ].map(path => winPath(path));
+  ]
+    .filter(path => path && existsSync(path))
+    .map(path => winPath(path));
 
   return {
     mockData,

@@ -19,7 +19,7 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
 
   // watcher
   const errors: Error[] = [];
-  console.log('mockWatcherPaths', mockWatcherPaths);
+  debug('mockWatcherPaths', mockWatcherPaths);
   const watcher = chokidar.watch(mockWatcherPaths, {
     ignoreInitial: true,
   });
