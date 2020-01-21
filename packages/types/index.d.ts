@@ -158,4 +158,4 @@ export interface IConfig extends IConfigCore {
 }
 
 export { webpack };
-export { Request, Express, Response, NextFunction };
+export { Request, Express, Response, NextFunction, RequestHandler };

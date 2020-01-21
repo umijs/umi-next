@@ -1,5 +1,5 @@
-import { RequestHandler } from 'express';
 import { chokidar, signale, createDebug } from '@umijs/utils';
+import { RequestHandler } from '@umijs/types';
 import { cleanRequireCache, IGetMockDataResult, matchMock } from './utils';
 
 const debug = createDebug('umi:preset-build-in:mock:createMiddleware');
@@ -36,8 +36,7 @@ export default function(opts = {} as IMockOpts): ICreateMiddleware {
       }
     });
   // close
-  process.on('SIGINT', async () => {
-    debug(`[Close] Watcher ${watcher.getWatched()}`);
+  process.once('SIGINT', async () => {
     await watcher.close();
   });
 

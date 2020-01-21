@@ -1,9 +1,8 @@
-import { IApi } from '@umijs/types';
+import { IApi, RequestHandler, Request } from '@umijs/types';
 import { winPath, createDebug, glob } from '@umijs/utils';
-import { join, basename } from 'path';
+import { join } from 'path';
 import { existsSync } from 'fs';
 import assert from 'assert';
-import { RequestHandler, Request } from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import { pathToRegexp } from 'path-to-regexp';
