@@ -1,4 +1,11 @@
-// @ts-ignore
+declare module NodeJS {
+  interface Process {
+    type: string;
+    browser: boolean;
+    __nwjs: any;
+  }
+}
+
 if (
   typeof process === 'undefined' ||
   process.type === 'renderer' ||
