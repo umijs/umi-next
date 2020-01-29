@@ -1,4 +1,4 @@
-import debug from 'debug';
+import { createDebug } from '@umijs/utils';
 
 interface ILogErrorOpts {
   detailsOnly?: boolean;
@@ -27,7 +27,7 @@ abstract class Common {
    * @param args common debug in node and browser env
    */
   public debug(...args: any) {
-    return debug(this.namespace)(args);
+    return createDebug(this.namespace)(args);
   }
 
   abstract error(msg: string): void;
