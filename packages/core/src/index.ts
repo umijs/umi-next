@@ -5,6 +5,10 @@ import Route from './Route/Route';
 import { IRoute } from './Route/types';
 import Service, { IServiceOpts } from './Service/Service';
 import PluginAPI from './Service/PluginAPI';
+import UmiError from './Logger/UmiError';
+
+const Logger = require('./Logger/index');
 
 export { Config, Html, Route, Service, PluginAPI };
 export { IRoute, IConfig, IServiceOpts };
+export { Logger, UmiError };
