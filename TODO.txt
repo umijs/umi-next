@@ -1,7 +1,6 @@
 umi-next:
-	server:
+  server:
 		- HTTPS @ycjcl868
-		- socket 断开重连及客户端提示 @ycjcl868
 		- webpack-dev-server 功能查漏补缺 @ycjcl868
 	core:
 		- logger @ycjcl868
@@ -18,7 +17,8 @@ umi-next:
 			- 支持 webpack 的 dynamic import
 	renderer-react:
 		- 支持 SSR + Prerender @ycjcl868
-	bundler-webpack:
+  bundler-webpack:
+    - socket 断开重连及客户端提示 @ycjcl868
 		- export declaration 的问题
 		- 验证 tree-shaking 有效性，因为某些链路里用了 require 模块的方式
 		- 验证 const enum 的问题
@@ -67,7 +67,7 @@ plugins:
 	CHORE:
 		- 发布脚本
 			支持单独发布某个插件
-			
+
 doc:
 	- 梳理目录以及和 bigfish、插件之间的共享共建机制
 
