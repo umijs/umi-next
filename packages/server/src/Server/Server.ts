@@ -58,6 +58,7 @@ const defaultOpts: Required<PartialProps<IServerOpts>> = {
   compilerMiddleware: null,
   compress: false,
   https: false,
+  http2: false,
   onListening: argv => argv,
   onConnection: () => {},
   onConnectionClose: () => {},
