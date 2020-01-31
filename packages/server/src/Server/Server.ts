@@ -1,10 +1,13 @@
 // @ts-ignore
-import { lodash, portfinder, PartialProps } from '@umijs/utils';
+import { lodash, portfinder, PartialProps, semver } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
+import { ServerOptions } from 'spdy';
+import https from 'https';
 import compress, { CompressionOptions } from 'compression';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
+import { getCredentials } from './utils';
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
@@ -22,11 +25,14 @@ type IServerProxyConfig =
   | (IServerProxyConfigItem | (() => IServerProxyConfigItem))[]
   | null;
 
+export interface IHttps extends ServerOptions {}
+
 export interface IServerOpts {
   afterMiddlewares?: RequestHandler<any>[];
   beforeMiddlewares?: RequestHandler<any>[];
   compilerMiddleware?: RequestHandler<any> | null;
-  https?: boolean;
+  https?: IHttps | boolean;
+  http2?: boolean;
   compress?: CompressionOptions | boolean;
   proxy?: IServerProxyConfig;
   onListening?: {
@@ -64,6 +70,8 @@ class Server {
   socketServer?: SocketServer;
   // @ts-ignore
   listeningApp: http.Server;
+  // @ts-ignore
+  listeninspdygApp: http.Server;
   sockets: Connection[] = [];
   // Proxy sockets
   socketProxies: HttpProxyMiddleware.Proxy[] = [];
@@ -237,9 +245,18 @@ class Server {
     });
   }
 
+  private isHttp2() {
+    return this.opts.http2 !== false;
+  }
+
   createServer() {
     if (this.opts.https) {
-      // TODO
+      const httpsOpts = getCredentials(this.opts);
+      if (semver.gte(process.version, '10.0.0') && !this.isHttp2()) {
+        this.listeninspdygApp = https.createServer(httpsOpts, this.app);
+      } else {
+        this.listeningApp = require('spdy').createServer(httpsOpts, this.app);
+      }
     } else {
       this.listeningApp = http.createServer(this.app);
     }

@@ -110,6 +110,7 @@ export default (api: IApi) => {
 
       const server = new Server({
         ...opts,
+        compress: true,
         // @ts-ignore
         proxy: (api.config as IConfig)?.proxy,
         beforeMiddlewares,

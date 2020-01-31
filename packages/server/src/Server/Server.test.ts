@@ -307,7 +307,7 @@ describe('proxy', () => {
       }),
     );
 
-    const { body: proxyRewriteBody } = await got(
+    const { body: proxyRewriteBody, headers } = await got(
       `http://${hostname}:${port}/api/users`,
     );
     expect(headers.authorization).toEqual(
