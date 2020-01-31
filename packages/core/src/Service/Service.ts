@@ -4,7 +4,7 @@ import assert from 'assert';
 import { BabelRegister, NodeEnv } from '@umijs/utils';
 import { AsyncSeriesWaterfallHook } from 'tapable';
 import { existsSync } from 'fs';
-import Logger from '../Logger/node';
+import Logger from '../Logger/Logger';
 import { pathToObj, resolvePlugins, resolvePresets } from './utils/pluginUtils';
 import PluginAPI from './PluginAPI';
 import {

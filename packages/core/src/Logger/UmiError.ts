@@ -9,7 +9,7 @@ export const ERROR_CODE_MAP = process.env.ERROR_CODE_MAP_PATH
 interface IOpts {
   message: string;
   code: string;
-  context: object;
+  context?: object;
 }
 
 export default class UmiError extends Error {

@@ -101,21 +101,24 @@ export default class Logger extends Common {
   public profile(id: string, message?: string) {
     const time = Date.now();
     const namespace = `${this.namespace}:${id}`;
+    // for test
+    let msg;
     if (this.profilers[id]) {
       const timeEnd = this.profilers[id];
       delete this.profilers[id];
       process.stderr.write(chalk.black.bgCyan('PROFILE') + ' ');
-      console.log(
-        `${chalk.cyan(`└ ${namespace}`)} Completed in ${this.formatTiming(
-          time - timeEnd,
-        )}`,
-      );
+      msg = `${chalk.black.bgCyan('PROFILE')} ${chalk.cyan(
+        `└ ${namespace}`,
+      )} Completed in ${this.formatTiming(time - timeEnd)}`;
+      console.log(msg);
     } else {
-      process.stderr.write(chalk.black.bgCyan('PROFILE') + ' ');
-      console.log(`${chalk.cyan(`┌ ${namespace}`)} ${message || ''}`);
+      msg = `${chalk.black.bgCyan('PROFILE')} ${chalk.cyan(
+        `┌ ${namespace}`,
+      )} ${message || ''}`;
+      console.log(msg);
     }
 
     this.profilers[id] = time;
-    return this;
+    return msg;
   }
 }
