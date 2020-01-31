@@ -1,7 +1,7 @@
 umi-next:
   server:
     - ~~Compress~~ @ycjcl868 https://github.com/umijs/umi-next/pull/27
-		- HTTPS @ycjcl868
+		- ~~HTTPS~~ @ycjcl868 https://github.com/umijs/umi-next/pull/27
 		- webpack-dev-server 功能查漏补缺 @ycjcl868
 	core:
 		- ~~logger~~ @ycjcl868
