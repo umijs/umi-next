@@ -25,8 +25,8 @@ export const getCredentials = (opts: IServerOpts): IHttps => {
   const credentials = immer(
     {
       ...serverOptions,
-      key: fs.readFileSync(serverOptions?.key),
-      cert: fs.readFileSync(serverOptions?.cert),
+      key: fs.readFileSync(serverOptions?.key as string),
+      cert: fs.readFileSync(serverOptions?.cert as string),
     },
     draft => {
       if (typeof serverOptions === 'object' && serverOptions.ca) {
