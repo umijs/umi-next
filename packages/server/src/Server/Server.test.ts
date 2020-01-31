@@ -91,6 +91,45 @@ test('normal', async () => {
   server.listeningApp?.close();
 });
 
+test('compress', async () => {
+  const server = new Server({
+    compress: { threshold: 0 },
+    beforeMiddlewares: [],
+    afterMiddlewares: [],
+    compilerMiddleware: (req, res, next) => {
+      if (req.path === '/compiler') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('compiler');
+      } else if (req.path === '/bar.png') {
+        res.setHeader('Accept-Encoding', 'gzip');
+        res.setHeader('Content-Type', 'image/jpeg');
+        res.end();
+      } else {
+        next();
+      }
+    },
+  });
+  const serverPort = await portfinder.getPortPromise({
+    port: 3003,
+  });
+  const { port, hostname } = await server.listen({
+    port: serverPort,
+    hostname: 'localhost',
+  });
+  const { body: compilerBody, headers } = await got(
+    `http://${hostname}:${port}/compiler`,
+  );
+  expect(compilerBody).toEqual('compiler');
+  expect(headers['Content-Encoding']).toBeFalsy();
+
+  const { headers: imgHeaders } = await got(
+    `http://${hostname}:${port}/bar.png`,
+  );
+  expect(imgHeaders['accept-encoding']).toEqual('gzip');
+
+  server.listeningApp?.close();
+});
+
 describe('proxy', () => {
   const host = 'localhost';
   let proxyServer1: http.Server;
@@ -268,7 +307,7 @@ describe('proxy', () => {
       }),
     );
 
-    const { body: proxyRewriteBody, headers } = await got(
+    const { body: proxyRewriteBody } = await got(
       `http://${hostname}:${port}/api/users`,
     );
     expect(headers.authorization).toEqual(

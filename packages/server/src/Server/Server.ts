@@ -1,8 +1,9 @@
 // @ts-ignore
-import { chalk, lodash, portfinder, PartialProps } from '@umijs/utils';
+import { lodash, portfinder, PartialProps } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
 import http from 'http';
+import compress, { CompressionOptions } from 'compression';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
@@ -26,6 +27,7 @@ export interface IServerOpts {
   beforeMiddlewares?: RequestHandler<any>[];
   compilerMiddleware?: RequestHandler<any> | null;
   https?: boolean;
+  compress?: CompressionOptions | boolean;
   proxy?: IServerProxyConfig;
   onListening?: {
     ({
@@ -48,6 +50,7 @@ const defaultOpts: Required<PartialProps<IServerOpts>> = {
   afterMiddlewares: [],
   beforeMiddlewares: [],
   compilerMiddleware: null,
+  compress: false,
   https: false,
   onListening: argv => argv,
   onConnection: () => {},
@@ -83,6 +86,11 @@ class Server {
 
   setupFeatures() {
     const features = {
+      compress: () => {
+        if (this.opts.compress) {
+          this.setupCompress();
+        }
+      },
       proxy: () => {
         if (this.opts.proxy) {
           this.setupProxy();
@@ -108,6 +116,16 @@ class Server {
     Object.keys(features).forEach(stage => {
       features[stage]();
     });
+  }
+
+  /**
+   * dev server compress to gzip assets
+   */
+  setupCompress() {
+    const compressOpts = lodash.isBoolean(this.opts.compress)
+      ? {}
+      : this.opts.compress;
+    this.app.use(compress(compressOpts));
   }
 
   /**

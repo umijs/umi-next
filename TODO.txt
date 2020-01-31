@@ -1,5 +1,6 @@
 umi-next:
   server:
+    - ~~Compress~~ @ycjcl868 https://github.com/umijs/umi-next/pull/27
 		- HTTPS @ycjcl868
 		- webpack-dev-server 功能查漏补缺 @ycjcl868
 	core:
@@ -18,7 +19,7 @@ umi-next:
 	renderer-react:
 		- 支持 SSR + Prerender @ycjcl868
   bundler-webpack:
-    - socket 断开重连及客户端提示 @ycjcl868
+    - ~~socket 断开重连及客户端提示~~ @ycjcl868 https://github.com/umijs/umi-next/pull/27
 		- export declaration 的问题
 		- 验证 tree-shaking 有效性，因为某些链路里用了 require 模块的方式
 		- 验证 const enum 的问题
