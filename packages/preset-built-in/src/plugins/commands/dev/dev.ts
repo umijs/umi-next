@@ -120,6 +120,9 @@ export default (api: IApi) => {
       const server = new Server({
         ...opts,
         compress: true,
+        headers: {
+          'access-control-allow-origin': '*',
+        },
         // @ts-ignore
         proxy: (api.config as IConfig)?.proxy,
         beforeMiddlewares,
