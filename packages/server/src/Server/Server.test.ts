@@ -157,6 +157,38 @@ test('headers', async () => {
   server.listeningApp?.close();
 });
 
+test('https', async () => {
+  const server = new Server({
+    https: true,
+    beforeMiddlewares: [],
+    afterMiddlewares: [],
+    compilerMiddleware: (req, res, next) => {
+      if (req.path === '/compiler') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.send('compiler');
+      } else {
+        next();
+      }
+    },
+  });
+  const serverPort = await portfinder.getPortPromise({
+    port: 3005,
+  });
+  const { port, hostname } = await server.listen({
+    port: serverPort,
+    hostname: 'localhost',
+  });
+  const { body: compilerBody, headers } = await got(
+    `https://${hostname}:${port}/compiler`,
+    {
+      rejectUnauthorized: false,
+    },
+  );
+  expect(compilerBody).toEqual('compiler');
+
+  server.listeningApp?.close();
+});
+
 describe('proxy', () => {
   const host = 'localhost';
   let proxyServer1: http.Server;

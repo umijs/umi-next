@@ -1,4 +1,5 @@
 // @ts-ignore
+import { Logger } from '@umijs/core';
 import { lodash, portfinder, PartialProps, semver } from '@umijs/utils';
 import express, { Express, RequestHandler } from 'express';
 import HttpProxyMiddleware from 'http-proxy-middleware';
@@ -8,6 +9,8 @@ import https from 'https';
 import compress, { CompressionOptions } from 'compression';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
 import { getCredentials } from './utils';
+
+const logger = new Logger('@umijs/server');
 
 interface IServerProxyConfigItem extends HttpProxyMiddleware.Config {
   path?: string | string[];
@@ -97,6 +100,33 @@ class Server {
       // @ts-ignore
       this.listeningApp.on('upgrade', wsProxy.upgrade);
     }, this);
+  }
+
+  private getHttpsOptions(): object | undefined {
+    if (this.opts.https) {
+      const credential = getCredentials(this.opts);
+
+      // note that options.spdy never existed. The user was able
+      // to set options.https.spdy before, though it was not in the
+      // docs. Keep options.https.spdy if the user sets it for
+      // backwards compatibility, but log a deprecation warning.
+      if (typeof this.opts.https === 'object' && this.opts.https.spdy) {
+        // for backwards compatibility: if options.https.spdy was passed in before,
+        // it was not altered in any way
+        logger.warn(
+          'Providing custom spdy server options is deprecated and will be removed in the next major version.',
+        );
+        return credential;
+      } else {
+        return {
+          spdy: {
+            protocols: ['h2', 'http/1.1'],
+          },
+          ...credential,
+        };
+      }
+    }
+    return;
   }
 
   setupFeatures() {
@@ -273,10 +303,10 @@ class Server {
   }
 
   createServer() {
-    if (this.opts.https) {
-      const httpsOpts = getCredentials(this.opts);
+    const httpsOpts = this.getHttpsOptions();
+    if (httpsOpts) {
       if (semver.gte(process.version, '10.0.0') && !this.isHttp2()) {
-        this.listeninspdygApp = https.createServer(httpsOpts, this.app);
+        this.listeningApp = https.createServer(httpsOpts, this.app);
       } else {
         this.listeningApp = require('spdy').createServer(httpsOpts, this.app);
       }
@@ -297,16 +327,14 @@ class Server {
     listeningApp: http.Server;
     server: Server;
   }> {
-    const listeningApp = http.createServer(this.app);
-    this.listeningApp = listeningApp;
     const foundPort = await portfinder.getPortPromise({ port });
     return new Promise(resolve => {
-      listeningApp.listen(foundPort, hostname, 5, () => {
+      this.listeningApp.listen(foundPort, hostname, 5, () => {
         this.createSocketServer();
         const ret = {
           port: foundPort,
           hostname,
-          listeningApp,
+          listeningApp: this.listeningApp,
           server: this,
         };
         this.opts.onListening(ret);

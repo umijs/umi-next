@@ -5,7 +5,7 @@ jest.mock('@umijs/error-code-map', () => ({}));
 
 jest.mock('fs', () => ({
   readFileSync(filename) {
-    return new Buffer(filename);
+    return filename;
   },
 }));
 
@@ -37,8 +37,8 @@ describe('ServerUtils', () => {
           },
         }),
       ).toEqual({
-        key: new Buffer('/tmp/key.pem'),
-        cert: new Buffer('/tmp/cert.pem'),
+        key: '/tmp/key.pem',
+        cert: '/tmp/cert.pem',
       });
     });
 
@@ -52,9 +52,9 @@ describe('ServerUtils', () => {
           },
         }),
       ).toEqual({
-        key: new Buffer('/tmp/key.pem'),
-        cert: new Buffer('/tmp/cert.pem'),
-        ca: [new Buffer('/tmp/ca.pem')],
+        key: '/tmp/key.pem',
+        cert: '/tmp/cert.pem',
+        ca: ['/tmp/ca.pem'],
       });
     });
 
@@ -64,8 +64,8 @@ describe('ServerUtils', () => {
           https: true,
         }),
       ).toEqual({
-        key: new Buffer(join(__dirname, 'cert', 'key.pem')),
-        cert: new Buffer(join(__dirname, 'cert', 'cert.pem')),
+        key: join(__dirname, 'cert', 'key.pem'),
+        cert: join(__dirname, 'cert', 'cert.pem'),
       });
     });
   });
