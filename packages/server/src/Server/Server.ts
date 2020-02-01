@@ -33,6 +33,10 @@ export interface IServerOpts {
   compilerMiddleware?: RequestHandler<any> | null;
   https?: IHttps | boolean;
   http2?: boolean;
+  headers?: {
+    [key: string]: string;
+  };
+  host?: string;
   compress?: CompressionOptions | boolean;
   proxy?: IServerProxyConfig;
   onListening?: {
@@ -56,13 +60,15 @@ const defaultOpts: Required<PartialProps<IServerOpts>> = {
   afterMiddlewares: [],
   beforeMiddlewares: [],
   compilerMiddleware: null,
-  compress: false,
+  compress: true,
   https: false,
   http2: false,
   onListening: argv => argv,
   onConnection: () => {},
   onConnectionClose: () => {},
   proxy: null,
+  headers: {},
+  host: 'localhost',
 };
 
 class Server {
@@ -105,6 +111,11 @@ class Server {
           this.setupProxy();
         }
       },
+      headers: () => {
+        if (lodash.isPlainObject(this.opts.headers)) {
+          this.setupHeaders();
+        }
+      },
       beforeMiddlewares: () => {
         this.opts.beforeMiddlewares.forEach(middleware => {
           this.app.use(middleware);
@@ -124,6 +135,17 @@ class Server {
 
     Object.keys(features).forEach(stage => {
       features[stage]();
+    });
+  }
+
+  /**
+   * response headers
+   */
+  setupHeaders() {
+    this.app.all('*', (req, res, next) => {
+      // eslint-disable-next-line
+      res.set(this.opts.headers);
+      next();
     });
   }
 

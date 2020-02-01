@@ -99,11 +99,7 @@ test('compress', async () => {
     compilerMiddleware: (req, res, next) => {
       if (req.path === '/compiler') {
         res.setHeader('Content-Type', 'text/plain');
-        res.end('compiler');
-      } else if (req.path === '/bar.png') {
-        res.setHeader('Accept-Encoding', 'gzip');
-        res.setHeader('Content-Type', 'image/jpeg');
-        res.end();
+        res.send('compiler');
       } else {
         next();
       }
@@ -118,14 +114,45 @@ test('compress', async () => {
   });
   const { body: compilerBody, headers } = await got(
     `http://${hostname}:${port}/compiler`,
+    {
+      headers: {
+        'Accept-Encoding': 'gzip',
+      },
+    },
   );
   expect(compilerBody).toEqual('compiler');
-  expect(headers['Content-Encoding']).toBeFalsy();
+  expect(headers['content-encoding']).toEqual('gzip');
 
-  const { headers: imgHeaders } = await got(
-    `http://${hostname}:${port}/bar.png`,
+  server.listeningApp?.close();
+});
+
+test('headers', async () => {
+  const server = new Server({
+    headers: {
+      'access-control-allow-origin': '*',
+    },
+    compilerMiddleware: (req, res, next) => {
+      if (req.path === '/compiler') {
+        res.setHeader('Content-Type', 'text/plain');
+        res.send('compiler');
+      } else {
+        next();
+      }
+    },
+  });
+  const serverPort = await portfinder.getPortPromise({
+    port: 3004,
+  });
+  const { port, hostname } = await server.listen({
+    port: serverPort,
+    hostname: 'localhost',
+  });
+  await delay(100);
+  const { body: compilerBody, headers } = await got(
+    `http://${hostname}:${port}/compiler`,
   );
-  expect(imgHeaders['accept-encoding']).toEqual('gzip');
+  expect(compilerBody).toEqual('compiler');
+  expect(headers['access-control-allow-origin']).toEqual('*');
 
   server.listeningApp?.close();
 });
