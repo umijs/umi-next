@@ -62,7 +62,6 @@ export interface IApi extends PluginAPI {
   ConfigChangeType: typeof Service.prototype.ConfigChangeType;
   ServiceStage: typeof Service.prototype.ServiceStage;
   writeTmpFile: { (args: { path: string; content: string }): void };
-  relativeToTmp: typeof Service.prototype.relativeToTmp;
   registerGenerator: { (args: { key: string; Generator: Generator }): void };
   babelRegister: typeof Service.prototype.babelRegister;
 
