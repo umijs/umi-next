@@ -120,7 +120,6 @@ export default class Service extends EventEmitter {
     });
     this.relativeToTmp = path =>
       winPath(relative(this.paths.absTmpPath || '', path));
-    console.log('relativeToTmp', this.relativeToTmp);
 
     // setup initial presets and plugins
     const baseOpts = {
