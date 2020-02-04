@@ -1,6 +1,6 @@
 {
   "name": "@umijs/utils",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "@umijs/utils",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -40,7 +40,7 @@
     "@types/rimraf": "2.0.3",
     "@types/semver": "7.1.0",
     "@types/signale": "1.2.1",
-    "@types/yargs": "15.0.2",
+    "@types/yargs": "15.0.3",
     "@types/yargs-parser": "15.0.0",
     "address": "1.1.2",
     "chalk": "3.0.0",
