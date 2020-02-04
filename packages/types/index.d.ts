@@ -172,6 +172,7 @@ export interface IConfig extends IConfigCore {
   terserOptions?: object;
   theme?: object;
   ssr?: object;
+  [key: string]: any;
 }
 
 export { webpack };
