@@ -4,11 +4,18 @@ import { join } from 'path';
 import assert from 'assert';
 import cheerio from 'cheerio';
 import { IConfig, IRoute } from '..';
+
 import { prettier } from '@umijs/utils';
 
 interface IOpts {
   config: IConfig;
 }
+
+interface IScript extends Partial<HTMLScriptElement> {
+  content?: string;
+}
+
+type IScriptType = Array<IScript | string>;
 
 interface IMeta {
   [key: string]: string;
@@ -28,6 +35,36 @@ class Html {
     return `${publicPath}${file.charAt(0) === '/' ? file.slice(1) : file}`;
   }
 
+  getScriptsContent(scripts: IScriptType) {
+    return scripts
+      .map(script => {
+        // convert 'umi.js' => { content: 'umi.js' }
+        const { content, ...attrs } =
+          typeof script === 'string' ? { content: script } : script;
+        if (content && !attrs.src) {
+          const newAttrs = Object.keys(attrs).reduce((memo, key) => {
+            // @ts-ignore
+            return memo.concat(`${key}="${attrs[key]}"`);
+          }, []);
+          return [
+            `<script${newAttrs.length ? ' ' : ''}${newAttrs.join(' ')}>`,
+            content
+              .split('\n')
+              .map(line => `  ${line}`)
+              .join('\n'),
+            '</script>',
+          ].join('\n');
+        } else {
+          const newAttrs = Object.keys(attrs).reduce((memo, key) => {
+            // @ts-ignore
+            return memo.concat(`${key}="${attrs[key]}"`);
+          }, []);
+          return `<script ${newAttrs.join(' ')}></script>`;
+        }
+      })
+      .join('\n');
+  }
+
   getContent({
     route,
     metas = [],
@@ -38,8 +75,8 @@ class Html {
   }: {
     route: IRoute;
     metas?: IMeta[];
-    headJSFiles?: string[];
-    jsFiles?: string[];
+    headJSFiles?: IScriptType;
+    jsFiles?: IScriptType;
     cssFiles?: string[];
     tplPath?: string;
   }) {
@@ -64,6 +101,7 @@ class Html {
     });
 
     const $ = cheerio.load(html);
+    console.log('metas', metas);
 
     // metas
     metas.forEach(meta => {
@@ -99,12 +137,12 @@ class Html {
     }
 
     // js
-    headJSFiles.forEach(file => {
-      $('head').append(`<script src="${this.getAsset({ file })}"></script>`);
-    });
-    jsFiles.forEach(file => {
-      $('body').append(`<script src="${this.getAsset({ file })}"></script>`);
-    });
+    if (headJSFiles.length) {
+      $('head').append(this.getScriptsContent(headJSFiles));
+    }
+    if (jsFiles) {
+      $('body').append(this.getScriptsContent(jsFiles));
+    }
 
     html = $.html();
     html = prettier.format(html, {

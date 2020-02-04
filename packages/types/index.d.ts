@@ -143,6 +143,12 @@ export interface IApi extends PluginAPI {
 
 export { IRoute };
 
+interface IScript extends Partial<HTMLScriptElement> {
+  content?: string;
+}
+
+export type IScriptType = Array<IScript | string>;
+
 export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
@@ -172,6 +178,12 @@ export interface IConfig extends IConfigCore {
   terserOptions?: object;
   theme?: object;
   ssr?: object;
+  /** html tags */
+  links?: any[];
+  chunks?: any[];
+  metas?: any[];
+  scripts?: IScriptType;
+  headScripts?: IScriptType;
 }
 
 export { webpack };
