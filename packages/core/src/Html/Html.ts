@@ -38,9 +38,9 @@ class Html {
   getScriptsContent(scripts: IScriptType) {
     return scripts
       .map(script => {
-        // convert 'umi.js' => { content: 'umi.js' }
+        // convert 'umi.js' => { src: 'umi.js' }
         const { content, ...attrs } =
-          typeof script === 'string' ? { content: script } : script;
+          typeof script === 'string' ? { src: script, content: '' } : script;
         if (content && !attrs.src) {
           const newAttrs = Object.keys(attrs).reduce((memo, key) => {
             // @ts-ignore
