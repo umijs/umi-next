@@ -1,7 +1,7 @@
-import { join } from 'path';
+import { join, relative } from 'path';
 import { EventEmitter } from 'events';
 import assert from 'assert';
-import { BabelRegister, NodeEnv } from '@umijs/utils';
+import { BabelRegister, NodeEnv, winPath } from '@umijs/utils';
 import { AsyncSeriesWaterfallHook } from 'tapable';
 import { existsSync } from 'fs';
 import Logger from '../Logger/Logger';
@@ -83,6 +83,7 @@ export default class Service extends EventEmitter {
     absTmpPath?: string;
     aliasedTmpPath?: string;
   } = {};
+  relativeToTmp: (path: string) => string = path => path;
   env: string | undefined;
   ApplyPluginsType = ApplyPluginsType;
   ConfigChangeType = ConfigChangeType;
@@ -117,6 +118,8 @@ export default class Service extends EventEmitter {
       config: this.userConfig!,
       env: this.env,
     });
+    this.relativeToTmp = path =>
+      winPath(relative(this.paths.absTmpPath || '', path));
 
     // setup initial presets and plugins
     const baseOpts = {
@@ -238,6 +241,7 @@ export default class Service extends EventEmitter {
         if (
           [
             'applyPlugins',
+            'relativeToTmp',
             'ApplyPluginsType',
             'ConfigChangeType',
             'babelRegister',
