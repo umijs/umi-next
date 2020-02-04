@@ -1,7 +1,7 @@
 import { IApi, webpack } from '@umijs/types';
 
 export default function(api: IApi) {
-  const { Html } = api;
+  const { Html, service } = api;
 
   class HtmlWebpackPlugin {
     apply(compiler: webpack.Compiler) {
@@ -15,6 +15,7 @@ export default function(api: IApi) {
         // console.log(compilation.chunks as webpack.compilation.Chunk[]);
         const html = new Html({
           config: api.config as any,
+          service,
         });
         const content = html.getContent({
           route: { path: '/' },

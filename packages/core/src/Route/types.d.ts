@@ -5,4 +5,5 @@ export interface IRoute {
   routes?: IRoute[];
   __toMerge?: boolean;
   __isDynamic?: boolean;
+  document?: string;
 }

@@ -8,6 +8,7 @@ export default ({ api }: { api: IApi }) => {
     function sendHtml() {
       const html = new api.Html({
         config: api.config as any,
+        service: api.service,
       });
       const content = html.getContent({
         route: { path: req.path },
