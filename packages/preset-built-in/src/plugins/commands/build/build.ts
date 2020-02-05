@@ -4,7 +4,6 @@ import generateFiles from '../generateFiles';
 
 export default function(api: IApi) {
   const {
-    cwd,
     paths,
     utils: { rimraf, chalk },
   } = api;
