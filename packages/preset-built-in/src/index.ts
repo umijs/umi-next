@@ -38,6 +38,7 @@ export default function() {
       require.resolve('./plugins/features/targets'),
       require.resolve('./plugins/features/terserOptions'),
       require.resolve('./plugins/features/theme'),
+      require.resolve('./plugins/features/html/headScripts'),
 
       // commands
       require.resolve('./plugins/commands/version/version'),

@@ -11,13 +11,13 @@ export default function(api: IApi) {
           // console.log(module, file);
         });
       });
-      compiler.hooks.emit.tap(key, compilation => {
+      compiler.hooks.emit.tap(key, async compilation => {
         // console.log(compilation.chunks as webpack.compilation.Chunk[]);
         const html = new Html({
           config: api.config as any,
           service,
         });
-        const content = html.getContent({
+        const content = await html.getContent({
           route: { path: '/' },
           cssFiles: ['umi.css'],
           jsFiles: ['umi.js'],

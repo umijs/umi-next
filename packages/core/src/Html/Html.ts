@@ -4,11 +4,11 @@ import { join } from 'path';
 import assert from 'assert';
 import cheerio from 'cheerio';
 import { IConfig, IRoute, Service } from '..';
-import { prettier } from '@umijs/utils';
+import { prettier, lodash } from '@umijs/utils';
 
 interface IOpts {
   config: IConfig;
-  service: Service;
+  service?: Service;
 }
 
 interface IMeta {
@@ -17,23 +17,25 @@ interface IMeta {
 
 type IModifyHtml<T = string> = (memo: T[], opts: { route: IRoute }) => T[];
 
+interface IScript extends Partial<HTMLScriptElement> {
+  content?: string;
+}
+
+export type ScriptConfig = Array<IScript | string>;
+
 interface IGetContentArgs {
   route: IRoute;
   metas?: IMeta[];
   headJSFiles?: string[];
+  headScripts?: ScriptConfig;
   jsFiles?: string[];
   cssFiles?: string[];
   tplPath?: string;
-  modifyHeadScripts?: IModifyHtml;
-  modifyScripts?: IModifyHtml;
-  modifyLinks?: IModifyHtml;
-  modifyMetas?: IModifyHtml<IMeta>;
-  modifyStyles?: IModifyHtml;
 }
 
 class Html {
   config: IConfig;
-  service: Service;
+  service?: Service;
   constructor(opts: IOpts) {
     this.config = opts.config;
     this.service = opts.service;
@@ -66,6 +68,16 @@ class Html {
     return join(__dirname, 'document.ejs');
   }
 
+  async modifyHeadScripts(memo: any, opts = {}): Promise<any[]> {
+    const { route } = opts as any;
+    return await this.service?.applyPlugins({
+      key: 'addHTMLHeadScript',
+      type: this.service.ApplyPluginsType.add,
+      initialValue: memo,
+      args: { route },
+    });
+  }
+
   getAsset({ file }: { file: string }) {
     if (/^https?:\/\//.test(file)) {
       return file;
@@ -74,20 +86,43 @@ class Html {
     return `${publicPath}${file.charAt(0) === '/' ? file.slice(1) : file}`;
   }
 
-  getContent(args: IGetContentArgs): string {
+  getScriptsContent(scripts: IScript[]) {
+    return scripts
+      .map((script: any) => {
+        const { content, ...attrs } = script;
+        if (content && !attrs.src) {
+          const newAttrs = Object.keys(attrs).reduce(
+            (memo: any, key: string) => {
+              return [...memo, `${key}="${attrs[key]}"`];
+            },
+            [],
+          );
+          return [
+            `<script${newAttrs.length ? ' ' : ''}${newAttrs.join(' ')}>`,
+            content
+              .split('\n')
+              .map((line: any) => `  ${line}`)
+              .join('\n'),
+            '</script>',
+          ].join('\n');
+        } else {
+          const newAttrs = Object.keys(attrs).reduce((memo: any, key: any) => {
+            return [...memo, `${key}="${attrs[key]}"`];
+          }, []);
+          return `<script ${newAttrs.join(' ')}></script>`;
+        }
+      })
+      .join('\n');
+  }
+
+  async getContent(args: IGetContentArgs): Promise<string> {
+    const { route, tplPath = '' } = args;
     let {
-      route,
       metas = [],
       headJSFiles = [],
+      headScripts = [],
       jsFiles = [],
       cssFiles = [],
-      tplPath = '',
-      // TODO
-      modifyHeadScripts,
-      modifyLinks,
-      modifyScripts,
-      modifyMetas,
-      modifyStyles,
     } = args;
     const { config } = this;
 
@@ -105,15 +140,6 @@ class Html {
     });
 
     const $ = cheerio.load(html);
-
-    if (modifyMetas) metas = modifyMetas(metas, { route });
-    if (modifyLinks) cssFiles = modifyLinks(cssFiles, { route });
-    // TODO: 支持 ['umi.js', `console.log('')`, '//g.alicdn.com/umi.js']
-    // TODO: 以及 [{ src: 'umi.js' }, { content: `console.log()` }, { src: '//' }]
-    if (modifyScripts) jsFiles = modifyScripts(jsFiles, { route });
-    if (modifyHeadScripts) {
-      headJSFiles = modifyHeadScripts(headJSFiles, { route });
-    }
 
     // metas
     metas.forEach(meta => {
@@ -148,7 +174,14 @@ class Html {
       bodyEl.append(`<div id="${mountElementId}"></div>`);
     }
 
+    if (this.service) {
+      headScripts = await this.modifyHeadScripts(headScripts, { route });
+    }
+
     // js
+    if (headScripts.length) {
+      $('head').append(this.getScriptsContent(headScripts));
+    }
     headJSFiles.forEach(file => {
       $('head').append(`<script src="${this.getAsset({ file })}"></script>`);
     });

@@ -16,6 +16,12 @@ import {
   RequestHandler,
 } from 'express';
 
+export interface IScript extends Partial<HTMLScriptElement> {
+  content?: string;
+}
+
+export type ScriptConfig = Array<IScript | string>;
+
 interface IEvent<T> {
   (fn: { (args: T): void }): void;
 }
@@ -115,6 +121,7 @@ export interface IApi extends PluginAPI {
   modifyBundleImplementor: IModify<any, {}>;
 
   // ApplyPluginType.add
+  addHTMLHeadScript: IAdd<{ route?: IRoute }, ScriptConfig>;
   addUmiExports: IAdd<
     null,
     {
@@ -147,6 +154,7 @@ export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
   };
+  headScripts?: any[];
   cssLoader?: object;
   define?: {
     [key: string]: any;
