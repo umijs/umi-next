@@ -1,7 +1,7 @@
 import { IApi } from '@umijs/types';
-import getScripts, { ScriptConfig } from '../utils/getScripts';
+import { getScripts } from './utils';
 
-export default function(api: IApi, option: ScriptConfig) {
+export default function(api: IApi) {
   // api.onOptionChange(newOption => {
   //   option = newOption;
   //   api.rebuildHTML();
@@ -10,9 +10,14 @@ export default function(api: IApi, option: ScriptConfig) {
 
   api.describe({
     key: 'scripts',
+    config: {
+      schema(joi) {
+        return joi.array();
+      },
+    },
   });
 
   api.addHTMLScript(() => {
-    return getScripts(option);
+    return getScripts(api.config?.scripts || []);
   });
 }

@@ -9,6 +9,11 @@ export default function(api: IApi, option) {
 
   api.describe({
     key: 'metas',
+    config: {
+      schema(joi) {
+        return joi.array();
+      },
+    },
   });
 
   (api as any).addHTMLMeta(() => {

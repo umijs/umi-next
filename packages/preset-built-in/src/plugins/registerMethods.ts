@@ -17,6 +17,7 @@ export default function(api: IApi) {
     'addEntryCodeAhead',
     'addEntryCode',
     'addHTMLHeadScript',
+    'addHTMLScript',
     'addTmpGenerateWatcherPaths',
     'modifyBundler',
     'modifyBundleConfigOpts',

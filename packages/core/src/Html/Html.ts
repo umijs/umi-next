@@ -29,6 +29,7 @@ interface IGetContentArgs {
   headJSFiles?: string[];
   headScripts?: ScriptConfig;
   jsFiles?: string[];
+  scripts?: ScriptConfig;
   cssFiles?: string[];
   tplPath?: string;
 }
@@ -66,6 +67,16 @@ class Html {
     }
 
     return join(__dirname, 'document.ejs');
+  }
+
+  async modifyScripts(memo: any, opts = {}): Promise<any[]> {
+    const { route } = opts as any;
+    return await this.service?.applyPlugins({
+      key: 'addHTMLScript',
+      type: this.service.ApplyPluginsType.add,
+      initialValue: memo,
+      args: { route },
+    });
   }
 
   async modifyHeadScripts(memo: any, opts = {}): Promise<any[]> {
@@ -121,6 +132,7 @@ class Html {
       metas = [],
       headJSFiles = [],
       headScripts = [],
+      scripts = [],
       jsFiles = [],
       cssFiles = [],
     } = args;
@@ -176,6 +188,7 @@ class Html {
 
     if (this.service) {
       headScripts = await this.modifyHeadScripts(headScripts, { route });
+      scripts = await this.modifyScripts(scripts, { route });
     }
 
     // js
@@ -188,6 +201,9 @@ class Html {
     jsFiles.forEach(file => {
       $('body').append(`<script src="${this.getAsset({ file })}"></script>`);
     });
+    if (scripts.length) {
+      $('body').append(this.getScriptsContent(scripts));
+    }
 
     html = $.html();
     html = prettier.format(html, {

@@ -122,6 +122,7 @@ export interface IApi extends PluginAPI {
 
   // ApplyPluginType.add
   addHTMLHeadScript: IAdd<{ route?: IRoute }, ScriptConfig>;
+  addHTMLScript: IAdd<{ route?: IRoute }, ScriptConfig>;
   addUmiExports: IAdd<
     null,
     {
@@ -154,7 +155,8 @@ export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
   };
-  headScripts?: any[];
+  headScripts?: ScriptConfig;
+  scripts?: ScriptConfig;
   cssLoader?: object;
   define?: {
     [key: string]: any;
