@@ -60,11 +60,8 @@ describe('createMiddleware', () => {
         }
       },
     });
-    const defaultPort = await portfinder.getPortPromise({
-      port: 8000,
-    });
     const result = await server.listen({
-      port: defaultPort,
+      port: 8001,
       hostname: 'localhost',
     });
     port = result.port;

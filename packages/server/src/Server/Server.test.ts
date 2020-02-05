@@ -54,11 +54,8 @@ test('normal', async () => {
       }
     },
   });
-  const serverPort = await portfinder.getPortPromise({
-    port: 3000,
-  });
   const { port, hostname } = await server.listen({
-    port: serverPort,
+    port: 3000,
     hostname: 'localhost',
   });
   const { body: compilerBody } = await got(
@@ -129,11 +126,8 @@ test('compress', async () => {
       }
     },
   });
-  const serverPort = await portfinder.getPortPromise({
-    port: 3003,
-  });
   const { port, hostname } = await server.listen({
-    port: serverPort,
+    port: 3003,
     hostname: 'localhost',
   });
   const { body: compilerBody, headers } = await got(
@@ -164,11 +158,8 @@ test('headers', async () => {
       }
     },
   });
-  const serverPort = await portfinder.getPortPromise({
-    port: 3004,
-  });
   const { port, hostname } = await server.listen({
-    port: serverPort,
+    port: 3004,
     hostname: 'localhost',
   });
   await delay(100);
@@ -195,11 +186,8 @@ test('https', async () => {
       }
     },
   });
-  const serverPort = await portfinder.getPortPromise({
-    port: 3005,
-  });
   const { port, hostname } = await server.listen({
-    port: serverPort,
+    port: 3005,
     hostname: 'localhost',
   });
   const { body: compilerBody, headers } = await got(
