@@ -10,7 +10,7 @@ export default function(api: IApi) {
     },
   });
 
-  api.addHTMLLink(() => {
+  api.addHTMLLinks(() => {
     return api.config?.links || [];
   });
 }

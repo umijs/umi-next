@@ -122,11 +122,11 @@ export interface IApi extends PluginAPI {
   modifyBundleImplementor: IModify<any, {}>;
 
   // ApplyPluginType.add
-  addHTMLHeadScript: IAdd<{ route?: IRoute }, IScriptConfig>;
-  addHTMLScript: IAdd<{ route?: IRoute }, IScriptConfig>;
-  addHTMLMeta: IAdd<{ route?: IRoute }, IHtmlTag[]>;
-  addHTMLLink: IAdd<{ route?: IRoute }, IHtmlTag[]>;
-  addHTMLStyle: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLHeadScripts: IAdd<{ route?: IRoute }, IScriptConfig>;
+  addHTMLScripts: IAdd<{ route?: IRoute }, IScriptConfig>;
+  addHTMLMetas: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLLinks: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLStyles: IAdd<{ route?: IRoute }, IHtmlTag[]>;
   addUmiExports: IAdd<
     null,
     {

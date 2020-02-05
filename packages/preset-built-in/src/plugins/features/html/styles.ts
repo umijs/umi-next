@@ -10,7 +10,7 @@ export default function(api: IApi) {
     },
   });
 
-  api.addHTMLStyle(() => {
+  api.addHTMLStyles(() => {
     return api.config?.styles || [];
   });
 }

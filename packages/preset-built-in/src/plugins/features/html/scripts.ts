@@ -11,7 +11,7 @@ export default function(api: IApi) {
     },
   });
 
-  api.addHTMLScript(() => {
+  api.addHTMLScripts(() => {
     return getScripts(api.config?.scripts || []);
   });
 }

@@ -80,7 +80,7 @@ class Html {
   async modifyStyles(memo: IStyle[], opts = {}): Promise<IStyle[]> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
-      key: 'addHTMLStyle',
+      key: 'addHTMLStyles',
       type: this.service.ApplyPluginsType.add,
       initialValue: memo,
       args: { route },
@@ -90,7 +90,7 @@ class Html {
   async modifyLinks(memo: ILink[], opts = {}): Promise<ILink[]> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
-      key: 'addHTMLLink',
+      key: 'addHTMLLinks',
       type: this.service.ApplyPluginsType.add,
       initialValue: memo,
       args: { route },
@@ -100,7 +100,7 @@ class Html {
   async modifyMetas(memo: IMeta[], opts = {}): Promise<IMeta[]> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
-      key: 'addHTMLMeta',
+      key: 'addHTMLMetas',
       type: this.service.ApplyPluginsType.add,
       initialValue: memo,
       args: { route },
@@ -110,7 +110,7 @@ class Html {
   async modifyScripts(memo: IScriptConfig, opts = {}): Promise<IScriptConfig> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
-      key: 'addHTMLScript',
+      key: 'addHTMLScripts',
       type: this.service.ApplyPluginsType.add,
       initialValue: memo,
       args: { route },
@@ -123,7 +123,7 @@ class Html {
   ): Promise<IScriptConfig> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
-      key: 'addHTMLHeadScript',
+      key: 'addHTMLHeadScripts',
       type: this.service.ApplyPluginsType.add,
       initialValue: memo,
       args: { route },

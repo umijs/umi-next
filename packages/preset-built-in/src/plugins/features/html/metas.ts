@@ -10,7 +10,7 @@ export default function(api: IApi) {
     },
   });
 
-  api.addHTMLMeta(() => {
+  api.addHTMLMetas(() => {
     return api.config?.metas || [];
   });
 }
