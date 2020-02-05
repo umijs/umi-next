@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 import { Service } from '@umijs/core';
+import portfinder from 'portfinder';
 import { Server } from '@umijs/server';
 import { winPath } from '@umijs/utils';
 import got from 'got';
@@ -59,8 +60,11 @@ describe('createMiddleware', () => {
         }
       },
     });
-    const result = await server.listen({
+    const defaultPort = await portfinder.getPortPromise({
       port: 8000,
+    });
+    const result = await server.listen({
+      port: defaultPort,
       hostname: 'localhost',
     });
     port = result.port;
