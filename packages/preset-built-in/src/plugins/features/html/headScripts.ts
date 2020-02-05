@@ -11,12 +11,6 @@ export default function(api: IApi) {
     },
   });
 
-  // api.onOptionChange(newOption => {
-  //   option = newOption;
-  //   api.rebuildHTML();
-  //   api.refreshBrowser();
-  // });
-
   api.addHTMLHeadScript(() => {
     return getScripts(api.config?.headScripts || []);
   });
