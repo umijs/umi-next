@@ -1,15 +1,13 @@
 import { IApi, NextFunction, Request, Response } from '@umijs/types';
 import { extname, join } from 'path';
+import { getHtmlGenerator } from '../buildDevUtils';
 
 const ASSET_EXTNAMES = ['.ico', '.png', '.jpg', '.jpeg', '.gif', '.svg'];
 
 export default ({ api }: { api: IApi }) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     async function sendHtml() {
-      const html = new api.Html({
-        config: api.config as any,
-        service: api.service,
-      });
+      const html = getHtmlGenerator({ api });
       const content = await html.getContent({
         route: { path: req.path },
         cssFiles: ['umi.css'],

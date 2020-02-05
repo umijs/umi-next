@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi, IRoute, Html } from '@umijs/types';
 import { Bundler as DefaultBundler, ConfigType } from '@umijs/bundler-webpack';
 import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
@@ -120,5 +120,50 @@ export function cleanTmpPathExceptCache({
   readdirSync(absTmpPath).forEach(file => {
     if (file === `.cache`) return;
     rimraf.sync(join(absTmpPath, file));
+  });
+}
+
+export function getHtmlGenerator({
+  api,
+}: {
+  api: IApi;
+}): InstanceType<typeof Html> {
+  const getDocumentTplPath = () => {
+    const { absPagesPath } = api.paths || {};
+    const absPageDocumentPath = join(absPagesPath || '', 'document.ejs');
+
+    // TODO: route.document ejs
+    // if (route.document) {
+    //   const docPath = join(cwd || '', route.document);
+    //   assert(existsSync(docPath), `document ${route.document} don't exists.`);
+    //   return docPath;
+    // }
+
+    if (existsSync(absPageDocumentPath)) {
+      return absPageDocumentPath;
+    }
+    return '';
+  };
+
+  const addHTMLFactory = (key: string): any => {
+    return (memo: any[], args: { route: IRoute }) =>
+      api.applyPlugins({
+        key,
+        type: api.ApplyPluginsType.add,
+        initialValue: memo,
+        args,
+      });
+  };
+
+  const tplPath = getDocumentTplPath();
+
+  return new api.Html({
+    config: api.config,
+    tplPath,
+    addHTMLHeadScripts: addHTMLFactory('addHTMLHeadScripts'),
+    addHTMLLinks: addHTMLFactory('addHTMLLinks'),
+    addHTMLMetas: addHTMLFactory('addHTMLMetas'),
+    addHTMLScripts: addHTMLFactory('addHTMLScripts'),
+    addHTMLStyles: addHTMLFactory('addHTMLStyles'),
   });
 }

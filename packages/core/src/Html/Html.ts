@@ -3,16 +3,25 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import assert from 'assert';
 import cheerio from 'cheerio';
-import { IConfig, IRoute, Service } from '..';
+import { IConfig, IRoute } from '..';
 import { prettier } from '@umijs/utils';
+
+interface IHTMLTag {
+  [key: string]: string;
+}
+
+interface IAddHTML<T> {
+  (memo: T, args: { route?: IRoute }): Promise<T>;
+}
 
 interface IOpts {
   config: IConfig;
-  service?: Service;
-}
-
-interface IMeta {
-  [key: string]: string;
+  tplPath?: string;
+  addHTMLHeadScripts?: IAddHTML<IScriptConfig>;
+  addHTMLScripts?: IAddHTML<IScriptConfig>;
+  addHTMLMetas?: IAddHTML<IHTMLTag[]>;
+  addHTMLLinks?: IAddHTML<IHTMLTag[]>;
+  addHTMLStyles?: IAddHTML<IHTMLTag[]>;
 }
 
 interface ILink {
@@ -29,105 +38,39 @@ interface IScript extends Partial<HTMLScriptElement> {
 
 export type IScriptConfig = Array<IScript | string>;
 
-interface IGetContentArgs {
-  route: IRoute;
-  metas?: IMeta[];
+export interface IHtmlConfig {
+  metas?: IHTMLTag[];
   links?: ILink[];
   styles?: IStyle[];
-  headJSFiles?: string[];
   headScripts?: IScriptConfig;
-  jsFiles?: string[];
   scripts?: IScriptConfig;
+}
+
+interface IGetContentArgs extends IHtmlConfig {
+  route: IRoute;
+  headJSFiles?: string[];
+  jsFiles?: string[];
   cssFiles?: string[];
   tplPath?: string;
 }
 
 class Html {
   config: IConfig;
-  service?: Service;
+  tplPath?: string;
+  addHTMLHeadScripts?: IAddHTML<IScriptConfig>;
+  addHTMLScripts?: IAddHTML<IScriptConfig>;
+  addHTMLMetas?: IAddHTML<IHTMLTag[]>;
+  addHTMLLinks?: IAddHTML<IHTMLTag[]>;
+  addHTMLStyles?: IAddHTML<IHTMLTag[]>;
+
   constructor(opts: IOpts) {
     this.config = opts.config;
-    this.service = opts.service;
-  }
-
-  // 获取顺序：
-  // 传入的 tplPath => route.document > pages/document.ejs > built-in document.ejs
-  getDocumentTplPath({ route, tplPath }: { route: IRoute; tplPath: string }) {
-    const { cwd, absPagesPath } = this.service?.paths || {};
-    const absPageDocumentPath = join(absPagesPath || '', 'document.ejs');
-
-    if (tplPath) {
-      assert(
-        existsSync(tplPath),
-        `getContent() failed, tplPath of ${tplPath} not exists.`,
-      );
-      return tplPath;
-    }
-
-    if (route.document) {
-      const docPath = join(cwd || '', route.document);
-      assert(existsSync(docPath), `document ${route.document} don't exists.`);
-      return docPath;
-    }
-
-    if (existsSync(absPageDocumentPath)) {
-      return absPageDocumentPath;
-    }
-
-    return join(__dirname, 'document.ejs');
-  }
-
-  async modifyStyles(memo: IStyle[], opts = {}): Promise<IStyle[]> {
-    const { route } = opts as any;
-    return await this.service?.applyPlugins({
-      key: 'addHTMLStyles',
-      type: this.service.ApplyPluginsType.add,
-      initialValue: memo,
-      args: { route },
-    });
-  }
-
-  async modifyLinks(memo: ILink[], opts = {}): Promise<ILink[]> {
-    const { route } = opts as any;
-    return await this.service?.applyPlugins({
-      key: 'addHTMLLinks',
-      type: this.service.ApplyPluginsType.add,
-      initialValue: memo,
-      args: { route },
-    });
-  }
-
-  async modifyMetas(memo: IMeta[], opts = {}): Promise<IMeta[]> {
-    const { route } = opts as any;
-    return await this.service?.applyPlugins({
-      key: 'addHTMLMetas',
-      type: this.service.ApplyPluginsType.add,
-      initialValue: memo,
-      args: { route },
-    });
-  }
-
-  async modifyScripts(memo: IScriptConfig, opts = {}): Promise<IScriptConfig> {
-    const { route } = opts as any;
-    return await this.service?.applyPlugins({
-      key: 'addHTMLScripts',
-      type: this.service.ApplyPluginsType.add,
-      initialValue: memo,
-      args: { route },
-    });
-  }
-
-  async modifyHeadScripts(
-    memo: IScriptConfig,
-    opts = {},
-  ): Promise<IScriptConfig> {
-    const { route } = opts as any;
-    return await this.service?.applyPlugins({
-      key: 'addHTMLHeadScripts',
-      type: this.service.ApplyPluginsType.add,
-      initialValue: memo,
-      args: { route },
-    });
+    this.tplPath = opts.tplPath;
+    this.addHTMLHeadScripts = opts.addHTMLHeadScripts;
+    this.addHTMLScripts = opts.addHTMLScripts;
+    this.addHTMLMetas = opts.addHTMLMetas;
+    this.addHTMLLinks = opts.addHTMLLinks;
+    this.addHTMLStyles = opts.addHTMLStyles;
   }
 
   getAsset({ file }: { file: string }) {
@@ -168,7 +111,7 @@ class Html {
   }
 
   async getContent(args: IGetContentArgs): Promise<string> {
-    const { route, tplPath = '' } = args;
+    const { route, tplPath = this.tplPath } = args;
     let {
       metas = [],
       links = [],
@@ -180,9 +123,14 @@ class Html {
       cssFiles = [],
     } = args;
     const { config } = this;
-
+    if (tplPath) {
+      assert(
+        existsSync(tplPath),
+        `getContent() failed, tplPath of ${tplPath} not exists.`,
+      );
+    }
     const tpl = readFileSync(
-      this.getDocumentTplPath({ tplPath, route }),
+      tplPath || join(__dirname, 'document.ejs'),
       'utf-8',
     );
     const context = {
@@ -196,12 +144,20 @@ class Html {
 
     const $ = cheerio.load(html);
 
-    if (this.service) {
-      metas = await this.modifyMetas(metas, { route });
-      links = await this.modifyLinks(links, { route });
-      headScripts = await this.modifyHeadScripts(headScripts, { route });
-      scripts = await this.modifyScripts(scripts, { route });
-      styles = await this.modifyStyles(styles, { route });
+    if (this.addHTMLMetas) {
+      metas = await this.addHTMLMetas(metas, { route });
+    }
+    if (this.addHTMLLinks) {
+      links = await this.addHTMLLinks(links, { route });
+    }
+    if (this.addHTMLHeadScripts) {
+      headScripts = await this.addHTMLHeadScripts(headScripts, { route });
+    }
+    if (this.addHTMLScripts) {
+      scripts = await this.addHTMLScripts(scripts, { route });
+    }
+    if (this.addHTMLStyles) {
+      styles = await this.addHTMLStyles(styles, { route });
     }
 
     // metas

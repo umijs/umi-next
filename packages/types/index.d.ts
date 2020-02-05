@@ -2,6 +2,7 @@ import {
   IConfig as IConfigCore,
   IRoute,
   PluginAPI,
+  Html,
   Service,
 } from '@umijs/core';
 import { Server, IServerOpts } from '@umijs/server';
@@ -196,4 +197,5 @@ export interface IConfig extends IConfigCore {
 }
 
 export { webpack };
+export { Html };
 export { Request, Express, Response, NextFunction, RequestHandler };
