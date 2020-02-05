@@ -91,6 +91,30 @@ test('normal', async () => {
   server.listeningApp?.close();
 });
 
+test('port', async () => {
+  const server = new Server({
+    compilerMiddleware: (req, res, next) => {
+      if (req.path === '/compiler') {
+        res.end('compiler');
+      } else {
+        next();
+      }
+    },
+  });
+  const { port, hostname } = await server.listen({
+    // not conflict
+    port: 3899,
+    hostname: 'localhost',
+  });
+  const { body: compilerBody } = await got(
+    `http://${hostname}:${port}/compiler`,
+  );
+  expect(compilerBody).toEqual('compiler');
+  expect(port).toEqual(3899);
+
+  server.listeningApp?.close();
+});
+
 test('compress', async () => {
   const server = new Server({
     compress: { threshold: 0 },
