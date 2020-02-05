@@ -165,6 +165,7 @@ export interface IConfig extends IConfigCore {
   metas?: IHtmlTag[];
   headScripts?: IScriptConfig;
   scripts?: IScriptConfig;
+  chainWebpack?: Function;
   cssLoader?: object;
   define?: {
     [key: string]: any;
