@@ -116,6 +116,36 @@ test('getContent with opts.headJSFiles', async () => {
   );
 });
 
+test('getContent with scripts', async () => {
+  const html = new Html({
+    config: {},
+  });
+  const content = await html.getContent({
+    route: { path: '/' },
+    headScripts: [{ content: 'console.log(123);' }],
+    scripts: [{ src: '//a.ali.com/a.js' }],
+  });
+  expect(content.split('</head>')[0]).toContain('console.log(123);');
+  expect(content.split('<body>')[1]).toContain(
+    '<script src="//a.ali.com/a.js"></script>',
+  );
+});
+
+test('getContent with css', async () => {
+  const html = new Html({
+    config: {},
+  });
+  const content = await html.getContent({
+    route: { path: '/' },
+    links: [{ rel: 'stylesheet', href: '//a.alicdn.com/a.css' }],
+    styles: [{ content: '.a{color: red;}' }],
+  });
+  expect(content.split('</head>')[0]).toContain(
+    '<link rel="stylesheet" href="//a.alicdn.com/a.css" />',
+  );
+  expect(content.split('</head>')[0]).toContain('color: red;');
+});
+
 test('getAssets', () => {
   const html = new Html({
     config: {
