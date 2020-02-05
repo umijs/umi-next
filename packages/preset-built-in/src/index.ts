@@ -40,7 +40,10 @@ export default function() {
       require.resolve('./plugins/features/theme'),
 
       // html
-      require.resolve('./plugins/features/title'),
+      require.resolve('./plugins/features/html/title'),
+      require.resolve('./plugins/features/html/links'),
+      require.resolve('./plugins/features/html/metas'),
+      require.resolve('./plugins/features/html/styles'),
       require.resolve('./plugins/features/html/headScripts'),
       require.resolve('./plugins/features/html/scripts'),
 

@@ -1,8 +1,8 @@
 import { lodash } from '@umijs/utils';
-import { ScriptConfig } from '@umijs/types';
+import { IScriptConfig } from '@umijs/types';
 
 // 方便测试
-export const getScripts = (option: ScriptConfig): ScriptConfig => {
+export const getScripts = (option: IScriptConfig): IScriptConfig => {
   if (Array.isArray(option) && option.length > 0) {
     return option
       .filter(script => !lodash.isEmpty(script))

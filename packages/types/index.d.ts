@@ -20,7 +20,8 @@ export interface IScript extends Partial<HTMLScriptElement> {
   content?: string;
 }
 
-export type ScriptConfig = Array<IScript | string>;
+export type IScriptConfig = Array<IScript | string>;
+export type IHtmlTag = { [key: string]: string };
 
 interface IEvent<T> {
   (fn: { (args: T): void }): void;
@@ -121,8 +122,11 @@ export interface IApi extends PluginAPI {
   modifyBundleImplementor: IModify<any, {}>;
 
   // ApplyPluginType.add
-  addHTMLHeadScript: IAdd<{ route?: IRoute }, ScriptConfig>;
-  addHTMLScript: IAdd<{ route?: IRoute }, ScriptConfig>;
+  addHTMLHeadScript: IAdd<{ route?: IRoute }, IScriptConfig>;
+  addHTMLScript: IAdd<{ route?: IRoute }, IScriptConfig>;
+  addHTMLMeta: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLLink: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLStyle: IAdd<{ route?: IRoute }, IHtmlTag[]>;
   addUmiExports: IAdd<
     null,
     {
@@ -155,8 +159,11 @@ export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
   };
-  headScripts?: ScriptConfig;
-  scripts?: ScriptConfig;
+  links?: IHtmlTag[];
+  styles?: IHtmlTag[];
+  metas?: IHtmlTag[];
+  headScripts?: IScriptConfig;
+  scripts?: IScriptConfig;
   cssLoader?: object;
   define?: {
     [key: string]: any;

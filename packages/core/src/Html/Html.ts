@@ -4,7 +4,7 @@ import { join } from 'path';
 import assert from 'assert';
 import cheerio from 'cheerio';
 import { IConfig, IRoute, Service } from '..';
-import { prettier, lodash } from '@umijs/utils';
+import { prettier } from '@umijs/utils';
 
 interface IOpts {
   config: IConfig;
@@ -15,21 +15,29 @@ interface IMeta {
   [key: string]: string;
 }
 
-type IModifyHtml<T = string> = (memo: T[], opts: { route: IRoute }) => T[];
+interface ILink {
+  [key: string]: string;
+}
+
+interface IStyle {
+  [key: string]: string;
+}
 
 interface IScript extends Partial<HTMLScriptElement> {
   content?: string;
 }
 
-export type ScriptConfig = Array<IScript | string>;
+export type IScriptConfig = Array<IScript | string>;
 
 interface IGetContentArgs {
   route: IRoute;
   metas?: IMeta[];
+  links?: ILink[];
+  styles?: IStyle[];
   headJSFiles?: string[];
-  headScripts?: ScriptConfig;
+  headScripts?: IScriptConfig;
   jsFiles?: string[];
-  scripts?: ScriptConfig;
+  scripts?: IScriptConfig;
   cssFiles?: string[];
   tplPath?: string;
 }
@@ -69,7 +77,37 @@ class Html {
     return join(__dirname, 'document.ejs');
   }
 
-  async modifyScripts(memo: any, opts = {}): Promise<any[]> {
+  async modifyStyles(memo: IStyle[], opts = {}): Promise<IStyle[]> {
+    const { route } = opts as any;
+    return await this.service?.applyPlugins({
+      key: 'addHTMLStyle',
+      type: this.service.ApplyPluginsType.add,
+      initialValue: memo,
+      args: { route },
+    });
+  }
+
+  async modifyLinks(memo: ILink[], opts = {}): Promise<ILink[]> {
+    const { route } = opts as any;
+    return await this.service?.applyPlugins({
+      key: 'addHTMLLink',
+      type: this.service.ApplyPluginsType.add,
+      initialValue: memo,
+      args: { route },
+    });
+  }
+
+  async modifyMetas(memo: IMeta[], opts = {}): Promise<IMeta[]> {
+    const { route } = opts as any;
+    return await this.service?.applyPlugins({
+      key: 'addHTMLMeta',
+      type: this.service.ApplyPluginsType.add,
+      initialValue: memo,
+      args: { route },
+    });
+  }
+
+  async modifyScripts(memo: IScriptConfig, opts = {}): Promise<IScriptConfig> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
       key: 'addHTMLScript',
@@ -79,7 +117,10 @@ class Html {
     });
   }
 
-  async modifyHeadScripts(memo: any, opts = {}): Promise<any[]> {
+  async modifyHeadScripts(
+    memo: IScriptConfig,
+    opts = {},
+  ): Promise<IScriptConfig> {
     const { route } = opts as any;
     return await this.service?.applyPlugins({
       key: 'addHTMLHeadScript',
@@ -130,6 +171,8 @@ class Html {
     const { route, tplPath = '' } = args;
     let {
       metas = [],
+      links = [],
+      styles = [],
       headJSFiles = [],
       headScripts = [],
       scripts = [],
@@ -153,6 +196,14 @@ class Html {
 
     const $ = cheerio.load(html);
 
+    if (this.service) {
+      metas = await this.modifyMetas(metas, { route });
+      links = await this.modifyLinks(links, { route });
+      headScripts = await this.modifyHeadScripts(headScripts, { route });
+      scripts = await this.modifyScripts(scripts, { route });
+      styles = await this.modifyStyles(styles, { route });
+    }
+
     // metas
     metas.forEach(meta => {
       $('head').append(
@@ -171,6 +222,37 @@ class Html {
       $('head').append('<title>foo</title>');
     }
 
+    // links
+    links.forEach(link => {
+      $('head').append(
+        [
+          '<link',
+          ...Object.keys(link).reduce((memo, key) => {
+            return memo.concat(`${key}="${link[key]}"`);
+          }, [] as string[]),
+          '/>',
+        ].join(' '),
+      );
+    });
+
+    // styles
+    styles.forEach(style => {
+      const { content, ...attrs } = style;
+      const newAttrs = Object.keys(attrs).reduce((memo, key) => {
+        return memo.concat(`${key}="${attrs[key]}"`);
+      }, [] as string[]);
+      $('head').append(
+        [
+          `<style${newAttrs.length ? ' ' : ''}${newAttrs.join(' ')}>`,
+          content
+            .split('\n')
+            .map(line => `  ${line}`)
+            .join('\n'),
+          '</style>',
+        ].join('\n'),
+      );
+    });
+
     // css
     cssFiles.forEach(file => {
       $('head').append(
@@ -184,11 +266,6 @@ class Html {
       const bodyEl = $('body');
       assert(bodyEl.length, `<body> not found in html template.`);
       bodyEl.append(`<div id="${mountElementId}"></div>`);
-    }
-
-    if (this.service) {
-      headScripts = await this.modifyHeadScripts(headScripts, { route });
-      scripts = await this.modifyScripts(scripts, { route });
     }
 
     // js

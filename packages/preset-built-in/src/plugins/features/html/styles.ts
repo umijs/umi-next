@@ -8,7 +8,7 @@ export default function(api: IApi) {
   // });
 
   api.describe({
-    key: 'metas',
+    key: 'styles',
     config: {
       schema(joi) {
         return joi.array();
@@ -16,7 +16,7 @@ export default function(api: IApi) {
     },
   });
 
-  api.addHTMLMeta(() => {
-    return api.config?.metas || [];
+  api.addHTMLStyle(() => {
+    return api.config?.styles || [];
   });
 }

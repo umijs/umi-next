@@ -16,7 +16,7 @@ export default function(api: IApi) {
     },
   });
 
-  (api as any).addHTMLLink(() => {
-    return [];
+  api.addHTMLLink(() => {
+    return api.config?.links || [];
   });
 }
