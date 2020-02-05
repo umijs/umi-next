@@ -3,56 +3,16 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import assert from 'assert';
 import cheerio from 'cheerio';
-import { IConfig, IRoute } from '..';
 import { prettier } from '@umijs/utils';
-
-interface IHTMLTag {
-  [key: string]: string;
-}
-
-interface IAddHTML<T> {
-  (memo: T, args: { route?: IRoute }): Promise<T>;
-}
-
-interface IOpts {
-  config: IConfig;
-  tplPath?: string;
-  addHTMLHeadScripts?: IAddHTML<IScriptConfig>;
-  addHTMLScripts?: IAddHTML<IScriptConfig>;
-  addHTMLMetas?: IAddHTML<IHTMLTag[]>;
-  addHTMLLinks?: IAddHTML<IHTMLTag[]>;
-  addHTMLStyles?: IAddHTML<IHTMLTag[]>;
-}
-
-interface ILink {
-  [key: string]: string;
-}
-
-interface IStyle {
-  [key: string]: string;
-}
-
-interface IScript extends Partial<HTMLScriptElement> {
-  content?: string;
-}
-
-export type IScriptConfig = Array<IScript | string>;
-
-export interface IHtmlConfig {
-  metas?: IHTMLTag[];
-  links?: ILink[];
-  styles?: IStyle[];
-  headScripts?: IScriptConfig;
-  scripts?: IScriptConfig;
-}
-
-interface IGetContentArgs extends IHtmlConfig {
-  route: IRoute;
-  headJSFiles?: string[];
-  jsFiles?: string[];
-  cssFiles?: string[];
-  tplPath?: string;
-}
+import { IConfig } from '..';
+import {
+  IAddHTML,
+  IScriptConfig,
+  IHTMLTag,
+  IOpts,
+  IGetContentArgs,
+  IScript,
+} from './types';
 
 class Html {
   config: IConfig;

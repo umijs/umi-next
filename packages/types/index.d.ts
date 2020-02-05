@@ -3,6 +3,8 @@ import {
   IRoute,
   PluginAPI,
   Html,
+  IScriptConfig,
+  IHTMLTag,
   Service,
 } from '@umijs/core';
 import { Server, IServerOpts } from '@umijs/server';
@@ -16,13 +18,6 @@ import {
   Response,
   RequestHandler,
 } from 'express';
-
-export interface IScript extends Partial<HTMLScriptElement> {
-  content?: string;
-}
-
-export type IScriptConfig = Array<IScript | string>;
-export type IHtmlTag = { [key: string]: string };
 
 interface IEvent<T> {
   (fn: { (args: T): void }): void;
@@ -126,9 +121,9 @@ export interface IApi extends PluginAPI {
   // ApplyPluginType.add
   addHTMLHeadScripts: IAdd<{ route?: IRoute }, IScriptConfig>;
   addHTMLScripts: IAdd<{ route?: IRoute }, IScriptConfig>;
-  addHTMLMetas: IAdd<{ route?: IRoute }, IHtmlTag[]>;
-  addHTMLLinks: IAdd<{ route?: IRoute }, IHtmlTag[]>;
-  addHTMLStyles: IAdd<{ route?: IRoute }, IHtmlTag[]>;
+  addHTMLMetas: IAdd<{ route?: IRoute }, IHTMLTag[]>;
+  addHTMLLinks: IAdd<{ route?: IRoute }, IHTMLTag[]>;
+  addHTMLStyles: IAdd<{ route?: IRoute }, IHTMLTag[]>;
   addUmiExports: IAdd<
     null,
     {
@@ -161,9 +156,9 @@ export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
   };
-  links?: IHtmlTag[];
-  styles?: IHtmlTag[];
-  metas?: IHtmlTag[];
+  links?: IHTMLTag[];
+  styles?: IHTMLTag[];
+  metas?: IHTMLTag[];
   headScripts?: IScriptConfig;
   scripts?: IScriptConfig;
   chainWebpack?: Function;
