@@ -1,8 +1,8 @@
-import { IApi, IRoute, Html } from '@umijs/types';
+import { IApi, IRoute, Html, webpack } from '@umijs/types';
 import { Bundler as DefaultBundler, ConfigType } from '@umijs/bundler-webpack';
 import { join } from 'path';
 import { existsSync, readdirSync } from 'fs';
-import { rimraf } from '@umijs/utils';
+import { rimraf, lodash } from '@umijs/utils';
 
 type Env = 'development' | 'production';
 
@@ -108,6 +108,29 @@ export async function getBundleAndConfigs({
     bundleImplementor,
     bundler,
     bundleConfigs,
+  };
+}
+
+export function chunksToFiles(
+  chunks: webpack.compilation.Chunk[],
+): { cssFiles: string[]; jsFiles: string[] } {
+  const cssFiles: string[] = [];
+  const jsFiles: string[] = [];
+
+  chunks.forEach(chunk => {
+    const { files } = chunk;
+    files.forEach(file => {
+      if (/\.js$/.test(file)) {
+        jsFiles.push(file);
+      }
+      if (/\.css$/.test(file)) {
+        cssFiles.push(file);
+      }
+    });
+  });
+  return {
+    cssFiles: lodash.uniq(cssFiles),
+    jsFiles: lodash.uniq(jsFiles),
   };
 }
 
