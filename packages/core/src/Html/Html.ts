@@ -135,7 +135,7 @@ class Html {
 
     // title
     if (config.title && !$('head > title').length) {
-      $('head').append(`<title>${config.title}</title>`);
+      $('head').append(`<title>${config.title?.defaultTitle}</title>`);
     }
 
     // links
