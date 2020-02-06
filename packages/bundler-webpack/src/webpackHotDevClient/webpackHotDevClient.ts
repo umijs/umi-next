@@ -12,20 +12,13 @@ let sock: InstanceType<typeof SockJS>;
 let retries: number = 0;
 let pending: HTMLDivElement | undefined;
 
-function stripLastSlash(str: string) {
-  return str.slice(-1) === '/' ? str.slice(0, -1) : str;
-}
-
 const initSocket = () => {
-  const socketUrl = process.env.SOCKET_SERVER
-    ? `${stripLastSlash(process.env.SOCKET_SERVER)}/dev-server`
-    : url.format({
-        protocol: window.location.protocol,
-        hostname: window.location.hostname,
-        port: window.location.port,
-        pathname: '/dev-server',
-      });
-  sock = new SockJS(socketUrl);
+  const dataFromSrc = document
+    ?.querySelector?.('script[data-from="umi"]')
+    ?.getAttribute('src');
+  const { host, protocol } = url.parse(dataFromSrc || '');
+  const hostname = host && protocol ? url.format({ host, protocol }) : '';
+  sock = new SockJS(`${hostname}/dev-server`);
 
   sock.onopen = () => {
     retries = 0;
@@ -63,7 +56,9 @@ const initSocket = () => {
 
     // @ts-ignore
     sock = null;
-    pending = showPending();
+    if (!pending) {
+      pending = showPending();
+    }
 
     if (retries <= 10) {
       const retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;

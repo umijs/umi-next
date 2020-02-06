@@ -103,7 +103,9 @@ class Html {
       $('head').append(`<script src="${this.getAsset({ file })}"></script>`);
     });
     jsFiles.forEach(file => {
-      $('body').append(`<script src="${this.getAsset({ file })}"></script>`);
+      $('body').append(
+        `<script data-from="umi" src="${this.getAsset({ file })}"></script>`,
+      );
     });
 
     html = $.html();
