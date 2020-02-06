@@ -1,4 +1,5 @@
 import SockJS from 'sockjs-client';
+import url from 'url';
 import {
   handleErrors,
   handleHashChange,
@@ -11,8 +12,21 @@ let sock: InstanceType<typeof SockJS>;
 let retries: number = 0;
 let pending: HTMLDivElement | undefined;
 
+function stripLastSlash(str: string) {
+  return str.slice(-1) === '/' ? str.slice(0, -1) : str;
+}
+
 const initSocket = () => {
-  sock = new SockJS(`/dev-server`);
+  const socketUrl = process.env.SOCKET_SERVER
+    ? `${stripLastSlash(process.env.SOCKET_SERVER)}/dev-server`
+    : url.format({
+        protocol: window.location.protocol,
+        hostname: window.location.hostname,
+        port: window.location.port,
+        pathname: '/dev-server',
+      });
+  console.log('socketUrl', socketUrl);
+  sock = new SockJS(socketUrl);
 
   sock.onopen = () => {
     retries = 0;
