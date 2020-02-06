@@ -1,5 +1,4 @@
 import SockJS from 'sockjs-client';
-import url from 'url';
 import {
   handleErrors,
   handleHashChange,
@@ -13,12 +12,7 @@ let retries: number = 0;
 let pending: HTMLDivElement | undefined;
 
 const initSocket = () => {
-  const dataFromSrc = document
-    ?.querySelector?.('script[data-from="umi"]')
-    ?.getAttribute('src');
-  const { host, protocol } = url.parse(dataFromSrc || '');
-  const hostname = host && protocol ? url.format({ host, protocol }) : '';
-  sock = new SockJS(`${hostname}/dev-server`);
+  sock = new SockJS(`/dev-server`);
 
   sock.onopen = () => {
     retries = 0;
