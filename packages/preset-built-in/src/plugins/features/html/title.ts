@@ -5,7 +5,7 @@ export default (api: IApi) => {
     key: 'title',
     config: {
       schema(joi) {
-        return joi.object();
+        return joi.alternatives().try(joi.string(), joi.object());
       },
     },
   });
