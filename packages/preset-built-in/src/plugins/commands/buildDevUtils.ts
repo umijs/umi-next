@@ -132,13 +132,6 @@ export function getHtmlGenerator({
     const { absPagesPath } = api.paths || {};
     const absPageDocumentPath = join(absPagesPath || '', 'document.ejs');
 
-    // TODO: route.document ejs
-    // if (route.document) {
-    //   const docPath = join(cwd || '', route.document);
-    //   assert(existsSync(docPath), `document ${route.document} don't exists.`);
-    //   return docPath;
-    // }
-
     if (existsSync(absPageDocumentPath)) {
       return absPageDocumentPath;
     }
