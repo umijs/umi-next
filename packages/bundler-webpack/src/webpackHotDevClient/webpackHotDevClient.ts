@@ -50,7 +50,9 @@ const initSocket = () => {
 
     // @ts-ignore
     sock = null;
-    pending = showPending();
+    if (!pending) {
+      pending = showPending();
+    }
 
     if (retries <= 10) {
       const retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;
