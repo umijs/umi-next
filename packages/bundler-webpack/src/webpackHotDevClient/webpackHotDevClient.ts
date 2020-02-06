@@ -25,7 +25,6 @@ const initSocket = () => {
         port: window.location.port,
         pathname: '/dev-server',
       });
-  console.log('socketUrl', socketUrl);
   sock = new SockJS(socketUrl);
 
   sock.onopen = () => {
