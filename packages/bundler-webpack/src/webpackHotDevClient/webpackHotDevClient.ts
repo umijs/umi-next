@@ -1,4 +1,5 @@
 import SockJS from 'sockjs-client';
+import url from 'url';
 import {
   handleErrors,
   handleHashChange,
@@ -11,8 +12,19 @@ let sock: InstanceType<typeof SockJS>;
 let retries: number = 0;
 let pending: HTMLDivElement | undefined;
 
+const getSocketHost = () => {
+  const scripts = document.body?.querySelectorAll?.('script') || [];
+  const dataFromSrc = scripts[scripts.length - 1]
+    ? scripts[scripts.length - 1].getAttribute('src')
+    : '';
+  const { host, protocol } = url.parse(dataFromSrc || '');
+  const socketHost = host && protocol ? url.format({ host, protocol }) : '';
+  return socketHost;
+};
+
 const initSocket = () => {
-  sock = new SockJS(`/dev-server`);
+  const host = getSocketHost();
+  sock = new SockJS(`${host}/dev-server`);
 
   sock.onopen = () => {
     retries = 0;
