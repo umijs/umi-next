@@ -1,12 +1,12 @@
 import { Service } from '@umijs/core';
 import { join } from 'path';
-import { rimraf, winPath } from '@umijs/utils';
+import { rimraf } from '@umijs/utils';
 import { existsSync } from 'fs';
 
-const fixtures = winPath(join(__dirname, '../../../fixtures'));
+const fixtures = join(__dirname, '../../../fixtures');
 
 test('build', async () => {
-  const cwd = winPath(join(fixtures, 'build'));
+  const cwd = join(fixtures, 'build');
   const service = new Service({
     cwd,
     presets: [require.resolve('../../../index.ts')],
@@ -18,5 +18,6 @@ test('build', async () => {
   });
 
   expect(existsSync(join(cwd, 'dist', 'umi.js'))).toEqual(true);
+  // expect(existsSync(join(cwd, 'dist', 'index.html'))).toEqual(true);
   rimraf.sync(join(cwd, 'dist'));
 });
