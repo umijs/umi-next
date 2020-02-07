@@ -201,7 +201,7 @@ TODO
 
 完整实例代码可参照：
 
-- [ycjcl868/umi3-plugin-test](https://www.notion.so/ycjcl868/e67c8980e957454eb2f1b0fe83ebd38d)
+- [ycjcl868/umi3-plugin-test](https://github.com/ycjcl868/umi3-plugin-test)
 - [@umijs/plugin-locale](https://github.com/umijs/plugins/tree/master/packages/plugin-locale) 国际化插件
 - [@umijs/plugin-dva](https://github.com/umijs/plugins/tree/master/packages/plugin-dva) dva 插件
 
