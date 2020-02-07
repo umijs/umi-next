@@ -139,7 +139,9 @@ export default () => <h1>{getUsername('Hello World')}</h1>;
 
 ### 编写测试用例
 
-这里我们可以从 `umi` 里创建一个 `Service` 对象，然后用 `@testing-library/react` 组件渲染库来渲染出我们的组件。
+这里我们可以从 `umi` 里创建一个 `Service` 对象。(`@umijs/core` 的 `Service` 不内置插件)
+
+然后用 `@testing-library/react` 组件渲染库来渲染出我们的组件。
 
 ```jsx
 // src/index.test.ts
