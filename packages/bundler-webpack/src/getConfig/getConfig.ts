@@ -58,12 +58,15 @@ export default async function getConfig(
   webpackConfig.mode(env);
 
   const isWebpack5 = bundleImplementor.version!.startsWith('5');
+  const isDev = env === 'development';
+  const isProd = env === 'production';
+  const disableCompress = process.env.COMPRESS === 'none';
 
   // entry
   if (entry) {
     Object.keys(entry).forEach(key => {
       const e = webpackConfig.entry(key);
-      if (hot) {
+      if (hot && isDev) {
         e.add(require.resolve('../webpackHotDevClient/webpackHotDevClient'));
       }
       if (config.runtimePublicPath) {
@@ -73,11 +76,6 @@ export default async function getConfig(
     });
   }
 
-  const isDev = env === 'development';
-  const isProd = env === 'production';
-  const disableCompress = process.env.COMPRESS === 'none';
-
-  // devtool
   webpackConfig.devtool(
     isDev
       ? (config.devtool as Config.DevTool) || 'cheap-module-source-map'
