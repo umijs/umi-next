@@ -76,6 +76,7 @@ export default async function getConfig(
     });
   }
 
+  // devtool
   webpackConfig.devtool(
     isDev
       ? (config.devtool as Config.DevTool) || 'cheap-module-source-map'
