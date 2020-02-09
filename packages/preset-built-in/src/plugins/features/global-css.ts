@@ -1,6 +1,9 @@
 import { relative } from 'path';
 import { IApi } from '@umijs/types';
+import { createDebug } from '@umijs/utils';
 import { getGlobalFile } from '../utils';
+
+const debug = createDebug('umi:preset-build-in:global-css');
 
 export default (api: IApi) => {
   const {
@@ -17,7 +20,7 @@ export default (api: IApi) => {
     'global.stylus',
   ];
   const globalCSSFile = getGlobalFile({ absSrcPath, files });
-  console.log('globalCSSFile', globalCSSFile);
+  debug('globalCSSFile', globalCSSFile);
 
   api.addEntryCodeAhead(
     () => `
