@@ -1,5 +1,6 @@
 import { Service } from '@umijs/core';
 import { join } from 'path';
+import cheerio from 'cheerio';
 import { render, cleanup } from '@testing-library/react';
 import { rimraf } from '@umijs/utils';
 import { readFileSync } from 'fs';
@@ -65,6 +66,53 @@ test('html', async () => {
       _: ['g', 'html'],
     },
   });
+  const removeSpace = (str: string | null) =>
+    str?.replace(/[\r\n]/g, '')?.replace(/\ +/g, '');
   const html = readFileSync(join(cwd, 'dist', 'index.html'), 'utf-8');
-  expect(html).toMatchSnapshot();
+  console.log('html', html);
+  const $ = cheerio.load(html);
+  expect($('head meta[name="keywords"]').attr('content')).toEqual('umi');
+  expect($('head link[href="//a.alicdn.com/common.css"]')).toBeTruthy();
+  expect($('head link[href="//a.alicdn.com/antd.css"]')).toBeTruthy();
+  expect(
+    removeSpace(
+      $('head style')
+        .eq(0)
+        .html(),
+    ),
+  ).toEqual(`.a{color:red;}`);
+  expect(
+    removeSpace(
+      $('head style')
+        .eq(1)
+        .html(),
+    ),
+  ).toEqual(`.b{color:blue;}`);
+  expect($('head script[src="//g.alicdn.com/ga.js"]')).toBeTruthy();
+  expect(
+    removeSpace(
+      $('head script')
+        .eq(2)
+        .html(),
+    ),
+  ).toContain(`console.log(3)`);
+
+  expect($('body script[src="//g.alicdn.com/react.js"]')).toBeTruthy();
+  expect(
+    removeSpace(
+      $('body script')
+        .eq(2)
+        .html(),
+    ),
+  ).toContain(`console.log(1);`);
+  expect(
+    removeSpace(
+      $('body script')
+        .eq(3)
+        .html(),
+    ),
+  ).toContain(`console.log(2);`);
+  expect($('body script[crossorigin="true"]').attr('src')).toEqual(
+    '/custom.js',
+  );
 });
