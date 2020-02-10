@@ -8,7 +8,6 @@ import { IConfig } from '..';
 import {
   IAddHTML,
   IModifyHTML,
-  IScriptConfig,
   IHTMLTag,
   IOpts,
   IGetContentArgs,
@@ -18,8 +17,8 @@ import {
 class Html {
   config: IConfig;
   tplPath?: string;
-  addHTMLHeadScripts?: IAddHTML<IScriptConfig>;
-  addHTMLScripts?: IAddHTML<IScriptConfig>;
+  addHTMLHeadScripts?: IAddHTML<IHTMLTag[]>;
+  addHTMLScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
   addHTMLLinks?: IAddHTML<IHTMLTag[]>;
   addHTMLStyles?: IAddHTML<IHTMLTag[]>;

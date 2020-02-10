@@ -15,14 +15,18 @@ export interface IAddHTML<T> {
 export interface IScript extends Partial<HTMLScriptElement> {
   content?: string;
 }
+export interface IStyle extends Partial<HTMLStyleElement> {
+  content: string;
+}
 
 export type IScriptConfig = Array<IScript | string>;
+export type IStyleConfig = Array<IStyle | string>;
 
 export interface IOpts {
   config: IConfig;
   tplPath?: string;
-  addHTMLHeadScripts?: IAddHTML<IScriptConfig>;
-  addHTMLScripts?: IAddHTML<IScriptConfig>;
+  addHTMLHeadScripts?: IAddHTML<IHTMLTag[]>;
+  addHTMLScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
   addHTMLLinks?: IAddHTML<IHTMLTag[]>;
   addHTMLStyles?: IAddHTML<IHTMLTag[]>;
@@ -41,8 +45,8 @@ export interface IHtmlConfig {
   metas?: IHTMLTag[];
   links?: ILink[];
   styles?: IStyle[];
-  headScripts?: IScriptConfig;
-  scripts?: IScriptConfig;
+  headScripts?: IHTMLTag[];
+  scripts?: IHTMLTag[];
 }
 
 export interface IGetContentArgs extends IHtmlConfig {
