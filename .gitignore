@@ -9,4 +9,4 @@
 .umi
 .umi-production
 .umi-test
-fixtures/**/dist
+**/fixtures/**/dist
