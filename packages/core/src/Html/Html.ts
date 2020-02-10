@@ -21,7 +21,7 @@ class Html {
   addHTMLHeadScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
-  addHTMLLinks?: IAddHTML<Partial<HTMLLIElement>[]>;
+  addHTMLLinks?: IAddHTML<Partial<HTMLLinkElement>[]>;
   addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
   modifyHTML?: IModifyHTML;
 
