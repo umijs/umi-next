@@ -10,7 +10,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
-    "types": ["@types/node", "modules.d.ts"],
     "declaration": true
   },
   "exclude": [
