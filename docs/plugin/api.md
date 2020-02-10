@@ -313,15 +313,15 @@ utils 方法，详见 [@umijs/utils/src/index.ts](https://github.com/umijs/umi-n
 
 ### logger
 
-插件日志类，包含 `api.logger[log|info|debug|error|warn|profile]`
+插件日志类，包含 `api.logger.(log|info|debug|error|warn|profile)`
 
 其中 `api.logger.profile` 可用于性能耗时记录，例如：
 
 ```ts
 export default api => {
-  logger.profile('barId');
+  api.logger.profile('barId');
   setTimeout(() => {
-    logger.profile('barId');
+    api.logger.profile('barId');
   });
 };
 
