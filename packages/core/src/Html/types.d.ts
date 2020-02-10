@@ -28,8 +28,8 @@ export interface IOpts {
   addHTMLHeadScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
-  addHTMLLinks?: IAddHTML<IHTMLTag[]>;
-  addHTMLStyles?: IAddHTML<IHTMLTag[]>;
+  addHTMLLinks?: IAddHTML<Partial<HTMLLinkElement>[]>;
+  addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
   modifyHTML?: IModifyHTML;
 }
 
@@ -37,14 +37,10 @@ export interface ILink {
   [key: string]: string;
 }
 
-export interface IStyle {
-  [key: string]: string;
-}
-
 export interface IHtmlConfig {
   metas?: IHTMLTag[];
-  links?: ILink[];
-  styles?: IStyle[];
+  links?: Partial<HTMLLinkElement>[];
+  styles?: Partial<IStyle>[];
   headScripts?: IHTMLTag[];
   scripts?: IHTMLTag[];
 }

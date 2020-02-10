@@ -52,3 +52,19 @@ test('global js', async () => {
   const { container } = render(reactNode);
   expect(container.textContent).toEqual('hello Global');
 });
+
+test('html', async () => {
+  const cwd = join(fixtures, 'html');
+  const service = new Service({
+    cwd,
+    presets: [require.resolve('./index.ts')],
+  });
+  await service.run({
+    name: 'g',
+    args: {
+      _: ['g', 'html'],
+    },
+  });
+  const html = readFileSync(join(cwd, 'dist', 'index.html'), 'utf-8');
+  expect(html).toMatchSnapshot();
+});

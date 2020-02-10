@@ -12,6 +12,7 @@ import {
   IOpts,
   IGetContentArgs,
   IScript,
+  IStyle,
 } from './types';
 
 class Html {
@@ -20,8 +21,8 @@ class Html {
   addHTMLHeadScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLScripts?: IAddHTML<IHTMLTag[]>;
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
-  addHTMLLinks?: IAddHTML<IHTMLTag[]>;
-  addHTMLStyles?: IAddHTML<IHTMLTag[]>;
+  addHTMLLinks?: IAddHTML<Partial<HTMLLIElement>[]>;
+  addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
   modifyHTML?: IModifyHTML;
 
   constructor(opts: IOpts) {
@@ -155,7 +156,7 @@ class Html {
 
     // styles
     styles.forEach(style => {
-      const { content, ...attrs } = style;
+      const { content = '', ...attrs } = style;
       const newAttrs = Object.keys(attrs).reduce((memo, key) => {
         return memo.concat(`${key}="${attrs[key]}"`);
       }, [] as string[]);

@@ -160,9 +160,9 @@ export interface IConfig extends IConfigCore {
   alias?: {
     (key: string): string;
   };
-  links?: IHTMLTag[];
+  links?: Partial<HTMLLinkElement>[];
   styles?: IStyleConfig;
-  metas?: IHTMLTag[];
+  metas?: Partial<HTMLMetaElement>[];
   headScripts?: IScriptConfig;
   scripts?: IScriptConfig;
   chainWebpack?: Function;
