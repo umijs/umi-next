@@ -69,7 +69,6 @@ test('html', async () => {
   const removeSpace = (str: string | null) =>
     str?.replace(/[\r\n]/g, '')?.replace(/\ +/g, '');
   const html = readFileSync(join(cwd, 'dist', 'index.html'), 'utf-8');
-  console.log('html', html);
   const $ = cheerio.load(html);
   expect($('head meta[name="keywords"]').attr('content')).toEqual('umi');
   expect($('head link[href="//a.alicdn.com/common.css"]')).toBeTruthy();
