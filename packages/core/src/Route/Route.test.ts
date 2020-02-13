@@ -13,6 +13,120 @@ test('config empty', async () => {
   ).toEqual([]);
 });
 
+test('config pro', async () => {
+  const route = new Route();
+  expect(
+    await route.getRoutes({
+      config: {
+        routes: [
+          {
+            path: '/user',
+            component: '../layouts/UserLayout',
+            routes: [
+              {
+                path: '/user/login',
+                component: './user/login',
+              },
+            ],
+          },
+          {
+            path: '/',
+            component: '../layouts/SecurityLayout',
+            routes: [
+              {
+                path: '/',
+                component: '../layouts/BasicLayout',
+                routes: [
+                  {
+                    path: '/',
+                    redirect: '/welcome',
+                  },
+                  {
+                    path: '/welcome',
+                    component: './Welcome',
+                  },
+                  {
+                    path: '/admin',
+                    component: './Admin',
+                    routes: [
+                      {
+                        path: '/admin/sub-page',
+                        component: './Welcome',
+                      },
+                    ],
+                  },
+                  {
+                    path: '/list',
+                    component: './ListTableList',
+                  },
+                  { component: './404' },
+                ],
+              },
+              { component: './404' },
+            ],
+          },
+          { component: './404' },
+        ],
+      },
+      root: '/tmp',
+    }),
+  ).toEqual([
+    {
+      path: '/user',
+      component: '/layouts/UserLayout',
+      routes: [
+        {
+          path: '/user/login',
+          component: '/tmp/user/login',
+        },
+      ],
+    },
+    {
+      path: '/',
+      component: '/layouts/SecurityLayout',
+      routes: [
+        {
+          path: '/',
+          component: '/layouts/BasicLayout',
+          routes: [
+            {
+              path: '/',
+              redirect: '/welcome',
+            },
+            {
+              path: '/welcome',
+              component: '/tmp/Welcome',
+            },
+            {
+              path: '/admin',
+              component: '/tmp/Admin',
+              routes: [
+                {
+                  path: '/admin/sub-page',
+                  component: '/tmp/Welcome',
+                },
+              ],
+            },
+            {
+              path: '/list',
+              component: '/tmp/ListTableList',
+            },
+            {
+              component: '/tmp/404',
+            },
+          ],
+        },
+        {
+          component: '/tmp/404',
+        },
+      ],
+    },
+    {
+      component: '/tmp/404',
+    },
+  ]);
+});
+
 test('conventional normal', async () => {
   const route = new Route();
   expect(
