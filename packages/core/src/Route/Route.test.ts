@@ -20,16 +20,6 @@ test('config pro', async () => {
       config: {
         routes: [
           {
-            path: '/user',
-            component: '../layouts/UserLayout',
-            routes: [
-              {
-                path: '/user/login',
-                component: './user/login',
-              },
-            ],
-          },
-          {
             path: '/',
             component: '../layouts/SecurityLayout',
             routes: [
@@ -40,24 +30,6 @@ test('config pro', async () => {
                   {
                     path: '/',
                     redirect: '/welcome',
-                  },
-                  {
-                    path: '/welcome',
-                    component: './Welcome',
-                  },
-                  {
-                    path: '/admin',
-                    component: './Admin',
-                    routes: [
-                      {
-                        path: '/admin/sub-page',
-                        component: './Welcome',
-                      },
-                    ],
-                  },
-                  {
-                    path: '/list',
-                    component: './ListTableList',
                   },
                   { component: './404' },
                 ],
@@ -72,16 +44,6 @@ test('config pro', async () => {
     }),
   ).toEqual([
     {
-      path: '/user',
-      component: '/layouts/UserLayout',
-      routes: [
-        {
-          path: '/user/login',
-          component: '/tmp/user/login',
-        },
-      ],
-    },
-    {
       path: '/',
       component: '/layouts/SecurityLayout',
       routes: [
@@ -92,24 +54,6 @@ test('config pro', async () => {
             {
               path: '/',
               redirect: '/welcome',
-            },
-            {
-              path: '/welcome',
-              component: '/tmp/Welcome',
-            },
-            {
-              path: '/admin',
-              component: '/tmp/Admin',
-              routes: [
-                {
-                  path: '/admin/sub-page',
-                  component: '/tmp/Welcome',
-                },
-              ],
-            },
-            {
-              path: '/list',
-              component: '/tmp/ListTableList',
             },
             {
               component: '/tmp/404',
