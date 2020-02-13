@@ -13,7 +13,7 @@ test('config empty', async () => {
   ).toEqual([]);
 });
 
-test('config pro', async () => {
+test('config routes', async () => {
   const route = new Route();
   expect(
     await route.getRoutes({
