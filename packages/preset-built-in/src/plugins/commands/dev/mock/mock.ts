@@ -16,7 +16,7 @@ export default function(api: IApi) {
     },
   });
 
-  if (process.env.MOCK === 'none' || process.env.HTTP_MOCK === 'none') {
+  if (process.env.MOCK === 'none') {
     return;
   }
 
