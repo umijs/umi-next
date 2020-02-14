@@ -16,6 +16,10 @@ export default function(api: IApi) {
     },
   });
 
+  if (process.env.MOCK === 'none' || process.env.HTTP_MOCK === 'none') {
+    return;
+  }
+
   const registerBabel = (paths: string[]): void => {
     // babel compiler
     api.babelRegister.setOnlyMap({
