@@ -53,6 +53,7 @@ export default function(api: IApi) {
           },
         });
       } catch (err) {
+        console.error(err);
         await api.applyPlugins({
           key: 'onBuildComplete',
           type: api.ApplyPluginsType.event,
