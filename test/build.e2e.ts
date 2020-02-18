@@ -2,7 +2,7 @@ import { join } from 'path';
 import { fork } from 'child_process';
 import puppeteer, { Page } from 'puppeteer';
 import http from 'http';
-import { existsSync, readdirSync } from 'fs';
+import { readdirSync } from 'fs';
 import { winPath, portfinder } from '@umijs/utils';
 
 export interface IOption {
