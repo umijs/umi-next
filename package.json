@@ -36,6 +36,7 @@
     "@types/babel__traverse": "7.0.8",
     "@types/jest": "^25.1.1",
     "@types/node": "^13.7.1",
+    "@types/puppeteer": "^2.0.0",
     "@umijs/core": "3.0.0-beta.18",
     "@umijs/test": "3.0.0-beta.18",
     "@umijs/utils": "3.0.0-beta.18",
@@ -44,6 +45,7 @@
     "lint-staged": "^10.0.7",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
+    "puppeteer": "^2.1.1",
     "yorkie": "^2.0.0"
   }
 }
