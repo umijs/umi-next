@@ -67,6 +67,7 @@ export default function() {
       require.resolve('./plugins/commands/build/build'),
       require.resolve('./plugins/commands/build/applyHtmlWebpackPlugin'),
       require.resolve('./plugins/commands/generate/generate'),
+      require.resolve('@umijs/plugin-blocks'),
     ],
   };
 }
