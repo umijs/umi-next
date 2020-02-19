@@ -3,7 +3,7 @@ import createMiddleware from './createMiddleware';
 import { getMockData } from './utils';
 
 export default function(api: IApi) {
-  const { cwd, config } = api;
+  const { cwd, userConfig } = api;
 
   api.describe({
     key: 'mock',
@@ -31,7 +31,7 @@ export default function(api: IApi) {
     });
   };
 
-  const ignore = config?.mock?.exclude;
+  const ignore = userConfig?.mock?.exclude;
 
   // get all mock paths
   const mockResult = getMockData({
