@@ -4,10 +4,16 @@ import { getHtmlGenerator, chunksToFiles } from '../htmlUtils';
 
 const ASSET_EXTNAMES = ['.ico', '.png', '.jpg', '.jpeg', '.gif', '.svg'];
 
-export default ({ api, chunksSet }: { api: IApi; chunksSet: any }) => {
+export default ({
+  api,
+  sharedMap,
+}: {
+  api: IApi;
+  sharedMap: Map<string, any>;
+}) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     async function sendHtml() {
-      const { jsFiles, cssFiles } = chunksToFiles(chunksSet.get('chunks'));
+      const { jsFiles, cssFiles } = chunksToFiles(sharedMap.get('chunks'));
       const html = getHtmlGenerator({ api });
       const content = await html.getContent({
         route: { path: req.path },

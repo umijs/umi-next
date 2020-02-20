@@ -7,7 +7,8 @@ import createRouteMiddleware from './createRouteMiddleware';
 import generateFiles from '../generateFiles';
 
 export default (api: IApi) => {
-  const chunksSet = new Map();
+  // do something with data sharing
+  const sharedMap = new Map();
   const {
     env,
     cwd,
@@ -28,7 +29,7 @@ export default (api: IApi) => {
 
   api.onDevCompileDone(({ stats }) => {
     // store chunks
-    chunksSet.set('chunks', stats.compilation.chunks);
+    sharedMap.set('chunks', stats.compilation.chunks);
   });
 
   api.registerCommand({
@@ -132,7 +133,7 @@ export default (api: IApi) => {
         beforeMiddlewares,
         afterMiddlewares: [
           ...middlewares,
-          createRouteMiddleware({ api, chunksSet }),
+          createRouteMiddleware({ api, sharedMap }),
         ],
         ...(api.config.devServer || {}),
       });
