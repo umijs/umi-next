@@ -18,10 +18,10 @@ export function chunksToFiles(
   chunks.forEach(chunk => {
     const { files } = chunk;
     files.forEach(file => {
-      if (/\.js$/.test(file)) {
+      if (/\.js$/.test(file) && !file.includes('.hot-update')) {
         jsFiles.push(file);
       }
-      if (/\.css$/.test(file)) {
+      if (/\.css$/.test(file) && !file.includes('.hot-update')) {
         cssFiles.push(file);
       }
     });

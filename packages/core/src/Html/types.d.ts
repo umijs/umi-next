@@ -1,11 +1,14 @@
+import 'cheerio';
 import { IConfig, IRoute } from '..';
 
 export interface IHTMLTag {
   [key: string]: string;
 }
 
+export type IGetChunkPath = (chunk: string) => string;
+
 export interface IModifyHTML {
-  (memo: any, args: any): Promise<any>;
+  (memo: CheerioStatic, args: { route?: IRoute }): Promise<any>;
 }
 
 export interface IAddHTML<T> {
