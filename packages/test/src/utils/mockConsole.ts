@@ -1,4 +1,3 @@
-import { t } from '../../../utils/src';
 type ConsoleFunctionName = {
   [T in keyof Console]: Console[T] extends (...args: any[]) => any ? T : never;
 }[keyof Console];
