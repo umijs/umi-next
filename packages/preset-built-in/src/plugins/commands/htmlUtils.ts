@@ -21,7 +21,7 @@ export function chunksToFiles(
       if (/\.js$/.test(file) && !file.includes('.hot-update')) {
         jsFiles.push(file);
       }
-      if (/\.css$/.test(file) && !file.includes('.hot-update')) {
+      if (/\.css$/.test(file)) {
         cssFiles.push(file);
       }
     });
