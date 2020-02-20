@@ -4,6 +4,11 @@ import cheerio from 'cheerio';
 import { render, cleanup } from '@testing-library/react';
 import { rimraf } from '@umijs/utils';
 import { readFileSync } from 'fs';
+import index from './index';
+
+test('normal', () => {
+  expect(index().plugins.length).toBeGreaterThan(1);
+});
 
 const fixtures = join(__dirname, 'fixtures');
 

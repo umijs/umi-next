@@ -17,9 +17,30 @@ async function runGenerator(args: any) {
   });
 }
 
+test('generate html', async () => {
+  await runGenerator({
+    _: ['generate', 'html'],
+    typescript: false,
+    less: false,
+  });
+  expect(existsSync(join(cwd, 'dist', 'index.html'))).toEqual(true);
+  rimraf.sync(join(cwd, 'dist'));
+});
+
+test('generate html with typescript and less', async () => {
+  await runGenerator({
+    _: ['generate', 'html'],
+    typescript: true,
+    less: true,
+  });
+  expect(existsSync(join(cwd, 'dist', 'index.html'))).toEqual(true);
+  rimraf.sync(join(cwd, 'dist'));
+});
 test('generate page', async () => {
   await runGenerator({
     _: ['generate', 'page', 'index'],
+    typescript: false,
+    less: false,
   });
   expect(existsSync(join(cwd, 'pages', 'index.js'))).toEqual(true);
   expect(existsSync(join(cwd, 'pages', 'index.css'))).toEqual(true);
