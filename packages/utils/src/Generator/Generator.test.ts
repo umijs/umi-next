@@ -34,4 +34,10 @@ test('normal', async () => {
   });
   await g.run();
   expect(readFileSync(target, 'utf-8').trim()).toEqual(`alert('bar');`);
+  expect(readFileSync(join(dist, './dir', 'a.js'), 'utf-8').trim()).toEqual(
+    `alert('bar');`,
+  );
+  expect(readFileSync(join(dist, './dir', 'b.js'), 'utf-8').trim()).toEqual(
+    `alert('abc');`,
+  );
 });
