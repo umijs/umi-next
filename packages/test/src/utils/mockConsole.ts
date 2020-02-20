@@ -44,7 +44,7 @@ const consoleFunctionName = Object.keys(console).filter(
  * });
  *
  * test('test sample', () => {
- *   const reset = mockConsole.log(messageStore);
+ *   const reset = mockConsole.log();
  *   expect(sample()).toBe(0);
  *   reset();
  *   expect(reset.messages).toEqual([['a']]);
