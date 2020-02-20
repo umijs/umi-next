@@ -19,6 +19,13 @@ test('normal', async () => {
         target,
         templatePath: join(cwd, 'a.js.tpl'),
       });
+      this.copyDirectory({
+        context: {
+          foo: 'bar',
+        },
+        path: join(cwd, './dir'),
+        target: join(dist, './dir'),
+      });
     }
   }
   const g = new NormalGenerator({
