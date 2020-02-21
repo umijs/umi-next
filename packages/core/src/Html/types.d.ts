@@ -10,7 +10,10 @@ export type IGetChunkPath = (chunk: string) => string;
 export interface IModifyHTML<T> {
   (
     memo: T,
-    args: { route?: IRoute; getAsset?: (chunk: string) => string },
+    args: {
+      route?: IRoute;
+      getAsset?: (opts: { path?: string; file?: string }) => string;
+    },
   ): Promise<T>;
 }
 
