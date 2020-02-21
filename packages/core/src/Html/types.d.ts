@@ -56,5 +56,5 @@ export interface IGetContentArgs extends IHtmlConfig {
   jsFiles?: string[];
   cssFiles?: string[];
   tplPath?: string;
-  modifyHTML?: IModifyHTML;
+  modifyHTML?: IModifyHTML<CheerioStatic>;
 }
