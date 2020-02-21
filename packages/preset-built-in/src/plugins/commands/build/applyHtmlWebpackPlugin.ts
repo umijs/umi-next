@@ -6,7 +6,12 @@ export default function(api: IApi) {
     apply(compiler: webpack.Compiler) {
       const key = 'UmiHtmlGeneration';
       compiler.hooks.emit.tap(key, async compilation => {
-        const { jsFiles, cssFiles } = chunksToFiles(compilation.chunks);
+        const chunks = await api.applyPlugins({
+          key: 'modifyHTMLChunks',
+          type: api.ApplyPluginsType.modify,
+          initialValue: ['umi'],
+        });
+        const { jsFiles, cssFiles } = chunksToFiles(compilation.chunks, chunks);
         const html = getHtmlGenerator({ api });
 
         const routeMap = api.config.exportStatic

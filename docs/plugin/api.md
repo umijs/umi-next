@@ -506,6 +506,10 @@ api.addHTMLScript(() => {
 
 在 HTML 头部添加脚本。
 
+### modifyHTMLChunks
+
+修改 chunks，默认值是 `['umi']`。
+
 ### modifyHTML
 
 修改 HTML，基于 [cheerio](https://github.com/cheeriojs/cheerio) 的 ast。

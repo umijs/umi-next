@@ -11,21 +11,24 @@ interface IGetContentArgs {
 }
 
 export function chunksToFiles(
-  chunks: webpack.compilation.Chunk[],
+  compilationChunks: webpack.compilation.Chunk[],
+  chunks: string[] = ['umi'],
 ): { cssFiles: string[]; jsFiles: string[] } {
   const cssFiles: string[] = [];
   const jsFiles: string[] = [];
 
-  chunks.forEach(chunk => {
-    const { files } = chunk;
-    files.forEach(file => {
-      if (/\.js$/.test(file) && !file.includes('.hot-update')) {
-        jsFiles.push(file);
-      }
-      if (/\.css$/.test(file)) {
-        cssFiles.push(file);
-      }
-    });
+  compilationChunks.forEach(compilationChunk => {
+    const { files, name } = compilationChunk;
+    if (chunks.includes(name)) {
+      files.forEach(file => {
+        if (/\.js$/.test(file) && !file.includes('.hot-update')) {
+          jsFiles.push(file);
+        }
+        if (/\.css$/.test(file)) {
+          cssFiles.push(file);
+        }
+      });
+    }
   });
   return {
     cssFiles: lodash.uniq(cssFiles),

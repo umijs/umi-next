@@ -13,13 +13,15 @@ export default ({
 }) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     async function sendHtml() {
-      const defaultFiles = {
-        jsFiles: ['umi.js'],
-        cssFiles: ['umi.css'],
-      };
-      const { jsFiles, cssFiles } = sharedMap.get('chunks')
-        ? chunksToFiles(sharedMap.get('chunks'))
-        : defaultFiles;
+      const chunks = await api.applyPlugins({
+        key: 'modifyHTMLChunks',
+        type: api.ApplyPluginsType.modify,
+        initialValue: ['umi'],
+      });
+      const { jsFiles, cssFiles } = chunksToFiles(
+        sharedMap.get('chunks'),
+        chunks,
+      );
       const html = getHtmlGenerator({ api });
       const content = await html.getContent({
         route: { path: req.path },

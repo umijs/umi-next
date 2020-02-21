@@ -27,7 +27,7 @@ umi-next:
     - api.hasPresets(presetIds: string[]) @done
 		- 未实现的接口，优先级低
 			api.rebuildTmpFiles()
-			api.modifyHTMLChunks()
+			api.modifyHTMLChunks() @done
 		- api.onDevCompileDone() @done
 		- api.modifyPublicPathStr() @done
 		- 添加 api.chainWebpackConfig，提供 chainWebpack 的配置 @done @sorrycc
