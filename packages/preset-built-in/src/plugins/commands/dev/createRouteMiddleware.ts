@@ -13,18 +13,15 @@ export default ({
 }) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     async function sendHtml() {
-      const defaultFiles = {
-        jsFiles: ['umi.js'],
-        cssFiles: ['umi.css'],
-      };
-      const { jsFiles, cssFiles } = sharedMap.get('chunks')
+      const { cssFiles } = sharedMap.get('chunks')
         ? chunksToFiles(sharedMap.get('chunks'))
-        : defaultFiles;
+        : { cssFiles: ['umi.css'] };
       const html = getHtmlGenerator({ api });
       const content = await html.getContent({
         route: { path: req.path },
+        // shouldn't add all entry js, whether add using IModifyHTML
+        jsFiles: ['umi.js'],
         cssFiles,
-        jsFiles,
       });
       res.setHeader('Content-Type', 'text/html');
       res.send(content);
