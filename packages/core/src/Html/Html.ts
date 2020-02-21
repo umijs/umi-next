@@ -4,7 +4,7 @@ import { join } from 'path';
 import assert from 'assert';
 import { prettier, cheerio } from '@umijs/utils';
 import { IConfig } from '..';
-import { IOpts, IGetContentArgs, IScript } from './types';
+import { IOpts, IGetContentArgs, IScript, IGetAsset } from './types';
 
 class Html {
   config: IConfig;
@@ -40,7 +40,7 @@ class Html {
     );
   }
 
-  getAsset(opts: { file: string; path?: string }) {
+  getAsset(opts: { file: string; path?: string }): string {
     if (/^https?:\/\//.test(opts.file)) {
       return opts.file;
     }

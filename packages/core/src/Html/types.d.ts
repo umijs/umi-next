@@ -5,14 +5,14 @@ export interface IHTMLTag {
   [key: string]: string;
 }
 
-export type IGetChunkPath = (chunk: string) => string;
+export type IGetAsset = (opts: { path?: string; file: string }) => string;
 
 export interface IModifyHTML<T> {
   (
     memo: T,
     args: {
       route?: IRoute;
-      getAsset?: (opts: { path?: string; file?: string }) => string;
+      getAsset?: IGetAsset;
     },
   ): Promise<T>;
 }
