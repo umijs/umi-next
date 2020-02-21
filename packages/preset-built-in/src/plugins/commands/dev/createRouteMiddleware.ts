@@ -13,7 +13,13 @@ export default ({
 }) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     async function sendHtml() {
-      const { jsFiles, cssFiles } = chunksToFiles(sharedMap.get('chunks'));
+      const defaultFiles = {
+        jsFiles: ['umi.js'],
+        cssFiles: ['umi.css'],
+      };
+      const { jsFiles, cssFiles } = sharedMap.get('chunks')
+        ? chunksToFiles(sharedMap.get('chunks'))
+        : defaultFiles;
       const html = getHtmlGenerator({ api });
       const content = await html.getContent({
         route: { path: req.path },
