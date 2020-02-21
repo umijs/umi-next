@@ -34,6 +34,7 @@ export interface IOpts {
   addHTMLLinks?: IAddHTML<Partial<HTMLLinkElement>[]>;
   addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
   modifyHTML?: IModifyHTML<CheerioStatic>;
+  modifyHTMLChunks?: IModifyHTML<string[]>;
 }
 
 export interface ILink {
