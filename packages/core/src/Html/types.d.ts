@@ -7,8 +7,8 @@ export interface IHTMLTag {
 
 export type IGetChunkPath = (chunk: string) => string;
 
-export interface IModifyHTML {
-  (memo: CheerioStatic, args: { route?: IRoute }): Promise<any>;
+export interface IModifyHTML<T> {
+  (memo: T, args: { route?: IRoute }): Promise<T>;
 }
 
 export interface IAddHTML<T> {
@@ -33,7 +33,9 @@ export interface IOpts {
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
   addHTMLLinks?: IAddHTML<Partial<HTMLLinkElement>[]>;
   addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
-  modifyHTML?: IModifyHTML;
+  modifyHTMLJSFiles: IModifyHTML<string[]>;
+  modifyHTMLHeadJSFiles: IModifyHTML<string[]>;
+  modifyHTML?: IModifyHTML<CheerioStatic>;
 }
 
 export interface ILink {
