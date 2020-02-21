@@ -201,7 +201,7 @@ class Html {
     }
 
     if (args.modifyHTML) {
-      $ = await args.modifyHTML($, { route });
+      $ = await args.modifyHTML($, { route, getAsset: this.getAsset });
     }
 
     html = $.html();

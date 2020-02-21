@@ -512,10 +512,10 @@ api.addHTMLScript(() => {
 修改 HTML，基于 [cheerio](https://github.com/cheeriojs/cheerio) 的 ast。
 
 ```js
-api.modifyHTML(($, { routs, getAsset }) => {
+api.modifyHTML(($, { route, getAsset }) => {
   $('h2').addClass('welcome');
   // 添加 chunk js
-  $('head').append(`<script src="${getAsset('chunk')}"></script>`)
+  $('head').append(`<script src="${getAsset({ file: 'chunk', path: route.path })}"></script>`)
   return $;
 });
 ```
