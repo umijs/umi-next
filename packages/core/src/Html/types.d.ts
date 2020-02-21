@@ -33,8 +33,6 @@ export interface IOpts {
   addHTMLMetas?: IAddHTML<IHTMLTag[]>;
   addHTMLLinks?: IAddHTML<Partial<HTMLLinkElement>[]>;
   addHTMLStyles?: IAddHTML<Partial<IStyle>[]>;
-  modifyHTMLJSFiles: IModifyHTML<string[]>;
-  modifyHTMLHeadJSFiles: IModifyHTML<string[]>;
   modifyHTML?: IModifyHTML<CheerioStatic>;
 }
 

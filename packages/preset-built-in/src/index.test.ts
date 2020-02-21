@@ -89,7 +89,6 @@ test('html', async () => {
     ),
   ).toEqual(`.b{color:blue;}`);
   expect($('head script[src="//g.alicdn.com/ga.js"]')).toBeTruthy();
-  expect($('head script[src="/mode-head.js"]')).toBeTruthy();
   expect(
     removeSpace(
       $('head script')
@@ -102,19 +101,18 @@ test('html', async () => {
   expect(
     removeSpace(
       $('body script')
-        .eq(3)
+        .eq(2)
         .html(),
     ),
   ).toContain(`console.log(1);`);
   expect(
     removeSpace(
       $('body script')
-        .eq(4)
+        .eq(3)
         .html(),
     ),
   ).toContain(`console.log(2);`);
   expect($('body script[crossorigin="true"]').attr('src')).toEqual(
     '/custom.js',
   );
-  expect($('body script[src="/head.js"]')).toBeTruthy();
 });
