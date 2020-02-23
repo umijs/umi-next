@@ -1,7 +1,8 @@
 export default {
   doc: {
     mode: 'site',
-    title: 'Umi',
+    title: 'UmiJS',
     include: ['./docs'],
+    previewLangs: [],
   },
 };

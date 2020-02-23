@@ -149,7 +149,7 @@ export default () => <h1>{getUsername('Hello World')}</h1>;
 
 然后用 `@testing-library/react` 组件渲染库来渲染出我们的组件。
 
-```jsx | pure
+```jsx
 // src/index.test.ts
 import { join } from 'path';
 import { Service } from 'umi';
@@ -183,7 +183,7 @@ test('normal tmp', async () => {
 
 同 [临时文件测试](#临时文件测试)，测试 html 生成时，我们只需将 `service` 执行的参数 `tmp` 换成 `html`
 
-```jsx | pure
+```jsx
 // index.test.ts
 test('normal html', async () => {
   const cwd = join(fixtures, 'normal');
