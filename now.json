@@ -7,6 +7,10 @@
       "use": "@now/static-build"
     }
   ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
+  ],
   "github": {
     "silent": true
   },
