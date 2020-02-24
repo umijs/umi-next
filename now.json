@@ -3,11 +3,8 @@
   "version": 2,
   "builds": [
     {
-      "use": "@now/static-build",
-      "config": {
-        "includeFiles": "docs/**",
-        "distDir": "./dist"
-      }
+      "src": "package.json",
+      "use": "@now/static-build"
     }
   ],
   "github": {
