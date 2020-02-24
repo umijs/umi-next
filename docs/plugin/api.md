@@ -207,6 +207,10 @@ dev 退出时触发。
 
 - 修改后的值不会再做 schema 校验
 
+### modifyHTMLChunks
+
+TODO
+
 ### onBuildCompelete({ err?, stats? })
 
 构建完成时可以做的事。
@@ -248,6 +252,10 @@ dev 退出时触发。
 ### onPatchRoute({ route })
 
 修改路由项。
+
+### onPatchRoutes({ routes })
+
+修改路由数组。
 
 ### chainWebpack(config, { webpack })
 
@@ -505,39 +513,6 @@ api.addHTMLScript(() => {
 ### addHTMLHeadScripts
 
 在 HTML 头部添加脚本。
-
-### modifyHTMLHeadJSFiles
-
-在 HTML 头部修改入口 js。
-
-```js
-api.chainWebpack(webpackConfig => {
-  webpackConfig.entry('mode').add(path.join(__dirname, './mode.js'));
-})
-api.modifyHTMLHeadJSFiles(headJSFiles => ['mode.js', ...headJSFiles]);
-
-// =>
-<head>
-  <script src="/mode.js"></script>
-</head>
-```
-
-### modifyHTMLJSFiles
-
-在 HTML 尾部修改入口 js。
-
-```js
-api.chainWebpack(webpackConfig => {
-  webpackConfig.entry('mode').add(path.join(__dirname, './mode.js'));
-})
-api.modifyHTMLJSFiles(jsFiles => ['mode.js', ...jsFiles]);
-
-// =>
-<body>
-  <script src="/mode.js"></script>
-  <script src="/umi.js"></script>
-</body>
-```
 
 ### modifyHTML
 

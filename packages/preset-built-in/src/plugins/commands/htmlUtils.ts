@@ -1,35 +1,71 @@
 import { IApi, IRoute, webpack } from '@umijs/types';
-import { join } from 'path';
+import { extname, join } from 'path';
 import { existsSync } from 'fs';
 import { lodash } from '@umijs/utils';
+import assert from 'assert';
 
 interface IGetContentArgs {
   route: IRoute;
-  jsFiles?: any[];
-  cssFiles?: any[];
-  headJSFiles?: any[];
+  chunks?: any;
+  noChunk?: boolean;
 }
 
-export function chunksToFiles(
-  chunks: webpack.compilation.Chunk[],
-): { cssFiles: string[]; jsFiles: string[] } {
+interface IHtmlChunk {
+  name: string;
+  headScript?: boolean;
+}
+
+interface IChunkMap {
+  [key: string]: string;
+}
+
+export function chunksToFiles(opts: {
+  htmlChunks: (string | object)[];
+  chunks?: webpack.compilation.Chunk[];
+  noChunk?: boolean;
+}): { cssFiles: string[]; jsFiles: string[]; headJSFiles: string[] } {
+  let chunksMap: IChunkMap = {};
+  if (opts.chunks) {
+    chunksMap = opts.chunks.reduce((memo, chunk) => {
+      const key = chunk.name || chunk.id;
+      if (key && chunk.files) {
+        chunk.files.forEach(file => {
+          if (!file.includes('.hot-update')) {
+            memo[`${key}${extname(file)}`] = file;
+          }
+        });
+      }
+      return memo;
+    }, {} as IChunkMap);
+  }
+
   const cssFiles: string[] = [];
   const jsFiles: string[] = [];
+  const headJSFiles: string[] = [];
 
-  chunks.forEach(chunk => {
-    const { files } = chunk;
-    files.forEach(file => {
-      if (/\.js$/.test(file) && !file.includes('.hot-update')) {
-        jsFiles.push(file);
-      }
-      if (/\.css$/.test(file)) {
-        cssFiles.push(file);
-      }
-    });
+  const htmlChunks = opts.htmlChunks.map(htmlChunk => {
+    return lodash.isPlainObject(htmlChunk) ? htmlChunk : { name: htmlChunk };
   });
+  (htmlChunks as IHtmlChunk[]).forEach(({ name, headScript }: IHtmlChunk) => {
+    const cssFile = opts.noChunk ? `${name}.css` : chunksMap[`${name}.css`];
+    if (cssFile) {
+      cssFiles.push(cssFile);
+    }
+
+    const jsFile = opts.noChunk ? `${name}.js` : chunksMap[`${name}.js`];
+    assert(jsFile, `chunk of ${name} not found.`);
+
+    if (headScript) {
+      headJSFiles.push(jsFile);
+    } else {
+      jsFiles.push(jsFile);
+    }
+  });
+
   return {
-    cssFiles: lodash.uniq(cssFiles),
-    jsFiles: lodash.uniq(jsFiles),
+    cssFiles,
+    jsFiles,
+    headJSFiles,
   };
 }
 
@@ -78,27 +114,23 @@ export function getHtmlGenerator({ api }: { api: IApi }): any {
         },
       });
 
-      const jsFiles = await api.applyPlugins({
-        key: 'modifyHTMLJSFiles',
+      const htmlChunks = await api.applyPlugins({
+        key: 'modifyHTMLChunks',
         type: api.ApplyPluginsType.modify,
-        initialValue: args.jsFiles || [],
+        initialValue: ['umi'],
         args: {
           route: args.route,
         },
       });
-
-      const headJSFiles = await api.applyPlugins({
-        key: 'modifyHTMLHeadJSFiles',
-        type: api.ApplyPluginsType.modify,
-        initialValue: args.headJSFiles || [],
-        args: {
-          route: args.route,
-        },
+      const { cssFiles, jsFiles, headJSFiles } = chunksToFiles({
+        htmlChunks,
+        chunks: args.chunks,
+        noChunk: args.noChunk,
       });
 
       return await super.getContent({
         route: args.route,
-        cssFiles: args.cssFiles || [],
+        cssFiles,
         headJSFiles,
         jsFiles,
         headScripts: await applyPlugins({
@@ -142,13 +174,13 @@ export function getHtmlGenerator({ api }: { api: IApi }): any {
 
     async getRouteMap() {
       const routes = await api.getRoutes();
-      const paths = getRoutePaths({ routes });
+      const flatRoutes = getFlatRoutes({ routes });
 
-      return paths.map(path => {
+      return flatRoutes.map(route => {
         // @ts-ignore
-        const file = this.getHtmlPath(path);
+        const file = this.getHtmlPath(route.path);
         return {
-          path,
+          route,
           file,
         };
       });
@@ -158,19 +190,19 @@ export function getHtmlGenerator({ api }: { api: IApi }): any {
   return new Html();
 }
 
-export function getRoutePaths(opts: { routes: IRoute[] }): string[] {
+export function getFlatRoutes(opts: { routes: IRoute[] }): IRoute[] {
   return opts.routes.reduce((memo, route) => {
     const { routes, path } = route;
     if (path && !path.includes('?')) {
-      memo.push(path);
+      memo.push(route);
     }
     if (routes) {
       memo.concat(
-        getRoutePaths({
+        getFlatRoutes({
           routes,
         }),
       );
     }
     return lodash.uniq(memo);
-  }, [] as string[]);
+  }, [] as IRoute[]);
 }

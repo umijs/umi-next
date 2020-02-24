@@ -99,6 +99,7 @@ export interface IApi extends PluginAPI {
   onExit: IEvent<{ signal: 'SIGINT' | 'SIGQUIT' | 'SIGTERM' }>;
   onGenerateFiles: IEvent<{ isRebuild?: boolean }>;
   onPatchRoute: IEvent<{ route: IRoute }>;
+  onPatchRoutes: IEvent<{ routes: IRoute[] }>;
   onBuildComplete: IEvent<{ err?: Error; stats?: webpack.Stats }>;
   onDevCompileDone: IEvent<{ isFirstCompile: boolean; stats: webpack.Stats }>;
 
@@ -145,6 +146,10 @@ export interface IApi extends PluginAPI {
   modifyDefaultConfig: IModify<IConfig, {}>;
   modifyHTML: IModify<CheerioStatic, { route: IRoute }>;
   modifyRoutes: IModify<IRoute[], {}>;
+  modifyHTMLChunks: IModify<
+    (string | { name: string; headScript?: boolean })[],
+    { route: IRoute }
+  >;
   chainWebpack: IModify<WebpackChain, { webpack: typeof webpack }>;
 
   // ApplyPluginType.add

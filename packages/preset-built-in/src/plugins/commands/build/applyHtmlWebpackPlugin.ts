@@ -1,5 +1,5 @@
-import { IApi, webpack, IRoute } from '@umijs/types';
-import { getRoutePaths, getHtmlGenerator, chunksToFiles } from '../htmlUtils';
+import { IApi, webpack } from '@umijs/types';
+import { getHtmlGenerator } from '../htmlUtils';
 
 export default function(api: IApi) {
   class HtmlWebpackPlugin {
@@ -7,17 +7,15 @@ export default function(api: IApi) {
       compiler.hooks.emit.tapPromise(
         'UmiHtmlGeneration',
         async (compilation: any) => {
-          const { jsFiles, cssFiles } = chunksToFiles(compilation.chunks);
           const html = getHtmlGenerator({ api });
 
           const routeMap = api.config.exportStatic
             ? await html.getRouteMap()
-            : [{ path: '/', file: 'index.html' }];
-          for (const { path, file } of routeMap) {
+            : [{ route: { path: '/' }, file: 'index.html' }];
+          for (const { route, file } of routeMap) {
             const content = await html.getContent({
-              route: { path },
-              cssFiles,
-              jsFiles,
+              route,
+              chunks: compilation.chunks,
             });
             compilation.assets[file] = {
               source: () => content,
