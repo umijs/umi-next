@@ -69,8 +69,8 @@ export default {
     memo.resolve.alias.set('foo', '/tmp/a/b/foo');
 
     // 删除 umi 内置插件
-    config.plugins.delete('progress');
-    config.plugins.delete('friendly-error');
+    memo.plugins.delete('progress');
+    memo.plugins.delete('friendly-error');
   }
 }
 ```
@@ -219,7 +219,7 @@ if (false) {
 
 ## dynamicImport
 
-* Type: `boolean`
+* Type: `object`
 * Default: `false`
 
 是否启用按需加载，即是否把构建产物进行拆分，在需要的时候下载额外的 JS 再执行。
@@ -228,7 +228,7 @@ if (false) {
 
 打包后通常是这样的，
 
-```js
+```bash
 + dist
   - umi.js
   - umi.css
@@ -239,7 +239,7 @@ if (false) {
 
 打包后通常是这样，
 
-```js
+```bash
 + dist
   - umi.js
   - umi.css
@@ -249,6 +249,32 @@ if (false) {
 ```
 
 这里的 `p__users_index.js` 是路由组件所在路径 `src/pages/users/index`，其中 `src` 会被忽略，`pages` 被替换为 `p`。
+
+包含以下子配置项，
+
+* loading, 类型为字符串，指向 loading 组件文件
+
+比如：
+
+```js
+export default {
+  dynamicImport: {
+    loading: '@/Loading',
+  },
+}
+```
+
+然后在 src 目录下新建 `Loading.tsx`，
+
+```jsx
+import React from 'react';
+
+export default () => {
+  return <div>加载中...</div>;
+}
+```
+
+构建之后使用低网络模拟就能看到效果。
 
 ## exportStatic
 
@@ -265,7 +291,7 @@ if (false) {
 
 比如以下路由，
 
-```js
+```bash
 /
 /users
 /list
@@ -273,13 +299,13 @@ if (false) {
 
 不开启 `exportStatic` 时，输出，
 
-```js
+```bash
 - index.html
 ```
 
 设置 `exportStatic: {}` 后，输出，
 
-```js
+```bash
 - index.html
 - users/index.html
 - list/index.html
@@ -287,7 +313,7 @@ if (false) {
 
 设置 `exportStatic: { htmlSuffix: true }` 后，输出，
 
-```js
+```bash
 - index.html
 - users.html
 - list.html
@@ -362,7 +388,7 @@ export default {
 
 HTML 中会生成，
 
-```js
+```html
 <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
 ```
 
@@ -375,7 +401,7 @@ HTML 中会生成，
 
 启用 hash 后，产物通常是这样，
 
-```js
+```bash
 + dist
   - logo.sw892d.png
   - umi.df723s.js
@@ -407,7 +433,7 @@ export default {
 
 会生成 HTML，
 
-```js
+```html
 <head>
   <script>alert(1);</script>
   <script src="https://a.com/b.js"></script>
@@ -427,7 +453,7 @@ export default {
 
 会生成 HTML，
 
-```js
+```html
 <head>
   <script src="/foo.js" defer></script>
   <script charset="utf-8">alert('你好');</script>
@@ -689,7 +715,7 @@ export default {
 
 会生成 HTML，
 
-```js
+```html
 <head>
   <style>body { color: red; }</style>
   <link rel="stylesheet" href="https://a.com/b.css" />
@@ -741,3 +767,38 @@ export default {
   },
 }
 ```
+
+## title
+
+* Type: `string`
+* Default: `''`
+
+配置标题。
+
+比如：
+
+```js
+export default {
+  title: 'hi',
+}
+```
+
+此外，你还可以针对路由配置标题，比如，
+
+```js
+export default {
+  title: 'hi',
+  routes: [
+    { path: '/', title: 'Home' },  
+    { path: '/users', title: 'Users' },  
+    { path: '/foo', },  
+  ],
+}
+```
+
+然后我们访问 `/` 标题是 `Home`，访问 `/users` 标题是 `Users`，访问 `/foo` 标题是默认的 `hi`。
+
+注意：
+
+* 默认不会在 HTML 里输出 `<title>` 标签，通过动态渲染得到
+* 配 `exportStatic` 后会为每个 HTML 输出 `<title>` 标签

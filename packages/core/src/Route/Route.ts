@@ -18,6 +18,7 @@ interface IGetRoutesOpts {
   root: string;
   componentPrefix?: string;
   isConventional?: boolean;
+  parentRoute?: IRoute;
 }
 
 class Route {
@@ -45,7 +46,6 @@ class Route {
 
   // TODO:
   // 1. 移动 /404 到最后，并处理 component 和 redirect
-  // 2. exportStatic 时同步 / 到 /index.html
   async patchRoutes(routes: IRoute[], opts: IGetRoutesOpts) {
     if (this.opts.onPatchRoutesBefore) {
       await this.opts.onPatchRoutesBefore({
@@ -58,6 +58,7 @@ class Route {
     if (this.opts.onPatchRoutes) {
       await this.opts.onPatchRoutes({
         routes,
+        parentRoute: opts.parentRoute,
       });
     }
   }
@@ -66,14 +67,23 @@ class Route {
     if (this.opts.onPatchRouteBefore) {
       await this.opts.onPatchRouteBefore({
         route,
+        parentRoute: opts.parentRoute,
       });
     }
 
     if (route.routes) {
-      await this.patchRoutes(route.routes, opts);
-    } else if (!('exact' in route)) {
-      // exact by default
-      route.exact = true;
+      await this.patchRoutes(route.routes, {
+        ...opts,
+        parentRoute: route,
+      });
+    } else {
+      if (!('exact' in route)) {
+        // exact by default
+        route.exact = true;
+      }
+      if (route.path && route.path.charAt(0) !== '/') {
+        route.path = winPath(join(opts.parentRoute?.path || '/', route.path));
+      }
     }
 
     // resolve component path
@@ -97,6 +107,7 @@ class Route {
     if (this.opts.onPatchRoute) {
       await this.opts.onPatchRoute({
         route,
+        parentRoute: opts.parentRoute,
       });
     }
   }
