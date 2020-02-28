@@ -6,9 +6,9 @@ export default (api: IApi) => {
     config: {
       schema(joi) {
         return joi.object({
-          fileName: joi.string().optional(),
-          publicPath: joi.string().optional(),
-          basePath: joi.string().optional(),
+          fileName: joi.string(),
+          publicPath: joi.string(),
+          basePath: joi.string(),
         });
       },
     },

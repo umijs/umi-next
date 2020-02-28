@@ -9,7 +9,7 @@ export default (api: IApi) => {
         return joi
           .string()
           .regex(/^\//)
-          .error(new Error('config.publicPath must start with /.'));
+          .error(new Error('config.publicPath must end with /.'));
       },
     },
   });
