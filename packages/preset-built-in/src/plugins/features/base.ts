@@ -9,7 +9,7 @@ export default (api: IApi) => {
         return joi
           .string()
           .regex(/^\//)
-          .error(new Error(''));
+          .error(new Error('config.base must start with /.'));
       },
     },
   });
