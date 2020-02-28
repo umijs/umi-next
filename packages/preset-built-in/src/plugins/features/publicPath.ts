@@ -8,7 +8,7 @@ export default (api: IApi) => {
       schema(joi) {
         return joi
           .string()
-          .regex(/^\//)
+          .regex(/\/$/)
           .error(new Error('config.publicPath must end with /.'));
       },
     },
