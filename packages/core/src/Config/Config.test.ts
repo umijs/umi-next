@@ -47,7 +47,6 @@ test('umi-env', async () => {
   const s1 = new Service({
     cwd,
   });
-  console.log('process.env.UMI_ENV', process.env.UMI_ENV);
   expect(s1.userConfig).toEqual({
     foo: 1,
     bar: 1,
