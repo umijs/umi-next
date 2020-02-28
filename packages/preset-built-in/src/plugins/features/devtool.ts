@@ -5,7 +5,7 @@ export default (api: IApi) => {
     key: 'devtool',
     config: {
       schema(joi) {
-        return joi.string();
+        return joi.alternatives(joi.string(), joi.boolean());
       },
     },
   });
