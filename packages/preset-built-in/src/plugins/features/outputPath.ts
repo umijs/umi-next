@@ -8,7 +8,7 @@ export default (api: IApi) => {
       schema(joi) {
         return joi
           .string()
-          .not(['src', 'public', 'pages', 'mock', 'config'])
+          .not('src', 'public', 'pages', 'mock', 'config')
           .allow('');
       },
     },
