@@ -6,7 +6,7 @@ export default (api: IApi) => {
     config: {
       default: '/',
       schema(joi) {
-        return joi.string().regex(/^\//g);
+        return joi.string().regex(/^\//);
       },
     },
   });
