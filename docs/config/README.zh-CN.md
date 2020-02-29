@@ -790,9 +790,9 @@ export default {
 export default {
   title: 'hi',
   routes: [
-    { path: '/', title: 'Home' },  
-    { path: '/users', title: 'Users' },  
-    { path: '/foo', },  
+    { path: '/', title: 'Home' },
+    { path: '/users', title: 'Users' },
+    { path: '/foo', },
   ],
 }
 ```
@@ -803,3 +803,28 @@ export default {
 
 * 默认不会在 HTML 里输出 `<title>` 标签，通过动态渲染得到
 * 配 `exportStatic` 后会为每个 HTML 输出 `<title>` 标签
+
+## analyze
+
+* Type: `object`
+* Default: `{}`
+
+包模块结构分析工具，可以看到项目各模块的大小，按需优化。开启通过 `ANALYZE=1 umi build`，默认启动 `8888` 用于预览结果，更多配置如下：
+
+```js
+{
+  // 配置具体含义见：https://github.com/umijs/umi-webpack-bundle-analyzer#options-for-plugin
+  analyze: {
+    analyzerMode: 'server',
+    analyzerPort: 8888,
+    openAnalyzer: true,
+    // generate stats file while ANALYZE_DUMP exist
+    generateStatsFile: false,
+    statsFilename: 'stats.json',
+    logLevel: 'info',
+    defaultSizes: 'parsed', // stat  // gzip
+  }
+}
+```
+
+> 建议经常在构建完后使用，更有利于应用优化。

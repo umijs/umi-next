@@ -75,3 +75,11 @@ $ umi dev
 ```bash
 $ FORK_TS_CHECKER=1 umi dev
 ```
+
+### ANALYZE
+
+默认关闭。分析 bundle 构成，build 时有效。比如：
+
+```bash
+$ ANALYZE=1 umi build
+```
