@@ -180,8 +180,11 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
 
   function getGzippedSize(asset: any) {
     const filepath = resolve(join(dir, asset.name));
-    const buffer = readFileSync(filepath);
-    return filesize(zlib.gzipSync(buffer).length);
+    if (existsSync(filepath)) {
+      const buffer = readFileSync(filepath);
+      return filesize(zlib.gzipSync(buffer).length);
+    }
+    return filesize(0);
   }
 
   function makeRow(a: string, b: string, c: string): string {
