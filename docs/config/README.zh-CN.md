@@ -809,7 +809,7 @@ export default {
 * Type: `object`
 * Default: `{}`
 
-包模块结构分析工具，可以看到项目各模块的大小，按需优化。开启通过 `ANALYZE=1 umi build`，默认启动 `8888` 用于预览结果，更多配置如下：
+包模块结构分析工具，可以看到项目各模块的大小，按需优化。开启通过 `ANALYZE=1 umi build` 或者 `ANALYZE=1 umi dev`，默认启动 `8888` 用于预览结果，更多配置如下：
 
 ```js
 {
