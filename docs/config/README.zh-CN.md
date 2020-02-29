@@ -828,3 +828,9 @@ export default {
 ```
 
 > 建议经常在构建完后使用，更有利于应用优化。
+## enableTSChecker
+
+* Type: `boolean`
+* Default: `false`
+
+开启 TypeScript 编译时类型检查。
