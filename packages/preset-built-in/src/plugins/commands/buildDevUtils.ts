@@ -149,8 +149,6 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
   const isJS = (val: string) => /\.js$/.test(val);
   const isCSS = (val: string) => /\.css$/.test(val);
 
-  let suggestBundleSplitting = false;
-
   const orderedAssets = assets
     ?.map(a => {
       a.name = a.name.split('?')[0];
@@ -160,10 +158,10 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
         ? WARN_AFTER_BUNDLE_GZIP_SIZE
         : WARN_AFTER_CHUNK_GZIP_SIZE;
       const isLarge = maxRecommendedSize && a.size > maxRecommendedSize;
-      if (isLarge && isJS(a.name)) {
-        suggestBundleSplitting = true;
-      }
-      return a;
+      return {
+        ...a,
+        suggested: isLarge && isJS(a.name),
+      };
     })
     .filter(a => {
       if (seenNames.has(a.name)) {
@@ -202,7 +200,10 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
         ?.map(asset =>
           makeRow(
             /js$/.test(asset.name)
-              ? chalk.green(join(dir, asset.name))
+              ? asset.suggested
+                ? // warning for large bundle
+                  chalk.yellow(join(dir, asset.name))
+                : chalk.green(join(dir, asset.name))
               : chalk.blue(join(dir, asset.name)),
             filesize(asset.size),
             getGzippedSize(asset),
@@ -217,7 +218,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
     )}\n`,
   );
 
-  if (suggestBundleSplitting) {
+  if (orderedAssets?.some(asset => asset.suggested)) {
     // We'll warn for bundles exceeding them.
     // TODO: use umi docs
     console.log();
