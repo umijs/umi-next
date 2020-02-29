@@ -130,8 +130,8 @@ export function cleanTmpPathExceptCache({
 }
 
 // These sizes are pretty large. We'll warn for bundles exceeding them.
-const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
-const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
+const WARN_AFTER_BUNDLE_GZIP_SIZE = 1.8 * 1024 * 1024;
+const WARN_AFTER_CHUNK_GZIP_SIZE = 1 * 1024 * 1024;
 
 export function printFileSizes(stats: webpack.Stats, dir: string) {
   const ui = require('cliui')({ width: 80 });
@@ -143,32 +143,26 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
 
   const assets = json.assets
     ? json.assets
-    : json?.children?.reduce(
-        (acc, child) => acc.concat(child?.assets as any),
-        [],
-      );
+    : json?.children?.reduce((acc, child) => acc.concat(child?.assets), []);
 
   const seenNames = new Map();
   const isJS = (val: string) => /\.js$/.test(val);
   const isCSS = (val: string) => /\.css$/.test(val);
 
   let suggestBundleSplitting = false;
-  const findLargeBundle = (asset: any) => {
-    // These sizes are pretty large
-    const isMainBundle = asset.name.indexOf('main.') === 0;
-    const maxRecommendedSize = isMainBundle
-      ? WARN_AFTER_BUNDLE_GZIP_SIZE
-      : WARN_AFTER_CHUNK_GZIP_SIZE;
-    const isLarge = maxRecommendedSize && asset.size > maxRecommendedSize;
-    if (isLarge && isJS(asset.name)) {
-      suggestBundleSplitting = true;
-    }
-  };
 
   const orderedAssets = assets
     ?.map(a => {
       a.name = a.name.split('?')[0];
-      findLargeBundle(a);
+      // These sizes are pretty large
+      const isMainBundle = a.name.indexOf('umi.') === 0;
+      const maxRecommendedSize = isMainBundle
+        ? WARN_AFTER_BUNDLE_GZIP_SIZE
+        : WARN_AFTER_CHUNK_GZIP_SIZE;
+      const isLarge = maxRecommendedSize && a.size > maxRecommendedSize;
+      if (isLarge && isJS(a.name)) {
+        suggestBundleSplitting = true;
+      }
       return a;
     })
     .filter(a => {
@@ -191,7 +185,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
   }
 
   function makeRow(a: string, b: string, c: string): string {
-    return `  ${a}\t    ${b}\t ${c}`;
+    return ` ${a}\t      ${b}\t ${c}`;
   }
 
   ui.div(
@@ -229,12 +223,12 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
     );
     console.log(
       chalk.yellow(
-        'Consider reducing it with code splitting: https://goo.gl/9VhYWB',
+        'Consider reducing it with code splitting: https://next.umijs.org/guide/code_splitting',
       ),
     );
     console.log(
       chalk.yellow(
-        'You can also analyze the project dependencies: https://goo.gl/LeUzfb',
+        'You can also analyze the project dependencies using ANALYZE=1',
       ),
     );
     console.log();
