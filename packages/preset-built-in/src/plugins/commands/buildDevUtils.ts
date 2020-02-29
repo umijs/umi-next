@@ -141,7 +141,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
   });
 
   const filesize = (bytes: number) => {
-    const bytesTotal = Math.abs(bytes);
+    bytes = Math.abs(bytes);
     const radix = 1024;
     const unit = ['b', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb'];
     let loop = 0;
@@ -151,7 +151,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
       bytes /= radix;
       ++loop;
     }
-    return `${bytesTotal.toFixed(1)} ${unit[loop]}`;
+    return `${bytes.toFixed(1)} ${unit[loop]}`;
   };
 
   const assets = json.assets
