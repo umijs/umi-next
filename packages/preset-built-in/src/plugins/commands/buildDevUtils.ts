@@ -226,7 +226,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
     );
     console.log(
       chalk.yellow(
-        'Consider reducing it with code splitting: https://next.umijs.org/guide/code_splitting',
+        'Consider reducing it with code splitting: https://umijs.org/guide/code_splitting',
       ),
     );
     console.log(
