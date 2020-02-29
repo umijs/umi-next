@@ -9,7 +9,7 @@ export default (api: IApi) => {
       },
     },
     enableBy: () =>
-      (process.env.FORK_TS_CHECKER || api.config?.enableTSChecker) as boolean,
+      (process.env.FORK_TS_CHECKER || !!api.config?.forkTSCheker) as boolean,
   });
 
   api.chainWebpack(webpackConfig => {
