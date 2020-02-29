@@ -2,14 +2,14 @@ import { IApi } from 'umi';
 
 export default (api: IApi) => {
   api.describe({
-    key: 'enableTSChecker',
+    key: 'forkTSCheker',
     config: {
       schema(joi) {
-        return joi.boolean();
+        return joi.object();
       },
     },
     enableBy: () =>
-      process.env.FORK_TS_CHECKER || api.config?.enableTSChecker,
+      (process.env.FORK_TS_CHECKER || api.config?.enableTSChecker) as boolean,
   });
 
   api.chainWebpack(webpackConfig => {
