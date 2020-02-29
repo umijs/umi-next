@@ -831,6 +831,5 @@ export default {
 ## forkTSCheker
 
 * Type: `object`
-* Default: ``
 
 开启 TypeScript 编译时类型检查，默认关闭。
