@@ -5,6 +5,7 @@
   "main": "index.js",
   "types": "types.d.ts",
   "files": [
+    "bin",
     "lib",
     "src",
     "dist",
