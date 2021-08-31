@@ -4,6 +4,9 @@
   "description": "@umijs/bundler-webpack",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "bundler-webpack": "bin/bundler-webpack.js"
+  },
   "files": [
     "bin",
     "compiled",
