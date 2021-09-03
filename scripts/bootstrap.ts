@@ -105,13 +105,11 @@ import { $, argv, chalk, fs, path } from 'zx';
       );
 
       // README.md
-      if (!fs.existsSync(path.join(pkgDir, 'README.md'))) {
-        await fs.writeFile(
-          path.join(pkgDir, 'README.md'),
-          `# ${name}\n`,
-          'utf-8',
-        );
-      }
+      await fs.writeFile(
+        path.join(pkgDir, 'README.md'),
+        `# ${name}\n\nSee our website [umijs](https://umijs.org) for more information.`,
+        'utf-8',
+      );
 
       // tsconfig.json
       await fs.writeFile(
