@@ -36,12 +36,10 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
       '\\.(css|less|sass|scss|stylus)$': require.resolve('identity-obj-proxy'),
     },
     verbose: true,
-
     watchPlugins: [
       'jest-watch-typeahead/filename',
       'jest-watch-typeahead/testname',
     ],
-
     testMatch: [
       `${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`,
     ],
@@ -63,7 +61,7 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
         'ts-jest',
       ),
     },
-    globals: {
+    globals: useEsbuild ? {} : {
       'ts-jest': {
         tsconfig: 'tsconfig.json',
       },
