@@ -1,3 +1,2 @@
-export default () => {
-  return '@umijs/test';
-};
+
+export * from './jest/config';
