@@ -13,7 +13,7 @@ export interface UmiTestJestOptions {
 
 export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJestOptions = {}): UmiTestJestConfig {
   const jestDefaults: Config.DefaultOptions = require('jest-config').defaults;
-  const { useEsbuild, hasE2e = true, isLerna } = options;
+  const { useEsbuild = true, hasE2e = true, isLerna = false } = options;
   const testMatchTypes = ['spec', 'test'];
   if (hasE2e) {
     testMatchTypes.push('e2e');
