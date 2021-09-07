@@ -36,7 +36,7 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
     moduleNameMapper: {
       '\\.(css|less|sass|scss|stylus)$': require.resolve('identity-obj-proxy'),
       '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
-        './helpers/fileMock.js',
+        './helpers/fileMock',
       ),
     },
     verbose: true,
