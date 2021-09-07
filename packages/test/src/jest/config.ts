@@ -1,7 +1,7 @@
 import type { Config } from '@jest/types';
 import { mergeConfig } from '../utils/mergeConfig/mergeConfig';
 
-export interface UmiTestJestConfig extends Omit<Config.InitialOptions, 'collectCoverageFrom'> {
+export interface UmiTestJestConfig extends Omit<Config.InitialOptions, 'collectCoverageFrom' | 'modulePathIgnorePatterns'> {
   collectCoverageFrom?: Config.InitialOptions['collectCoverageFrom'] | ((memo: Config.InitialOptions['collectCoverageFrom']) => Config.InitialOptions['collectCoverageFrom']);
 }
 
@@ -23,17 +23,21 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
     testEnvironment: require.resolve('jest-environment-jsdom'),
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     collectCoverageFrom: [
+      '!**/.umi/**',
+      '!**/.umi-production/**',
       '!**/typings/**',
       '!**/types/**',
       '!**/fixtures/**',
       '!**/examples/**',
       '!**/*.d.ts',
     ].filter(Boolean),
-    modulePathIgnorePatterns: [],
     moduleDirectories: ['node_modules'],
     transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
     moduleNameMapper: {
       '\\.(css|less|sass|scss|stylus)$': require.resolve('identity-obj-proxy'),
+      '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
+        './helpers/fileMock.js',
+      ),
     },
     verbose: true,
     watchPlugins: [
