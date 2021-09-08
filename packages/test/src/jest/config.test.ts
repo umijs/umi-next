@@ -12,14 +12,6 @@ test('e2e', () => {
   }).testMatch).toContain('**/?*.(spec|test|e2e).(j|t)s?(x)');
 });
 
-test('lerna', () => {
-  expect(
-    createJestConfig({}, {
-      isLerna: true
-    }).testMatch,
-  ).toContain('**/packages/**/**/?*.(spec|test|e2e).(j|t)s?(x)');
-});
-
 test('useEsbuild', () => {
   expect(
     JSON.stringify(createJestConfig({}, {
