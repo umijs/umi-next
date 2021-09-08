@@ -3,10 +3,16 @@ import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { DEFAULT_DEVTOOL, DEFAULT_OUTPUT_PATH } from '../constants';
 import { Env, IConfig } from '../types';
+import { getBrowsersList } from '../utils/getBrowsersList';
 import { applyCompress } from './compress';
 import { applyCSSRules } from './cssRules';
+import { applyDefinePlugin } from './definePlugin';
+import { applyIgnorePlugin } from './ignorePlugin';
 import { applyJavaScriptRules } from './javaScriptRules';
 import { applyMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
+import { applyProgressPlugin } from './progressPlugin';
+import { applySpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
+import { applyWebpackBundleAnalyzer } from './webpackBundleAnalyzer';
 
 interface IOpts {
   cwd: string;
@@ -19,11 +25,17 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   const { userConfig } = opts;
   const isDev = opts.env === Env.development;
   const config = new Config();
+  userConfig.targets = userConfig.targets || {
+    chrome: 80,
+  };
   const applyOpts = {
     config,
     userConfig,
     cwd: opts.cwd,
     env: opts.env,
+    browsers: getBrowsersList({
+      targets: userConfig.targets,
+    }),
   };
 
   // mode
@@ -88,7 +100,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // target
   config.target(['web', 'es5']);
 
-  // node polyfill
+  // TODO: node polyfill
 
   // rules
   await applyJavaScriptRules(applyOpts);
@@ -97,17 +109,25 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // plugins
   // mini-css-extract-plugin
   await applyMiniCSSExtractPlugin(applyOpts);
-  // ignoreMomentLocale [?]
+  // ignoreMomentLocale
+  await applyIgnorePlugin(applyOpts);
   // define
+  await applyDefinePlugin(applyOpts);
   // progress
-  // copy
-  // friendly-error
-  // profile
-  // manifest
+  await applyProgressPlugin(applyOpts);
+  // TODO: copy
+  // TODO: friendly-error
+  // TODO: manifest
   // hmr
+  if (isDev) {
+    config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
+  }
   // compress
   await applyCompress(applyOpts);
-  // speed measure
+  // purgecss
+  // await applyPurgeCSSWebpackPlugin(applyOpts);
+  // analyzer
+  await applyWebpackBundleAnalyzer(applyOpts);
 
   // chain webpack
   if (userConfig.chainWebpack) {
@@ -117,7 +137,13 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     });
   }
 
-  const webpackConfig = config.toConfig();
-  webpackConfig;
+  let webpackConfig = config.toConfig();
+
+  // speed measure
+  // TODO: mini-css-extract-plugin 报错
+  webpackConfig = await applySpeedMeasureWebpackPlugin({
+    webpackConfig,
+  });
+
   return webpackConfig;
 }

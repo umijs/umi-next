@@ -36,19 +36,25 @@ export interface IConfig {
   cssLoaderModules?: { [key: string]: any };
   cssMinifier?: CSSMinifier;
   cssMinifierOptions?: { [key: string]: any };
+  define?: { [key: string]: any };
   depTranspiler?: Transpiler;
   devtool?: any;
   externals?: WebpackConfig['externals'];
   extraBabelPlugins?: IBabelPlugin[];
   extraBabelPresets?: IBabelPlugin[];
+  extraPostCSSPlugins?: any[];
   hash?: any;
+  ignoreMomentLocale?: boolean;
   jsMinifier?: JSMinifier;
   jsMinifierOptions?: { [key: string]: any };
   lessLoader?: { [key: string]: any };
   outputPath?: string;
+  postcssLoader?: { [key: string]: any };
   publicPath?: string;
+  purgeCSS?: { [key: string]: any };
   sassLoader?: { [key: string]: any };
   srcTranspiler?: Transpiler;
   styleLoader?: { [key: string]: any };
+  targets?: { [key: string]: any };
   [key: string]: any;
 }

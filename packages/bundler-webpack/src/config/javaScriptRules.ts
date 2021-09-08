@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import Config from '../../compiled/webpack-5-chain';
 import { Env, IConfig, Transpiler } from '../types';
-import { es5ImcompatibleVersionsToPkg, isMatch } from './depMatch';
+import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
 
 interface IOpts {
   config: Config;
@@ -29,11 +29,8 @@ export async function applyJavaScriptRules(opts: IOpts) {
       .end()
       .exclude.add(/node_modules/)
       .end(),
-    config.module
-      .rule('jsx-ts-tsx')
-      .test(/\.(jsx|ts|tsx)$/)
-      .include.add(/node_modules/)
-      .end(),
+
+    config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),
     config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
@@ -80,6 +77,7 @@ export async function applyJavaScriptRules(opts: IOpts) {
             process.env.BABEL_CACHE !== 'none'
               ? winPath(`${prefix}/.umi/.cache/babel-loader`)
               : false,
+          targets: userConfig.targets,
           presets: [
             [
               require.resolve('@umijs/babel-preset-umi'),
@@ -91,6 +89,7 @@ export async function applyJavaScriptRules(opts: IOpts) {
                 pluginTransformRuntime: {},
                 pluginLockCoreJS: {},
                 pluginDynamicImportNode: false,
+                pluginAutoCSSModules: userConfig.autoCSSModules,
               },
             ],
             ...(userConfig.extraBabelPresets || []).filter(Boolean),

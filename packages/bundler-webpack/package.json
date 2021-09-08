@@ -35,39 +35,57 @@
     "@umijs/babel-preset-umi": "4.0.0-alpha.1",
     "@umijs/utils": "4.0.0-alpha.1",
     "es5-imcompatible-versions": "^0.1.73",
-    "jest-worker": "27.1.0"
+    "jest-worker": "27.1.0",
+    "postcss": "8.3.6",
+    "postcss-preset-env": "6.7.0"
   },
   "devDependencies": {
     "@types/webpack-sources": "3.2.0",
+    "autoprefixer": "10.3.4",
     "babel-loader": "8.2.2",
     "css-loader": "6.2.0",
+    "css-minimizer-webpack-plugin": "3.0.2",
+    "cssnano": "5.0.8",
     "less": "4.1.1",
     "less-loader": "10.0.1",
     "mini-css-extract-plugin": "2.2.2",
+    "postcss-flexbugs-fixes": "5.0.2",
+    "postcss-loader": "6.1.1",
+    "purgecss-webpack-plugin": "4.0.3",
     "sass-loader": "12.1.0",
     "schema-utils": "3.1.1",
     "style-loader": "3.2.1",
+    "speed-measure-webpack-plugin": "1.5.0",
     "tapable": "2.2.0",
     "terser": "5.7.2",
     "terser-webpack-plugin": "5.2.0",
     "webpack": "5.51.1",
     "webpack-5-chain": "8.0.0",
+    "webpack-bundle-analyzer": "4.4.2",
     "webpack-sources": "3.2.0"
   },
   "compiledConfig": {
     "deps": [
+      "autoprefixer",
       "babel-loader",
       "css-loader",
+      "css-minimizer-webpack-plugin",
+      "cssnano",
       "less",
       "less-loader",
       "mini-css-extract-plugin",
+      "postcss-flexbugs-fixes",
+      "postcss-loader",
+      "purgecss-webpack-plugin",
       "sass-loader",
       "schema-utils",
       "style-loader",
+      "speed-measure-webpack-plugin",
       "tapable",
       "terser",
       "terser-webpack-plugin",
       "webpack-5-chain",
+      "webpack-bundle-analyzer",
       "webpack-sources",
       "./bundles/webpack/bundle"
     ],
@@ -78,7 +96,8 @@
       "esbuild": "@umijs/bundler-utils/compiled/esbuild",
       "jest-worker": "jest-worker",
       "less": "$$LOCAL",
-      "schema-utils": "$$LOCAL",
+      "cssnano": "$$LOCAL",
+      "postcss": "postcss",
       "tapable": "$$LOCAL",
       "terser": "$$LOCAL",
       "terser-webpack-plugin": "$$LOCAL",
@@ -89,7 +108,8 @@
     "noMinify": [
       "./bundles/webpack/bundle",
       "terser-webpack-plugin",
-      "mini-css-extract-plugin"
+      "mini-css-extract-plugin",
+      "purgecss-webpack-plugin"
     ],
     "extraDtsDeps": [
       "webpack"
@@ -103,11 +123,18 @@
     "excludeDtsDeps": [
       "babel-loader",
       "css-loader",
+      "css-minimizer-webpack-plugin",
+      "cssnano",
       "less",
       "less-loader",
-      "sass-loader",
       "mini-css-extract-plugin",
-      "style-loader"
+      "postcss-flexbugs-fixes",
+      "postcss-loader",
+      "purgecss-webpack-plugin",
+      "sass-loader",
+      "speed-measure-webpack-plugin",
+      "style-loader",
+      "webpack-bundle-analyzer"
     ]
   }
 }
