@@ -19,10 +19,26 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
     testMatchTypes.push('e2e');
   }
   const testMatchPrefix = isLerna ? `**/packages/**/` : '';
+  const umiRootDir = process.env.APP_ROOT || process.cwd();
+  console.log('umiRootDir', umiRootDir);
+  
   const umiTestDefaultsConfig: Config.InitialOptions = {
     testEnvironment: require.resolve('jest-environment-jsdom'),
-    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+    setupFiles: [
+      require.resolve('../../helpers/jsdom.js')
+    ],
+    setupFilesAfterEnv: [
+      require.resolve('../../helpers/setupTests.js')
+    ],
+    moduleFileExtensions: [
+      'js',
+      'jsx',
+      'ts',
+      'tsx',
+      'json'
+    ],
     collectCoverageFrom: [
+      "src/**/*.{js,jsx,ts,tsx}",
       '!**/.umi/**',
       '!**/.umi-production/**',
       '!**/typings/**',
@@ -31,15 +47,20 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
       '!**/examples/**',
       '!**/*.d.ts',
     ].filter(Boolean),
-    moduleDirectories: ['node_modules'],
-    transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
+    transformIgnorePatterns: [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    modulePaths: [],
     moduleNameMapper: {
-      '\\.(css|less|sass|scss|stylus)$': require.resolve('identity-obj-proxy'),
-      '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
-        './helpers/fileMock',
-      ),
+      '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
+      // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
+      //   './helpers/fileMock',
+      // ),
+      '^@/(.*)$': `${umiRootDir}/src/$1`,
+      '^@@/(.*)$': `${umiRootDir}/src/.umi/$1`,
     },
-    verbose: true,
+    resetMocks: true,
     watchPlugins: [
       'jest-watch-typeahead/filename',
       'jest-watch-typeahead/testname',
@@ -49,33 +70,30 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
     ],
     testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
     transform: {
-      // esbuild-jest 比 ts-jest 快 3 倍左右
-      "^.+\\.(js|jsx|ts|tsx)$": useEsbuild ? [
-        require.resolve(
-          'esbuild-jest',
-        ),
-        {
-          sourcemap: true,
-          loaders: {
-            '.spec.ts': 'tsx',
-            '.test.ts': 'tsx'
+      ...useEsbuild ? {
+        "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": [
+          require.resolve(
+            'esbuild-jest',
+          ),
+          {
+            sourcemap: true,
+            loaders: {
+              '.spec.ts': 'tsx',
+              '.test.ts': 'tsx'
+            }
           }
-        }
-      ] : require.resolve(
-        'ts-jest',
-      ),
-    },
-    globals: useEsbuild ? {} : {
-      'ts-jest': {
-        tsconfig: 'tsconfig.json',
+        ]
+      } : {
+        "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": require.resolve("../../helpers/babelTransform.js"),
       },
+      "^.+\\.css$": require.resolve("../../helpers/cssTransform.js"),
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": require.resolve("../../helpers/fileTransform.js")
     },
     // 用于设置 jest worker 启动的个数
     ...(process.env.MAX_WORKERS
       ? { maxWorkers: Number(process.env.MAX_WORKERS) }
       : {}),
   };
-
   const jestConfig = mergeConfig<UmiTestJestConfig, Config.InitialOptions>(
     jestDefaults,
     umiTestDefaultsConfig,

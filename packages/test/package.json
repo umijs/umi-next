@@ -1,11 +1,12 @@
 {
-  "name": "@umijs/test",
-  "version": "4.0.0-alpha.1",
+  "name": "alita-test",
+  "version": "4.0.0-alpha.6",
   "description": "@umijs/test",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "helpers"
   ],
   "scripts": {
     "build": "pnpm tsc",
@@ -27,11 +28,15 @@
   },
   "dependencies": {
     "@jest/types": "^27.1.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "babel-jest": "^27.1.0",
+    "babel-preset-react-app": "^10.0.0",
+    "camelcase": "^6.2.0",
     "esbuild": "^0.12.25",
     "esbuild-jest": "^0.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-config": "^27.1.0",
     "jest-watch-typeahead": "^0.6.4",
-    "ts-jest": "^27.0.5"
+    "whatwg-fetch": "^3.6.2"
   }
 }
