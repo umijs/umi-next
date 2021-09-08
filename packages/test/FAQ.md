@@ -21,17 +21,13 @@ UmiTestJestConfig 就是 jest 的所有配置。
 ```
 export interface UmiTestJestOptions {
   hasE2e?: boolean;
-  isLerna?: boolean;
   useEsbuild?: boolean;
 }
 ```
 | 属性 | 类型 | 说明 | 默认值 |
 |  :-  | :-:  | :-:  | :-:  |
 | hasE2e | boolean | 是否包含 e2e 测试 | true |
-| isLerna | boolean | 是否是 lerna 项目 | false |
-| useEsbuild | boolean | 是否使用 esbuild | true |
-
-> 使用 esbuild 会快3倍左右，但是不完全检测类型。
+| useEsbuild | boolean | 是否使用 esbuild | false |
 
 ## jest 的安装与使用
 
@@ -94,6 +90,13 @@ export default config;
 
 更新 jest 到 jest@27
 
+### createScriptTransformer is not defined
+
+使用 jest@27 但存在 jest@26 相关的依赖
+
+### Cannot read property 'cwd' of undefined
+
+使用 jest@27 但存在 jest@26 相关的依赖
 ### 从 jest@26 升级到 jest@27
 
 ```diff

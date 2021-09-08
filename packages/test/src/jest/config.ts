@@ -1,27 +1,26 @@
 import type { Config } from '@jest/types';
 import { mergeConfig } from '../utils/mergeConfig/mergeConfig';
 
-export interface UmiTestJestConfig extends Omit<Config.InitialOptions, 'collectCoverageFrom' | 'modulePathIgnorePatterns'> {
+export interface UmiTestJestConfig extends Omit<Config.InitialOptions, 'collectCoverageFrom' | 'transformIgnorePatterns' | 'moduleNameMapper'> {
   collectCoverageFrom?: Config.InitialOptions['collectCoverageFrom'] | ((memo: Config.InitialOptions['collectCoverageFrom']) => Config.InitialOptions['collectCoverageFrom']);
+  transformIgnorePatterns?: Config.InitialOptions['transformIgnorePatterns'] | ((memo: Config.InitialOptions['transformIgnorePatterns']) => Config.InitialOptions['transformIgnorePatterns']);
+  moduleNameMapper?: Config.InitialOptions['moduleNameMapper'] | ((memo: Config.InitialOptions['moduleNameMapper']) => Config.InitialOptions['moduleNameMapper']);
 }
 
 export interface UmiTestJestOptions {
   hasE2e?: boolean;
-  isLerna?: boolean;
   useEsbuild?: boolean;
 }
 
 export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJestOptions = {}): UmiTestJestConfig {
   const jestDefaults: Config.DefaultOptions = require('jest-config').defaults;
-  const { useEsbuild = true, hasE2e = true, isLerna = false } = options;
+  const { useEsbuild = false, hasE2e = true} = options;
   const testMatchTypes = ['spec', 'test'];
   if (hasE2e) {
     testMatchTypes.push('e2e');
   }
-  const testMatchPrefix = isLerna ? `**/packages/**/` : '';
   const umiRootDir = process.env.APP_ROOT || process.cwd();
-  console.log('umiRootDir', umiRootDir);
-  
+
   const umiTestDefaultsConfig: Config.InitialOptions = {
     testEnvironment: require.resolve('jest-environment-jsdom'),
     setupFiles: [
@@ -37,7 +36,10 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
       'tsx',
       'json'
     ],
+    testRunner: require.resolve('jest-circus/runner'),
+    runner: require.resolve('jest-runner'),
     collectCoverageFrom: [
+      'packages/*/src/**/*.{js,jsx,ts,tsx}',
       "src/**/*.{js,jsx,ts,tsx}",
       '!**/.umi/**',
       '!**/.umi-production/**',
@@ -66,7 +68,7 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
       'jest-watch-typeahead/testname',
     ],
     testMatch: [
-      `${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`,
+      `**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`,
     ],
     testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
     transform: {
@@ -76,7 +78,7 @@ export function createJestConfig(config: UmiTestJestConfig, options: UmiTestJest
             'esbuild-jest',
           ),
           {
-            sourcemap: true,
+            sourcemap: false,
             loaders: {
               '.spec.ts': 'tsx',
               '.test.ts': 'tsx'
