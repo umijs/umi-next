@@ -26,6 +26,12 @@ const expects: Record<string, Function> = {
   chainWebpack({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
   },
+  'copy-plugin'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log('copy');`);
+  },
+  'copy-plugin-from-config'({ files }: IOpts) {
+    expect(files['assets/index.js']).toContain(`console.log('copy assets');`);
+  },
   'css-modules'({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a_module = ({"a":"`);
   },
@@ -84,7 +90,7 @@ for (const fixture of readdirSync(fixtures)) {
     let config: Record<string, any> = {};
     try {
       config = require(join(base, 'config.ts')).default;
-    } catch (e) {}
+    } catch (e) { }
     await build({
       config: {
         ...config,
