@@ -1,8 +1,8 @@
 // @ts-ignore
 import ncc from '@vercel/ncc';
+import { Package } from 'dts-packer';
 import resolve from 'resolve';
 import 'zx/globals';
-import { Package } from 'dts-packer';
 // @ts-ignore
 // import { Package } from '/Users/chencheng/code/github.com/sorrycc/dts-packer/dist/Package.js';
 

@@ -242,10 +242,16 @@ importers:
   packages/bundler-webpack/bundles/webpack/packages:
     specifiers: {}
 
+  packages/bundler-webpack/compiled/autoprefixer:
+    specifiers: {}
+
   packages/bundler-webpack/compiled/babel-loader:
     specifiers: {}
 
   packages/bundler-webpack/compiled/compression:
+    specifiers: {}
+
+  packages/bundler-webpack/compiled/copy-webpack-plugin:
     specifiers: {}
 
   packages/bundler-webpack/compiled/css-loader:
@@ -321,7 +327,14 @@ importers:
     specifiers: {}
 
   packages/mfsu:
-    specifiers: {}
+    specifiers:
+      '@umijs/bundler-utils': 4.0.0-alpha.1
+      '@umijs/bundler-webpack': 4.0.0-alpha.1
+      '@umijs/utils': 4.0.0-alpha.1
+    dependencies:
+      '@umijs/bundler-utils': link:../bundler-utils
+      '@umijs/bundler-webpack': link:../bundler-webpack
+      '@umijs/utils': link:../utils
 
   packages/umi:
     specifiers: {}
