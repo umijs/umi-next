@@ -62,6 +62,7 @@
     "schema-utils": "3.1.1",
     "style-loader": "3.2.1",
     "speed-measure-webpack-plugin": "1.5.0",
+    "svgo-loader": "3.0.0",
     "tapable": "2.2.0",
     "terser": "5.7.2",
     "terser-webpack-plugin": "5.2.0",
@@ -91,6 +92,7 @@
       "schema-utils",
       "style-loader",
       "speed-measure-webpack-plugin",
+      "svgo-loader",
       "tapable",
       "terser",
       "terser-webpack-plugin",
@@ -149,6 +151,7 @@
       "sass-loader",
       "speed-measure-webpack-plugin",
       "style-loader",
+      "svgo-loader",
       "webpack-bundle-analyzer",
       "webpack-dev-middleware"
     ]

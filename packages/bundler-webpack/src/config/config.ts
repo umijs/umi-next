@@ -15,6 +15,7 @@ import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
 import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
+import { addSVGRules } from './svgRules';
 
 interface IOpts {
   cwd: string;
@@ -112,6 +113,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addJavaScriptRules(applyOpts);
   await addCSSRules(applyOpts);
   await addAssetRules(applyOpts);
+  await addSVGRules(applyOpts);
 
   // plugins
   // mini-css-extract-plugin

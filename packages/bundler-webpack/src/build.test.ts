@@ -65,6 +65,9 @@ const expects: Record<string, Function> = {
   'postcss-flexbugs-fixes'({ files }: IOpts) {
     expect(files['index.css']).toContain(`.foo { flex: 1 1; }`);
   },
+  svg({ files }: IOpts) {
+    expect(files['index.js']).toContain(`.svg"`);
+  },
   targets({ files }: IOpts) {
     expect(files['index.js']).toContain(`var foo = 'foo';`);
   },

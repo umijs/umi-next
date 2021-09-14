@@ -188,6 +188,7 @@ importers:
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0
       style-loader: 3.2.1
+      svgo-loader: 3.0.0
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0
@@ -227,6 +228,7 @@ importers:
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0_webpack@5.51.1
       style-loader: 3.2.1_webpack@5.51.1
+      svgo-loader: 3.0.0
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0_329e5d56a65849e8fc122dce2eddee71
@@ -286,6 +288,9 @@ importers:
     specifiers: {}
 
   packages/bundler-webpack/compiled/style-loader:
+    specifiers: {}
+
+  packages/bundler-webpack/compiled/svgo-loader:
     specifiers: {}
 
   packages/bundler-webpack/compiled/tapable:
@@ -7822,6 +7827,13 @@ packages:
     dependencies:
       has-flag: 4.0.0
       supports-color: 7.2.0
+    dev: true
+
+  /svgo-loader/3.0.0:
+    resolution: {integrity: sha512-gwyFuzTxZ8hEWYKQ9GodudSKRHzW8CUqgdfsdNpu1U5Keow5dPIgxT4DoHUEVXQRolefgSCeBtW3y12CyhIGxw==}
+    dependencies:
+      loader-utils: 1.4.0
+      svgo: 2.5.0
     dev: true
 
   /svgo/2.5.0:
