@@ -2,9 +2,9 @@
 import ncc from '@vercel/ncc';
 import resolve from 'resolve';
 import 'zx/globals';
-// import { Package } from 'dts-packer';
+import { Package } from 'dts-packer';
 // @ts-ignore
-import { Package } from '/Users/chencheng/code/github.com/sorrycc/dts-packer/dist/Package.js';
+// import { Package } from '/Users/chencheng/code/github.com/sorrycc/dts-packer/dist/Package.js';
 
 export async function buildDep(opts: any) {
   console.log(chalk.green(`Build dep ${opts.pkgName || opts.file}`));

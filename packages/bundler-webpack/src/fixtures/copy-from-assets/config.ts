@@ -1,6 +1,6 @@
 export default {
-  copy: {
+  copy: [{
     from: 'assets',
     to: 'assets',
-  },
+  }],
 };

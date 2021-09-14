@@ -26,11 +26,11 @@ const expects: Record<string, Function> = {
   chainWebpack({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
   },
-  'copy-plugin'({ files }: IOpts) {
-    expect(files['index.js']).toContain(`console.log('copy');`);
+  copy({ files }: IOpts) {
+    expect(files['a.js']).toContain(`console.log('copy');`);
   },
-  'copy-plugin-from-config'({ files }: IOpts) {
-    expect(files['assets/index.js']).toContain(`console.log('copy assets');`);
+  'copy-from-assets'({ files }: IOpts) {
+    expect(files['assets']).toContain(`1`);
   },
   'css-modules'({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a_module = ({"a":"`);
@@ -111,6 +111,7 @@ for (const fixture of readdirSync(fixtures)) {
       }
       return memo;
     }, {});
+    console.log(fixture)
     expects[fixture]({
       files,
     });

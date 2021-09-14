@@ -1,4 +1,5 @@
 import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
+// @ts-ignore
 import CopyPlugin from '@umijs/bundler-webpack/compiled/copy-webpack-plugin';
 
 import { existsSync } from 'fs';
@@ -39,9 +40,7 @@ export async function applyCopyPlugin(opts: IOpts) {
       })
       : []),
   ].filter(Boolean);
-
   if (copyPatterns.length) {
-    // TODO: must do build:deps for copy-webpack-plugin
     config
       .plugin('copy')
       .use(CopyPlugin, [
