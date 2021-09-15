@@ -55,6 +55,8 @@ export interface IConfig {
   sassLoader?: { [key: string]: any };
   srcTranspiler?: Transpiler;
   styleLoader?: { [key: string]: any };
+  svgr?: { [key: string]: any };
+  svgo?: { [key: string]: any } | false;
   targets?: { [key: string]: any };
   writeToDisk?: boolean;
   [key: string]: any;

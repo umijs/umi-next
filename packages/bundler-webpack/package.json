@@ -45,6 +45,7 @@
     "@types/express": "4.17.13",
     "@types/webpack-sources": "3.2.0",
     "@types/ws": "7.4.7",
+    "@svgr/webpack": "5.5.0",
     "autoprefixer": "10.3.4",
     "babel-loader": "8.2.2",
     "css-loader": "6.2.0",
@@ -75,6 +76,7 @@
   },
   "compiledConfig": {
     "deps": [
+      "@svgr/webpack",
       "autoprefixer",
       "babel-loader",
       "css-loader",
@@ -137,6 +139,7 @@
       "webpack"
     ],
     "excludeDtsDeps": [
+      "@svgr/webpack",
       "babel-loader",
       "css-loader",
       "css-minimizer-webpack-plugin",

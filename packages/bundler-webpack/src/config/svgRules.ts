@@ -10,11 +10,24 @@ interface IOpts {
 }
 
 export async function addSVGRules(opts: IOpts) {
-  const { config } = opts;
-  const rule = config.module.rule('svg').test(/\.svg$/)
-  rule
-    .use('file-loader')
-    .loader(
-      require.resolve('@umijs/bundler-webpack/compiled/svgo-loader'),
-    ).options({ configFile: false })
+  const { config, userConfig } = opts;
+  const { svgr, svgo } = userConfig;
+  const rule = config.module.rule('svg');
+  // config svgr to use svgr-loader
+  if (svgr) {
+    // svgr defaultPlugins: [svgo, jsx], can use svgo:fasle to close svgo-loader
+    rule.test(/\.svg$/).use('svgr-loader')
+      .loader(require.resolve('@umijs/bundler-webpack/compiled/@svgr/webpack'))
+      .options({ ...svgr, svgo });
+  } else {
+    // config svgo:fasle to close svgo-loader
+    if (svgo === false) return;
+    rule
+      .test(/\.svg$/)
+      .use('svgo-loader')
+      .loader(
+        require.resolve('@umijs/bundler-webpack/compiled/svgo-loader'),
+      )
+      .options({ configFile: false, ...svgo })
+  }
 }
