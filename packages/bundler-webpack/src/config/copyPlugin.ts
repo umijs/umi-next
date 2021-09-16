@@ -1,10 +1,8 @@
 import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 // @ts-ignore
 import CopyPlugin from '@umijs/bundler-webpack/compiled/copy-webpack-plugin';
-
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { DEFAULT_OUTPUT_PATH } from '../constants';
 import { Env, IConfig } from '../types';
 
 interface IOpts {
@@ -14,28 +12,23 @@ interface IOpts {
   env: Env;
 }
 
-export async function applyCopyPlugin(opts: IOpts) {
+export async function addCopyPlugin(opts: IOpts) {
   const { config, userConfig, cwd } = opts;
-  const absOutputPath = join(
-    cwd,
-    userConfig.outputPath || DEFAULT_OUTPUT_PATH,
-  );
   const copyPatterns = [
     existsSync(join(cwd, 'public')) && {
       from: join(cwd, 'public'),
-      to: absOutputPath,
     },
     ...(userConfig.copy
       ? userConfig.copy.map((item) => {
         if (typeof item === 'string') {
           return {
             from: join(cwd, item),
-            to: absOutputPath,
           };
         }
         return {
+          // 相对于 process.cwd，所以这里需要使用绝对路径
           from: join(cwd, item.from),
-          to: join(absOutputPath, item.to),
+          to: item.to,
         };
       })
       : []),

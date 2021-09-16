@@ -111,7 +111,6 @@ for (const fixture of readdirSync(fixtures)) {
       }
       return memo;
     }, {});
-    console.log(fixture)
     expects[fixture]({
       files,
     });
