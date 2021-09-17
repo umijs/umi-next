@@ -1,7 +1,9 @@
+import { existsSync } from 'fs';
 import { join } from 'path';
+import { winPath } from '@umijs/utils';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
-import { DEFAULT_DEVTOOL, DEFAULT_OUTPUT_PATH } from '../constants';
+import { DEFAULT_DEVTOOL, DEFAULT_OUTPUT_PATH, DEFAULT_TEMPLATE_PATH } from '../constants';
 import { Env, IConfig } from '../types';
 import { getBrowsersList } from '../utils/browsersList';
 import { addAssetRules } from './assetRules';
@@ -89,22 +91,22 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   config.resolve
     .set('symlinks', true)
     .modules
-      .add('node_modules')
-      .end()
+    .add('node_modules')
+    .end()
     .alias
-      .merge(userConfig.alias || {})
-      .end()
+    .merge(userConfig.alias || {})
+    .end()
     .extensions
-      .merge([
-        '.wasm',
-        '.mjs',
-        '.js',
-        '.jsx',
-        '.ts',
-        '.tsx',
-        '.json'
-      ])
-      .end();
+    .merge([
+      '.wasm',
+      '.mjs',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.json'
+    ])
+    .end();
 
   // externals
   config.externals(userConfig.externals || []);
@@ -154,6 +156,19 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     await userConfig.chainWebpack(config, {
       env: opts.env,
       webpack: webpack,
+    });
+  }
+  // 缓存默认开启，可通过环境变量关闭
+  if (process.env.WEBPACK_FS_CACHE !== 'none') {
+    const prefix = existsSync(join(opts.cwd, 'src')) ? join(opts.cwd, 'src') : opts.cwd;
+    const budlerWebpackVersion = require('../../package.json').version;
+    // filesystem cache
+    config.cache({
+      type: 'filesystem',
+      //TODO: using umi version as `cache.version` process.env.UMI_VERSION
+      version: budlerWebpackVersion,
+      // TODO: using the config.path.absTmpPath
+      cacheDirectory: winPath(join(prefix, DEFAULT_TEMPLATE_PATH, '.cache', 'webpack')),
     });
   }
 
