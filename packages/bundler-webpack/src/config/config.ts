@@ -7,6 +7,7 @@ import { getBrowsersList } from '../utils/browsersList';
 import { addAssetRules } from './assetRules';
 import { addBundleAnalyzerPlugin } from './bundleAnalyzerPlugin';
 import { addCompressPlugin } from './compressPlugin';
+import { addCopyPlugin } from './copyPlugin';
 import { addCSSRules } from './cssRules';
 import { addDefinePlugin } from './definePlugin';
 import { addIgnorePlugin } from './ignorePlugin';
@@ -21,6 +22,10 @@ interface IOpts {
   cwd: string;
   env: Env;
   entry: Record<string, string>;
+  extraBabelPlugins?: any[];
+  hash?: boolean;
+  hmr?: boolean;
+  staticPathPrefix?: string;
   userConfig: IConfig;
 }
 
@@ -36,9 +41,12 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     userConfig,
     cwd: opts.cwd,
     env: opts.env,
+    extraBabelPlugins: opts.extraBabelPlugins || [],
     browsers: getBrowsersList({
       targets: userConfig.targets,
     }),
+    staticPathPrefix:
+      opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
   };
 
   // mode
@@ -47,9 +55,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // entry
   Object.keys(opts.entry).forEach((key) => {
     const entry = config.entry(key);
-    // TODO: hot
     // TODO: runtimePublicPath
-    if (isDev) {
+    if (isDev && opts.hmr) {
       entry.add(require.resolve('../client/client'));
     }
     entry.add(opts.entry[key]);
@@ -69,7 +76,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     opts.cwd,
     userConfig.outputPath || DEFAULT_OUTPUT_PATH,
   );
-  const useHash = userConfig.hash && !isDev;
+  const useHash = opts.hash || (userConfig.hash && !isDev);
   const disableCompress = process.env.COMPRESS === 'none';
   config.output
     .path(absOutputPath)
@@ -106,6 +113,11 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // target
   config.target(['web', 'es5']);
 
+  // experiments
+  config.experiments({
+    topLevelAwait: true,
+  });
+
   // node polyfill
   await addNodePolyfill(applyOpts);
 
@@ -124,11 +136,12 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addDefinePlugin(applyOpts);
   // progress
   await addProgressPlugin(applyOpts);
-  // TODO: copy
+  // copy
+  await addCopyPlugin(applyOpts);
   // TODO: friendly-error
   // TODO: manifest
   // hmr
-  if (isDev) {
+  if (isDev && opts.hmr) {
     config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
   }
   // compress

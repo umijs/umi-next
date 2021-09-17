@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@umijs/babel-preset-umi": "4.0.0-alpha.1",
+    "@umijs/mfsu": "4.0.0-alpha.1",
     "@umijs/utils": "4.0.0-alpha.1",
     "es5-imcompatible-versions": "^0.1.73",
     "jest-worker": "27.1.0",
@@ -48,6 +49,7 @@
     "@svgr/webpack": "5.5.0",
     "autoprefixer": "10.3.4",
     "babel-loader": "8.2.2",
+    "copy-webpack-plugin": "6.1.0",
     "css-loader": "6.2.0",
     "css-minimizer-webpack-plugin": "3.0.2",
     "cssnano": "5.0.8",
@@ -79,6 +81,7 @@
       "@svgr/webpack",
       "autoprefixer",
       "babel-loader",
+      "copy-webpack-plugin",
       "css-loader",
       "css-minimizer-webpack-plugin",
       "cssnano",
@@ -141,6 +144,7 @@
     "excludeDtsDeps": [
       "@svgr/webpack",
       "babel-loader",
+      "copy-webpack-plugin",
       "css-loader",
       "css-minimizer-webpack-plugin",
       "cssnano",

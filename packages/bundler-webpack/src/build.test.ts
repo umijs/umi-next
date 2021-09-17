@@ -7,6 +7,8 @@ interface IOpts {
   files: Record<string, string>;
 }
 
+const EXISTS = '1';
+
 const expects: Record<string, Function> = {
   alias({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
@@ -25,6 +27,12 @@ const expects: Record<string, Function> = {
   },
   chainWebpack({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
+  },
+  copy({ files }: IOpts) {
+    expect(files['a.js']).toContain(`console.log('copy');`);
+  },
+  'copy-from-assets'({ files }: IOpts) {
+    expect(files['assets']).toContain(EXISTS);
   },
   'css-modules'({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a_module = ({"a":"`);
@@ -97,6 +105,7 @@ for (const fixture of readdirSync(fixtures)) {
       config = require(join(base, 'config.ts')).default;
     } catch (e) { }
     await build({
+      clean: true,
       config: {
         ...config,
         jsMinifier: JSMinifier.none,
@@ -112,7 +121,7 @@ for (const fixture of readdirSync(fixtures)) {
       if (['.css', '.js', '.svg'].includes(extname(fileName))) {
         memo[fileName] = readFileSync(join(base, 'dist', fileName), 'utf-8');
       } else {
-        memo[fileName] = '1';
+        memo[fileName] = EXISTS;
       }
       return memo;
     }, {});
