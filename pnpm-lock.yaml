@@ -207,6 +207,7 @@ importers:
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0
+      url-loader: 4.1.1
       webpack: 5.51.1
       webpack-5-chain: 8.0.0
       webpack-bundle-analyzer: 4.4.2
@@ -250,6 +251,7 @@ importers:
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0_329e5d56a65849e8fc122dce2eddee71
+      url-loader: 4.1.1_webpack@5.51.1
       webpack: 5.51.1_5f021820e21d1917ddfcb06c1763c69d
       webpack-5-chain: 8.0.0
       webpack-bundle-analyzer: 4.4.2
@@ -282,6 +284,9 @@ importers:
     specifiers: {}
 
   packages/bundler-webpack/compiled/express:
+    specifiers: {}
+
+  packages/bundler-webpack/compiled/file-loader:
     specifiers: {}
 
   packages/bundler-webpack/compiled/less:
@@ -324,6 +329,9 @@ importers:
     specifiers: {}
 
   packages/bundler-webpack/compiled/terser-webpack-plugin:
+    specifiers: {}
+
+  packages/bundler-webpack/compiled/url-loader:
     specifiers: {}
 
   packages/bundler-webpack/compiled/webpack:
@@ -8819,6 +8827,22 @@ packages:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
       punycode: 2.1.1
+    dev: true
+
+  /url-loader/4.1.1_webpack@5.51.1:
+    resolution: {integrity: sha512-3BTV812+AVHHOJQO8O5MkWgZ5aosP7GnROJwvzLS9hWDj00lZ6Z0wNak423Lp9PBZN05N+Jk/N5Si8jRAlGyWA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      file-loader: '*'
+      webpack: ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      file-loader:
+        optional: true
+    dependencies:
+      loader-utils: 2.0.0
+      mime-types: 2.1.32
+      schema-utils: 3.1.1
+      webpack: 5.51.1_5f021820e21d1917ddfcb06c1763c69d
     dev: true
 
   /url/0.11.0:

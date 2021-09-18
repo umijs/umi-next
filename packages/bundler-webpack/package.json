@@ -69,6 +69,7 @@
     "tapable": "2.2.0",
     "terser": "5.7.2",
     "terser-webpack-plugin": "5.2.0",
+    "url-loader": "4.1.1",
     "webpack": "5.51.1",
     "webpack-5-chain": "8.0.0",
     "webpack-bundle-analyzer": "4.4.2",
@@ -101,6 +102,7 @@
       "tapable",
       "terser",
       "terser-webpack-plugin",
+      "url-loader",
       "webpack-5-chain",
       "webpack-bundle-analyzer",
       "webpack-dev-middleware",
@@ -159,6 +161,7 @@
       "speed-measure-webpack-plugin",
       "style-loader",
       "svgo-loader",
+      "url-loader",
       "webpack-bundle-analyzer",
       "webpack-dev-middleware"
     ]

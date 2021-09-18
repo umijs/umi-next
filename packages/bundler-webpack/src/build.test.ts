@@ -74,14 +74,15 @@ const expects: Record<string, Function> = {
     expect(files['index.css']).toContain(`.foo { flex: 1 1; }`);
   },
   svgo({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
+  'svgo-false'({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
     expect(files['index.js']).toContain(`.svg`);
   },
   svgr({ files }: IOpts) {
-    // svg filename is random
-    const [svgFilename] = Object.keys(files).filter(key => /\.svg$/.test(key));
-    if (svgFilename) {
-      expect(files[svgFilename]).toContain(`import * as React from "react"`);
-    }
+    expect(files['static']).toContain(EXISTS);
     expect(files['index.js']).toContain(`.svg`);
   },
   targets({ files }: IOpts) {
