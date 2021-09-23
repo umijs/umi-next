@@ -98,6 +98,22 @@ export async function addJavaScriptRules(opts: IOpts) {
             ...(userConfig.extraBabelPlugins || []),
           ].filter(Boolean),
         });
+    } else if (srcTranspiler === Transpiler.swc) {
+      rule
+        .use('swc-loader')
+        .loader(require.resolve('../../compiled/swc-loader'))
+        .options({
+          jsc: {
+            parser: {
+              syntax: "ecmascript",
+              jsx: true,
+              dynamicImport: true,
+              classProperty: true,
+              exportNamespaceFrom: true,
+              exportDefaultFrom: true
+            }
+          }
+        })
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);
     }

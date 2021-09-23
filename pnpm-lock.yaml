@@ -202,6 +202,7 @@ importers:
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0
       style-loader: 3.2.1
+      swc-loader: ^0.1.15
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0
@@ -243,6 +244,7 @@ importers:
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0_webpack@5.51.1
       style-loader: 3.2.1_webpack@5.51.1
+      swc-loader: 0.1.15_@swc+core@1.2.83+webpack@5.51.1
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0_329e5d56a65849e8fc122dce2eddee71
@@ -350,6 +352,9 @@ importers:
       just-diff: 3.1.1
 
   packages/core/compiled/@hapi/joi:
+    specifiers: {}
+
+  packages/core/compiled/just-diff:
     specifiers: {}
 
   packages/mfsu:
@@ -8150,6 +8155,17 @@ packages:
       css-tree: 1.1.3
       csso: 4.2.0
       stable: 0.1.8
+    dev: true
+
+  /swc-loader/0.1.15_@swc+core@1.2.83+webpack@5.51.1:
+    resolution: {integrity: sha512-cn1WPIeQJvXM4bbo3OwdEIapsQ4uUGOfyFj0h2+2+brT0k76DCGnZXDE2KmcqTd2JSQ+b61z2NPMib7eEwMYYw==}
+    peerDependencies:
+      '@swc/core': ^1.2.52
+      webpack: '>=2'
+    dependencies:
+      '@swc/core': 1.2.83
+      loader-utils: 2.0.0
+      webpack: 5.51.1_5f021820e21d1917ddfcb06c1763c69d
     dev: true
 
   /symbol-tree/3.2.4:
