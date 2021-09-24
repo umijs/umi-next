@@ -286,9 +286,6 @@ importers:
   packages/bundler-webpack/compiled/express:
     specifiers: {}
 
-  packages/bundler-webpack/compiled/file-loader:
-    specifiers: {}
-
   packages/bundler-webpack/compiled/less:
     specifiers: {}
 

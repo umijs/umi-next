@@ -20,6 +20,7 @@ export async function addSVGRules(opts: IOpts) {
     svgrRule
       .test(/\.svg$/)
       .issuer(/\.[jt]sx?$/)
+      .type('javascript/auto')
       .use('babel-loader')
       .loader(require.resolve('@umijs/bundler-webpack/compiled/babel-loader'))
       .end()

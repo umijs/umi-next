@@ -1,5 +1,9 @@
 
 // @ts-ignore
-import SvgSmile from './smile.svg';
+import smileUrl, { ReactComponent as SmileSvg } from './smile.svg';
+// @ts-ignore
+import react from 'react';
 import './index.css';
-console.log('foo');
+console.log(react);
+console.log(smileUrl);
+console.log(SmileSvg);
