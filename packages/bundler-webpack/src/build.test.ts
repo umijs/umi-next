@@ -78,6 +78,7 @@ const expects: Record<string, Function> = {
   },
   swc({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
+    expect(files['index.js']).toContain(`var myIdentity = identity;`);
   },
   theme({ files }: IOpts) {
     expect(files['index.css']).toContain(`color: green;`);

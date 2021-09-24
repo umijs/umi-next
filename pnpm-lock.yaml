@@ -202,7 +202,7 @@ importers:
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0
       style-loader: 3.2.1
-      swc-loader: ^0.1.15
+      swc-loader: 0.1.15
       tapable: 2.2.0
       terser: 5.7.2
       terser-webpack-plugin: 5.2.0
@@ -307,6 +307,9 @@ importers:
     specifiers: {}
 
   packages/bundler-webpack/compiled/style-loader:
+    specifiers: {}
+
+  packages/bundler-webpack/compiled/swc-loader:
     specifiers: {}
 
   packages/bundler-webpack/compiled/tapable:

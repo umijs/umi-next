@@ -16,7 +16,7 @@ export async function addJavaScriptRules(opts: IOpts) {
 
   const depPkgs = Object.assign({}, es5ImcompatibleVersionsToPkg());
   const srcRules = [
-    config.module
+    [config.module
       .rule('src')
       .test(/\.(js|mjs)$/)
       .include.add([
@@ -27,10 +27,10 @@ export async function addJavaScriptRules(opts: IOpts) {
       ])
       .end()
       .exclude.add(/node_modules/)
-      .end(),
+      .end(),false],
 
-    config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),
-    config.module
+    [config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),true],
+    [config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
       .include.add((path: string) => {
@@ -41,8 +41,8 @@ export async function addJavaScriptRules(opts: IOpts) {
           throw e;
         }
       })
-      .end(),
-  ];
+      .end(),false]
+  ] as [Config.Rule<Config.Module>,boolean][];
   const depRules = [
     config.module
       .rule('dep')
@@ -62,7 +62,7 @@ export async function addJavaScriptRules(opts: IOpts) {
 
   // const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   const srcTranspiler = userConfig.srcTranspiler || Transpiler.babel;
-  srcRules.forEach((rule) => {
+  srcRules.forEach(([rule,isTypeScript]) => {
     if (srcTranspiler === Transpiler.babel) {
       rule
         .use('babel-loader')
@@ -105,13 +105,21 @@ export async function addJavaScriptRules(opts: IOpts) {
         .options({
           jsc: {
             parser: {
-              syntax: "ecmascript",
-              jsx: true,
+              syntax: isTypeScript ? 'typescript' : 'ecmascript',
               dynamicImport: true,
-              classProperty: true,
-              exportNamespaceFrom: true,
-              exportDefaultFrom: true
-            }
+              [isTypeScript ? 'tsx' : 'jsx']: true,
+            },
+        
+            transform: {
+              react: {
+                runtime: 'automatic',
+                pragma: 'React.createElement',
+                pragmaFrag: 'React.Fragment',
+                throwIfNamespace: true,
+                development:  env === Env.development,
+                useBuiltins: true,
+              },
+            },
           }
         })
     } else {
