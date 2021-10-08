@@ -196,7 +196,7 @@ importers:
       jest-worker: 27.2.4
       less: 4.1.2
       less-loader: 10.0.1
-      mini-css-extract-plugin: 2.4.2
+      mini-css-extract-plugin: 2.3.0
       node-libs-browser: 2.2.1
       postcss: 8.3.9
       postcss-flexbugs-fixes: 5.0.2
@@ -241,7 +241,7 @@ importers:
       express: 4.17.1
       less: 4.1.2
       less-loader: 10.0.1_less@4.1.2+webpack@5.58.0
-      mini-css-extract-plugin: 2.4.2_webpack@5.58.0
+      mini-css-extract-plugin: 2.3.0_webpack@5.58.0
       postcss-flexbugs-fixes: 5.0.2_postcss@8.3.9
       postcss-loader: 6.1.1_postcss@8.3.9+webpack@5.58.0
       purgecss-webpack-plugin: 4.0.3_7b9b732f0c64d3a9086c9f7d3f539676
@@ -6458,8 +6458,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /mini-css-extract-plugin/2.4.2_webpack@5.58.0:
-    resolution: {integrity: sha512-ZmqShkn79D36uerdED+9qdo1ZYG8C1YsWvXu0UMJxurZnSdgz7gQKO2EGv8T55MhDqG3DYmGtizZNpM/UbTlcA==}
+  /mini-css-extract-plugin/2.3.0_webpack@5.58.0:
+    resolution: {integrity: sha512-uzWaOwC+gJrnKbr23J1ZRWx/Wd9W9Ce1mKPlsBGBV/r8zG7/G7oKMxGmxbI65pVGbae2cR7CUx9Ulk0HQt8BfQ==}
     engines: {node: '>= 12.13.0'}
     peerDependencies:
       webpack: ^5.0.0
