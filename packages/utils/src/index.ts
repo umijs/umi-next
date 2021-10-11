@@ -1,3 +1,5 @@
+import * as chokidar from 'chokidar';
+import * as clipboardy from 'clipboardy';
 import address from '../compiled/address';
 import axios from '../compiled/axios';
 import chalk from '../compiled/chalk';
@@ -9,18 +11,21 @@ import fsExtra from '../compiled/fs-extra';
 import lodash from '../compiled/lodash';
 import pkgUp from '../compiled/pkg-up';
 import portfinder from '../compiled/portfinder';
+import resolve from '../compiled/resolve';
 import rimraf from '../compiled/rimraf';
 import semver from '../compiled/semver';
 import stripAnsi from '../compiled/strip-ansi';
 import yParser from '../compiled/yargs-parser';
-import * as logger from './logger/logger';
-
-export * from './winPath/winPath';
+import * as logger from './logger';
+export * as register from './register';
+export * from './winPath';
 export {
   address,
   axios,
   chalk,
   cheerio,
+  chokidar,
+  clipboardy,
   crossSpawn,
   debug,
   fsExtra,
@@ -29,6 +34,7 @@ export {
   logger,
   pkgUp,
   portfinder,
+  resolve,
   rimraf,
   semver,
   stripAnsi,
