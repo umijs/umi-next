@@ -9,33 +9,6 @@ const hookPropertyMap = new Map([
   ['webpack/package.json', '@umijs/bundler-webpack/compiled/webpack/package'],
   ['webpack/lib/webpack', '@umijs/bundler-webpack/compiled/webpack/index'],
   ['webpack/lib/webpack.js', '@umijs/bundler-webpack/compiled/webpack/index'],
-  //TODO: where ?
-  // [
-  //   'webpack/lib/node/NodeEnvironmentPlugin',
-  //   '',
-  // ],
-  // [
-  //   'webpack/lib/node/NodeEnvironmentPlugin.js',
-  //   '',
-  // ],
-  // [
-  //   'webpack/lib/BasicEvaluatedExpression',
-  //   '',
-  // ],
-  // [
-  //   'webpack/lib/BasicEvaluatedExpression.js',
-  //   '',
-  // ],
-  // [
-  //   'webpack/lib/node/NodeTargetPlugin',
-  //   '',
-  // ],
-  // [
-  //   'webpack/lib/node/NodeTargetPlugin.js',
-  //   '',
-  // ],
-  // ['webpack/lib/GraphHelpers', ''],
-  // ['webpack/lib/GraphHelpers.js', ''],
   [
     'webpack/lib/ModuleFilenameHelpers',
     '@umijs/bundler-webpack/compiled/webpack/ModuleFilenameHelpers',
