@@ -1,5 +1,3 @@
-import index from './index';
-
 test('normal', () => {
-  expect(index()).toEqual('@umijs/bundler-webpack');
+  // TODO: add bundler-webpack test
 });
