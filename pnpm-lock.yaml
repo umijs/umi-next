@@ -197,7 +197,6 @@ importers:
       '@umijs/bundler-utils': 4.0.0-alpha.1
       '@umijs/utils': 4.0.0-alpha.1
       '@vitejs/plugin-react': 1.0.4
-      autoprefixer: 10.3.7
       express: 4.17.1
       postcss-preset-env: 6.7.0
       rollup-plugin-copy: 3.4.0
@@ -208,7 +207,6 @@ importers:
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/utils': link:../utils
       '@vitejs/plugin-react': 1.0.4
-      autoprefixer: 10.3.7
       postcss-preset-env: 6.7.0
       rollup-plugin-copy: 3.4.0
       rollup-plugin-polyfill: 3.0.0
@@ -3447,21 +3445,6 @@ packages:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
     dev: true
 
-  /autoprefixer/10.3.7:
-    resolution: {integrity: sha512-EmGpu0nnQVmMhX8ROoJ7Mx8mKYPlcUHuxkwrRYEYMz85lu7H09v8w6R1P0JPdn/hKU32GjpLBFEOuIlDWCRWvg==}
-    engines: {node: ^10 || ^12 || >=14}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.1.0
-    dependencies:
-      browserslist: 4.17.3
-      caniuse-lite: 1.0.30001265
-      fraction.js: 4.1.1
-      normalize-range: 0.1.2
-      picocolors: 0.2.1
-      postcss-value-parser: 4.1.0
-    dev: false
-
   /autoprefixer/10.3.7_postcss@8.3.9:
     resolution: {integrity: sha512-EmGpu0nnQVmMhX8ROoJ7Mx8mKYPlcUHuxkwrRYEYMz85lu7H09v8w6R1P0JPdn/hKU32GjpLBFEOuIlDWCRWvg==}
     engines: {node: ^10 || ^12 || >=14}
@@ -5323,6 +5306,7 @@ packages:
 
   /fraction.js/4.1.1:
     resolution: {integrity: sha512-MHOhvvxHTfRFpF1geTK9czMIZ6xclsEor2wkIGYYq+PxcQqT7vStJqjhe6S1TenZrMZzo+wlqOufBDVepUEgPg==}
+    dev: true
 
   /fresh/0.5.2:
     resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}

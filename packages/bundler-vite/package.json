@@ -32,7 +32,6 @@
     "@umijs/bundler-utils": "4.0.0-alpha.1",
     "@umijs/utils": "4.0.0-alpha.1",
     "@vitejs/plugin-react": "1.0.4",
-    "autoprefixer": "10.3.7",
     "postcss-preset-env": "6.7.0",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-polyfill": "3.0.0",
