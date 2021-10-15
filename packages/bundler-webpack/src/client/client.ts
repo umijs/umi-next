@@ -44,7 +44,7 @@ socket.addEventListener('close', async () => {
   if (pingTimer) clearInterval(pingTimer);
   if (typeof console !== 'undefined' && typeof console.info === 'function') {
     console.info(
-      'The development server has disconnected. polling for restart...',
+      '[webpack] Dev server disconnected. Polling for restart...',
     );
   }
   await waitForSuccessfulPing();
