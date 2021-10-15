@@ -16,7 +16,7 @@ export async function dev(opts: IOpts) {
     entry: opts.entry,
     userConfig: opts.config,
   });
-
+console.log(viteConfig)
   await createServer({
     viteConfig,
     userConfig: opts.config,

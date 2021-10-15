@@ -1,5 +1,4 @@
 import { mergeConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import configTransformer from './transformer';
 
 import type { InlineConfig as ViteInlineConfig } from 'vite';
@@ -22,7 +21,7 @@ export async function getConfig(opts: IOpts): Promise<ViteInlineConfig> {
   return mergeConfig(
     viteConfigFromUserConfig,
     {
-      plugins: [react()],
+      // plugins: [react()],
     },
   );
 }
