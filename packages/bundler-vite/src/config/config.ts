@@ -16,8 +16,6 @@ export async function getConfig(opts: IOpts): Promise<ViteInlineConfig> {
   const viteConfigFromUserConfig = configTransformer(opts.userConfig);
 
   // TODO:
-  // umi config transform
-  // css pre-processor config
   // babel config
   // code minify config
 
