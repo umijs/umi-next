@@ -10,7 +10,7 @@ interface IOpts {
   questions?: prompts.PromptObject[];
 }
 
-export default class AppGenerator extends Generator {
+export default class BaseGenerator extends Generator {
   path: string;
   target: string;
   data: any;

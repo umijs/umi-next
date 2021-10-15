@@ -1,5 +1,5 @@
 import * as prompts from '@umijs/utils/compiled/prompts';
-import Generator from './Generator/Generator';
+import Generator from './Generator';
 
 export default async ({
   path,
