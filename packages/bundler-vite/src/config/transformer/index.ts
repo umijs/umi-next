@@ -1,4 +1,5 @@
 import { mergeConfig } from 'vite';
+import rename from './rename';
 
 import type { InlineConfig as ViteInlineConfig } from 'vite';
 
@@ -17,7 +18,7 @@ export type IConfigProcessor = (
  * config transformer
  */
 export default (userConfig: ITmpUserConfig): ViteInlineConfig => {
-  const transformers: IConfigProcessor[] = [];
+  const transformers = [rename];
 
   return transformers.reduce<ViteInlineConfig>(
     (memo, transformer) =>
