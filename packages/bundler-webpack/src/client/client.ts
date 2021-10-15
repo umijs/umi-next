@@ -42,11 +42,7 @@ async function waitForSuccessfulPing(ms = 1000) {
 
 socket.addEventListener('close', async () => {
   if (pingTimer) clearInterval(pingTimer);
-  if (typeof console !== 'undefined' && typeof console.info === 'function') {
-    console.info(
-      '[webpack] Dev server disconnected. Polling for restart...',
-    );
-  }
+  console.info('[webpack] Dev server disconnected. Polling for restart...');
   await waitForSuccessfulPing();
   location.reload();
 });
