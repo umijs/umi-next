@@ -1,7 +1,7 @@
-import { Generator,mkdirp } from '@umijs/utils';
-import { copyFileSync,statSync } from 'fs';
-import { dirname, join,basename } from 'path';
+import { Generator, mkdirp } from '@umijs/utils';
 import * as prompts from '@umijs/utils/compiled/prompts';
+import { copyFileSync, statSync } from 'fs';
+import { basename, dirname, join } from 'path';
 
 interface IOpts {
   path: string;
@@ -16,12 +16,12 @@ export default class AppGenerator extends Generator {
   data: any;
   questions: prompts.PromptObject[];
 
-  constructor({ path,target ,data,questions }: IOpts) {
-    super({cwd:target, args:data});
+  constructor({ path, target, data, questions }: IOpts) {
+    super({ cwd: target, args: data });
     this.path = path;
     this.target = target;
     this.data = data;
-    this.questions = questions||[];
+    this.questions = questions || [];
   }
 
   prompting() {
@@ -31,9 +31,9 @@ export default class AppGenerator extends Generator {
   async writing() {
     const context = {
       ...this.data,
-      ...this.prompts
-    }
-    if(statSync(this.path).isDirectory()){
+      ...this.prompts,
+    };
+    if (statSync(this.path).isDirectory()) {
       this.copyDirectory({
         context,
         path: this.path,
@@ -45,7 +45,7 @@ export default class AppGenerator extends Generator {
         this.copyTpl({
           templatePath: this.path,
           target: join(this.target, file),
-          context
+          context,
         });
       } else {
         const absTarget = join(this.target, file);

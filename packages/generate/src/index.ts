@@ -1,5 +1,5 @@
-import Generator from './Generator/Generator';
 import * as prompts from '@umijs/utils/compiled/prompts';
+import Generator from './Generator/Generator';
 
 export default async ({
   path,
@@ -12,7 +12,6 @@ export default async ({
   data?: any;
   questions?: prompts.PromptObject[];
 }) => {
-
   //TODO: ganerate examples
   //TODO: path is server address: https://github.com/XX
 
@@ -20,7 +19,8 @@ export default async ({
     path,
     target,
     data,
-    questions
+    questions,
   });
+
   await generator.run();
 };
