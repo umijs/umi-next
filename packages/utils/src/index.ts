@@ -7,16 +7,21 @@ import cheerio from '../compiled/cheerio';
 import crossSpawn from '../compiled/cross-spawn';
 import debug from '../compiled/debug';
 import fsExtra from '../compiled/fs-extra';
+import glob from '../compiled/glob';
 // import globby from '../compiled/globby';
 import lodash from '../compiled/lodash';
+import mkdirp from '../compiled/mkdirp';
 import Mustache from '../compiled/mustache';
 import pkgUp from '../compiled/pkg-up';
 import portfinder from '../compiled/portfinder';
+import prompts from '../compiled/prompts';
 import resolve from '../compiled/resolve';
 import rimraf from '../compiled/rimraf';
 import semver from '../compiled/semver';
 import stripAnsi from '../compiled/strip-ansi';
 import yParser from '../compiled/yargs-parser';
+import yargs from '../compiled/yargs';
+import Generator from './Generator';
 import * as logger from './logger';
 export * from './importLazy';
 export * as register from './register';
@@ -31,15 +36,20 @@ export {
   crossSpawn,
   debug,
   fsExtra,
+  glob,
+  Generator,
   // globby,
   lodash,
   logger,
   Mustache,
+  mkdirp,
   pkgUp,
   portfinder,
+  prompts,
   resolve,
   rimraf,
   semver,
   stripAnsi,
+  yargs,
   yParser,
 };
