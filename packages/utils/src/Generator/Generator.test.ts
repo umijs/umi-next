@@ -1,7 +1,7 @@
 import { join } from 'path';
 import Generator from './Generator';
 import { readFileSync } from 'fs';
-import { rimraf } from './index';
+import { rimraf } from '../index';
 
 const fixtures = join(__dirname, 'fixtures');
 
