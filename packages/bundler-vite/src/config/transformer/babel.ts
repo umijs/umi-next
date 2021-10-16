@@ -5,10 +5,10 @@ import type { IConfigProcessor } from '.';
 /**
  * transform umi babel to vite babel
  */
-export default (function devServer(userConfig) {
+export default (function react(userConfig) {
   const config: ReturnType<IConfigProcessor> = { plugins: [] };
 
-  config.plugins?.push(...reactPlugin({
+  config.plugins?.push(reactPlugin({
     // jsxRuntime: 'automatic',
     include: userConfig.extraBabelIncludes,
     babel: {

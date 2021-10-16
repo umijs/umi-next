@@ -1,7 +1,6 @@
-import { logger } from '@umijs/utils';
-import { build as viteBuild } from 'vite';
 import { getConfig } from './config/config';
 import { Env, IConfig } from './types';
+import { viteBuild } from './build/build';
 
 interface IOpts {
   cwd: string;
@@ -12,8 +11,6 @@ interface IOpts {
 }
 
 export async function build(opts: IOpts): Promise<void> {
-  logger.info(`build`, JSON.stringify(opts));
-
   const userConfig = opts.config;
   const viteConfig = await getConfig({
     cwd: opts.cwd,
@@ -23,9 +20,10 @@ export async function build(opts: IOpts): Promise<void> {
   });
   
   viteBuild({
-    root: process.env.APP_ROOT,
-    base: userConfig.publicPath,
-    mode: Env.production,
-    ...viteConfig
+    viteConfig,
+    userConfig,
+    cwd: opts.cwd,
+    clean: opts.clean,
+    onBuildComplete: opts.onBuildComplete,
   });
 }
