@@ -1,15 +1,37 @@
-import { rimraf } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import generate from './';
+import prompts from '../../compiled/prompts';
+import rimraf from '../../compiled/rimraf';
+import Generator from './BaseGenerator';
 
-const fixtures = join(__dirname, '../fixtures');
+const fixtures = join(__dirname, './fixtures');
 const cwd = join(fixtures, 'generate');
+
+const generate = async ({
+  path,
+  target,
+  data,
+  questions,
+}: {
+  path: string;
+  target: string;
+  data?: any;
+  questions?: prompts.PromptObject[];
+}) => {
+  const generator = new Generator({
+    path,
+    target,
+    data,
+    questions,
+  });
+
+  await generator.run();
+};
 
 test('generate tpl', async () => {
   await generate({
     path: join(fixtures, 'tpl'),
-    target: join(cwd, 'hello'),
+    target: join(cwd, 'hello/', ''),
   });
   expect(existsSync(join(cwd, 'hello', 'index.tsx'))).toEqual(true);
   rimraf.sync(join(cwd, 'hello'));

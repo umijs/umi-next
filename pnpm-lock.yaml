@@ -441,12 +441,6 @@ importers:
   packages/core/compiled/tapable:
     specifiers: {}
 
-  packages/generate:
-    specifiers:
-      '@umijs/utils': 4.0.0-alpha.1
-    dependencies:
-      '@umijs/utils': link:../utils
-
   packages/mfsu:
     specifiers:
       '@types/express': 4.17.13
@@ -521,7 +515,6 @@ importers:
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
       '@types/lodash': 4.14.175
-      '@types/mkdirp': ^1.0.2
       '@types/mustache': 4.1.2
       '@types/prompts': ^2.0.14
       '@types/rimraf': 3.0.2
@@ -539,7 +532,6 @@ importers:
       globby: 11.0.4
       import-lazy: 4.0.0
       lodash: 4.17.21
-      mkdirp: 1.0.4
       mustache: 4.2.0
       pkg-up: 3.1.0
       portfinder: 1.0.28
@@ -548,7 +540,6 @@ importers:
       rimraf: 3.0.2
       semver: 7.3.5
       strip-ansi: 6.0.1
-      yargs: 17.2.1
       yargs-parser: 20.2.9
     dependencies:
       chokidar: 3.5.2
@@ -557,7 +548,6 @@ importers:
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
       '@types/lodash': 4.14.175
-      '@types/mkdirp': 1.0.2
       '@types/mustache': 4.1.2
       '@types/prompts': 2.0.14
       '@types/rimraf': 3.0.2
@@ -573,7 +563,6 @@ importers:
       globby: 11.0.4
       import-lazy: 4.0.0
       lodash: 4.17.21
-      mkdirp: 1.0.4
       mustache: 4.2.0
       pkg-up: 3.1.0
       portfinder: 1.0.28
@@ -582,7 +571,6 @@ importers:
       rimraf: 3.0.2
       semver: 7.3.5
       strip-ansi: 6.0.1
-      yargs: 17.2.1
       yargs-parser: 20.2.9
 
   packages/utils/compiled/address:
@@ -615,9 +603,6 @@ importers:
   packages/utils/compiled/lodash:
     specifiers: {}
 
-  packages/utils/compiled/mkdirp:
-    specifiers: {}
-
   packages/utils/compiled/mustache:
     specifiers: {}
 
@@ -640,9 +625,6 @@ importers:
     specifiers: {}
 
   packages/utils/compiled/strip-ansi:
-    specifiers: {}
-
-  packages/utils/compiled/yargs:
     specifiers: {}
 
   packages/utils/compiled/yargs-parser:
@@ -3007,12 +2989,6 @@ packages:
 
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
-    dev: true
-
-  /@types/mkdirp/1.0.2:
-    resolution: {integrity: sha512-o0K1tSO0Dx5X6xlU5F1D6625FawhC3dU3iqr25lluNv/+/QIVH8RLNEiVokgIZo+mz+87w/3Mkg/VvQS+J51fQ==}
-    dependencies:
-      '@types/node': 16.10.3
     dev: true
 
   /@types/ms/0.7.31:
@@ -9982,19 +9958,6 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 20.2.9
-
-  /yargs/17.2.1:
-    resolution: {integrity: sha512-XfR8du6ua4K6uLGm5S6fA+FIJom/MdJcFNVY8geLlp2v8GYbOXD4EB1tPNZsRn4vBzKGMgb5DRZMeWuFc2GO8Q==}
-    engines: {node: '>=12'}
-    dependencies:
-      cliui: 7.0.4
-      escalade: 3.1.1
-      get-caller-file: 2.0.5
-      require-directory: 2.1.1
-      string-width: 4.2.3
-      y18n: 5.0.8
-      yargs-parser: 20.2.9
-    dev: true
 
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}

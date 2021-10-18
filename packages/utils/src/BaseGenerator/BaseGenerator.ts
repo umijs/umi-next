@@ -1,7 +1,8 @@
-import { Generator, mkdirp } from '@umijs/utils';
-import * as prompts from '@umijs/utils/compiled/prompts';
 import { copyFileSync, statSync } from 'fs';
 import { basename, dirname, join } from 'path';
+import fsExtra from '../../compiled/fs-extra';
+import prompts from '../../compiled/prompts';
+import Generator from '../Generator/Generator';
 
 interface IOpts {
   path: string;
@@ -49,7 +50,7 @@ export default class BaseGenerator extends Generator {
         });
       } else {
         const absTarget = join(this.target, file);
-        mkdirp.sync(dirname(absTarget));
+        fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(this.path, absTarget);
       }
     }

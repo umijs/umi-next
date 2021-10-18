@@ -1,15 +1,20 @@
 import { copyFileSync, readFileSync, statSync, writeFileSync } from 'fs';
-import { dirname, relative, join } from 'path';
-import { chalk, mkdirp, Mustache, yargs, glob, prompts } from '../index';
+import { dirname, join, relative } from 'path';
+import chalk from '../../compiled/chalk';
+import fsExtra from '../../compiled/fs-extra';
+import glob from '../../compiled/glob';
+import Mustache from '../../compiled/mustache';
+import prompts from '../../compiled/prompts';
+import yParser from '../../compiled/yargs-parser';
 
 interface IOpts {
   cwd: string;
-  args: yargs.Arguments;
+  args: yParser.Arguments;
 }
 
 class Generator {
   cwd: string;
-  args: yargs.Arguments;
+  args: yParser.Arguments;
   prompts: any;
 
   constructor({ cwd, args }: IOpts) {
@@ -33,7 +38,7 @@ class Generator {
   copyTpl(opts: { templatePath: string; target: string; context: object }) {
     const tpl = readFileSync(opts.templatePath, 'utf-8');
     const content = Mustache.render(tpl, opts.context);
-    mkdirp.sync(dirname(opts.target));
+    fsExtra.mkdirpSync(dirname(opts.target));
     console.log(`${chalk.green('Write:')} ${relative(this.cwd, opts.target)}`);
     writeFileSync(opts.target, content, 'utf-8');
   }
@@ -56,7 +61,7 @@ class Generator {
       } else {
         console.log(`${chalk.green('Copy: ')} ${file}`);
         const absTarget = join(opts.target, file);
-        mkdirp.sync(dirname(absTarget));
+        fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(absFile, absTarget);
       }
     });

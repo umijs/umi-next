@@ -10,7 +10,6 @@ import fsExtra from '../compiled/fs-extra';
 import glob from '../compiled/glob';
 // import globby from '../compiled/globby';
 import lodash from '../compiled/lodash';
-import mkdirp from '../compiled/mkdirp';
 import Mustache from '../compiled/mustache';
 import pkgUp from '../compiled/pkg-up';
 import portfinder from '../compiled/portfinder';
@@ -20,7 +19,7 @@ import rimraf from '../compiled/rimraf';
 import semver from '../compiled/semver';
 import stripAnsi from '../compiled/strip-ansi';
 import yParser from '../compiled/yargs-parser';
-import yargs from '../compiled/yargs';
+import BaseGenerator from './BaseGenerator/BaseGenerator';
 import Generator from './Generator/Generator';
 import * as logger from './logger';
 export * from './importLazy';
@@ -38,11 +37,11 @@ export {
   fsExtra,
   glob,
   Generator,
+  BaseGenerator,
   // globby,
   lodash,
   logger,
   Mustache,
-  mkdirp,
   pkgUp,
   portfinder,
   prompts,
@@ -50,6 +49,5 @@ export {
   rimraf,
   semver,
   stripAnsi,
-  yargs,
   yParser,
 };
