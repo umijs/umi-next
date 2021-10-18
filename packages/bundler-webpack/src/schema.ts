@@ -1,8 +1,5 @@
 import type { Root } from '@hapi/joi';
-
-const CSSMinifier = ['esbuild', 'cssnano', 'none'];
-const Transpiler = ['babel', 'swc', 'esbuild', 'none'];
-const JSMinifier = ['terser', 'swc', 'esbuild', 'uglifyJs', 'none'];
+import { CSSMinifier, JSMinifier, Transpiler } from './types';
 
 const options = [
   'cheap-source-map',
@@ -42,10 +39,21 @@ export function getSchemas(): Record<string, (joi: Root) => any> {
       ),
     cssLoader: (joi) => joi.object(),
     cssLoaderModules: (joi) => joi.object(),
-    cssMinifier: (joi) => joi.string().valid(...CSSMinifier),
+    cssMinifier: (joi) =>
+      joi
+        .string()
+        .valid(CSSMinifier.cssnano, CSSMinifier.esbuild, CSSMinifier.none),
     cssMinifierOptions: (joi) => joi.object(),
     define: (joi) => joi.object(),
-    depTranspiler: (joi) => joi.string().valid(...Transpiler),
+    depTranspiler: (joi) =>
+      joi
+        .string()
+        .valid(
+          Transpiler.babel,
+          Transpiler.esbuild,
+          Transpiler.swc,
+          Transpiler.none,
+        ),
     devtool: (joi) =>
       joi.alternatives().try(joi.string().regex(DEVTOOL_REGEX), joi.boolean()),
     externals: (joi) =>
@@ -80,7 +88,16 @@ export function getSchemas(): Record<string, (joi: Root) => any> {
     extraPostCSSPlugins: (joi) => joi.array(),
     hash: (joi) => joi.boolean(),
     ignoreMomentLocale: (joi) => joi.boolean(),
-    jsMinifier: (joi) => joi.string().valid(...JSMinifier),
+    jsMinifier: (joi) =>
+      joi
+        .string()
+        .valid(
+          JSMinifier.esbuild,
+          JSMinifier.swc,
+          JSMinifier.terser,
+          JSMinifier.uglifyJs,
+          JSMinifier.none,
+        ),
     jsMinifierOptions: (joi) => joi.object(),
     lessLoader: (joi) => joi.object(),
     outputPath: (joi) => joi.string(),
@@ -89,7 +106,15 @@ export function getSchemas(): Record<string, (joi: Root) => any> {
     publicPath: (joi) => joi.string(),
     purgeCSS: (joi) => joi.object(),
     sassLoader: (joi) => joi.object(),
-    srcTranspiler: (joi) => joi.string().valid(...Transpiler),
+    srcTranspiler: (joi) =>
+      joi
+        .string()
+        .valid(
+          Transpiler.babel,
+          Transpiler.esbuild,
+          Transpiler.swc,
+          Transpiler.none,
+        ),
     styleLoader: (joi) => joi.object(),
     svgr: (joi) => joi.object(),
     svgo: (joi) => joi.alternatives().try(joi.object(), joi.boolean()),
