@@ -59,7 +59,6 @@ export async function createServer(opts: IOpts) {
 
   // writeToDisk(?)
   // mock
-  // proxy
   // prerender
   // bundless
 
