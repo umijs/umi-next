@@ -45,7 +45,7 @@
     "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "0.5.1",
     "@svgr/webpack": "5.5.0",
     "@types/express": "4.17.13",
     "@types/hapi__joi": "17.1.7",
