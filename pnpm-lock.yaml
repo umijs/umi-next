@@ -97,6 +97,9 @@ importers:
       '@umijs/utils': link:../utils
       core-js: 3.18.3
 
+  packages/bigfish:
+    specifiers: {}
+
   packages/bundler-utils:
     specifiers:
       '@babel/code-frame': 7.15.8
@@ -246,6 +249,7 @@ importers:
       postcss-preset-env: 6.7.0
       purgecss-webpack-plugin: 4.0.3
       react-error-overlay: 6.0.9
+      react-refresh: 0.10.0
       sass-loader: 12.2.0
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0
@@ -272,7 +276,7 @@ importers:
       postcss-preset-env: 6.7.0
       react-error-overlay: 6.0.9
     devDependencies:
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.1_webpack@5.59.0
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.1_5ac37ed20a84769dcb451289db4f7be1
       '@svgr/webpack': 5.5.0
       '@types/express': 4.17.13
       '@types/hapi__joi': 17.1.7
@@ -294,6 +298,7 @@ importers:
       postcss-flexbugs-fixes: 5.0.2_postcss@8.3.9
       postcss-loader: 6.2.0_postcss@8.3.9+webpack@5.59.0
       purgecss-webpack-plugin: 4.0.3_14df025a5657ac5593fafdf72fa6fc6d
+      react-refresh: 0.10.0
       sass-loader: 12.2.0_webpack@5.59.0
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0_webpack@5.59.0
@@ -438,6 +443,9 @@ importers:
     specifiers: {}
 
   packages/core/compiled/tapable:
+    specifiers: {}
+
+  packages/create-umi:
     specifiers: {}
 
   packages/mfsu:
@@ -2496,7 +2504,7 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
-  /@pmmmwh/react-refresh-webpack-plugin/0.5.1_webpack@5.59.0:
+  /@pmmmwh/react-refresh-webpack-plugin/0.5.1_5ac37ed20a84769dcb451289db4f7be1:
     resolution: {integrity: sha512-ccap6o7+y5L8cnvkZ9h8UXCGyy2DqtwCD+/N3Yru6lxMvcdkPKtdx13qd7sAC9s5qZktOmWf9lfUjsGOvSdYhg==}
     engines: {node: '>= 10.13'}
     peerDependencies:
@@ -2529,6 +2537,7 @@ packages:
       find-up: 5.0.0
       html-entities: 2.3.2
       loader-utils: 2.0.0
+      react-refresh: 0.10.0
       schema-utils: 3.1.1
       source-map: 0.7.3
       webpack: 5.59.0_14df025a5657ac5593fafdf72fa6fc6d
@@ -8653,7 +8662,6 @@ packages:
   /react-refresh/0.10.0:
     resolution: {integrity: sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /react-router-dom/6.0.0-beta.7_291a957f278f7aa26ef530933d3fb2a8:
     resolution: {integrity: sha512-XW50WW6YBYbRJwQPIt8SAcXf8Jo47sY5QuEI8Y/TkckekoMVOHcax4CAArrbONV8MTNyZ4jUfDU776G8ToNDgw==}
