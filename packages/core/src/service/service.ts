@@ -41,6 +41,7 @@ export class Service {
   config: Record<string, any> = {};
   configSchemas: Record<string, any> = {};
   configDefaults: Record<string, any> = {};
+  configOnChanges: Record<string, any> = {};
   cwd: string;
   env: Env;
   hooks: Record<string, Hook[]> = {};
@@ -60,6 +61,7 @@ export class Service {
   stage: ServiceStage = ServiceStage.uninitialized;
   userConfig: Record<string, any> = {};
   configManager: Config | null = null;
+  pkg: Record<string, string | Record<string, any>> = {};
 
   constructor(opts: IOpts) {
     this.cwd = opts.cwd;
@@ -174,6 +176,7 @@ export class Service {
         } catch (_e) {}
       }
     }
+    this.pkg = pkg;
     // get user config
     const configManager = new Config({
       cwd: this.cwd,
@@ -210,6 +213,7 @@ export class Service {
       if (config.default !== undefined) {
         this.configDefaults[key] = config.default;
       }
+      this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
@@ -334,6 +338,7 @@ export class Service {
         'args',
         'config',
         'cwd',
+        'pkg',
         'name',
         'paths',
         'userConfig',
@@ -391,6 +396,7 @@ export interface IServicePluginAPI {
   args: typeof Service.prototype.args;
   config: typeof Service.prototype.config;
   cwd: typeof Service.prototype.cwd;
+  pkg: typeof Service.prototype.pkg;
   name: typeof Service.prototype.name;
   paths: Required<typeof Service.prototype.paths>;
   userConfig: typeof Service.prototype.userConfig;

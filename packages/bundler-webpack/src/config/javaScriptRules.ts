@@ -1,5 +1,6 @@
 import { chalk } from '@umijs/utils';
 import Config from '../../compiled/webpack-5-chain';
+import { MFSU_NAME } from '../constants';
 import { Env, IConfig, Transpiler } from '../types';
 import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
 
@@ -9,10 +10,14 @@ interface IOpts {
   cwd: string;
   env: Env;
   extraBabelPlugins: any[];
+  name?: string;
 }
 
 export async function addJavaScriptRules(opts: IOpts) {
-  const { config, userConfig, cwd, env } = opts;
+  const { config, userConfig, cwd, env, name } = opts;
+  const isDev = opts.env === Env.development;
+  const useFastRefresh =
+    isDev && userConfig.fastRefresh !== false && name === MFSU_NAME;
 
   const depPkgs = Object.assign({}, es5ImcompatibleVersionsToPkg());
   const srcRules = [
@@ -35,6 +40,7 @@ export async function addJavaScriptRules(opts: IOpts) {
       .test(/\.(js|mjs)$/)
       .include.add((path: string) => {
         try {
+          if (path.includes('client/client')) return true;
           return isMatch({ path, pkgs: depPkgs });
         } catch (e) {
           console.error(chalk.red(e));
@@ -94,6 +100,7 @@ export async function addJavaScriptRules(opts: IOpts) {
             ...(userConfig.extraBabelPresets || []).filter(Boolean),
           ],
           plugins: [
+            useFastRefresh && require.resolve('react-refresh/babel'),
             ...opts.extraBabelPlugins,
             ...(userConfig.extraBabelPlugins || []),
           ].filter(Boolean),
