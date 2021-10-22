@@ -4,6 +4,7 @@ import { join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
+import { faviconMiddleware } from './faviconMiddleware';
 import {
   addUnWatch,
   createDebouncedHandler,
@@ -12,8 +13,11 @@ import {
   watch,
 } from './watch';
 
-const { dev }: typeof import('@umijs/bundler-webpack') = importLazy(
+const bundlerWebpack: typeof import('@umijs/bundler-webpack') = importLazy(
   '@umijs/bundler-webpack',
+);
+const bundlerVite: typeof import('@umijs/bundler-vite') = importLazy(
+  '@umijs/bundler-vite',
 );
 
 export default (api: IApi) => {
@@ -37,15 +41,18 @@ PORT=8888 umi dev
       clearTmp(api.paths.absTmpPath);
 
       // generate files
-      async function generate(files?: any) {
+      async function generate(opts: { isFirstTime?: boolean; files?: any }) {
         api.applyPlugins({
           key: 'onGenerateFiles',
           args: {
-            files: files || null,
+            files: opts.files || null,
+            isFirstTime: opts.isFirstTime,
           },
         });
       }
-      await generate();
+      await generate({
+        isFirstTime: true,
+      });
       const { absPagesPath, absSrcPath } = api.paths;
       const watcherPaths: string[] = await api.applyPlugins({
         key: 'addTmpGenerateWatcherPaths',
@@ -62,7 +69,7 @@ PORT=8888 umi dev
           onChange: createDebouncedHandler({
             timeout: 2000,
             async onChange(opts) {
-              await generate(opts.files);
+              await generate({ files: opts.files, isFirstTime: false });
             },
           }),
         });
@@ -90,19 +97,35 @@ PORT=8888 umi dev
       addUnWatch(
         api.service.configManager!.watch({
           schemas: api.service.configSchemas,
-          // @ts-ignore
-          onChangeTypes: [
-            api.ConfigChangeType.reload,
-            api.ConfigChangeType.regenerateTmpFiles,
-          ],
+          onChangeTypes: api.service.configOnChanges,
           onChange(opts) {
-            console.log(opts);
+            const { data } = opts;
+            if (data.changes[api.ConfigChangeType.reload]) {
+              logger.event(
+                `config ${data.changes[api.ConfigChangeType.reload].join(
+                  ', ',
+                )} changed, restart server...`,
+              );
+              api.restartServer();
+              return;
+            }
+            if (data.changes[api.ConfigChangeType.regenerateTmpFiles]) {
+              logger.event(
+                `config ${data.changes[api.ConfigChangeType.reload].join(
+                  ', ',
+                )} changed, regenerate tmp files...`,
+              );
+              generate({ isFirstTime: false });
+            }
+            for (const fn of data.fns) {
+              fn();
+            }
           },
         }),
       );
 
       // start dev server
-      await dev({
+      const opts = {
         config: api.config,
         cwd: api.cwd,
         entry: {
@@ -110,9 +133,14 @@ PORT=8888 umi dev
         },
         port: api.appData.port,
         host: api.appData.host,
-        beforeMiddlewares: [],
+        beforeMiddlewares: [faviconMiddleware],
         afterMiddlewares: [],
-      });
+      };
+      if (api.args.vite) {
+        await bundlerVite.dev(opts);
+      } else {
+        await bundlerWebpack.dev(opts);
+      }
     },
   });
 

@@ -6,11 +6,13 @@
   "types": "dist/index.d.ts",
   "files": [
     "bin",
+    "client",
     "compiled",
     "dist"
   ],
   "scripts": {
     "build": "pnpm tsc",
+    "build:client": "pnpm tsc --project ./tsconfig.client.json",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
     "generate:webpackPackages": "zx ./scripts/generateWebpackPackages.mjs"
@@ -32,6 +34,7 @@
     "bundler-webpack": "bin/bundler-webpack.js"
   },
   "dependencies": {
+    "@pmmmwh/react-refresh-webpack-plugin": "0.5.1",
     "@umijs/babel-preset-umi": "4.0.0-alpha.1",
     "@umijs/mfsu": "4.0.0-alpha.1",
     "@umijs/utils": "4.0.0-alpha.1",
@@ -64,6 +67,7 @@
     "postcss-flexbugs-fixes": "5.0.2",
     "postcss-loader": "6.2.0",
     "purgecss-webpack-plugin": "4.0.3",
+    "react-refresh": "0.10.0",
     "sass-loader": "12.2.0",
     "schema-utils": "3.1.1",
     "speed-measure-webpack-plugin": "1.5.0",
@@ -113,7 +117,8 @@
       "webpack-dev-middleware",
       "webpack-sources",
       "ws",
-      "./bundles/webpack/bundle"
+      "./bundles/webpack/bundle",
+      "./bundles/react-refresh/babel"
     ],
     "externals": {
       "@swc/core": "@swc/core",
@@ -129,6 +134,7 @@
       "terser": "$$LOCAL",
       "terser-webpack-plugin": "$$LOCAL",
       "uglify-js": "uglify-js",
+      "url-loader": "$$LOCAL",
       "webpack": "$$LOCAL",
       "webpack-5-chain": "$$LOCAL",
       "webpack-sources": "$$LOCAL",

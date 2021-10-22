@@ -7,6 +7,8 @@ importers:
       '@swc/core': ^1.2.101
       '@types/jest': ^27.0.2
       '@types/node': ^16.11.1
+      '@types/react': ^17.0.30
+      '@types/react-dom': ^17.0.9
       '@types/resolve': ^1.20.1
       '@umijs/bundler-utils': link:packages/bundler-utils
       '@umijs/bundler-vite': link:packages/bundler-vite
@@ -31,6 +33,8 @@ importers:
       '@swc/core': 1.2.101
       '@types/jest': 27.0.2
       '@types/node': 16.11.1
+      '@types/react': 17.0.30
+      '@types/react-dom': 17.0.9
       '@types/resolve': 1.20.1
       '@umijs/bundler-utils': link:packages/bundler-utils
       '@umijs/bundler-vite': link:packages/bundler-vite
@@ -53,16 +57,7 @@ importers:
       zx: 4.2.0
 
   examples/boilerplate:
-    specifiers:
-      '@types/react': ^17.0.30
-      '@types/react-dom': ^17.0.9
-      react: ^18.0.0-alpha-fd5e01c2e-20210913
-      react-dom: ^18.0.0-alpha-fd5e01c2e-20210913
-    devDependencies:
-      '@types/react': 17.0.30
-      '@types/react-dom': 17.0.9
-      react: 18.0.0-alpha-fd5e01c2e-20210913
-      react-dom: 18.0.0-alpha-fd5e01c2e-20210913_27cbfb1ba22cf08042f03db86a23d387
+    specifiers: {}
 
   examples/bundler-vite-demo:
     specifiers:
@@ -101,6 +96,9 @@ importers:
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/utils': link:../utils
       core-js: 3.18.3
+
+  packages/bigfish:
+    specifiers: {}
 
   packages/bundler-utils:
     specifiers:
@@ -224,6 +222,7 @@ importers:
 
   packages/bundler-webpack:
     specifiers:
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.1
       '@svgr/webpack': 5.5.0
       '@types/express': 4.17.13
       '@types/hapi__joi': 17.1.7
@@ -254,6 +253,7 @@ importers:
       postcss-preset-env: 6.7.0
       purgecss-webpack-plugin: 4.0.3
       react-error-overlay: 6.0.9
+      react-refresh: 0.10.0
       sass-loader: 12.2.0
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0
@@ -280,6 +280,7 @@ importers:
       postcss-preset-env: 6.7.0
       react-error-overlay: 6.0.9
     devDependencies:
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.1_5ac37ed20a84769dcb451289db4f7be1
       '@svgr/webpack': 5.5.0
       '@types/express': 4.17.13
       '@types/hapi__joi': 17.1.7
@@ -301,6 +302,7 @@ importers:
       postcss-flexbugs-fixes: 5.0.2_postcss@8.3.9
       postcss-loader: 6.2.0_postcss@8.3.9+webpack@5.59.0
       purgecss-webpack-plugin: 4.0.3_14df025a5657ac5593fafdf72fa6fc6d
+      react-refresh: 0.10.0
       sass-loader: 12.2.0_webpack@5.59.0
       schema-utils: 3.1.1
       speed-measure-webpack-plugin: 1.5.0_webpack@5.59.0
@@ -447,6 +449,9 @@ importers:
   packages/core/compiled/tapable:
     specifiers: {}
 
+  packages/create-umi:
+    specifiers: {}
+
   packages/mfsu:
     specifiers:
       '@types/express': 4.17.13
@@ -477,25 +482,35 @@ importers:
 
   packages/preset-built-in:
     specifiers:
+      '@umijs/bundler-vite': 4.0.0-alpha.1
       '@umijs/bundler-webpack': 4.0.0-alpha.1
       '@umijs/core': 4.0.0-alpha.1
       '@umijs/renderer-react': 4.0.0-alpha.1
       '@umijs/utils': 4.0.0-alpha.1
+      react: 18.0.0-alpha-f2c381131-20211004
+      react-dom: 18.0.0-alpha-f2c381131-20211004
+      react-router: 6.0.0-beta.7
+      react-router-dom: 6.0.0-beta.7
     dependencies:
+      '@umijs/bundler-vite': link:../bundler-vite
       '@umijs/bundler-webpack': link:../bundler-webpack
       '@umijs/core': link:../core
       '@umijs/renderer-react': link:../renderer-react
       '@umijs/utils': link:../utils
+      react: 18.0.0-alpha-f2c381131-20211004
+      react-dom: 18.0.0-alpha-f2c381131-20211004_4dd5d306b9d43f72893e315a470a8635
+      react-router: 6.0.0-beta.7_4dd5d306b9d43f72893e315a470a8635
+      react-router-dom: 6.0.0-beta.7_98b0e95f68ac622f80ef243148f20a59
 
   packages/renderer-react:
     specifiers:
       history: 5.0.1
       react: 18.0.0-alpha-f2c381131-20211004
       react-dom: 18.0.0-alpha-f2c381131-20211004
-      react-router-dom: 6.0.0-beta.6
+      react-router-dom: 6.0.0-beta.7
     dependencies:
       history: 5.0.1
-      react-router-dom: 6.0.0-beta.6_291a957f278f7aa26ef530933d3fb2a8
+      react-router-dom: 6.0.0-beta.7_291a957f278f7aa26ef530933d3fb2a8
     devDependencies:
       react: 18.0.0-alpha-f2c381131-20211004
       react-dom: 18.0.0-alpha-f2c381131-20211004_4dd5d306b9d43f72893e315a470a8635
@@ -2492,6 +2507,45 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
+  /@pmmmwh/react-refresh-webpack-plugin/0.5.1_5ac37ed20a84769dcb451289db4f7be1:
+    resolution: {integrity: sha512-ccap6o7+y5L8cnvkZ9h8UXCGyy2DqtwCD+/N3Yru6lxMvcdkPKtdx13qd7sAC9s5qZktOmWf9lfUjsGOvSdYhg==}
+    engines: {node: '>= 10.13'}
+    peerDependencies:
+      '@types/webpack': 4.x || 5.x
+      react-refresh: ^0.10.0
+      sockjs-client: ^1.4.0
+      type-fest: '>=0.17.0 <3.0.0'
+      webpack: '>=4.43.0 <6.0.0'
+      webpack-dev-server: 3.x || 4.x
+      webpack-hot-middleware: 2.x
+      webpack-plugin-serve: 0.x || 1.x
+    peerDependenciesMeta:
+      '@types/webpack':
+        optional: true
+      sockjs-client:
+        optional: true
+      type-fest:
+        optional: true
+      webpack-dev-server:
+        optional: true
+      webpack-hot-middleware:
+        optional: true
+      webpack-plugin-serve:
+        optional: true
+    dependencies:
+      ansi-html-community: 0.0.8
+      common-path-prefix: 3.0.0
+      core-js-pure: 3.18.3
+      error-stack-parser: 2.0.6
+      find-up: 5.0.0
+      html-entities: 2.3.2
+      loader-utils: 2.0.0
+      react-refresh: 0.10.0
+      schema-utils: 3.1.1
+      source-map: 0.7.3
+      webpack: 5.59.0_14df025a5657ac5593fafdf72fa6fc6d
+    dev: true
+
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
@@ -3329,6 +3383,12 @@ packages:
       type-fest: 0.21.3
     dev: true
 
+  /ansi-html-community/0.0.8:
+    resolution: {integrity: sha512-1APHAyr3+PCamwNw3bXCPp4HFLONZt/yIH0sZp0/469KWNTEy+qN5jQ3GVX6DMZ1UXAi34yVwtTeaG/HpBuuzw==}
+    engines: {'0': node >= 0.8.0}
+    hasBin: true
+    dev: true
+
   /ansi-regex/5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
@@ -4044,6 +4104,10 @@ packages:
     engines: {node: '>= 12'}
     dev: true
 
+  /common-path-prefix/3.0.0:
+    resolution: {integrity: sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==}
+    dev: true
+
   /commondir/1.0.1:
     resolution: {integrity: sha1-3dgA2gxmEnOTzKWVDqloo6rxJTs=}
     dev: true
@@ -4137,6 +4201,11 @@ packages:
     dependencies:
       browserslist: 4.17.3
       semver: 7.0.0
+    dev: true
+
+  /core-js-pure/3.18.3:
+    resolution: {integrity: sha512-qfskyO/KjtbYn09bn1IPkuhHl5PlJ6IzJ9s9sraJ1EqcuGyLGKzhSM1cY0zgyL9hx42eulQLZ6WaeK5ycJCkqw==}
+    requiresBuild: true
     dev: true
 
   /core-js/3.18.3:
@@ -4762,6 +4831,12 @@ packages:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
     dependencies:
       is-arrayish: 0.2.1
+
+  /error-stack-parser/2.0.6:
+    resolution: {integrity: sha512-d51brTeqC+BHlwF0BhPtcYgF5nlzf9ZZ0ZIUQNZpc9ZB9qw5IJ2diTrBY9jlCJkTLITYPjmiX6OWCwH+fuyNgQ==}
+    dependencies:
+      stackframe: 1.2.0
+    dev: true
 
   /es-abstract/1.19.1:
     resolution: {integrity: sha512-2vJ6tjA/UfqLm2MPs7jxVybLoB8i1t1Jd9R3kISld20sIxPcTbLuggQOUxeWeAvIUkduv/CfMjuh4WmiXr2v9w==}
@@ -5423,6 +5498,14 @@ packages:
       path-exists: 4.0.0
     dev: true
 
+  /find-up/5.0.0:
+    resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
+    engines: {node: '>=10'}
+    dependencies:
+      locate-path: 6.0.0
+      path-exists: 4.0.0
+    dev: true
+
   /flatten/1.0.3:
     resolution: {integrity: sha512-dVsPA/UwQ8+2uoFe5GHtiBMu48dWLTdsuEd7CKGlZlD78r1TTWBvDuFaFGKCo/ZfEr95Uk56vZoX86OsHkUeIg==}
     deprecated: flatten is deprecated in favor of utility frameworks such as lodash.
@@ -5729,6 +5812,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       whatwg-encoding: 1.0.5
+    dev: true
+
+  /html-entities/2.3.2:
+    resolution: {integrity: sha512-c3Ab/url5ksaT0WyleslpBEthOzWhrjQbg75y7XUsfSzi3Dgzt0l8w5e7DylRn15MTlMMD58dTfzddNS2kcAjQ==}
     dev: true
 
   /html-escaper/2.0.2:
@@ -6941,6 +7028,13 @@ packages:
       p-locate: 4.1.0
     dev: true
 
+  /locate-path/6.0.0:
+    resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
+    engines: {node: '>=10'}
+    dependencies:
+      p-locate: 5.0.0
+    dev: true
+
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
     dev: true
@@ -6972,7 +7066,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: true
 
   /lowercase-keys/2.0.0:
     resolution: {integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==}
@@ -7469,6 +7562,13 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       p-limit: 2.3.0
+    dev: true
+
+  /p-locate/5.0.0:
+    resolution: {integrity: sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==}
+    engines: {node: '>=10'}
+    dependencies:
+      p-limit: 3.1.0
     dev: true
 
   /p-map/4.0.0:
@@ -8519,7 +8619,6 @@ packages:
       object-assign: 4.1.1
       react: 18.0.0-alpha-f2c381131-20211004
       scheduler: 0.21.0-alpha-f2c381131-20211004
-    dev: true
 
   /react-dom/18.0.0-alpha-fd5e01c2e-20210913_27cbfb1ba22cf08042f03db86a23d387:
     resolution: {integrity: sha512-TC5tvZF9sspBjxETtTD7bKkc72drM9BIQvDI0GnSxIj4VKzq1i1aAJPZSdSKPOZ1kgqRrXWRFF5YTcgzOIC/Vw==}
@@ -8543,10 +8642,9 @@ packages:
   /react-refresh/0.10.0:
     resolution: {integrity: sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
-  /react-router-dom/6.0.0-beta.6_291a957f278f7aa26ef530933d3fb2a8:
-    resolution: {integrity: sha512-8pca4/YgQi+azEoY4KtfQMuhkIgRurmqa+mBXIICZRp71nPQX/x1lAnTw6Q2/J5dFu2rIRx1V+HA4hZ1AV0x2Q==}
+  /react-router-dom/6.0.0-beta.7_291a957f278f7aa26ef530933d3fb2a8:
+    resolution: {integrity: sha512-XW50WW6YBYbRJwQPIt8SAcXf8Jo47sY5QuEI8Y/TkckekoMVOHcax4CAArrbONV8MTNyZ4jUfDU776G8ToNDgw==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
@@ -8555,11 +8653,32 @@ packages:
       history: 5.0.1
       react: 18.0.0-alpha-f2c381131-20211004
       react-dom: 18.0.0-alpha-f2c381131-20211004_4dd5d306b9d43f72893e315a470a8635
-      react-router: 6.0.0-beta.6_a226d4b6d4a1b54dc3fde166c351e89c
+      react-router: 6.0.0-beta.7_a226d4b6d4a1b54dc3fde166c351e89c
     dev: false
 
-  /react-router/6.0.0-beta.6_a226d4b6d4a1b54dc3fde166c351e89c:
-    resolution: {integrity: sha512-wuwkFWb464LwWcGuO75kYfzWPE9f5Wgj9/cRVVh8kh/IjOIDpM+8nYCs11ukMJwnwT+3pIps9t/lB9Hnk67zpw==}
+  /react-router-dom/6.0.0-beta.7_98b0e95f68ac622f80ef243148f20a59:
+    resolution: {integrity: sha512-XW50WW6YBYbRJwQPIt8SAcXf8Jo47sY5QuEI8Y/TkckekoMVOHcax4CAArrbONV8MTNyZ4jUfDU776G8ToNDgw==}
+    peerDependencies:
+      history: '>=5'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      react: 18.0.0-alpha-f2c381131-20211004
+      react-dom: 18.0.0-alpha-f2c381131-20211004_4dd5d306b9d43f72893e315a470a8635
+      react-router: 6.0.0-beta.7_4dd5d306b9d43f72893e315a470a8635
+    dev: false
+
+  /react-router/6.0.0-beta.7_4dd5d306b9d43f72893e315a470a8635:
+    resolution: {integrity: sha512-n5eIqqY724yW6v2G2DXwcTNwz+NlowV1bOg/OKLz6EtJWD8/lez/5whyfyp9dPkA3ICqYuDZhZxnhk7A/u0aFQ==}
+    peerDependencies:
+      history: '>=5'
+      react: '>=16.8'
+    dependencies:
+      react: 18.0.0-alpha-f2c381131-20211004
+    dev: false
+
+  /react-router/6.0.0-beta.7_a226d4b6d4a1b54dc3fde166c351e89c:
+    resolution: {integrity: sha512-n5eIqqY724yW6v2G2DXwcTNwz+NlowV1bOg/OKLz6EtJWD8/lez/5whyfyp9dPkA3ICqYuDZhZxnhk7A/u0aFQ==}
     peerDependencies:
       history: '>=5'
       react: '>=16.8'
@@ -8574,7 +8693,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: true
 
   /react/18.0.0-alpha-fd5e01c2e-20210913:
     resolution: {integrity: sha512-SWeUmHARw0qSM8LcpGzpw3UbyCTVNcJTuCHmPIvgHMvZrs8R8wwk2nil5BQ+LZ8q0iNwwU0ilkLTWIqCQ5d44w==}
@@ -8822,7 +8940,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-    dev: true
 
   /scheduler/0.21.0-alpha-fd5e01c2e-20210913:
     resolution: {integrity: sha512-ylcV55/U6e67/3tjL16ognZk14UX/J4/C1N0XLZjqKV+XYS0QSxdwin/kdqxueCCbDLh0xLroq/G2lVTbFHP0Q==}
@@ -9076,6 +9193,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       escape-string-regexp: 2.0.0
+    dev: true
+
+  /stackframe/1.2.0:
+    resolution: {integrity: sha512-GrdeshiRmS1YLMYgzF16olf2jJ/IzxXY9lhKOskuVziubpTYcYqyOwYeJKzQkwy7uN0fYSsbsC4RQaXf9LCrYA==}
     dev: true
 
   /statuses/1.5.0:
