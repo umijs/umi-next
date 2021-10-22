@@ -1,7 +1,9 @@
+import type { Plugin } from 'vite';
+
 /**
  * auto CSS Module
  */
- export default function autoCSSModulePlugin() {
+ export default function autoCSSModulePlugin(): Plugin {
   return {
     name: 'bundler-vite:auto-css-module',
     transform(code: string) {
