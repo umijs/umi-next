@@ -8,7 +8,7 @@ import type { Plugin } from 'vite';
     name: 'bundler-vite:auto-css-module',
     transform(code: string) {
       let result = code;
-      const REG_EXP = /(import [a-z]+ from ["'].+\.[css|less|sass|scss|styl|stylus|pcss|postcss]+)(["'])/;
+      const REG_EXP = /(import [a-z]+ from ["'].+\.[css|less|sass|scss|styl|stylus]+)(["'])/;
 
       if (code.match(REG_EXP)) {
         // @ts-ignore

@@ -1,10 +1,11 @@
 import fs from 'fs';
+// @ts-ignore
 import svgr from '@svgr/core';
-import { transform } from 'esbuild';
+import { transform, TransformOptions } from '@umijs/bundler-utils/compiled/esbuild';
 
 import type { Plugin } from 'vite';
 
-export default function svgrPlugin(): Plugin {
+export default function svgrPlugin(svgOptions: TransformOptions): Plugin {
   return {
     name: 'bundler-vite:svgr',
     async transform(code, id) {
@@ -22,11 +23,12 @@ export default function svgrPlugin(): Plugin {
 
         const result = await transform(componentCode + '\n' + code, {
           loader: 'jsx',
+          ...svgOptions,
         });
 
         return {
           code: result.code,
-          map: null,
+          map: result.map,
         };
       }
     },

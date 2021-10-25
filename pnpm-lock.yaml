@@ -192,11 +192,10 @@ importers:
 
   packages/bundler-vite:
     specifiers:
-      '@svgr/core': ^5.5.0
+      '@svgr/core': 5.5.0
       '@umijs/bundler-utils': 4.0.0-alpha.1
       '@umijs/utils': 4.0.0-alpha.1
       '@vitejs/plugin-react': 1.0.5
-      esbuild: 0.13.8
       express: 4.17.1
       postcss-preset-env: 6.7.0
       rollup-plugin-copy: 3.4.0
@@ -208,7 +207,6 @@ importers:
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/utils': link:../utils
       '@vitejs/plugin-react': 1.0.5
-      esbuild: 0.13.8
       postcss-preset-env: 6.7.0
       rollup-plugin-copy: 3.4.0
       rollup-plugin-polyfill: 3.0.0
@@ -7024,6 +7022,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+    dev: false
 
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
@@ -7558,6 +7557,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-limit: 3.1.0
+    dev: false
 
   /p-map/4.0.0:
     resolution: {integrity: sha512-/bjOqmgETBYB5BoEeGVea8dmvHb2m9GLy1E9W43yeyfP6QQCZGFNa+XRceJEuDB6zqr+gKpIAmlLebMpykw/MQ==}
@@ -9182,6 +9182,7 @@ packages:
 
   /stackframe/1.2.0:
     resolution: {integrity: sha512-GrdeshiRmS1YLMYgzF16olf2jJ/IzxXY9lhKOskuVziubpTYcYqyOwYeJKzQkwy7uN0fYSsbsC4RQaXf9LCrYA==}
+    dev: false
 
   /statuses/1.5.0:
     resolution: {integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=}
