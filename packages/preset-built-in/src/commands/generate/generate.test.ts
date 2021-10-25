@@ -8,7 +8,7 @@ const cwd = join(fixtures, 'generate');
 async function runGenerator(args: any) {
   const service = new Service({
     cwd,
-    env: Env.development,
+    env: Env.test,
     plugins: [require.resolve('./generate')],
   });
   await service.run({
