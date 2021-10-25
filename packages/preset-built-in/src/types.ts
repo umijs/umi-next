@@ -3,7 +3,7 @@ import { IAdd, IEvent, IServicePluginAPI, PluginAPI } from '@umijs/core';
 export interface IRegisterGenerator {
   key: string;
   Generator?: any;
-  fn?: (opts: { cwd: string; args: any }) => void;
+  fn?: (opts: { args: any; paths: IServicePluginAPI['paths'] }) => void;
 }
 
 export type IApi = PluginAPI &

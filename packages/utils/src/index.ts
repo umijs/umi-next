@@ -22,8 +22,8 @@ import yParser from '../compiled/yargs-parser';
 import BaseGenerator from './BaseGenerator/BaseGenerator';
 import Generator from './Generator/Generator';
 import * as logger from './logger';
-import randomColor from './randomColor/randomColor';
 export * from './importLazy';
+export * from './randomColor/randomColor';
 export * as register from './register';
 export * from './winPath';
 export {
@@ -48,7 +48,6 @@ export {
   prompts,
   resolve,
   rimraf,
-  randomColor,
   semver,
   stripAnsi,
   yParser,
