@@ -1,19 +1,8 @@
 import { BaseGenerator, randomColor } from '@umijs/utils';
 import { join } from 'path';
-import { IApi } from '../../types';
+import { IApi, IRegisterGenerator } from '../../types';
 
-interface IRegisterGenerator {
-  key: string;
-  Generator?: any;
-  fn?: (opts: { cwd: string; args: any }) => void;
-}
-
-// TODO:插件定义的接口如何加到 IApi 中
-interface IGeneratorAPI extends IApi {
-  registerGenerator: (command: IRegisterGenerator) => void;
-}
-
-export default (api: IGeneratorAPI) => {
+export default (api: IApi) => {
   const generators = {} as any;
 
   api.registerCommand({
@@ -60,7 +49,7 @@ umi g page pageName
     },
   });
 
-  const createPageGenerator = ({ api }: { api: IGeneratorAPI }) => {
+  const createPageGenerator = ({ api }: { api: IApi }) => {
     return class PageGenerator extends BaseGenerator {
       constructor(opts: any) {
         const { args } = opts;
