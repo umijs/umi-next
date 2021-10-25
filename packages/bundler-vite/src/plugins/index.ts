@@ -10,7 +10,9 @@ import type { InlineConfig as ViteInlineConfig } from 'vite';
 export default (userConfig: IConfig): ViteInlineConfig => {
   return {
     plugins: [
-      svgrPlugin(),
+      svgrPlugin({
+        sourcemap: !!userConfig.devtool
+      }),
       autoCSSModulePlugin()
     ],
   };

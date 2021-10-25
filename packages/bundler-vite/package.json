@@ -29,11 +29,10 @@
     "bundler-vite": "bin/bundler-vite.js"
   },
   "dependencies": {
-    "@svgr/core": "^5.5.0",
+    "@svgr/core": "5.5.0",
     "@umijs/bundler-utils": "4.0.0-alpha.1",
     "@umijs/utils": "4.0.0-alpha.1",
     "@vitejs/plugin-react": "1.0.5",
-    "esbuild": "0.13.8",
     "postcss-preset-env": "6.7.0",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-polyfill": "3.0.0",
