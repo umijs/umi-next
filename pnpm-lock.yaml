@@ -83,6 +83,16 @@ importers:
       react: 18.0.0-alpha-fd5e01c2e-20210913
       react-dom: 18.0.0-alpha-fd5e01c2e-20210913_27cbfb1ba22cf08042f03db86a23d387
 
+  packages/ast:
+    specifiers:
+      '@babel/parser': 7.15.8
+      '@babel/traverse': 7.15.4
+      '@babel/types': 7.15.6
+    devDependencies:
+      '@babel/parser': 7.15.8
+      '@babel/traverse': 7.15.4
+      '@babel/types': 7.15.6
+
   packages/babel-preset-umi:
     specifiers:
       '@babel/runtime': 7.15.4
