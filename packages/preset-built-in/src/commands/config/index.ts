@@ -27,7 +27,8 @@ $ umi config remove history
 $ umi config r history
     `.trim(),
     fn({ args }) {
-      const [command, name] = args._;
+      const { _ } = args;
+      const [command, name, value] = _;
       switch (command) {
         case 'list':
           list(api.config, args.name || '');
@@ -36,11 +37,13 @@ $ umi config r history
           list(api.config, name);
           break;
         case 'set':
-          set();
+          set(api.appData.mainConfigFile, name, value);
+          // set(api.appData.mainConfigFile,name,value);
           break;
         case 'remove':
         case 'r':
-          remove();
+          console.log(api.appData);
+          remove(api.appData.mainConfigFile, name);
           break;
         default:
           throw new Error(`Unsupported sub command ${command} for umi config.`);
