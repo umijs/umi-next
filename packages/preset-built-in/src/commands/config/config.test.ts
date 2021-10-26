@@ -23,3 +23,11 @@ test('set config:abc', async () => {
   const config = readFileSync(join(cwd, 'config.ts'), 'utf-8');
   expect(config).toContain('abc: false');
 });
+
+test('remove config:abc', async () => {
+  await runGenerator({
+    _: ['config', 'remove', 'abc'],
+  });
+  const config = readFileSync(join(cwd, 'config.ts'), 'utf-8');
+  expect(config).not.toContain('abc');
+});

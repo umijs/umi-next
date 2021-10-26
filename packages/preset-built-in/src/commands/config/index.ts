@@ -38,11 +38,9 @@ $ umi config r history
           break;
         case 'set':
           set(api.appData.mainConfigFile, name, value);
-          // set(api.appData.mainConfigFile,name,value);
           break;
         case 'remove':
         case 'r':
-          console.log(api.appData);
           remove(api.appData.mainConfigFile, name);
           break;
         default:
