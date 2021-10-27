@@ -4,6 +4,7 @@ import { join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
+import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
 import {
   addUnWatch,
@@ -134,7 +135,13 @@ PORT=8888 umi dev
         port: api.appData.port,
         host: api.appData.host,
         beforeMiddlewares: [faviconMiddleware],
-        afterMiddlewares: [],
+        afterMiddlewares: [createRouteMiddleware({ api })],
+        onDevCompileDone(opts: any) {
+          api.applyPlugins({
+            key: 'onDevCompileDone',
+            args: opts,
+          });
+        },
       };
       if (api.args.vite) {
         await bundlerVite.dev(opts);

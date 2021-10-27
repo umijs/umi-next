@@ -2,6 +2,7 @@ import { getSchemas } from '@umijs/bundler-webpack/dist/schema';
 import { resolve } from '@umijs/utils';
 import { dirname, join } from 'path';
 import { IApi } from '../../types';
+import { getSchemas as getExtraSchemas } from './schema';
 
 function resolveProjectDep(opts: { pkg: any; cwd: string; dep: string }) {
   if (
@@ -27,23 +28,30 @@ export default (api: IApi) => {
           pkg: api.pkg,
           cwd: api.cwd,
           dep: 'react',
-        }) || dirname(require.resolve('react/package')),
+        }) || dirname(require.resolve('react/package.json')),
       'react-dom':
         resolveProjectDep({
           pkg: api.pkg,
           cwd: api.cwd,
           dep: 'react-dom',
-        }) || dirname(require.resolve('react-dom/package')),
-      'react-router': dirname(require.resolve('react-router/package')),
-      'react-router-dom': dirname(require.resolve('react-router-dom/package')),
+        }) || dirname(require.resolve('react-dom/package.json')),
+      'react-router': dirname(require.resolve('react-router/package.json')),
+      'react-router-dom': dirname(
+        require.resolve('react-router-dom/package.json'),
+      ),
     },
     externals: {},
   };
 
   const bundleSchemas = getSchemas();
-  for (const key of Object.keys(bundleSchemas)) {
+  const extraSchemas = getExtraSchemas();
+  const schemas = {
+    ...bundleSchemas,
+    ...extraSchemas,
+  };
+  for (const key of Object.keys(schemas)) {
     const config: Record<string, any> = {
-      schema: bundleSchemas[key] || ((joi: any) => joi.any()),
+      schema: schemas[key] || ((joi: any) => joi.any()),
     };
     if (key in configDefaults) {
       config.default = configDefaults[key];

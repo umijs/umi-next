@@ -1,15 +1,14 @@
-import http from 'http';
-import { createServer as createViteServer } from 'vite';
 import { logger } from '@umijs/utils';
-import express from '../../compiled/express';
-import pluginOnHotUpdate from './plugins/onHotUpdate';
-
+import http from 'http';
 import type {
-  InlineConfig as ViteInlineConfig,
-  HmrContext,
   DepOptimizationMetadata,
+  HmrContext,
+  InlineConfig as ViteInlineConfig,
 } from 'vite';
+import { createServer as createViteServer } from 'vite';
+import express from '../../compiled/express';
 import type { IConfig } from '../types';
+import pluginOnHotUpdate from './plugins/onHotUpdate';
 
 interface IOpts {
   cwd: string;
@@ -51,22 +50,38 @@ export async function createServer(opts: IOpts) {
     server: { middlewareMode: 'html' },
   });
 
+  // before middlewares
+  opts.beforeMiddlewares?.forEach((m) => app.use(m));
+
+  // after middlewares, insert before vite spaFallbackMiddleware
+  // refer: https://github.com/vitejs/vite/blob/2c586165d7bc4b60f8bcf1f3b462b97a72cce58c/packages/vite/src/node/server/index.ts#L508
+  if (opts.afterMiddlewares?.length) {
+    vite.middlewares.stack.some((s, i) => {
+      if ((s.handle as Function).name === 'viteSpaFallbackMiddleware') {
+        const afterStacks: typeof vite.middlewares.stack =
+          opts.afterMiddlewares!.map((handle) => ({
+            route: '',
+            handle,
+          }));
+
+        vite.middlewares.stack.splice(i, 0, ...afterStacks);
+
+        return true;
+      }
+
+      return false;
+    });
+  }
+
   // use vite via middleware way
   app.use(vite.middlewares);
-
-  // before middlewares
-  (opts.beforeMiddlewares || []).forEach((m) => app.use(m));
 
   // writeToDisk(?)
   // mock
   // prerender
   // bundless
 
-  // after middlewares
-  (opts.afterMiddlewares || []).forEach((m) => app.use(m));
-
   const server = http.createServer(app);
-
   const port = process.env.PORT || 8000;
 
   server.listen(port, async () => {

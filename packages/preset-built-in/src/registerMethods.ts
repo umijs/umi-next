@@ -8,14 +8,14 @@ import { isTypeScriptFile } from './utils/isTypeScriptFile';
 export default (api: IApi) => {
   [
     'onGenerateFiles',
-    // 'onBuildComplete',
+    'onBuildComplete',
     // 'onExit',
     // 'onPatchRoute',
     // 'onPatchRouteBefore',
     // 'onPatchRoutes',d
     // 'onPatchRoutesBefore',
     'onPkgJSONChanged', // new
-    // 'onDevCompileDone',
+    'onDevCompileDone',
     // 'addBeforeMiddlewares',
     // 'addBeforeMiddewares',
     // 'addDepInfo',
