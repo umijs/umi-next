@@ -16,18 +16,18 @@ async function runGenerator(args: any) {
   });
 }
 
-test('set config:abc', async () => {
-  await runGenerator({
-    _: ['config', 'set', 'abc', false],
-  });
-  const config = readFileSync(join(cwd, 'config.ts'), 'utf-8');
-  expect(config).toContain('abc: false');
-});
-
 test('remove config:abc', async () => {
   await runGenerator({
     _: ['config', 'remove', 'abc'],
   });
   const config = readFileSync(join(cwd, 'config.ts'), 'utf-8');
   expect(config).not.toContain('abc');
+});
+
+test('set config:abc', async () => {
+  await runGenerator({
+    _: ['config', 'set', 'abc', true],
+  });
+  const config = readFileSync(join(cwd, 'config.ts'), 'utf-8');
+  expect(config).toContain('abc: true');
 });

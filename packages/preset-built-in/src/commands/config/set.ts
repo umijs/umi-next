@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 const set = async (mainConfigFile: string, name: string, value: any) => {
   const ast = getASTByFilePath(mainConfigFile);
   if (!ast) return;
-  const generateCode = generate(setConfigByName(ast, name, value));
+  const generateCode = generate(setConfigByName(ast, name, value)!);
   await writeFileSync(mainConfigFile, generateCode, 'utf-8');
   console.log(`set config:${name} on ${mainConfigFile}`);
 };

@@ -1,3 +1,1 @@
-export default {
-  abc: false,
-};
+export default { abc: true };

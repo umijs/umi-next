@@ -19,7 +19,6 @@ $ umi config list --name history
 $ umi config get history
 
 # Set the specific config (only local config) [beta]
-$ umi config set history --type=hash
 $ umi config set history "{type:'hash'}"
 
 # Remove the specific config (only local config) [beta]
