@@ -73,6 +73,18 @@ const expects: Record<string, Function> = {
   'postcss-flexbugs-fixes'({ files }: IOpts) {
     expect(files['index.css']).toContain(`.foo { flex: 1 1; }`);
   },
+  svgo({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
+  'svgo-false'({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
+  svgr({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
   targets({ files }: IOpts) {
     expect(files['index.js']).toContain(`var foo = 'foo';`);
   },
@@ -111,7 +123,7 @@ for (const fixture of readdirSync(fixtures)) {
     });
     const fileNames = readdirSync(join(base, 'dist'));
     const files = fileNames.reduce<Record<string, string>>((memo, fileName) => {
-      if (['.css', '.js'].includes(extname(fileName))) {
+      if (['.css', '.js', '.svg'].includes(extname(fileName))) {
         memo[fileName] = readFileSync(join(base, 'dist', fileName), 'utf-8');
       } else {
         memo[fileName] = EXISTS;

@@ -8,7 +8,13 @@ console.log('[webpack] connecting...');
 
 let pingTimer: NodeJS.Timer | null = null;
 const host = location.host;
-const socket = new WebSocket(`ws://${host}`, 'webpack-hmr');
+const wsUrl = `ws://${host}`;
+let isFirstCompilation = true;
+let mostRecentCompilationHash: string | null = null;
+let hasCompileErrors = false;
+let hadRuntimeError = false;
+
+const socket = new WebSocket(wsUrl, 'webpack-hmr');
 
 socket.addEventListener('message', async ({ data }) => {
   data = JSON.parse(data);
@@ -22,20 +28,25 @@ socket.addEventListener('message', async ({ data }) => {
   }
 });
 
-socket.addEventListener('close', () => {
-  if (pingTimer) clearInterval(pingTimer);
-  if (typeof console !== 'undefined' && typeof console.info === 'function') {
-    console.info(
-      'The development server has disconnected.\nRefresh the page if necessary.',
-    );
+async function waitForSuccessfulPing(ms = 1000) {
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      await fetch(`/__umi_ping`);
+      break;
+    } catch (e) {
+      await new Promise((resolve) => setTimeout(resolve, ms));
+    }
   }
+}
+
+socket.addEventListener('close', async () => {
+  if (pingTimer) clearInterval(pingTimer);
+  console.info('[webpack] Dev server disconnected. Polling for restart...');
+  await waitForSuccessfulPing();
+  location.reload();
 });
 
-let isFirstCompilation = true;
-let mostRecentCompilationHash: string | null = null;
-let hasCompileErrors = false;
-
-let hadRuntimeError = false;
 ErrorOverlay.startReportingRuntimeErrors({
   onError: function () {
     hadRuntimeError = true;

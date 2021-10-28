@@ -25,6 +25,7 @@ register.register({
 });
 register.clearFiles();
 if (existsSync(configFile)) {
+  require('./requireHook');
   config = require(configFile).default;
 }
 Object.assign(config, args);
@@ -53,6 +54,7 @@ if (command === 'build') {
       await dev({
         config,
         cwd,
+        port: process.env.PORT as number | undefined,
         entry: {
           [getEntryKey(entry)]: entry,
         },

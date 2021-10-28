@@ -18,6 +18,7 @@ interface IOpts {
   cwd: string;
   env: Env;
   specifiedEnv?: string;
+  defaultConfigFiles?: string[];
 }
 
 type ISchema = Record<string, any>;
@@ -28,33 +29,39 @@ export class Config {
   public opts: IOpts;
   public mainConfigFile: string | null;
   public prevConfig: any;
+  public files: string[] = [];
   constructor(opts: IOpts) {
     this.opts = opts;
     this.mainConfigFile = Config.getMainConfigFile(this.opts);
     this.prevConfig = null;
   }
 
-  getConfig(opts: { defaultConfig: any; schema: ISchema }) {
+  getUserConfig() {
     const configFiles = Config.getConfigFiles({
       mainConfigFile: this.mainConfigFile,
       env: this.opts.env,
       specifiedEnv: this.opts.specifiedEnv,
     });
-    const { config, files } = Config.getUserConfig({
-      configFiles,
+    return Config.getUserConfig({
+      configFiles: getAbsFiles({
+        files: configFiles,
+        cwd: this.opts.cwd,
+      }),
     });
-    Config.validateConfig({ config, schemas: opts.schema });
+  }
+
+  getConfig(opts: { schemas: ISchema }) {
+    const { config, files } = this.getUserConfig();
+    Config.validateConfig({ config, schemas: opts.schemas });
+    this.files = files;
     return (this.prevConfig = {
-      config: lodash.merge(opts.defaultConfig, config),
-      userConfig: config,
+      config: config,
       files,
     });
   }
 
   watch(opts: {
-    files: string[];
-    defaultConfig: Record<string, any>;
-    schema: ISchema;
+    schemas: ISchema;
     onChangeTypes: IOnChangeTypes;
     onChange: (opts: {
       data: ReturnType<typeof Config.diffConfigs>;
@@ -64,10 +71,13 @@ export class Config {
   }) {
     const watcher = chokidar.watch(
       [
-        ...opts.files,
+        ...this.files,
         ...(this.mainConfigFile
           ? []
-          : getAbsFiles({ files: DEFAULT_CONFIG_FILES, cwd: this.opts.cwd })),
+          : getAbsFiles({
+              files: this.opts.defaultConfigFiles || DEFAULT_CONFIG_FILES,
+              cwd: this.opts.cwd,
+            })),
       ],
       {
         ignoreInitial: true,
@@ -78,7 +88,9 @@ export class Config {
       'all',
       lodash.debounce((event, path) => {
         const { config: origin } = this.prevConfig;
-        const { config: updated, files } = this.getConfig(opts);
+        const { config: updated, files } = this.getConfig({
+          schemas: opts.schemas,
+        });
         watcher.add(files);
         const data = Config.diffConfigs({
           origin,
@@ -95,9 +107,12 @@ export class Config {
     return () => watcher.close();
   }
 
-  static getMainConfigFile(opts: { cwd: string }) {
+  static getMainConfigFile(opts: {
+    cwd: string;
+    defaultConfigFiles?: string[];
+  }) {
     let mainConfigFile = null;
-    for (const configFile of DEFAULT_CONFIG_FILES) {
+    for (const configFile of opts.defaultConfigFiles || DEFAULT_CONFIG_FILES) {
       const absConfigFile = join(opts.cwd, configFile);
       if (existsSync(absConfigFile)) {
         mainConfigFile = absConfigFile;
@@ -147,6 +162,9 @@ export class Config {
         });
         register.clearFiles();
         config = lodash.merge(config, require(configFile).default);
+        for (const file of register.getFiles()) {
+          delete require.cache[file];
+        }
         files.push(...register.getFiles());
       }
     }
@@ -167,7 +185,7 @@ export class Config {
       // invalid schema
       assert(joi.isSchema(schema), `schema for config ${key} is not valid.`);
       const { error } = schema.validate(opts.config[key]);
-      errors.set(key, error);
+      if (error) errors.set(key, error);
     }
     // invalid config values
     assert(

@@ -5,28 +5,33 @@
     "bootstrap": "esno scripts/bootstrap.ts",
     "build": "pnpm -r --filter ./packages run build && pnpm -r --filter ./packages run build",
     "dev": "pnpm -r --filter ./packages --parallel run dev",
+    "dep:update": "pnpm up --interactive --latest --recursive",
     "test": "jest"
   },
   "devDependencies": {
-    "@swc/core": "^1.2.83",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.7.10",
+    "@swc/core": "^1.2.101",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.1",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
     "@types/resolve": "^1.20.1",
     "@umijs/bundler-utils": "link:packages/bundler-utils",
+    "@umijs/bundler-vite": "link:packages/bundler-vite",
     "@umijs/bundler-webpack": "link:packages/bundler-webpack",
     "@umijs/utils": "link:packages/utils",
-    "@vercel/ncc": "^0.30.0",
+    "@vercel/ncc": "^0.31.1",
     "dts-packer": "^0.0.2",
-    "esno": "^0.9.1",
-    "jest": "^27.1.0",
-    "lint-staged": "^11.1.2",
-    "prettier": "^2.3.2",
-    "prettier-plugin-organize-imports": "^2.3.3",
+    "esno": "^0.10.1",
+    "jest": "^27.3.1",
+    "lint-staged": "^11.2.3",
+    "prettier": "^2.4.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "resolve": "^1.20.0",
     "rimraf": "^3.0.2",
-    "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.3",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.5.0-beta",
+    "uglify-js": "^3.14.2",
     "yorkie": "^2.0.0",
     "zx": "^4.2.0"
   },
@@ -41,8 +46,5 @@
     "*.ts?(x)": [
       "prettier --parser=typescript --write"
     ]
-  },
-  "dependencies": {
-    "uglify-js": "^3.14.1"
   }
 }

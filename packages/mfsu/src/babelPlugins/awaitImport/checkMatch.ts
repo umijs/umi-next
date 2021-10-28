@@ -67,6 +67,7 @@ export function checkMatch({
         opts,
         isExportAll,
         depth: depth + 1,
+        cache,
       });
     } else {
       isMatch = true;
@@ -108,6 +109,16 @@ export function checkMatch({
       file,
     });
   }
+
+  // console.log(
+  //   '> check',
+  //   // @ts-ignore
+  //   path.hub.file.opts.filename,
+  //   value,
+  //   cache,
+  //   'isMatch',
+  //   isMatch,
+  // );
 
   return {
     isMatch,

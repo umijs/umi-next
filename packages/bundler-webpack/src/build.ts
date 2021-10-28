@@ -17,12 +17,20 @@ export async function build(opts: IOpts): Promise<void> {
     env: Env.production,
     entry: opts.entry,
     userConfig: opts.config,
+    analyze: process.env.ANALYZE,
   });
+  let isFirstCompile = true;
   return new Promise((resolve, reject) => {
     rimraf.sync(webpackConfig.output!.path!);
     const compiler = webpack(webpackConfig);
     compiler.run((err, stats) => {
-      opts.onBuildComplete?.(err, stats);
+      opts.onBuildComplete?.({
+        err,
+        stats,
+        isFirstCompile,
+        time: stats ? stats.endTime - stats.startTime : null,
+      });
+      isFirstCompile = false;
       if (err || stats?.hasErrors()) {
         if (err) {
           // console.error(err);

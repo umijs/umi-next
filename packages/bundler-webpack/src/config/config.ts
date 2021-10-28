@@ -10,12 +10,14 @@ import { addCompressPlugin } from './compressPlugin';
 import { addCopyPlugin } from './copyPlugin';
 import { addCSSRules } from './cssRules';
 import { addDefinePlugin } from './definePlugin';
+import { addFastRefreshPlugin } from './fastRefreshPlugin';
 import { addIgnorePlugin } from './ignorePlugin';
 import { addJavaScriptRules } from './javaScriptRules';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
 import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
+import { addSVGRules } from './svgRules';
 
 interface IOpts {
   cwd: string;
@@ -26,6 +28,8 @@ interface IOpts {
   hmr?: boolean;
   staticPathPrefix?: string;
   userConfig: IConfig;
+  analyze?: any;
+  name?: string;
 }
 
 export async function getConfig(opts: IOpts): Promise<Configuration> {
@@ -36,6 +40,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     chrome: 80,
   };
   const applyOpts = {
+    name: opts.name,
     config,
     userConfig,
     cwd: opts.cwd,
@@ -50,13 +55,14 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
 
   // mode
   config.mode(opts.env);
+  config.stats('none');
 
   // entry
   Object.keys(opts.entry).forEach((key) => {
     const entry = config.entry(key);
     // TODO: runtimePublicPath
     if (isDev && opts.hmr) {
-      entry.add(require.resolve('../client/client'));
+      entry.add(require.resolve('../../client/client/client'));
     }
     entry.add(opts.entry[key]);
   });
@@ -67,7 +73,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
       ? userConfig.devtool === false
         ? false
         : userConfig.devtool || DEFAULT_DEVTOOL
-      : userConfig.devtool,
+      : userConfig.devtool!,
   );
 
   // output
@@ -124,6 +130,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addJavaScriptRules(applyOpts);
   await addCSSRules(applyOpts);
   await addAssetRules(applyOpts);
+  await addSVGRules(applyOpts);
 
   // plugins
   // mini-css-extract-plugin
@@ -132,6 +139,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addIgnorePlugin(applyOpts);
   // define
   await addDefinePlugin(applyOpts);
+  // fast refresh
+  await addFastRefreshPlugin(applyOpts);
   // progress
   await addProgressPlugin(applyOpts);
   // copy
@@ -147,7 +156,9 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // purgecss
   // await applyPurgeCSSWebpackPlugin(applyOpts);
   // analyzer
-  await addBundleAnalyzerPlugin(applyOpts);
+  if (opts.analyze) {
+    await addBundleAnalyzerPlugin(applyOpts);
+  }
 
   // chain webpack
   if (userConfig.chainWebpack) {
