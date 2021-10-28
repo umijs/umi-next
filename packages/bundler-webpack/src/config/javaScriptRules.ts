@@ -46,7 +46,7 @@ export async function addJavaScriptRules(opts: IOpts) {
           throw e;
         }
       })
-      .end()
+      .end(),
   ] as Config.Rule<Config.Module>[];
   const depRules = [
     config.module
@@ -116,19 +116,19 @@ export async function addJavaScriptRules(opts: IOpts) {
               dynamicImport: true,
               tsx: true,
             },
-        
+
             transform: {
               react: {
                 runtime: 'automatic',
                 pragma: 'React.createElement',
                 pragmaFrag: 'React.Fragment',
                 throwIfNamespace: true,
-                development:  env === Env.development,
+                development: env === Env.development,
                 useBuiltins: true,
               },
             },
-          }
-        })
+          },
+        });
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);
     }
