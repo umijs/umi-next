@@ -25,10 +25,10 @@ function setConfigByPath(config: any, path: string, value: any) {
   fields.reduce((memo, field, i) => {
     const isLastVar = i === fields.length - 1;
 
-    if (!isLastVar && !(field in memo)) {
-      memo[field] = {};
-    } else {
+    if (isLastVar) {
       memo[field] = value;
+    } else if (!(field in memo)) {
+      memo[field] = {};
     }
 
     return memo[field];
