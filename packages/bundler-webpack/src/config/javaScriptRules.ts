@@ -21,7 +21,7 @@ export async function addJavaScriptRules(opts: IOpts) {
 
   const depPkgs = Object.assign({}, es5ImcompatibleVersionsToPkg());
   const srcRules = [
-    [config.module
+    config.module
       .rule('src')
       .test(/\.(js|mjs)$/)
       .include.add([
@@ -32,10 +32,9 @@ export async function addJavaScriptRules(opts: IOpts) {
       ])
       .end()
       .exclude.add(/node_modules/)
-      .end(),false],
-
-    [config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),true],
-    [config.module
+      .end(),
+    config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),
+    config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
       .include.add((path: string) => {
@@ -47,8 +46,8 @@ export async function addJavaScriptRules(opts: IOpts) {
           throw e;
         }
       })
-      .end(),false]
-  ] as [Config.Rule<Config.Module>,boolean][];
+      .end()
+  ] as Config.Rule<Config.Module>[];
   const depRules = [
     config.module
       .rule('dep')
@@ -68,7 +67,7 @@ export async function addJavaScriptRules(opts: IOpts) {
 
   // const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   const srcTranspiler = userConfig.srcTranspiler || Transpiler.babel;
-  srcRules.forEach(([rule,isTypeScript]) => {
+  srcRules.forEach((rule) => {
     if (srcTranspiler === Transpiler.babel) {
       rule
         .use('babel-loader')
@@ -106,15 +105,16 @@ export async function addJavaScriptRules(opts: IOpts) {
           ].filter(Boolean),
         });
     } else if (srcTranspiler === Transpiler.swc) {
+      // TODO: support javascript
       rule
         .use('swc-loader')
         .loader(require.resolve('../../compiled/swc-loader'))
         .options({
           jsc: {
             parser: {
-              syntax: isTypeScript ? 'typescript' : 'ecmascript',
+              syntax: 'typescript',
               dynamicImport: true,
-              [isTypeScript ? 'tsx' : 'jsx']: true,
+              tsx: true,
             },
         
             transform: {
