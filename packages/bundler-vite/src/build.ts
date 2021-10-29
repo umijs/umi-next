@@ -80,8 +80,6 @@ export async function build(opts: IOpts): Promise<void> {
       build: {
         // generate assets into top dir
         assetsDir: '',
-        // same as umi default
-        cssCodeSplit: false,
         rollupOptions: tmpHtmlEntry
           ? // first use entry from options
             {
