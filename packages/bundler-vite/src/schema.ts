@@ -67,7 +67,10 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           Joi.boolean(),
         ),
     jsMinifierOptions: (Joi) => Joi.object(),
-    lessLoader: (Joi) => Joi.object(),
+    lessLoader: (Joi) =>
+      Joi.object().keys({
+        lessOptions: Joi.object(),
+      }),
     legacy: (Joi) =>
       Joi.alternatives().try(
         Joi.object(),
@@ -76,9 +79,12 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
     outputPath: (Joi) => Joi.string(),
     polyfill: (Joi) =>
       Joi.object().keys({
-        imports: Joi.any()
+        imports: Joi.array().items(Joi.string()),
       }),
-    postcssLoader: (Joi) => Joi.object(),
+    postcssLoader: (Joi) =>
+      Joi.object().keys({
+        postcssOptions: Joi.object(),
+      }),
     proxy: (Joi) => Joi.object(),
     publicPath: (Joi) => Joi.string(),
     svgr: (Joi) => Joi.object(),

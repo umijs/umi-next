@@ -36,11 +36,11 @@ export interface IConfig {
   manifest?: boolean;
   jsMinifier?: JSMinifier | boolean;
   jsMinifierOptions?: { [key: string]: any };
-  lessLoader?: { [key: string]: any };
+  lessLoader?: { lessOptions: any };
   legacy?: LegacyOptions | boolean;
   outputPath?: string;
-  polyfill?: { imports: any };
-  postcssLoader?: { [key: string]: any };
+  polyfill?: { imports: string[] };
+  postcssLoader?: { postcssOptions: any };
   proxy?: { [key: string]: ProxyOptions };
   publicPath?: string;
   svgr?: TransformOptions;
