@@ -31,7 +31,7 @@ export interface IConfig {
   extraBabelPresets?: IBabelPlugin[];
   extraPostCSSPlugins?: any[];
   extraVitePlugins?: Plugin[];
-  hash?: any;
+  hash?: boolean;
   inlineLimit?: number;
   manifest?: boolean;
   jsMinifier?: JSMinifier | boolean;
