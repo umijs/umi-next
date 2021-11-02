@@ -353,8 +353,16 @@ importers:
 
   packages/plugins:
     specifiers:
+      antd: ^4.16.13
+      antd-dayjs-webpack-plugin: ^1.0.6
+      babel-plugin-import: ^1.13.3
+      dayjs: ^1.10.7
       umi: workspace:*
     devDependencies:
+      antd: 4.16.13
+      antd-dayjs-webpack-plugin: 1.0.6_dayjs@1.10.7
+      babel-plugin-import: 1.13.3
+      dayjs: 1.10.7
       umi: link:../umi
 
   packages/preset-built-in:
@@ -5330,6 +5338,14 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /antd-dayjs-webpack-plugin/1.0.6_dayjs@1.10.7:
+    resolution: {integrity: sha512-UlK3BfA0iE2c5+Zz/Bd2iPAkT6cICtrKG4/swSik5MZweBHtgmu1aUQCHvICdiv39EAShdZy/edfP6mlkS/xXg==}
+    peerDependencies:
+      dayjs: '*'
+    dependencies:
+      dayjs: 1.10.7
+    dev: true
+
   /antd/4.16.13:
     resolution: {integrity: sha512-EMPD3fzKe7oayx9keD/GA1oKatcx7j5CGlkJj5eLS0/eEDDEkxVj3DFmKOPuHYt4BK7ltTzMFS+quSTmqUXPiw==}
     peerDependencies:
@@ -5645,6 +5661,13 @@ packages:
     resolution: {integrity: sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ==}
     dependencies:
       object.assign: 4.1.2
+    dev: true
+
+  /babel-plugin-import/1.13.3:
+    resolution: {integrity: sha512-1qCWdljJOrDRH/ybaCZuDgySii4yYrtQ8OJQwrcDqdt0y67N30ng3X3nABg6j7gR7qUJgcMa9OMhc4AGViDwWw==}
+    dependencies:
+      '@babel/helper-module-imports': 7.16.0
+      '@babel/runtime': 7.16.0
     dev: true
 
   /babel-plugin-istanbul/6.1.1:
