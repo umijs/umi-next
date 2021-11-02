@@ -25,11 +25,13 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
+  "dependencies": {
     "antd": "^4.16.13",
     "antd-dayjs-webpack-plugin": "^1.0.6",
     "babel-plugin-import": "^1.13.3",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.10.7"
+  },
+  "devDependencies": {
     "umi": "workspace:*"
   }
 }

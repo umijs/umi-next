@@ -3,10 +3,16 @@ import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { IApi } from 'umi';
 
+interface IDayJsOpts {
+  preset?: string; // 'antd' | 'antdv3'
+  plugins?: string[];
+  replaceMoment?: boolean;
+}
+
 interface IAntdOpts {
   dark?: boolean;
   compact?: boolean;
-  dayjs?: boolean;
+  dayjs?: boolean | IDayJsOpts;
 }
 
 const presets = {
@@ -67,16 +73,16 @@ export default (api: IApi) => {
 
   api.describe({
     config: {
-      schema(joi) {
-        return joi.object({
-          dark: joi.boolean(),
-          compact: joi.boolean(),
-          dayjs: joi.alternatives(
-            joi.boolean(),
-            joi.object({
-              preset: joi.string(), // 'antd' | 'antdv3'
-              plugins: joi.array(),
-              replaceMoment: joi.boolean(),
+      schema(Joi) {
+        return Joi.object({
+          dark: Joi.boolean(),
+          compact: Joi.boolean(),
+          dayjs: Joi.alternatives(
+            Joi.boolean(),
+            Joi.object({
+              preset: Joi.string(), // 'antd' | 'antdv3'
+              plugins: Joi.array(),
+              replaceMoment: Joi.boolean(),
             }),
           ),
         });
@@ -140,8 +146,11 @@ export default (api: IApi) => {
   // babel-plugin-import
   api.addExtraBabelPlugins(() => {
     return [
+      require.resolve('babel-plugin-import'),
       {
-        import: [{ libraryName: 'antd', libraryDirectory: 'es', style: true }],
+        libraryName: 'antd',
+        libraryDirectory: 'es',
+        style: true,
       },
     ];
   });
