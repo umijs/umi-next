@@ -1,6 +1,7 @@
+import { mergeConfig } from 'vite';
 import { getConfig } from './config/config';
 import { createServer } from './server/server';
-import { Env, IConfig } from './types';
+import { Env, IConfig, IBabelPlugin } from './types';
 
 interface IOpts {
   afterMiddlewares?: any[];
@@ -11,14 +12,20 @@ interface IOpts {
   cwd: string;
   config: IConfig;
   entry: Record<string, string>;
+  extraBabelPlugins?: IBabelPlugin[];
+  extraBabelPresets?: IBabelPlugin[];
 }
 
 export async function dev(opts: IOpts) {
+  const userConfig = mergeConfig({
+    extraBabelPlugins: opts.extraBabelPlugins,
+    extraBabelPresets: opts.extraBabelPresets,
+  }, opts.config);
   const viteConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.development,
     entry: opts.entry,
-    userConfig: opts.config,
+    userConfig,
   });
 
   await createServer({
