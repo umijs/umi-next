@@ -1,4 +1,3 @@
-import { logger } from '@umijs/utils';
 import { IApi } from '../types';
 
 export default (api: IApi) => {
@@ -7,7 +6,7 @@ export default (api: IApi) => {
     description: 'inspect umi plugins',
     fn({ args }) {
       const command = args._[0];
-      console.log('command',command)
+      console.log('command',command);
       
       if (!command) {
         throw new Error(`
@@ -24,11 +23,11 @@ Did you mean:
           throw new Error(`Unsupported sub command ${command} for umi plugin.`);
       }
       function getPluginList() {
-        const ignoreList = ['./plugin.ts']
-        Object.keys(api.service.plugins).forEach((pluginId: string)=>{
-          const plugin = api.service.plugins[pluginId]
-          if(ignoreList.includes(plugin.id)) return
-          console.info(`- ${plugin.id}`)
+        const ignoreList = ['./plugin.ts'];
+        Object.keys(api.service.plugins).forEach((pluginId: string) => {
+          const plugin = api.service.plugins[pluginId];
+          if(ignoreList.includes(plugin.id)) return;
+          console.info(`- ${plugin.id}`);
         })
       }
     },
