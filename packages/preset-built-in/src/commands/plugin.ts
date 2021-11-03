@@ -23,10 +23,9 @@ Did you mean:
           throw new Error(`Unsupported sub command ${command} for umi plugin.`);
       }
       function getPluginList() {
-        const ignoreList = ['./plugin.ts'];
         Object.keys(api.service.plugins).forEach((pluginId: string) => {
           const plugin = api.service.plugins[pluginId];
-          if(ignoreList.includes(plugin.id)) return;
+          if(plugin.id === './plugin.ts') return;
           console.info(`- ${plugin.id}`);
         })
       }
