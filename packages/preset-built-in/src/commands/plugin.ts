@@ -28,7 +28,7 @@ Did you mean:
         Object.keys(api.service.plugins).forEach((pluginId: string)=>{
           const plugin = api.service.plugins[pluginId]
           if(ignoreList.includes(plugin.id)) return
-          logger.info(`${plugin.id}`)
+          console.info(`- ${plugin.id}`)
         })
       }
     },

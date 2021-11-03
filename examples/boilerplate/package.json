@@ -1,7 +1,10 @@
 {
   "scripts": {
-    "dev": "../../packages/umi/bin/umi.js dev",
-    "plugin": "../../packages/umi/bin/umi.js plugin"
+    "start":"pnpm run dev",
+    "dev": "umi dev",
+    "plugin": "umi plugin"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "umi":"workspace:*"
+  }
 }
