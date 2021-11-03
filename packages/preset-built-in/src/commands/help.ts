@@ -13,7 +13,17 @@ umi help dev
       const subCommand = api.args._[0];
       if (subCommand) {
         if (subCommand in api.service.commands) {
-          showHelp(api.service.commands[subCommand]);
+          if (
+            api.service.commands[subCommand].name === 'g' ||
+            api.service.commands[subCommand].name === 'generate'
+          ) {
+            showGenerateHelp(
+              api.service.commands[subCommand],
+              api.service.generators,
+            );
+          } else {
+            showHelp(api.service.commands[subCommand]);
+          }
         } else {
           logger.error(`Invalid sub command ${subCommand}.`);
         }
@@ -22,6 +32,18 @@ umi help dev
       }
     },
   });
+
+  function showGenerateHelp(command: any, generators: any) {
+    console.log(`
+Usage: umi ${command.name} [type] [options]
+${command.description ? `${chalk.gray(command.description)}.\n` : ''}
+${command.options ? `Options:\n${padLeft(command.options)}\n` : ''}
+${command.details ? `Details:\n${padLeft(command.details)}` : ''}
+Types:
+
+${getDeps(generators)}
+`);
+  }
 
   function showHelp(command: any) {
     console.log(`
@@ -51,7 +73,7 @@ ${getDeps(commands)}
     console.log();
   }
 
-  function getDeps(commands: typeof api.service.commands) {
+  function getDeps(commands: any) {
     return Object.keys(commands)
       .map((key) => {
         return `    ${chalk.green(lodash.padEnd(key, 10))}${

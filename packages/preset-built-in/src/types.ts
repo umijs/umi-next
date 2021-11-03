@@ -4,11 +4,6 @@ import type WebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IAdd, IEvent, IServicePluginAPI, PluginAPI } from '@umijs/core';
 import { Env } from '@umijs/core';
 
-export interface IRegisterGenerator {
-  key: string;
-  fn: (opts: { args: any; paths: IServicePluginAPI['paths'] }) => void;
-}
-
 export type IScript =
   | Partial<{
       async: boolean;
@@ -64,7 +59,6 @@ export type IApi = PluginAPI &
       context?: Record<string, any>;
     }) => void;
     addTmpGenerateWatcherPaths: IAdd<null, string[]>;
-    registerGenerator: (command: IRegisterGenerator) => void;
     onGenerateFiles: IEvent<{
       isFirstTime?: boolean;
       files?: { event: string; path: string } | null;
