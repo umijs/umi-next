@@ -31,11 +31,10 @@ export default (api: IApi) => {
 
   api.addMiddlewares({
     fn: () => {
-      const faviconFile = getFaviconFile(api.paths.absSrcPath);
-      if (faviconFile) {
+      if (api.appData.faviconFile) {
         const faviconMiddleware: RequestHandler = (req, res, next) => {
-          if (req.path === `/${faviconFile}`) {
-            res.sendFile(join(api.paths.absSrcPath, faviconFile));
+          if (req.path === `/${api.appData.faviconFile}`) {
+            res.sendFile(join(api.paths.absSrcPath, api.appData.faviconFile));
           } else {
             next();
           }
@@ -47,11 +46,10 @@ export default (api: IApi) => {
 
   api.onBuildComplete(({ err }) => {
     if (!err) {
-      const faviconFile = getFaviconFile(api.paths.absSrcPath);
-      if (faviconFile) {
+      if (api.appData.faviconFile) {
         copyFileSync(
-          join(api.paths.absSrcPath, faviconFile),
-          join(api.paths.absOutputPath, faviconFile),
+          join(api.paths.absSrcPath, api.appData.faviconFile),
+          join(api.paths.absOutputPath, api.appData.faviconFile),
         );
       }
     }
