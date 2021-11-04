@@ -6,14 +6,14 @@ export default (api: IApi) => {
     description: 'inspect umi plugins',
     fn({ args }) {
       const command = args._[0];
-      console.log('command',command);
-      
+      console.log('command', command);
+
       if (!command) {
         throw new Error(`
 Sub command not found: umi plugin
 Did you mean:
   umi plugin list
-        `)
+        `);
       }
       switch (command) {
         case 'list':
@@ -25,9 +25,8 @@ Did you mean:
       function getPluginList() {
         Object.keys(api.service.plugins).forEach((pluginId: string) => {
           const plugin = api.service.plugins[pluginId];
-          if(plugin.id === './plugin.ts') return;
           console.info(`- ${plugin.id}`);
-        })
+        });
       }
     },
   });
