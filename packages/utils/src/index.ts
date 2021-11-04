@@ -6,6 +6,7 @@ import chalk from '../compiled/chalk';
 import cheerio from '../compiled/cheerio';
 import crossSpawn from '../compiled/cross-spawn';
 import debug from '../compiled/debug';
+import deepmerge from '../compiled/deepmerge';
 import fsExtra from '../compiled/fs-extra';
 import glob from '../compiled/glob';
 // import globby from '../compiled/globby';
@@ -20,9 +21,13 @@ import semver from '../compiled/semver';
 import stripAnsi from '../compiled/strip-ansi';
 import yParser from '../compiled/yargs-parser';
 import BaseGenerator from './BaseGenerator/BaseGenerator';
+import generateFile from './BaseGenerator/generateFile';
 import Generator from './Generator/Generator';
+import installDeps from './installDeps';
 import * as logger from './logger';
+import updatePackageJSON from './updatePackageJSON';
 export * from './importLazy';
+export * from './npmClient';
 export * from './randomColor/randomColor';
 export * as register from './register';
 export * from './winPath';
@@ -35,10 +40,13 @@ export {
   clipboardy,
   crossSpawn,
   debug,
+  deepmerge,
   fsExtra,
   glob,
   Generator,
   BaseGenerator,
+  generateFile,
+  installDeps,
   // globby,
   lodash,
   logger,
@@ -50,5 +58,6 @@ export {
   rimraf,
   semver,
   stripAnsi,
+  updatePackageJSON,
   yParser,
 };

@@ -1,13 +1,14 @@
 import type { RequestHandler } from '@umijs/bundler-webpack';
 import type webpack from '@umijs/bundler-webpack/compiled/webpack';
 import type WebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
-import type { IAdd, IEvent, IServicePluginAPI, PluginAPI } from '@umijs/core';
+import type {
+  IAdd,
+  IEvent,
+  IModify,
+  IServicePluginAPI,
+  PluginAPI,
+} from '@umijs/core';
 import { Env } from '@umijs/core';
-
-export interface IRegisterGenerator {
-  key: string;
-  fn: (opts: { args: any; paths: IServicePluginAPI['paths'] }) => void;
-}
 
 export type IScript =
   | Partial<{
@@ -64,7 +65,6 @@ export type IApi = PluginAPI &
       context?: Record<string, any>;
     }) => void;
     addTmpGenerateWatcherPaths: IAdd<null, string[]>;
-    registerGenerator: (command: IRegisterGenerator) => void;
     onGenerateFiles: IEvent<{
       isFirstTime?: boolean;
       files?: { event: string; path: string } | null;
@@ -99,6 +99,7 @@ export type IApi = PluginAPI &
     addHTMLMetas: IAdd<null, IMeta[]>;
     addRuntimePlugin: IAdd<null, string[]>;
     addRuntimePluginKey: IAdd<null, string[]>;
+    modifyHTMLFavicon: IModify<string, {}>;
     chainWebpack: {
       (fn: {
         (
