@@ -1,5 +1,12 @@
 export type NpmClient = 'npm' | 'cnpm' | 'tnpm' | 'yarn' | 'pnpm';
-
+export const npmClients = ['pnpm', 'tnpm', 'cnpm', 'yarn', 'npm'];
+export enum NpmClientEnum {
+  pnpm = 'pnpm',
+  tnpm = 'tnpm',
+  cnpm = 'cnpm',
+  yarn = 'yarn',
+  npm = 'npm',
+}
 export const getNpmClient = (): NpmClient => {
   const userAgent = process.env.npm_config_user_agent;
   if (userAgent) {
