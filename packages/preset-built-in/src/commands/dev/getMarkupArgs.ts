@@ -1,4 +1,22 @@
+import { copyFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import { IApi, IScript } from '../../types';
+
+const FAVICON_FILES = [
+  'favicon.ico',
+  'favicon.gif',
+  'favicon.png',
+  'favicon.jpg',
+  'favicon.jpeg',
+  'favicon.svg',
+  'favicon.avif',
+  'favicon.webp',
+];
+
+function getFaviconFile(p: string): string | undefined {
+  const componentFile = FAVICON_FILES.find((f) => existsSync(join(p, f)));
+  return componentFile;
+}
 
 export async function getMarkupArgs(opts: { api: IApi }) {
   const headScripts = await opts.api.applyPlugins<IScript[]>({
@@ -21,9 +39,21 @@ export async function getMarkupArgs(opts: { api: IApi }) {
     key: 'addHTMLStyles',
     initialValue: opts.api.config.styles || [],
   });
+  let favicon = opts.api.config.favicon;
+  // 没有配置，走约定
+  if (!favicon) {
+    const faviconFile = getFaviconFile(opts.api.paths.absSrcPath);
+    if (faviconFile) {
+      copyFileSync(
+        join(opts.api.paths.absSrcPath, faviconFile),
+        join(opts.api.paths.absOutputPath, faviconFile),
+      );
+      favicon = faviconFile;
+    }
+  }
   return {
     routes: opts.api.appData.routes,
-    favicon: opts.api.config.favicon,
+    favicon,
     headScripts,
     scripts,
     metas,
