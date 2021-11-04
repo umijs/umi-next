@@ -12,10 +12,7 @@ export default (api: IApi) => {
     checkEnable: (opts) => {
       const { api } = opts;
       // 存在 .prettierrc，不开启
-      if (existsSync(join(api.paths.cwd, '.prettierrc'))) {
-        return false;
-      }
-      return true;
+      return !existsSync(join(api.paths.cwd, '.prettierrc'));
     },
     fn: async (options) => {
       console.log(options);
