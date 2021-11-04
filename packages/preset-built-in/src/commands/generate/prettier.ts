@@ -7,7 +7,7 @@ export default (api: IApi) => {
   api.registerGenerator({
     key: 'prettier',
     name: 'Enable Prettier',
-    description: 'Enable Prettier in the umi project',
+    description: 'Enable Prettier',
     type: GeneratorType.enable,
     checkEnable: (opts) => {
       const { api } = opts;
