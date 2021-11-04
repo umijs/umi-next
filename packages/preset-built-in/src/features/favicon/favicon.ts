@@ -45,7 +45,7 @@ export default (api: IApi) => {
     },
   });
 
-  api.onBuildComplete((err) => {
+  api.onBuildComplete(({ err }) => {
     if (!err) {
       const faviconFile = getFaviconFile(api.paths.absSrcPath);
       if (faviconFile) {
