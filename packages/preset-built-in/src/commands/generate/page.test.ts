@@ -9,7 +9,7 @@ async function runGenerator(args: any) {
   const service = new Service({
     cwd,
     env: Env.test,
-    plugins: [require.resolve('./generate'), require.resolve('./page')],
+    plugins: [require.resolve('./page')],
   });
   await service.run({
     name: 'generate',

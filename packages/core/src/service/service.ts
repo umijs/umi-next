@@ -191,7 +191,9 @@ export class Service {
     const { plugins, presets } = Plugin.getPluginsAndPresets({
       cwd: this.cwd,
       pkg,
-      plugins: this.opts.plugins || [],
+      plugins: [require.resolve('./generatePlugin')].concat(
+        this.opts.plugins || [],
+      ),
       presets: [require.resolve('./servicePlugin')].concat(
         this.opts.presets || [],
       ),

@@ -18,7 +18,6 @@ export default () => {
       require.resolve('./commands/help'),
       require.resolve('./commands/setup'),
       require.resolve('./commands/version'),
-      require.resolve('./commands/generate/generate'),
       require.resolve('./commands/generate/page'),
       require.resolve('./commands/generate/prettier'),
     ],

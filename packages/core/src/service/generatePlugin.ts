@@ -1,13 +1,14 @@
-import { GeneratorType, IGeneratorOpts } from '@umijs/core';
 import {
   generateFile,
   installDeps,
   prompts,
   updatePackageJSON,
 } from '@umijs/utils';
-import { IApi } from '../../types';
+import { GeneratorType, IGeneratorOpts } from './generator';
+import { PluginAPI } from './pluginAPI';
+import { IServicePluginAPI } from './service';
 
-export default (api: IApi) => {
+export default (api: PluginAPI & IServicePluginAPI) => {
   api.registerCommand({
     name: 'generate',
     alias: 'g',

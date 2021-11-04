@@ -1,5 +1,6 @@
 import { prompts } from '@umijs/utils';
 import { Plugin } from './plugin';
+import { PluginAPI } from './pluginAPI';
 import { IServicePluginAPI } from './service';
 
 export enum GeneratorType {
@@ -13,12 +14,12 @@ export interface IGeneratorOpts {
   description?: string;
   type?: GeneratorType;
   checkEnable?: {
-    (opts: { args: any; api: IServicePluginAPI }): boolean;
+    (opts: { args: any; api: PluginAPI & IServicePluginAPI }): boolean;
   };
   fn: {
     (opts: {
       args: any;
-      api: IServicePluginAPI;
+      api: PluginAPI & IServicePluginAPI;
       generateFile: {
         (opts: {
           path: string;
@@ -27,8 +28,18 @@ export interface IGeneratorOpts {
           questions?: prompts.PromptObject[];
         }): void;
       };
-      updatePackageJSON: any;
-      installDeps: any;
+      updatePackageJSON: {
+        (opts: { opts: object; cwd?: string }): void;
+      };
+      installDeps: {
+        (opts: {
+          opts: {
+            devDependencies?: string[];
+            dependencies?: string[];
+          };
+          cwd?: string;
+        }): void;
+      };
     }): void;
   };
   plugin: Plugin;
