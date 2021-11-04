@@ -3,10 +3,10 @@ export type NpmClient = 'npm' | 'cnpm' | 'tnpm' | 'yarn' | 'pnpm';
 export const getNpmClient = (): NpmClient => {
   const userAgent = process.env.npm_config_user_agent;
   if (userAgent) {
-    if (userAgent.includes('cnpm')) return 'cnpm';
+    if (userAgent.includes('pnpm')) return 'pnpm';
     if (userAgent.includes('tnpm')) return 'tnpm';
     if (userAgent.includes('yarn')) return 'yarn';
-    if (userAgent.includes('pnpm')) return 'pnpm';
+    if (userAgent.includes('cnpm')) return 'cnpm';
   }
   return 'npm';
 };
