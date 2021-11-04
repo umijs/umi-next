@@ -55,7 +55,7 @@ export class PluginAPI {
     const { key } = opts;
     assert(
       !this.service.generators[key],
-      `api.registerGenerator() failed, the command ${key} is exists from ${this.service.generators[key]?.plugin.id}.`,
+      `api.registerGenerator() failed, the generator ${key} is exists from ${this.service.generators[key]?.plugin.id}.`,
     );
     this.service.generators[key] = new Generator({
       ...opts,
