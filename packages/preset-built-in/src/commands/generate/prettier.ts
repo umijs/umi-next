@@ -15,6 +15,7 @@ export default (api: IApi) => {
       return !existsSync(join(api.paths.cwd, '.prettierrc'));
     },
     fn: async (options) => {
+      // TODO
       console.log(options);
     },
   });
