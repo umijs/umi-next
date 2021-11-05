@@ -11,4 +11,9 @@ export default {
   headScripts: [`console.log('head script')`],
   scripts: [`console.log('script')`],
   npmClient: 'pnpm',
+  plugins: ['@umijs/plugins/dist/aconsole'],
+  aconsole: {
+    console: {},
+    inspx: {},
+  },
 };

@@ -1,5 +1,8 @@
 {
   "scripts": {
     "dev": "umi dev"
+  },
+  "dependencies": {
+    "@umijs/plugins": "workspace:*"
   }
 }
