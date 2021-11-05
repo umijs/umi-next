@@ -72,8 +72,8 @@ export default (api: IApi) => {
         api.writeTmpFile({
           path: 'plugin-inspx/inspx.tsx',
           content: Mustache.render(inspxTpl, {
-            // inspxpath: join(__dirname,'..','compiled','@alita','inspx'),
-            inspxpath: '@alita/inspx',
+            inspxpath: join(__dirname,'..','compiled','@alita','inspx'),
+            // inspxpath: '@alita/inspx',
             inspx: {
               ...{
                 disabled: false,
