@@ -15,6 +15,7 @@ export default (api: IApi) => {
     // 'onPatchRoutes',
     // 'onPatchRoutesBefore',
     'onPkgJSONChanged', // new
+    'onPluginChanged', // new
     'onDevCompileDone',
     'onCheckPkgJSON',
     'onCheckCode',
