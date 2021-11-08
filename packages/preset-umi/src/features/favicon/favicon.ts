@@ -1,5 +1,5 @@
 import { copyFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { IApi } from '../../types';
 
 const FAVICON_FILES = [
@@ -29,9 +29,10 @@ export default (api: IApi) => {
 
   api.addMiddlewares(() => [
     (req, res, next) => {
+      // local/faviconFile or local/user/faviconFile
       if (
         api.appData.faviconFile &&
-        req.path === `/${api.appData.faviconFile}`
+        basename(req.path) === basename(api.appData.faviconFile)
       ) {
         res.sendFile(join(api.paths.absSrcPath, api.appData.faviconFile));
       } else {
