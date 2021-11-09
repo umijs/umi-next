@@ -73,10 +73,6 @@ export type IApi = PluginAPI &
       origin: Record<string, any>;
       current: Record<string, any>;
     }>;
-    onPluginChanged: IEvent<{
-      origin: Record<string, any>;
-      current: Record<string, any>;
-    }>;
     onBuildComplete: IEvent<{
       isFirstCompile: boolean;
       stats: any;

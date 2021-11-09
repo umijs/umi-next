@@ -147,14 +147,6 @@ PORT=8888 umi dev
           path: pluginPath,
           addToUnWatches: true,
           onChange() {
-            // TODO
-            // api.applyPlugins({
-            //   key: 'onPluginChanged',
-            //   args: {
-            //     origin,
-            //     current,
-            //   },
-            // });
             logger.event(`${basename(pluginPath)} changed, restart server...`);
             api.restartServer();
           },
