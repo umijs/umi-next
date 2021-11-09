@@ -1,5 +1,5 @@
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
-import { existsSync, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
@@ -141,8 +141,11 @@ PORT=8888 umi dev
       );
 
       // watch plugin change
-      const pluginPath = join(api.cwd, 'plugin.ts');
-      if (existsSync(pluginPath)) {
+      const localPluginFiles: string[] = [
+        join(api.cwd, 'plugin.ts'),
+        join(api.cwd, 'plugin.js'),
+      ].filter(Boolean);
+      localPluginFiles.forEach((pluginPath: string) => {
         watch({
           path: pluginPath,
           addToUnWatches: true,
@@ -151,7 +154,7 @@ PORT=8888 umi dev
             api.restartServer();
           },
         });
-      }
+      });
 
       // start dev server
       const beforeMiddlewares = await api.applyPlugins({
