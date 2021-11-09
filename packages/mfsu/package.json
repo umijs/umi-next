@@ -1,10 +1,11 @@
 {
   "name": "@umijs/mfsu",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.5",
   "description": "@umijs/mfsu",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "compiled",
     "dist"
   ],
   "scripts": {
@@ -26,13 +27,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@umijs/bundler-utils": "workspace:*",
-    "@umijs/utils": "workspace:*"
+    "@umijs/bundler-esbuild": "4.0.0-beta.5",
+    "@umijs/bundler-utils": "4.0.0-beta.5",
+    "@umijs/utils": "4.0.0-beta.5"
   },
   "devDependencies": {
     "@types/express": "4.17.13",
     "mrmime": "1.0.0",
-    "webpack": "5.61.0"
+    "webpack": "5.61.0",
+    "enhanced-resolve": "5.8.3"
   },
   "compiledConfig": {
     "deps": [

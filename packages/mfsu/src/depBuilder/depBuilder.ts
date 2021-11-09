@@ -1,10 +1,12 @@
-import { lodash } from '@umijs/utils';
+import { build } from '@umijs/bundler-esbuild';
+import { lodash, logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { MF_DEP_PREFIX, REMOTE_FILE_FULL } from '../constants';
+import { MF_DEP_PREFIX, MF_VA_PREFIX, REMOTE_FILE_FULL } from '../constants';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu';
 import { DepChunkIdPrefixPlugin } from '../webpackPlugins/depChunkIdPrefixPlugin';
+import { getESBuildEntry } from './getESBuildEntry';
 
 interface IOpts {
   mfsu: MFSU;
@@ -18,18 +20,12 @@ export class DepBuilder {
     this.opts = opts;
   }
 
-  async build(opts: { deps: Dep[] }) {
-    this.isBuilding = true;
-    await this.writeMFFiles({ deps: opts.deps });
-
+  async buildWithWebpack(opts: { onBuildComplete: Function; deps: Dep[] }) {
     const config = this.getWebpackConfig({ deps: opts.deps });
     return new Promise((resolve, reject) => {
       const compiler = this.opts.mfsu.opts.implementor(config);
       compiler.run((err, stats) => {
-        this.isBuilding = false;
-        this.completeFns.forEach((fn) => fn());
-        this.completeFns = [];
-
+        opts.onBuildComplete();
         if (err || stats?.hasErrors()) {
           if (err) {
             reject(err);
@@ -45,6 +41,47 @@ export class DepBuilder {
         compiler.close(() => {});
       });
     });
+  }
+
+  // TODO: support watch and rebuild
+  async buildWithESBuild(opts: { onBuildComplete: Function; deps: Dep[] }) {
+    const entryContent = getESBuildEntry({ deps: opts.deps });
+    const ENTRY_FILE = 'esbuild-entry.js';
+    const tmpDir = this.opts.mfsu.opts.tmpBase!;
+    const entryPath = join(tmpDir, ENTRY_FILE);
+    writeFileSync(entryPath, entryContent, 'utf-8');
+    const date = new Date().getTime();
+    await build({
+      cwd: this.opts.mfsu.opts.cwd!,
+      entry: {
+        [`${MF_VA_PREFIX}remoteEntry`]: entryPath,
+      },
+      config: {
+        outputPath: tmpDir,
+      },
+    });
+    logger.event(
+      `[mfsu] compiled with esbuild successfully in ${+new Date() - date} ms`,
+    );
+    opts.onBuildComplete();
+  }
+
+  async build(opts: { deps: Dep[] }) {
+    this.isBuilding = true;
+    await this.writeMFFiles({ deps: opts.deps });
+    const newOpts = {
+      ...opts,
+      onBuildComplete: () => {
+        this.isBuilding = false;
+        this.completeFns.forEach((fn) => fn());
+        this.completeFns = [];
+      },
+    };
+    if (this.opts.mfsu.opts.buildDepWithESBuild) {
+      await this.buildWithESBuild(newOpts);
+    } else {
+      await this.buildWithWebpack(newOpts);
+    }
   }
 
   onBuildComplete(fn: Function) {

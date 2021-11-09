@@ -2,7 +2,6 @@ import { lodash, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import * as process from 'process';
 import { AsyncSeriesWaterfallHook } from '../../compiled/tapable';
 import { Config } from '../config/config';
 import { DEFAULT_FRAMEWORK_NAME } from '../constants';
@@ -18,6 +17,7 @@ import {
 } from '../types';
 import { Command } from './command';
 import { loadEnv } from './env';
+import { Generator } from './generator';
 import { Hook } from './hook';
 import { getPaths } from './path';
 import { Plugin } from './plugin';
@@ -38,6 +38,7 @@ export class Service {
   appData: Record<string, any> = {};
   args: yParser.Arguments = { _: [], $0: '' };
   commands: Record<string, Command> = {};
+  generators: Record<string, Generator> = {};
   config: Record<string, any> = {};
   configSchemas: Record<string, any> = {};
   configDefaults: Record<string, any> = {};
@@ -190,7 +191,9 @@ export class Service {
     const { plugins, presets } = Plugin.getPluginsAndPresets({
       cwd: this.cwd,
       pkg,
-      plugins: this.opts.plugins || [],
+      plugins: [require.resolve('./generatePlugin')].concat(
+        this.opts.plugins || [],
+      ),
       presets: [require.resolve('./servicePlugin')].concat(
         this.opts.presets || [],
       ),
@@ -199,9 +202,15 @@ export class Service {
     });
     // register presets and plugins
     this.stage = ServiceStage.initPresets;
+    const presetPlugins: Plugin[] = [];
     while (presets.length) {
-      await this.initPreset({ preset: presets.shift()!, presets, plugins });
+      await this.initPreset({
+        preset: presets.shift()!,
+        presets,
+        plugins: presetPlugins,
+      });
     }
+    plugins.unshift(...presetPlugins);
     this.stage = ServiceStage.initPlugins;
     while (plugins.length) {
       await this.initPlugin({ plugin: plugins.shift()!, plugins });
@@ -299,7 +308,7 @@ export class Service {
       plugins: opts.plugins,
     });
     opts.presets.unshift(...(presets || []));
-    opts.plugins.unshift(...(plugins || []));
+    opts.plugins.push(...(plugins || []));
   }
 
   async initPlugin(opts: {
@@ -396,6 +405,7 @@ export interface IServicePluginAPI {
   args: typeof Service.prototype.args;
   config: typeof Service.prototype.config;
   cwd: typeof Service.prototype.cwd;
+  generators: typeof Service.prototype.generators;
   pkg: typeof Service.prototype.pkg;
   name: typeof Service.prototype.name;
   paths: Required<typeof Service.prototype.paths>;

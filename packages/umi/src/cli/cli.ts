@@ -9,12 +9,16 @@ import {
   setNodeTitle,
 } from './node';
 
-checkNodeVersion();
-checkLocal();
-setNodeTitle();
-setNoDeprecation();
+interface IOpts {
+  presets?: string[];
+}
 
-(async () => {
+export async function run(opts?: IOpts) {
+  checkNodeVersion();
+  checkLocal();
+  setNodeTitle();
+  setNoDeprecation();
+
   const args = yParser(process.argv.slice(2), {
     alias: {
       version: ['v'],
@@ -27,6 +31,9 @@ setNoDeprecation();
     process.env.NODE_ENV = 'development';
   } else if (command === 'build') {
     process.env.NODE_ENV = 'production';
+  }
+  if (opts?.presets) {
+    process.env.UMI_PRESETS = opts.presets.join(',');
   }
   if (command === DEV_COMMAND) {
     dev();
@@ -41,4 +48,4 @@ setNoDeprecation();
       process.exit(1);
     }
   }
-})();
+}

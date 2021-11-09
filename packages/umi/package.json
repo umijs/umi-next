@@ -1,6 +1,6 @@
 {
   "name": "umi",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.5",
   "description": "umi",
   "main": "dist/index.js",
   "module": "index.esm.js",
@@ -9,8 +9,12 @@
     "dist",
     "index.d.ts",
     "index.esm.js",
-    "client"
+    "client",
+    "bin"
   ],
+  "bin": {
+    "umi": "bin/umi.js"
+  },
   "scripts": {
     "build": "pnpm tsc",
     "build:client": "pnpm tsc --project ./tsconfig.client.json",
@@ -31,10 +35,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@umijs/core": "workspace:*",
-    "@umijs/preset-built-in": "workspace:*",
-    "@umijs/renderer-react": "workspace:*",
-    "@umijs/utils": "workspace:*",
+    "@umijs/core": "4.0.0-beta.5",
+    "@umijs/preset-umi": "4.0.0-beta.5",
+    "@umijs/renderer-react": "4.0.0-beta.5",
+    "@umijs/utils": "4.0.0-beta.5",
     "v8-compile-cache": "2.3.0"
   }
 }

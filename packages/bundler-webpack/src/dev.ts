@@ -12,6 +12,8 @@ interface IOpts {
   port?: number;
   host?: string;
   chainWebpack?: Function;
+  beforeBabelPlugins?: any[];
+  beforeBabelPresets?: any[];
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   cwd: string;
@@ -22,6 +24,7 @@ interface IOpts {
 export async function dev(opts: IOpts) {
   const mfsu = new MFSU({
     implementor: webpack as any,
+    buildDepWithESBuild: opts.config.mfsu?.esbuild,
   });
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
@@ -29,10 +32,14 @@ export async function dev(opts: IOpts) {
     entry: opts.entry,
     userConfig: opts.config,
     extraBabelPlugins: [
+      ...(opts.beforeBabelPlugins || []),
       ...mfsu.getBabelPlugins(),
       ...(opts.extraBabelPlugins || []),
     ],
-    extraBabelPresets: opts.extraBabelPresets,
+    extraBabelPresets: [
+      ...(opts.beforeBabelPresets || []),
+      ...(opts.extraBabelPresets || []),
+    ],
     chainWebpack: opts.chainWebpack,
     hmr: true,
     analyze: process.env.ANALYZE,
