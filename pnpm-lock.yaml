@@ -65,6 +65,12 @@ importers:
   examples/boilerplate:
     specifiers: {}
 
+  examples/bundler-esbuild-demo:
+    specifiers:
+      antd: 4.16.13
+    devDependencies:
+      antd: 4.16.13
+
   examples/bundler-vite-demo:
     specifiers:
       '@types/react': ^17.0.33
