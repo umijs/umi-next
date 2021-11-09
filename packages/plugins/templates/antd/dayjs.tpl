@@ -1,5 +1,5 @@
 import dayjs from '{{{dayjsPath}}}';
-import antdPlugin from 'antd-dayjs-webpack-plugin/src/antd-plugin';
+import antdPlugin from '{{{dayjsPluginPath}}}/src/antd-plugin';
 
 {{#plugins}}
 import {{.}} from '{{{dayjsPath}}}/plugin/{{.}}';
