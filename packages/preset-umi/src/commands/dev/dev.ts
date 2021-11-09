@@ -141,16 +141,16 @@ PORT=8888 umi dev
       );
 
       // watch plugin change
-      const localPluginFiles: string[] = [
+      const pluginFiles: string[] = [
         join(api.cwd, 'plugin.ts'),
         join(api.cwd, 'plugin.js'),
-      ].filter(Boolean);
-      localPluginFiles.forEach((pluginPath: string) => {
+      ];
+      pluginFiles.forEach((filePath: string) => {
         watch({
-          path: pluginPath,
+          path: filePath,
           addToUnWatches: true,
           onChange() {
-            logger.event(`${basename(pluginPath)} changed, restart server...`);
+            logger.event(`${basename(filePath)} changed, restart server...`);
             api.restartServer();
           },
         });
