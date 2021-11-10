@@ -1,6 +1,6 @@
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
@@ -140,6 +140,22 @@ PORT=8888 umi dev
         }),
       );
 
+      // watch plugin change
+      const pluginFiles: string[] = [
+        join(api.cwd, 'plugin.ts'),
+        join(api.cwd, 'plugin.js'),
+      ];
+      pluginFiles.forEach((filePath: string) => {
+        watch({
+          path: filePath,
+          addToUnWatches: true,
+          onChange() {
+            logger.event(`${basename(filePath)} changed, restart server...`);
+            api.restartServer();
+          },
+        });
+      });
+
       // start dev server
       const beforeMiddlewares = await api.applyPlugins({
         key: 'addBeforeMiddlewares',
@@ -155,8 +171,29 @@ PORT=8888 umi dev
         beforeBabelPresets,
         extraBabelPlugins,
         extraBabelPresets,
-        chainWebpack,
       } = await getBabelOpts({ api });
+      const chainWebpack = async (memo: any, args: Object) => {
+        await api.applyPlugins({
+          key: 'chainWebpack',
+          type: api.ApplyPluginsType.modify,
+          initialValue: memo,
+          args,
+        });
+      };
+      const modifyWebpackConfig = async (memo: any, args: Object) => {
+        return await api.applyPlugins({
+          key: 'modifyWebpackConfig',
+          initialValue: memo,
+          args,
+        });
+      };
+      const modifyViteConfig = async (memo: any, args: Object) => {
+        return await api.applyPlugins({
+          key: 'modifyViteConfig',
+          initialValue: memo,
+          args,
+        });
+      };
       const opts = {
         config: api.config,
         cwd: api.cwd,
@@ -165,7 +202,9 @@ PORT=8888 umi dev
         },
         port: api.appData.port,
         host: api.appData.host,
-        ...(api.args.vite ? {} : { babelPreset, chainWebpack }),
+        ...(api.args.vite
+          ? { modifyViteConfig }
+          : { babelPreset, chainWebpack, modifyWebpackConfig }),
         beforeBabelPlugins,
         beforeBabelPresets,
         extraBabelPlugins,
