@@ -1,4 +1,4 @@
-import { join,dirname } from 'path';
+import { join, dirname } from 'path';
 export default {
   alias: {
     react$: dirname(require.resolve('react/package')),

@@ -1,9 +1,8 @@
-import { dirname } from 'path';
-
 export default {
-  alias: {
-    react: dirname(require.resolve('react/package')),
-  },
+  // externals: {
+  //   react: 'React',
+  //   'react-dom': 'ReactDOM',
+  // },
   chainWebpack(memo: any) {
     memo;
   },
