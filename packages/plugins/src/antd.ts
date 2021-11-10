@@ -74,13 +74,14 @@ const DIR_NAME = 'plugin-antd';
 
 export default (api: IApi) => {
   const opts: IAntdOpts = api.userConfig.antd;
-
+  const { dayjs = false } = opts;
   api.describe({
     config: {
       schema(Joi) {
         return Joi.object({
           dark: Joi.boolean(),
           compact: Joi.boolean(),
+          config: Joi.object(),
           dayjs: Joi.alternatives(
             Joi.boolean(),
             Joi.object({
@@ -122,7 +123,7 @@ export default (api: IApi) => {
       getUserLibDir({ library: 'antd' }) ||
         dirname(require.resolve('antd/package.json')),
     );
-    if (opts.dayjs !== false) {
+    if (dayjs !== false) {
       const { replaceMoment } = getConfig(api);
       if (replaceMoment) {
         memo.resolve.alias.set(
@@ -148,7 +149,7 @@ export default (api: IApi) => {
     });
   }
   // dayjs (by default?)
-  if (opts.dayjs !== false) {
+  if (dayjs !== false) {
     api.onGenerateFiles({
       fn: () => {
         const { plugins } = getConfig(api);
@@ -204,10 +205,9 @@ export default (api: IApi) => {
         });
       },
     });
-    // Runtime Plugin
+    //TODO：Runtime Plugin
     api.addRuntimePlugin(() => [
       join(api.paths.absTmpPath!, DIR_NAME, 'runtime.tsx'),
     ]);
-    api.addRuntimePluginKey(() => ['antd']);
   }
 };
