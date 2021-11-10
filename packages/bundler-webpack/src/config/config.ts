@@ -94,7 +94,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     .filename(useHash ? `[name].[contenthash:8].js` : `[name].js`)
     .chunkFilename(useHash ? `[name].[contenthash:8].async.js` : `[name].js`)
     .publicPath(userConfig.publicPath || '/')
-    .pathinfo(isDev || disableCompress);
+    .pathinfo(isDev || disableCompress)
+    .module(!!userConfig.esm);
 
   // resolve
   // prettier-ignore
@@ -127,6 +128,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // experiments
   config.experiments({
     topLevelAwait: true,
+    outputModule: !!userConfig.esm,
   });
 
   // node polyfill
