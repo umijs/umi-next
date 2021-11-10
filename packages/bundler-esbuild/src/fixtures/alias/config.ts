@@ -1,7 +1,8 @@
-import { join } from 'path';
+import { join,dirname } from 'path';
 export default {
   alias: {
-    react: require.resolve('./react.ts'),
+    react$: dirname(require.resolve('react/package')),
+    react: join(__dirname,'react'),
     some: join(__dirname,'some'),
   },
 };

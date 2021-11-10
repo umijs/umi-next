@@ -1,6 +1,14 @@
 import { Plugin } from '@umijs/bundler-utils/compiled/esbuild';
 import { winPath } from '@umijs/utils';
 
+const checkPath = (p: string) => {
+  try {
+    const existed = require.resolve(p);
+    return existed;
+  } catch (e) {
+    return p;
+  }
+};
 // https://esbuild.github.io/plugins/#resolve-callbacks
 export default (options?: Record<string, string>): Plugin => {
   return {
@@ -10,22 +18,10 @@ export default (options?: Record<string, string>): Plugin => {
         return;
       }
       Object.keys(options).forEach((key) => {
-        // import react from 'react';
-        onResolve({ filter: new RegExp(`^${key}$`) }, (args) => {
+        onResolve({ filter: new RegExp(`^${key}`) }, (args) => {
           return {
-            path: winPath(args.path).replace(
-              new RegExp(`^${key}$`),
-              options[key],
-            ),
-          };
-        });
-        // import abc from 'react/abc';
-        // import abc from 'react/abc.js';
-        onResolve({ filter: new RegExp(`^${key}\\/.*$`) }, (args) => {
-          return {
-            path: winPath(args.path).replace(
-              new RegExp(`^${key}`),
-              options[key],
+            path: checkPath(
+              winPath(args.path).replace(new RegExp(`^${key}`), options[key]),
             ),
           };
         });

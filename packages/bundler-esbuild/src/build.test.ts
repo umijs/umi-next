@@ -10,6 +10,7 @@ const EXISTS = '1';
 
 const expects: Record<string, Function> = {
   alias({ files }: IOpts) {
+    expect(files['index.js']).toContain(`exports.version = ReactVersion`);
     expect(files['index.js']).toContain(`var a = "react";`);
     expect(files['index.js']).toContain(`var something = "happy";`);
   },
