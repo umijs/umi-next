@@ -1,8 +1,8 @@
-import { join, dirname } from 'path';
+import { join } from 'path';
 export default {
   alias: {
-    react$: dirname(require.resolve('react/package')),
-    react: join(__dirname,'react'),
-    some: join(__dirname,'some'),
+    foo: join(__dirname, 'path', 'foo'),
+    dir: join(__dirname, 'path', 'dir'),
+    less$: join(__dirname, 'path', 'less'),
   },
 };
