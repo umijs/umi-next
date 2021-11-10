@@ -94,8 +94,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     .filename(useHash ? `[name].[contenthash:8].js` : `[name].js`)
     .chunkFilename(useHash ? `[name].[contenthash:8].async.js` : `[name].js`)
     .publicPath(userConfig.publicPath || '/')
-    .pathinfo(isDev || disableCompress)
-    .module(!!userConfig.esm);
+    .pathinfo(isDev || disableCompress);
 
   // resolve
   // prettier-ignore
