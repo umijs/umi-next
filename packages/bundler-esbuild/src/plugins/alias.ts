@@ -8,7 +8,6 @@ const getRealFile = async (cwd: string, file: string) => {
   try {
     return await resolve(cwd, file);
   } catch (e) {
-    console.error(e);
     return null;
   }
 };
@@ -50,22 +49,15 @@ export default (options?: Record<string, string>): Plugin => {
         onResolve({ filter: new RegExp(`^${key}`) }, async (args) => {
           const dir = dirname(args.path);
           try {
-            console.log(options.cwd);
-            console.log(args.path);
             const realFile = await getRealFile(
               options.cwd,
               winPath(args.path).replace(new RegExp(`^${key}`), options[key]),
             );
-            console.log(realFile);
-
             assert(realFile, `filePath not found of ${args.path}`);
             return {
               path: realFile,
             };
           } catch (error: any) {
-            console.log('errror');
-            console.log(args.path);
-
             return {
               errors: [
                 {
