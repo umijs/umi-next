@@ -40,29 +40,7 @@ class AutoCSSModule extends Visitor {
         extname(declarations[0].init.argument.arguments[0].expression.value),
       )
     ) {
-      return {
-        ...expression,
-        declarations: [
-          {
-            ...declarations[0],
-            init: {
-              ...declarations[0].init,
-              argument: {
-                ...declarations[0].init.argument,
-                arguments: [
-                  {
-                    ...declarations[0].init.argument.arguments[0],
-                    expression: {
-                      ...declarations[0].init.argument.arguments[0].expression,
-                      value: `${declarations[0].init.argument.arguments[0].expression.value}?modules`,
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        ],
-      };
+      declarations[0].init.argument.arguments[0].expression.value = `${declarations[0].init.argument.arguments[0].expression.value}?modules`;
     }
 
     return expression;
