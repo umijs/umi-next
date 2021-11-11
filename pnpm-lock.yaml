@@ -62,6 +62,9 @@ importers:
       umi: link:packages/umi
       zx: 4.2.0
 
+  examples/ant-design-pro:
+    specifiers: {}
+
   examples/boilerplate:
     specifiers: {}
 
@@ -98,12 +101,6 @@ importers:
       antd: 4.16.13
       framer-motion: 5.0.0
       swr: 1.1.0-beta.8
-
-  examples/plugin-demo:
-    specifiers:
-      '@umijs/plugins': workspace:*
-    dependencies:
-      '@umijs/plugins': link:../../packages/plugins
 
   packages/ast:
     specifiers:

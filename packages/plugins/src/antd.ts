@@ -74,7 +74,8 @@ const DIR_NAME = 'plugin-antd';
 
 export default (api: IApi) => {
   const opts: IAntdOpts = api.userConfig.antd;
-  const { dayjs = false } = opts;
+  // dayjs (by default)
+  const { dayjs = true } = opts;
   api.describe({
     config: {
       schema(Joi) {
@@ -148,7 +149,6 @@ export default (api: IApi) => {
       return config;
     });
   }
-  // dayjs (by default?)
   if (dayjs !== false) {
     api.onGenerateFiles({
       fn: () => {
