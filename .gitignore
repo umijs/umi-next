@@ -4,6 +4,7 @@
 /examples/*/.umi-production
 /examples/*/src/.umi
 /examples/*/src/.umi-production
+/examples/*/.pnpm-debug.log
 /examples/libs/monorepo/foo/.mfsu
 /examples/libs/monorepo/foo/.umi
 /examples/*/dist
