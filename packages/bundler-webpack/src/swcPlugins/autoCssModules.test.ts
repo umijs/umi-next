@@ -1,6 +1,5 @@
-import {transformSync} from '@swc/core'
-import AutoCSSModule from './autoCSSModules'
-
+import { transformSync } from '@swc/core';
+import AutoCSSModule from './autoCSSModules';
 
 interface IOpts {
   code: string;
@@ -11,6 +10,24 @@ interface IOpts {
 function doTransform(opts: IOpts): string {
   return transformSync(opts.code, {
     filename: opts.filename || 'foo.js',
+    jsc: {
+      parser: {
+        syntax: 'ecmascript',
+        jsx: false,
+        topLevelAwait: true,
+      },
+      target: 'es2017',
+      loose: false,
+      minify: {
+        compress: false,
+        mangle: false,
+      },
+    },
+    module: {
+      type: 'es6',
+    },
+    minify: false,
+    isModule: true,
     plugin: (m) => new AutoCSSModule().visitProgram(m),
   })!.code.trim() as string;
 }
