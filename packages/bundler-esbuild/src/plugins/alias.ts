@@ -1,35 +1,71 @@
 import { Plugin } from '@umijs/bundler-utils/compiled/esbuild';
-import { winPath } from '@umijs/utils';
+import enhancedResolve from 'enhanced-resolve';
+import { existsSync, statSync } from 'fs';
+import { sortByAffix } from '../utils/sortByAffix';
+
+const resolver = enhancedResolve.create({
+  mainFields: ['module', 'browser', 'main'],
+  extensions: ['.json', '.js', '.jsx', '.ts', '.tsx', '.cjs', '.mjs'],
+  // TODO: support exports
+  exportsFields: [],
+});
+
+async function resolve(context: string, path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    resolver(context, path, (err: Error, result: string) =>
+      err ? reject(err) : resolve(result),
+    );
+  });
+}
 
 // https://esbuild.github.io/plugins/#resolve-callbacks
-export default (options?: Record<string, string>): Plugin => {
+export default (options: Record<string, string> = {}): Plugin => {
   return {
     name: 'alias',
     setup({ onResolve }) {
-      if (!options || Object.keys(options).length === 0) {
-        return;
-      }
-      Object.keys(options).forEach((key) => {
-        // import react from 'react';
-        onResolve({ filter: new RegExp(`^${key}$`) }, (args) => {
+      const keys = sortByAffix({ arr: Object.keys(options), affix: '$' });
+      keys.forEach((key) => {
+        let value = options[key];
+        let filter: RegExp;
+        if (key.endsWith('$')) {
+          filter = new RegExp(`^${key}`);
+        } else {
+          filter = new RegExp(`^${key}$`);
+        }
+        onResolve({ filter: filter }, async (args) => {
+          const path = await resolve(
+            args.importer,
+            args.path.replace(filter, value),
+          );
           return {
-            path: winPath(args.path).replace(
-              new RegExp(`^${key}$`),
-              options[key],
-            ),
+            path,
           };
         });
-        // import abc from 'react/abc';
-        // import abc from 'react/abc.js';
-        onResolve({ filter: new RegExp(`^${key}\\/.*$`) }, (args) => {
-          return {
-            path: winPath(args.path).replace(
-              new RegExp(`^${key}`),
-              options[key],
-            ),
-          };
-        });
+
+        if (
+          !key.endsWith('/') &&
+          existsSync(value) &&
+          statSync(value).isDirectory()
+        ) {
+          const filter = new RegExp(`^${addSlashAffix(key)}`);
+          onResolve({ filter }, async (args) => {
+            const path = await resolve(
+              args.importer,
+              args.path.replace(filter, addSlashAffix(value)),
+            );
+            return {
+              path,
+            };
+          });
+        }
       });
     },
   };
 };
+
+function addSlashAffix(key: string) {
+  if (key.endsWith('/')) {
+    return key;
+  }
+  return `${key}/`;
+}
