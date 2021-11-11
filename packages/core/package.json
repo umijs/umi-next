@@ -1,10 +1,11 @@
 {
   "name": "@umijs/core",
-  "version": "4.0.0-alpha.1",
+  "version": "4.0.0-beta.5",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "compiled"
   ],
   "scripts": {
     "build": "pnpm tsc",
@@ -23,5 +24,30 @@
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/core#readme",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@umijs/bundler-utils": "4.0.0-beta.5",
+    "@umijs/utils": "4.0.0-beta.5"
+  },
+  "devDependencies": {
+    "@hapi/joi": "17.1.1",
+    "@types/hapi__joi": "17.1.7",
+    "dotenv": "10.0.0",
+    "just-diff": "3.1.1",
+    "tapable": "2.2.1"
+  },
+  "compiledConfig": {
+    "deps": [
+      "@hapi/joi",
+      "dotenv",
+      "just-diff",
+      "tapable"
+    ],
+    "externals": {
+      "@hapi/joi": "$$LOCAL",
+      "dotenv": "$$LOCAL",
+      "just-diff": "$$LOCAL",
+      "tapable": "$$LOCAL"
+    }
   }
 }

@@ -1,10 +1,10 @@
 // @ts-ignore
 import ncc from '@vercel/ncc';
+import { Package } from 'dts-packer';
 import resolve from 'resolve';
-import { argv, chalk, fs, path } from 'zx';
-// import { Package } from 'dts-packer';
+import 'zx/globals';
 // @ts-ignore
-import { Package } from '/Users/chencheng/code/github.com/sorrycc/dts-packer/dist/Package.js';
+// import { Package } from '/Users/chencheng/code/github.com/sorrycc/dts-packer/dist/Package.js';
 
 export async function buildDep(opts: any) {
   console.log(chalk.green(`Build dep ${opts.pkgName || opts.file}`));
@@ -52,6 +52,9 @@ Object.keys(exported).forEach(function (key) {
       );
     } else {
       const filesToCopy: string[] = [];
+      if (opts.file === './bundles/webpack/bundle') {
+        delete opts.webpackExternals['webpack'];
+      }
       const { code, assets } = await ncc(entry, {
         externals: opts.webpackExternals,
         minify: !!opts.minify,
@@ -196,6 +199,10 @@ Object.keys(exported).forEach(function (key) {
             'utf-8',
           );
         }
+        if (opts.pkgName === 'lodash') {
+          // TODO
+          // fs.copySync()
+        }
       }
     }
   }
@@ -224,7 +231,7 @@ Object.keys(exported).forEach(function (key) {
   const pkgDeps = pkg.dependencies || {};
   const {
     deps,
-    externals,
+    externals = {},
     noMinify = [],
     extraDtsDeps = [],
     extraDtsExternals = [],

@@ -1,7 +1,6 @@
-import { chalk, winPath } from '@umijs/utils';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import { chalk } from '@umijs/utils';
 import Config from '../../compiled/webpack-5-chain';
+import { MFSU_NAME } from '../constants';
 import { Env, IConfig, Transpiler } from '../types';
 import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
 
@@ -10,10 +9,17 @@ interface IOpts {
   userConfig: IConfig;
   cwd: string;
   env: Env;
+  extraBabelPlugins: any[];
+  extraBabelPresets: any[];
+  babelPreset: any;
+  name?: string;
 }
 
-export async function applyJavaScriptRules(opts: IOpts) {
-  const { config, userConfig, cwd, env } = opts;
+export async function addJavaScriptRules(opts: IOpts) {
+  const { config, userConfig, cwd, env, name } = opts;
+  const isDev = opts.env === Env.development;
+  const useFastRefresh =
+    isDev && userConfig.fastRefresh !== false && name === MFSU_NAME;
 
   const depPkgs = Object.assign({}, es5ImcompatibleVersionsToPkg());
   const srcRules = [
@@ -29,13 +35,13 @@ export async function applyJavaScriptRules(opts: IOpts) {
       .end()
       .exclude.add(/node_modules/)
       .end(),
-
     config.module.rule('jsx-ts-tsx').test(/\.(jsx|ts|tsx)$/),
     config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
       .include.add((path: string) => {
         try {
+          if (path.includes('client/client')) return true;
           return isMatch({ path, pkgs: depPkgs });
         } catch (e) {
           console.error(chalk.red(e));
@@ -43,7 +49,7 @@ export async function applyJavaScriptRules(opts: IOpts) {
         }
       })
       .end(),
-  ];
+  ] as Config.Rule<Config.Module>[];
   const depRules = [
     config.module
       .rule('dep')
@@ -61,7 +67,7 @@ export async function applyJavaScriptRules(opts: IOpts) {
       .end(),
   ];
 
-  const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
+  // const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   const srcTranspiler = userConfig.srcTranspiler || Transpiler.babel;
   srcRules.forEach((rule) => {
     if (srcTranspiler === Transpiler.babel) {
@@ -73,16 +79,15 @@ export async function applyJavaScriptRules(opts: IOpts) {
           // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
           sourceType: 'unambiguous',
           babelrc: false,
-          cacheDirectory:
-            process.env.BABEL_CACHE !== 'none'
-              ? winPath(`${prefix}/.umi/.cache/babel-loader`)
-              : false,
+          cacheDirectory: false,
+          // process.env.BABEL_CACHE !== 'none'
+          //   ? join(cwd, `.umi/.cache/babel-loader`)
+          //   : false,
           targets: userConfig.targets,
           presets: [
-            [
+            opts.babelPreset || [
               require.resolve('@umijs/babel-preset-umi'),
               {
-                env,
                 presetEnv: {},
                 presetReact: {},
                 presetTypeScript: {},
@@ -92,9 +97,39 @@ export async function applyJavaScriptRules(opts: IOpts) {
                 pluginAutoCSSModules: userConfig.autoCSSModules,
               },
             ],
+            ...opts.extraBabelPresets,
             ...(userConfig.extraBabelPresets || []).filter(Boolean),
           ],
-          plugins: (userConfig.extraBabelPlugins || []).filter(Boolean),
+          plugins: [
+            useFastRefresh && require.resolve('react-refresh/babel'),
+            ...opts.extraBabelPlugins,
+            ...(userConfig.extraBabelPlugins || []),
+          ].filter(Boolean),
+        });
+    } else if (srcTranspiler === Transpiler.swc) {
+      // TODO: support javascript
+      rule
+        .use('swc-loader')
+        .loader(require.resolve('../../compiled/swc-loader'))
+        .options({
+          jsc: {
+            parser: {
+              syntax: 'typescript',
+              dynamicImport: true,
+              tsx: true,
+            },
+
+            transform: {
+              react: {
+                runtime: 'automatic',
+                pragma: 'React.createElement',
+                pragmaFrag: 'React.Fragment',
+                throwIfNamespace: true,
+                development: env === Env.development,
+                useBuiltins: true,
+              },
+            },
+          },
         });
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);

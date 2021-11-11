@@ -9,13 +9,17 @@
     "noUnusedParameters": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "esnext",
+    "target": "es2015",
+    "jsx": "react",
     "paths": {
-      "@umijs/utils": ["./packages/utils"]
-    },
+      "umi": ["./packages/umi"],
+      "@umijs/utils": ["./packages/utils"],
+      "@umijs/renderer-react": ["./packages/renderer-react"]
+    }
   },
   "exclude": [
     "**/node_modules",
+    "**/examples",
     "**/dist",
     "**/fixtures",
     "**/*.test.ts"

@@ -1,6 +1,16 @@
-node_modules
+/node_modules
+/examples/*/.mfsu
+/examples/*/.umi
+/examples/*/.umi-production
+/examples/*/src/.umi
+/examples/*/src/.umi-production
+/examples/libs/monorepo/foo/.mfsu
+/examples/libs/monorepo/foo/.umi
+/examples/*/dist
+/examples/*/node_modules
 /packages/*/node_modules
 /packages/*/dist
 /packages/*/tsconfig.tsbuildinfo
 /packages/*/src/**/fixtures/*/dist
 /packages/*/src/**/fixtures/*/.umi
+/packages/*/src/**/fixtures/*/.umi-production

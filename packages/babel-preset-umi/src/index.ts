@@ -2,10 +2,8 @@ import { dirname } from 'path';
 import autoCSSModules from './plugins/autoCSSModules';
 import dynamicImportNode from './plugins/dynamicImportNode';
 import lockCoreJS from './plugins/lockCoreJS';
-import { Env } from './types';
 
 interface IOpts {
-  env: Env;
   presetEnv: any;
   presetReact: any;
   presetTypeScript: any;
@@ -41,7 +39,7 @@ export default (_context: any, opts: IOpts) => {
         require.resolve('@umijs/bundler-utils/compiled/babel/preset-react'),
         {
           runtime: 'automatic',
-          development: opts.env === Env.development,
+          development: process.env.NODE_ENV === 'development',
           importSource: 'react',
           ...opts.presetReact,
         },

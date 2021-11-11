@@ -1,5 +1,6 @@
+import { rimraf } from '@umijs/utils';
 import webpack from '../compiled/webpack';
-import { getConfig } from './config/getConfig';
+import { getConfig } from './config/config';
 import { Env, IConfig } from './types';
 
 interface IOpts {
@@ -7,19 +8,47 @@ interface IOpts {
   entry: Record<string, string>;
   config: IConfig;
   onBuildComplete?: Function;
+  babelPreset?: any;
+  chainWebpack?: Function;
+  modifyWebpackConfig?: Function;
+  beforeBabelPlugins?: any[];
+  beforeBabelPresets?: any[];
+  extraBabelPlugins?: any[];
+  extraBabelPresets?: any[];
+  clean?: boolean;
 }
 
 export async function build(opts: IOpts): Promise<void> {
-  const config = await getConfig({
+  const webpackConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.production,
     entry: opts.entry,
     userConfig: opts.config,
+    analyze: process.env.ANALYZE,
+    babelPreset: opts.babelPreset,
+    extraBabelPlugins: [
+      ...(opts.beforeBabelPlugins || []),
+      ...(opts.extraBabelPlugins || []),
+    ],
+    extraBabelPresets: [
+      ...(opts.beforeBabelPresets || []),
+      ...(opts.extraBabelPresets || []),
+    ],
+    chainWebpack: opts.chainWebpack,
+    modifyWebpackConfig: opts.modifyWebpackConfig,
   });
+  let isFirstCompile = true;
   return new Promise((resolve, reject) => {
-    const compiler = webpack(config);
+    rimraf.sync(webpackConfig.output!.path!);
+    const compiler = webpack(webpackConfig);
     compiler.run((err, stats) => {
-      opts.onBuildComplete?.(err, stats);
+      opts.onBuildComplete?.({
+        err,
+        stats,
+        isFirstCompile,
+        time: stats ? stats.endTime - stats.startTime : null,
+      });
+      isFirstCompile = false;
       if (err || stats?.hasErrors()) {
         if (err) {
           // console.error(err);

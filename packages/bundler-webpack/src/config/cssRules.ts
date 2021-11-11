@@ -9,14 +9,14 @@ interface IOpts {
   browsers: any;
 }
 
-export async function applyCSSRules(opts: IOpts) {
+export async function addCSSRules(opts: IOpts) {
   const { config, userConfig } = opts;
 
   const rulesConfig = [
-    { name: 'css', test: /\.css(\?.*)?/ },
+    { name: 'css', test: /\.css(\?.*)?$/ },
     {
       name: 'less',
-      test: /\.less(\?.*)?/,
+      test: /\.less(\?.*)?$/,
       loader: require.resolve('@umijs/bundler-webpack/compiled/less-loader'),
       loaderOptions: {
         implementation: require.resolve('@umijs/bundler-webpack/compiled/less'),
@@ -29,7 +29,7 @@ export async function applyCSSRules(opts: IOpts) {
     },
     {
       name: 'sass',
-      test: /\.(sass|scss)(\?.*)?/,
+      test: /\.(sass|scss)(\?.*)?$/,
       loader: require.resolve('@umijs/bundler-webpack/compiled/sass-loader'),
       loaderOptions: userConfig.sassLoader || {},
     },
@@ -45,14 +45,18 @@ export async function applyCSSRules(opts: IOpts) {
           .resourceQuery(/modules/),
         isCSSModules: true,
       },
-      { rule: rule.test(test).oneOf('css'), isCSSModules: false },
+      {
+        rule: rule.test(test).oneOf('css').sideEffects(true),
+        isCSSModules: false,
+      },
     ].filter(Boolean);
+    // @ts-ignore
     for (const { rule, isCSSModules } of nestRulesConfig) {
       if (userConfig.styleLoader) {
         rule
           .use('style-loader')
           .loader(
-            require.resolve('@umijs/bundler-webpack/compiled/sass-loader'),
+            require.resolve('@umijs/bundler-webpack/compiled/style-loader'),
           )
           .options({ base: 0, esModule: true, ...userConfig.styleLoader });
       } else {
@@ -72,7 +76,7 @@ export async function applyCSSRules(opts: IOpts) {
 
       rule
         .use('css-loader')
-        .loader(require.resolve('@umijs/bundler-webpack/compiled/css-loader'))
+        .loader(require.resolve('css-loader'))
         .options({
           importLoaders: 1,
           esModule: true,

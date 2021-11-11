@@ -7,18 +7,44 @@ interface IOpts {
   files: Record<string, string>;
 }
 
+const EXISTS = '1';
+
 const expects: Record<string, Function> = {
   alias({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
   },
+  'asset-avif'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`.avif"`);
+  },
+  'asset-base64'({ files }: IOpts) {
+    expect(files['index.css']).toContain(`data:image/svg+xml;base64,P`);
+  },
+  'asset-fallback'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`.mp3"`);
+  },
+  'asset-image-large'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`.png"`);
+  },
+  'asset-image-small'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`"data:image/png;base64,`);
+  },
   chainWebpack({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a = 'react';`);
+  },
+  copy({ files }: IOpts) {
+    expect(files['a.js']).toContain(`console.log('copy');`);
+  },
+  'copy-from-assets'({ files }: IOpts) {
+    expect(files['assets']).toContain(EXISTS);
   },
   'css-modules'({ files }: IOpts) {
     expect(files['index.js']).toContain(`var a_module = ({"a":"`);
   },
   'css-modules-auto'({ files }: IOpts) {
     expect(files['index.js']).toContain(`var amodules = ({"a":"`);
+  },
+  'css-side-effects'({ files }: IOpts) {
+    expect(files['index.css']).toContain(`color: red;`);
   },
   define({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("1");`);
@@ -36,6 +62,9 @@ const expects: Record<string, Function> = {
       `var react_namespaceObject = {"foo":"react"};`,
     );
   },
+  'node-polyfill'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`exports.join = function() {`);
+  },
   'postcss-autoprefixer'({ files }: IOpts) {
     expect(files['index.css']).toContain(
       `.a { display: -ms-flexbox; display: flex; }`,
@@ -47,8 +76,24 @@ const expects: Record<string, Function> = {
   'postcss-flexbugs-fixes'({ files }: IOpts) {
     expect(files['index.css']).toContain(`.foo { flex: 1 1; }`);
   },
+  svgo({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
+  'svgo-false'({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
+  svgr({ files }: IOpts) {
+    expect(files['static']).toContain(EXISTS);
+    expect(files['index.js']).toContain(`.svg`);
+  },
   targets({ files }: IOpts) {
     expect(files['index.js']).toContain(`var foo = 'foo';`);
+  },
+  swc({ files }: IOpts) {
+    expect(files['index.js']).toContain(`var a = 'react';`);
+    expect(files['index.js']).toContain(`var myIdentity = identity;`);
   },
   theme({ files }: IOpts) {
     expect(files['index.css']).toContain(`color: green;`);
@@ -68,6 +113,7 @@ for (const fixture of readdirSync(fixtures)) {
       config = require(join(base, 'config.ts')).default;
     } catch (e) {}
     await build({
+      clean: true,
       config: {
         ...config,
         jsMinifier: JSMinifier.none,
@@ -80,10 +126,10 @@ for (const fixture of readdirSync(fixtures)) {
     });
     const fileNames = readdirSync(join(base, 'dist'));
     const files = fileNames.reduce<Record<string, string>>((memo, fileName) => {
-      if (['.css', '.js'].includes(extname(fileName))) {
+      if (['.css', '.js', '.svg'].includes(extname(fileName))) {
         memo[fileName] = readFileSync(join(base, 'dist', fileName), 'utf-8');
       } else {
-        memo[fileName] = '1';
+        memo[fileName] = EXISTS;
       }
       return memo;
     }, {});
