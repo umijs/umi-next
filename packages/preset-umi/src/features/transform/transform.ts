@@ -1,5 +1,7 @@
 import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
+import { winPath } from '@umijs/utils';
+import { join } from 'path';
 import { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -16,13 +18,17 @@ export default (api: IApi) => {
               post(state: any) {
                 // @ts-ignore
                 const { cache } = this;
-                if (cache.has(state.opts.filename)) {
+                const filename = winPath(state.opts.filename);
+                if (
+                  cache.has(filename) &&
+                  !filename.includes('bundler-webpack/client') &&
+                  !filename.startsWith(winPath(join(api.cwd, 'node_modules')))
+                ) {
                   api.applyPlugins({
                     key: 'onCheckCode',
                     args: {
                       ...cache.get(state.opts.filename),
                       file: state.opts.filename,
-                      code: state.opts.code,
                       isFromTmp: state.opts.filename.startsWith(
                         api.paths.absTmpPath,
                       ),
@@ -38,7 +44,10 @@ export default (api: IApi) => {
                     // @ts-ignore
                     const cache = this.cache;
                     // reset cache
-                    cache.set(file, {});
+                    cache.set(file, {
+                      code: path.hub.getCode(),
+                      imports: [],
+                    });
                     path.node.body.forEach((node) => {
                       // import x from 'x'; { default: 'x' }
                       // import * as x2 from 'x'; { namespace: 'x2' }
@@ -63,7 +72,6 @@ export default (api: IApi) => {
                             ] = specifier.local.name;
                           }
                         });
-                        cache.get(file).imports ||= [];
                         cache.get(file).imports.push(ret);
                       }
 

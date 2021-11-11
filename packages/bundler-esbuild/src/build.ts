@@ -1,8 +1,9 @@
 import {
   build as buildWithESBuild,
   Format,
+  Plugin,
 } from '@umijs/bundler-utils/compiled/esbuild';
-import { rimraf } from '@umijs/utils';
+import { rimraf, winPath } from '@umijs/utils';
 import { join } from 'path';
 import alias from './plugins/alias';
 import externals from './plugins/externals';
@@ -44,13 +45,23 @@ export async function build(opts: IOpts) {
         javascriptEnabled: true,
         ...opts.config.lessLoader,
       }),
-      alias({ cwd: opts.cwd, ...opts.config.alias }),
-      externals(opts.config.externals),
-    ],
+      opts.config.alias && alias(addCwdPrefix(opts.config.alias, opts.cwd)),
+      opts.config.externals && externals(opts.config.externals),
+    ].filter(Boolean) as Plugin[],
     define: {
       // __dirname sham
       __dirname: JSON.stringify('__dirname'),
       'process.env.NODE_ENV': JSON.stringify(opts.mode || 'development'),
     },
   });
+}
+
+// TODO: move to api.describe({ config: { format } })
+function addCwdPrefix(obj: Record<string, string>, cwd: string) {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key].startsWith('.')) {
+      obj[key] = winPath(join(cwd, obj[key]));
+    }
+  });
+  return obj;
 }
