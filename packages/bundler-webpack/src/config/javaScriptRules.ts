@@ -1,4 +1,4 @@
-import { Program } from '@swc/core';
+import type { Program } from '@swc/core';
 import { chalk } from '@umijs/utils';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
