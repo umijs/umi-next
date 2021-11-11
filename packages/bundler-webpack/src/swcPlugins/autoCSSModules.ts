@@ -1,10 +1,14 @@
-import { ImportDeclaration, VariableDeclaration } from '@swc/core';
+import { ImportDeclaration, TsType, VariableDeclaration } from '@swc/core';
 import Visitor from '@swc/core/Visitor';
 import { extname } from 'path';
 
 const CSS_EXT_NAMES = ['.css', '.less', '.sass', '.scss', '.stylus', '.styl'];
 
 class AutoCSSModule extends Visitor {
+  visitTsType(expression: TsType) {
+    return expression;
+  }
+
   visitImportDeclaration(expression: ImportDeclaration): ImportDeclaration {
     const { specifiers, source } = expression;
     const { value } = source;
