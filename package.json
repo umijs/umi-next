@@ -9,7 +9,7 @@
     "build:release": "pnpm -r --filter ./packages run build -- --declarationMap false",
     "dev": "pnpm -r --filter ./packages --parallel run dev",
     "dep:update": "esno scripts/checkNpmClient.ts && pnpm up --interactive --latest --recursive",
-    "test": "jest",
+    "test": "jest packages/bundler-webpack/src/swcPlugins/",
     "test:clean": "jest --clearCache",
     "prepare": "husky install"
   },
