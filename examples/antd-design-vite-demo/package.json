@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "umi dev --vite"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@ant-design/pro-layout": "^6.28.1",
+    "antd": "^4.16.13"
+  }
+}
