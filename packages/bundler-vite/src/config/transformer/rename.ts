@@ -58,7 +58,5 @@ export default (function rename(userConfig) {
     }
   });
 
-  console.log('rename config', config);
-
   return config;
 } as IConfigProcessor);
