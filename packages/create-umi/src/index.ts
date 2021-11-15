@@ -14,7 +14,7 @@ const testData = {
   org: 'umijs',
   version: '4.0.0-alpha.1',
   npmClient: 'pnpm',
-  registry: 'https://registry.npmmirror.com',
+  registry: 'https://registry.npmjs.org/',
 };
 
 export default async ({
@@ -26,7 +26,7 @@ export default async ({
 }) => {
   const [_, name] = args._;
   let npmClient = 'pnpm' as any;
-  let registry = 'https://registry.npmmirror.com';
+  let registry = 'https://registry.npmjs.org/';
   // test ignore prompts
   if (!args.default) {
     const response = await prompts([
@@ -49,7 +49,7 @@ export default async ({
         choices: [
           {
             title: 'npm',
-            value: 'https://registry.npmmirror.com',
+            value: 'https://registry.npmjs.org/',
             selected: true,
           },
           { title: 'taobao', value: 'https://registry.npmmirror.com' },
