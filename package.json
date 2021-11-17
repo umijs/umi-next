@@ -14,6 +14,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.33",
@@ -52,6 +53,11 @@
     ],
     "*.ts?(x)": [
       "prettier --parser=typescript --write"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
     ]
   }
 }
