@@ -21,7 +21,7 @@ test('generate tmp', async () => {
   await runGenerator({
     _: ['generate', 'tmp'],
   });
-  expect(existsSync(join(cwd, 'umi-test', 'umi.ts'))).toEqual(true);
+  expect(existsSync(join(cwd, '.umi-test', 'umi.ts'))).toEqual(true);
   expect(existsSync(join(cwd, '.umi-test', 'core', 'route.ts'))).toEqual(true);
   rimraf.sync(join(cwd, '.umi-test'));
 });
