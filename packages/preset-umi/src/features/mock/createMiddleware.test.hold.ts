@@ -1,3 +1,5 @@
+// TypeError: /Users/congxiaochen/Documents/umi-next/packages/preset-umi/src/features/mock/createMiddleware.ts: Property expression of TSExpressionWithTypeArguments expected node to be of a type ["TSEntityName"] but instead got "MemberExpression"
+
 import express from '@umijs/bundler-webpack/compiled/express';
 import { portfinder, rimraf, winPath } from '@umijs/utils';
 import { writeFileSync } from 'fs';
