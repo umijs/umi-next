@@ -2,7 +2,6 @@ import * as chokidar from 'chokidar';
 import * as clipboardy from 'clipboardy';
 import address from '../compiled/address';
 import axios from '../compiled/axios';
-import bodyParser from '../compiled/body-parser';
 import chalk from '../compiled/chalk';
 import cheerio from '../compiled/cheerio';
 import crossSpawn from '../compiled/cross-spawn';
@@ -12,7 +11,6 @@ import fsExtra from '../compiled/fs-extra';
 import glob from '../compiled/glob';
 // import globby from '../compiled/globby';
 import lodash from '../compiled/lodash';
-import multer from '../compiled/multer';
 import Mustache from '../compiled/mustache';
 import pkgUp from '../compiled/pkg-up';
 import portfinder from '../compiled/portfinder';
@@ -36,7 +34,6 @@ export * from './winPath';
 export {
   address,
   axios,
-  bodyParser,
   chalk,
   cheerio,
   chokidar,
@@ -54,7 +51,6 @@ export {
   lodash,
   logger,
   Mustache,
-  multer,
   pkgUp,
   portfinder,
   prompts,

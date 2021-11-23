@@ -3,9 +3,11 @@ import {
   Request,
   RequestHandler,
 } from '@umijs/bundler-webpack/compiled/express';
-import { bodyParser, glob, multer, winPath } from '@umijs/utils';
+import { glob, winPath } from '@umijs/utils';
 import assert from 'assert';
+import bodyParser from 'body-parser';
 import { existsSync } from 'fs';
+import multer from 'multer';
 import { join } from 'path';
 import pathToRegexp from 'path-to-regexp';
 import { IApi } from '../../types';
