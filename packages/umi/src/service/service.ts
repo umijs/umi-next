@@ -7,6 +7,7 @@ import { getCwd } from './cwd';
 export class Service extends CoreService {
   constructor(opts?: any) {
     process.env.UMI_DIR = dirname(require.resolve('../../package'));
+    process.env.UMI_VERSION = require('../../package').version;
     const cwd = getCwd();
     super({
       ...opts,

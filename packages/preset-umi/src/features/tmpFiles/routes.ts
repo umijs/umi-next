@@ -1,5 +1,5 @@
-import { winPath } from '@umijs/utils';
 import { addParentRoute, getConventionRoutes } from '@umijs/core';
+import { winPath } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { isAbsolute, join } from 'path';
 

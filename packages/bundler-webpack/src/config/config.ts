@@ -1,3 +1,5 @@
+import { winPath } from '@umijs/utils';
+import { existsSync } from 'fs';
 import { join } from 'path';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
@@ -178,6 +180,20 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     await userConfig.chainWebpack(config, {
       env: opts.env,
       webpack,
+    });
+  }
+
+  // 缓存默认开启，可通过环境变量关闭
+  if (process.env.WEBPACK_FS_CACHE !== 'none') {
+    const prefix = existsSync(join(opts.cwd, 'src'))
+      ? join(opts.cwd, 'src')
+      : opts.cwd;
+    // enable filesystem cache
+    config.cache({
+      type: 'filesystem',
+      version: process.env.UMI_VERSION,
+      // TODO: using the config.path.absTmpPath
+      cacheDirectory: winPath(join(prefix, '.umi', '.cache', 'webpack')),
     });
   }
 
