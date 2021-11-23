@@ -46,7 +46,7 @@ const createMiddleware = (opts = {} as IMockOpts): ICreateMiddleware => {
     middleware: (req, res, next) => {
       const match = data && matchMock(req, data);
       if (match) {
-        console.log(`mock matched: [${match.method}] ${match.path}`);
+        // console.log(`mock matched: [${match.method}] ${match.path}`);
         return match.handler(req, res, next);
       } else {
         return next();
