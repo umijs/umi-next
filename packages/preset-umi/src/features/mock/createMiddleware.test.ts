@@ -1,9 +1,8 @@
 import express from '@umijs/bundler-webpack/compiled/express';
-import { rimraf, winPath } from '@umijs/utils';
+import { portfinder, rimraf, winPath } from '@umijs/utils';
 import { writeFileSync } from 'fs';
 import got from 'got';
 import { join } from 'path';
-import portfinder from 'portfinder';
 import createMiddleware from './createMiddleware';
 import { getMockData } from './utils';
 
