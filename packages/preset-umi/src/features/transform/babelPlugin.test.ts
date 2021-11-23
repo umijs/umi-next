@@ -22,7 +22,6 @@ function doTransform(opts: IOpts): any {
         },
       ],
     ],
-    configFile: false,
   });
   return ret;
 }

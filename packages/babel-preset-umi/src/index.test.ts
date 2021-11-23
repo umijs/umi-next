@@ -10,7 +10,6 @@ function doTransform(opts: IOpts): string {
   return transform(opts.code, {
     filename: opts.filename || 'foo.js',
     presets: [[require.resolve('./index.ts'), opts.opts || {}]],
-    configFile: false,
   })!.code as string;
 }
 
