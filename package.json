@@ -54,10 +54,5 @@
     "*.ts?(x)": [
       "prettier --parser=typescript --write"
     ]
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-typescript"
-    ]
   }
 }

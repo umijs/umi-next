@@ -73,11 +73,13 @@ importers:
       '@ant-design/icons': 4.7.0
       '@ant-design/pro-layout': 6.28.1
       antd: 4.16.13
+      dayjs: ^1.10.7
       umi: 4.0.0-beta.8
     dependencies:
       '@ant-design/icons': 4.7.0
       '@ant-design/pro-layout': 6.28.1_antd@4.16.13
       antd: 4.16.13
+      dayjs: 1.10.7
       umi: link:../../packages/umi
 
   examples/boilerplate:
@@ -456,6 +458,7 @@ importers:
 
   packages/preset-umi:
     specifiers:
+      '@types/multer': ^1.4.7
       '@umijs/ast': 4.0.0-beta.8
       '@umijs/babel-preset-umi': 4.0.0-beta.8
       '@umijs/bundler-utils': 4.0.0-beta.8
@@ -465,6 +468,11 @@ importers:
       '@umijs/renderer-react': 4.0.0-beta.8
       '@umijs/server': 4.0.0-beta.8
       '@umijs/utils': 4.0.0-beta.8
+      body-parser: ^1.19.0
+      got: ^11.8.2
+      multer: ^1.4.3
+      path-to-regexp: 1.7.0
+      portfinder: 1.0.28
       react: 18.0.0-alpha-f2c381131-20211004
       react-dom: 18.0.0-alpha-f2c381131-20211004
       react-router: 6.0.0-beta.7
@@ -11966,6 +11974,12 @@ packages:
 
   /path-to-regexp/0.1.7:
     resolution: {integrity: sha1-32BBeABfUi8V60SQ5yR6G/qmf4w=}
+    dev: true
+
+  /path-to-regexp/1.7.0:
+    resolution: {integrity: sha1-Wf3g9DW62suhA6hOnTvGTpa5k30=}
+    dependencies:
+      isarray: 0.0.1
     dev: true
 
   /path-to-regexp/2.4.0:
