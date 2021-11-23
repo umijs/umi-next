@@ -38,6 +38,12 @@ export default (api: IApi) => {
             initialValue: [],
           })
         ).join('\n'),
+        polyfillImports: importsToStr(
+          await api.applyPlugins({
+            key: 'addPolyfillImports',
+            initialValue: [],
+          }),
+        ).join('\n'),
         importsAhead: importsToStr(
           await api.applyPlugins({
             key: 'addEntryImportsAhead',
@@ -59,9 +65,7 @@ export default (api: IApi) => {
       routes = api.appData.routes;
     } else {
       routes = await getRoutes({
-        config: api.config,
-        absSrcPage: api.paths.absSrcPath,
-        absPagesPath: api.paths.absPagesPath,
+        api,
       });
     }
     const hasSrc = api.appData.hasSrcDir;
