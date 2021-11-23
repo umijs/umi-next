@@ -10,6 +10,7 @@ function doTransform(opts: IOpts): string {
   return transform(opts.code, {
     filename: opts.filename || 'foo.js',
     plugins: [[require.resolve('./autoExport.ts'), opts.opts || {}]],
+    configFile: false,
   })!.code as string;
 }
 

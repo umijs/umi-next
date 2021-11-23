@@ -12,6 +12,7 @@ function doTransform(opts: IOpts): string {
   return transform(opts.code, {
     filename: opts.filename || 'foo.js',
     plugins: [[require.resolve(`./${fileToTest}`), opts.opts || {}]],
+    configFile: false,
   })!.code as string;
 }
 

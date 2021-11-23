@@ -4,12 +4,12 @@ importers:
 
   .:
     specifiers:
-      '@babel/preset-typescript': ^7.16.0
       '@types/jest': ^27.0.2
       '@types/node': ^16.11.6
       '@types/react': ^17.0.33
       '@types/react-dom': ^17.0.10
       '@types/resolve': ^1.20.1
+      '@umijs/babel-preset-umi': workspace:*
       '@umijs/bundler-utils': workspace:*
       '@umijs/bundler-vite': workspace:*
       '@umijs/bundler-webpack': workspace:*
@@ -36,12 +36,12 @@ importers:
       umi: workspace:*
       zx: ^4.2.0
     devDependencies:
-      '@babel/preset-typescript': 7.16.0
       '@types/jest': 27.0.2
       '@types/node': 16.11.6
       '@types/react': 17.0.33
       '@types/react-dom': 17.0.10
       '@types/resolve': 1.20.1
+      '@umijs/babel-preset-umi': link:packages/babel-preset-umi
       '@umijs/bundler-utils': link:packages/bundler-utils
       '@umijs/bundler-vite': link:packages/bundler-vite
       '@umijs/bundler-webpack': link:packages/bundler-webpack
@@ -857,22 +857,6 @@ packages:
       '@babel/helper-optimise-call-expression': 7.15.4
       '@babel/helper-replace-supers': 7.15.4
       '@babel/helper-split-export-declaration': 7.15.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@babel/helper-create-class-features-plugin/7.16.0:
-    resolution: {integrity: sha512-XLwWvqEaq19zFlF5PTgOod4bUA+XbkR4WLQBct1bkzmxJGB0ZEJaoKF4c8cgH9oBtCDuYJ8BP5NB9uFiEgO5QA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.16.0
-      '@babel/helper-function-name': 7.16.0
-      '@babel/helper-member-expression-to-functions': 7.16.0
-      '@babel/helper-optimise-call-expression': 7.16.0
-      '@babel/helper-replace-supers': 7.16.0
-      '@babel/helper-split-export-declaration': 7.16.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2116,15 +2100,6 @@ packages:
       '@babel/helper-plugin-utils': 7.14.5
     dev: true
 
-  /@babel/plugin-syntax-typescript/7.16.0:
-    resolution: {integrity: sha512-Xv6mEXqVdaqCBfJFyeab0fH2DnUoMsDmhamxsSi4j8nLd4Vtw213WMJr55xxqipC/YVWyPY3K0blJncPYji+dQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.14.5
-    dev: true
-
   /@babel/plugin-syntax-typescript/7.16.0_@babel+core@7.16.0:
     resolution: {integrity: sha512-Xv6mEXqVdaqCBfJFyeab0fH2DnUoMsDmhamxsSi4j8nLd4Vtw213WMJr55xxqipC/YVWyPY3K0blJncPYji+dQ==}
     engines: {node: '>=6.9.0'}
@@ -2944,19 +2919,6 @@ packages:
       '@babel/helper-plugin-utils': 7.14.5
     dev: true
 
-  /@babel/plugin-transform-typescript/7.16.0:
-    resolution: {integrity: sha512-dNUn7RSt1dykzFTquwm7qND+dQ8u0SRhZpPFsm1GYAad+EEAirNTjqu/fnqB0zVPwjcZQd//DYWszVKoCrQuoQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-create-class-features-plugin': 7.16.0
-      '@babel/helper-plugin-utils': 7.14.5
-      '@babel/plugin-syntax-typescript': 7.16.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@babel/plugin-transform-typescript/7.16.0_@babel+core@7.16.0:
     resolution: {integrity: sha512-dNUn7RSt1dykzFTquwm7qND+dQ8u0SRhZpPFsm1GYAad+EEAirNTjqu/fnqB0zVPwjcZQd//DYWszVKoCrQuoQ==}
     engines: {node: '>=6.9.0'}
@@ -3236,19 +3198,6 @@ packages:
       '@babel/plugin-transform-react-jsx': 7.16.0_@babel+core@7.16.0
       '@babel/plugin-transform-react-jsx-development': 7.16.0_@babel+core@7.16.0
       '@babel/plugin-transform-react-pure-annotations': 7.16.0_@babel+core@7.16.0
-    dev: true
-
-  /@babel/preset-typescript/7.16.0:
-    resolution: {integrity: sha512-txegdrZYgO9DlPbv+9QOVpMnKbOtezsLHWsnsRF4AjbSIsVaujrq1qg8HK0mxQpWv0jnejt0yEoW1uWpvbrDTg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.14.5
-      '@babel/helper-validator-option': 7.14.5
-      '@babel/plugin-transform-typescript': 7.16.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /@babel/preset-typescript/7.16.0_@babel+core@7.16.0:

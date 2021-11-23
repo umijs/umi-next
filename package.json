@@ -14,7 +14,6 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.16.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.33",
@@ -24,6 +23,7 @@
     "@umijs/bundler-utils": "workspace:*",
     "@umijs/bundler-vite": "workspace:*",
     "@umijs/bundler-webpack": "workspace:*",
+    "@umijs/babel-preset-umi": "workspace:*",
     "@umijs/server": "workspace:*",
     "@umijs/utils": "workspace:*",
     "@vercel/ncc": "^0.31.1",
