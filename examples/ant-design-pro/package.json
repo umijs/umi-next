@@ -4,10 +4,17 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "@ant-design/pro-layout": "6.28.1",
     "@ant-design/icons": "4.7.0",
+    "@ant-design/pro-descriptions": "^1.10.5",
+    "@ant-design/pro-form": "^1.49.3",
+    "@ant-design/pro-layout": "6.28.1",
+    "@ant-design/pro-table": "^2.58.1",
+    "ahooks": "^2.10.12",
     "antd": "4.16.13",
+    "classnames": "^2.3.1",
     "dayjs": "^1.10.7",
-    "umi": "4.0.0-beta.8"
+    "rc-menu": "^9.0.14",
+    "rc-util": "^5.15.0",
+    "umi-request": "^1.4.0"
   }
 }
