@@ -16,6 +16,6 @@ export default {
   npmClient: 'pnpm',
   esm: {},
   targets: {
-    // ie: 10,
+    ie: 10,
   },
 };
