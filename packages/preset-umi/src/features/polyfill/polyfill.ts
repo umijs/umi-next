@@ -5,7 +5,7 @@ export default (api: IApi) => {
     const polyfillImports: { source: string; specifier?: string }[] = [];
     if (!!api.config.targets?.ie) {
       polyfillImports.push({
-        source: 'current-script-polyfill',
+        source: require.resolve('current-script-polyfill'),
       });
     }
     return polyfillImports;
