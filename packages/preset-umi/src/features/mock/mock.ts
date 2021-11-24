@@ -1,10 +1,9 @@
+import { watch } from '../../commands/dev/watch';
 import { IApi } from '../../types';
-import createMiddleware from './createMiddleware';
-import { getMockData, IGetMockDataResult } from './utils';
+import { createMockMiddleware } from './createMockMiddleware';
+import { getMockData } from './getMockData';
 
 export default function (api: IApi) {
-  const { cwd, userConfig } = api;
-
   api.describe({
     key: 'mock',
     config: {
@@ -18,37 +17,27 @@ export default function (api: IApi) {
     },
   });
 
-  if (process.env.MOCK === 'none') {
-    return;
-  }
+  // context for update mockData
+  const context: any = {
+    mockData: null,
+  };
 
-  const ignore = [
-    // ignore mock files under node_modules
-    'node_modules/**',
-    ...(userConfig?.mock?.exclude || []),
-  ];
-
-  api.addBeforeMiddlewares(async () => {
-    const mockResult = getMockData({
-      cwd,
-      ignore,
-    });
-
-    //TODO: check whether conflict when starting ？
-    // await checkConflictPaths(mockResult);
-
-    const { middleware } = createMiddleware({
-      ...mockResult,
-      updateMockData: async () => {
-        const result = getMockData({
-          cwd,
-          ignore,
-        }) as IGetMockDataResult;
-        //TODO: check whether conflict when updating ？
-        // await checkConflictPaths(result);
-        return result;
+  api.onStart(() => {
+    watch({
+      path: `${api.cwd}/mock`,
+      addToUnWatches: true,
+      onChange: () => {
+        context.mockData = getMockData({ cwd: api.cwd });
       },
     });
-    return [middleware];
+  });
+
+  api.addBeforeMiddlewares(async () => {
+    context.mockData = getMockData({ cwd: api.cwd });
+    return [
+      createMockMiddleware({
+        context,
+      }),
+    ];
   });
 }
