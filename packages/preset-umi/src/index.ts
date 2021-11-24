@@ -13,6 +13,7 @@ export default () => {
       require.resolve('./features/tmpFiles/tmpFiles'),
       require.resolve('./features/favicon/favicon'),
       require.resolve('./features/mock/mock'),
+      require.resolve('./features/polyfill/polyfill'),
 
       // commands
       require.resolve('./commands/build'),
