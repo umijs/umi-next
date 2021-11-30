@@ -1,7 +1,9 @@
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
+import * as process from 'process';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
+import { createResolver, scan } from '../../libs/scan';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
 import { createRouteMiddleware } from './createRouteMiddleware';
@@ -39,6 +41,8 @@ umi dev
 PORT=8888 umi dev
 `,
     async fn() {
+      const enableVite = api.args.vite;
+
       // clear tmp except cache
       clearTmp(api.paths.absTmpPath);
 
@@ -51,9 +55,23 @@ PORT=8888 umi dev
         },
       });
 
+      // clean cache if umi version not matched
+      // const umiJSONPath = join(api.paths.absTmpPath, 'umi.json');
+      // if (existsSync(umiJSONPath)) {
+      //   const originVersion = require(umiJSONPath).version;
+      //   if (originVersion !== api.appData.umi.version) {
+      //     logger.info(`Delete cache folder since umi version updated.`);
+      //     rimraf.sync(api.paths.absTmpPath);
+      //   }
+      // }
+      // fsExtra.outputFileSync(
+      //   umiJSONPath,
+      //   JSON.stringify({ version: api.appData.umi.version }),
+      // );
+
       // generate files
       async function generate(opts: { isFirstTime?: boolean; files?: any }) {
-        api.applyPlugins({
+        await api.applyPlugins({
           key: 'onGenerateFiles',
           args: {
             files: opts.files || null,
@@ -85,6 +103,19 @@ PORT=8888 umi dev
           }),
         });
       });
+
+      // scan and module graph
+      // TODO: module graph
+      if (enableVite) {
+        const resolver = createResolver({
+          alias: api.config.alias,
+        });
+        api.appData.deps = await scan({
+          entry: join(api.paths.absTmpPath, 'umi.ts'),
+          externals: api.config.externals,
+          resolver,
+        });
+      }
 
       // watch package.json change
       const pkgPath = join(api.cwd, 'package.json');
@@ -140,7 +171,7 @@ PORT=8888 umi dev
                   ', ',
                 )} changed, regenerate tmp files...`,
               );
-              generate({ isFirstTime: false });
+              await generate({ isFirstTime: false });
             }
             for (const fn of data.fns) {
               fn();
@@ -211,7 +242,7 @@ PORT=8888 umi dev
         },
         port: api.appData.port,
         host: api.appData.host,
-        ...(api.args.vite
+        ...(enableVite
           ? { modifyViteConfig }
           : { babelPreset, chainWebpack, modifyWebpackConfig }),
         beforeBabelPlugins,
@@ -228,7 +259,7 @@ PORT=8888 umi dev
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
       };
-      if (api.args.vite) {
+      if (enableVite) {
         await bundlerVite.dev(opts);
       } else {
         await bundlerWebpack.dev(opts);
