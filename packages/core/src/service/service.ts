@@ -224,6 +224,20 @@ export class Service {
       }
       this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
+
+    const paths = getPaths({
+      cwd: this.cwd,
+      env: this.env,
+      prefix: this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME,
+    });
+    if (this.config.outputPath) {
+      paths.absOutputPath = join(this.cwd, this.config.outputPath);
+    }
+    this.paths = await this.applyPlugins({
+      key: 'modifyPaths',
+      initialValue: paths,
+    });
+
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
     const config = await this.applyPlugins({
@@ -237,18 +251,7 @@ export class Service {
       initialValue: this.configDefaults,
     });
     this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
-    const paths = getPaths({
-      cwd: this.cwd,
-      env: this.env,
-      prefix: this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME,
-    });
-    if (this.config.outputPath) {
-      paths.absOutputPath = join(this.cwd, this.config.outputPath);
-    }
-    this.paths = await this.applyPlugins({
-      key: 'modifyPaths',
-      initialValue: paths,
-    });
+
     // applyPlugin collect app data
     // TODO: some data is mutable
     this.stage = ServiceStage.collectAppData;
