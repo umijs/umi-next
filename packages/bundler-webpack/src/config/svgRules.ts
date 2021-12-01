@@ -21,7 +21,7 @@ export async function addSVGRules(opts: IOpts) {
       .loader(require.resolve('@umijs/bundler-webpack/compiled/@svgr/webpack'))
       .options({
         svgoConfig: {
-          ...svgo,
+          ...(svgo || {}),
         },
         ...svgr,
         svgo: !!svgo,
