@@ -3,5 +3,11 @@ export default {
     esbuild: false,
   },
   plugins: ['@umijs/plugins/src/antd'],
-  antd: {},
+  // externals: {
+  //   react: 'React',
+  //   'react-dom': 'ReactDOM',
+  // },
+  antd: {
+    external: true,
+  },
 };

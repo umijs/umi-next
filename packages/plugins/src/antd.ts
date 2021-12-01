@@ -14,6 +14,7 @@ interface IAntdOpts {
   dark?: boolean;
   compact?: boolean;
   dayjs?: boolean | IDayJsOpts;
+  external?: boolean;
   config?: ConfigProviderProps;
 }
 
@@ -75,7 +76,7 @@ const DIR_NAME = 'plugin-antd';
 export default (api: IApi) => {
   const opts: IAntdOpts = api.userConfig.antd;
   // dayjs (by default)
-  const { dayjs = true } = opts;
+  const { dayjs = true, external = false } = opts;
   api.describe({
     config: {
       schema(Joi) {
@@ -83,6 +84,7 @@ export default (api: IApi) => {
           dark: Joi.boolean(),
           compact: Joi.boolean(),
           config: Joi.object(),
+          external: Joi.boolean(),
           dayjs: Joi.alternatives(
             Joi.boolean(),
             Joi.object({
@@ -135,7 +137,8 @@ export default (api: IApi) => {
         );
       }
     }
-    return memo;
+
+    if (api.config.antd) return memo;
   });
   // dark mode
   // compat mode
@@ -175,6 +178,15 @@ export default (api: IApi) => {
       return [`import './${DIR_NAME}/dayjs.tsx'`];
     });
   }
+  api.modifyConfig((memo) => {
+    if (external) {
+      memo.externals = {
+        ...memo.externals,
+        antd: 'antd',
+      };
+    }
+    return memo;
+  });
   // babel-plugin-import
   api.addExtraBabelPlugins(() => {
     return [
