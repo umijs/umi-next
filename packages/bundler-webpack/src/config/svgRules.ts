@@ -20,33 +20,16 @@ export async function addSVGRules(opts: IOpts) {
       .issuer(/\.[jt]sx?$/)
       .type('javascript/auto')
       //想在 javaScriptRules 中统一处理，可是好像有执行顺序问题
-      .use('babel-loader')
-      .loader(require.resolve('../../compiled/babel-loader'))
-      .options({
-        // Tell babel to guess the type, instead assuming all files are modules
-        // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
-        sourceType: 'unambiguous',
-        babelrc: false,
-        cacheDirectory: false,
-        targets: userConfig.targets,
-        presets: [
-          [
-            require.resolve('@umijs/babel-preset-umi'),
-            {
-              presetEnv: {},
-              presetReact: {},
-              presetTypeScript: {},
-              pluginTransformRuntime: {},
-              pluginLockCoreJS: {},
-              pluginDynamicImportNode: false,
-              pluginAutoCSSModules: userConfig.autoCSSModules,
-            },
-          ],
-          ...(userConfig.extraBabelPresets || []).filter(Boolean),
-        ],
-        plugins: [...(userConfig.extraBabelPlugins || [])].filter(Boolean),
-      })
-      .end()
+      // .use('babel-loader')
+      // .loader(require.resolve('../../compiled/babel-loader'))
+      // .options({
+      //   presets: [
+      //     [
+      //       require.resolve('@umijs/babel-preset-umi'),
+      //     ],
+      //   ],
+      // })
+      // .end()
       .use('svgr-loader')
       .loader(require.resolve('../loader/svgr'))
       .options({

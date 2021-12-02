@@ -5,13 +5,22 @@ import { Config, State, transform } from '@svgr/core';
 import jsx from '@svgr/plugin-jsx';
 // @ts-ignore
 import svgo from '@svgr/plugin-svgo';
+import { transform as defaultEsbuildTransform } from '@umijs/bundler-utils/compiled/esbuild';
 import { normalize } from 'path';
 import { callbackify } from 'util';
 import type { LoaderContext } from '../../compiled/webpack';
 
 const tranformSvg = callbackify(
   async (contents: string, options: Config, state: Partial<State>) => {
-    return await transform(contents, options, state);
+    const jsCode = await transform(contents, options, state);
+    const result = await defaultEsbuildTransform(jsCode, {
+      loader: 'tsx',
+      target: 'es2015',
+    });
+    if (!result?.code) {
+      throw new Error(`Error while transforming using Esbuild`);
+    }
+    return result.code;
   },
 );
 
