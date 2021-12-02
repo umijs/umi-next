@@ -48,7 +48,7 @@ export async function addAssetRules(opts: IOpts) {
     .resourceQuery(/url/)
     .parser({
       dataUrlCondition: {
-        maxSize: 1000,
+        maxSize: inlineLimit,
       },
     })
     .generator({

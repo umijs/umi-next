@@ -7,6 +7,7 @@ interface IOpts {
   cwd: string;
   env: Env;
   browsers: any;
+  staticPathPrefix: string;
 }
 
 export async function addSVGRules(opts: IOpts) {
@@ -15,13 +16,53 @@ export async function addSVGRules(opts: IOpts) {
   if (svgr) {
     const svgrRule = config.module.rule('svgr');
     svgrRule
-      .test(/\.svg$/i)
+      .test(/\.svg$/)
       .issuer(/\.[jt]sx?$/)
+      .type('javascript/auto')
+      .resourceQuery(/^((?!url).)*$/)
+      //想在 javaScriptRules 中统一处理，可是好像有执行顺序问题
+      .use('babel-loader')
+      .loader(require.resolve('../../compiled/babel-loader'))
+      .options({
+        // Tell babel to guess the type, instead assuming all files are modules
+        // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
+        sourceType: 'unambiguous',
+        babelrc: false,
+        cacheDirectory: false,
+        targets: userConfig.targets,
+        presets: [
+          [
+            require.resolve('@umijs/babel-preset-umi'),
+            {
+              presetEnv: {},
+              presetReact: {},
+              presetTypeScript: {},
+              pluginTransformRuntime: {},
+              pluginLockCoreJS: {},
+              pluginDynamicImportNode: false,
+              pluginAutoCSSModules: userConfig.autoCSSModules,
+            },
+          ],
+          ...(userConfig.extraBabelPresets || []).filter(Boolean),
+        ],
+        plugins: [...(userConfig.extraBabelPlugins || [])].filter(Boolean),
+      })
+      .end()
       .use('svgr-loader')
-      .loader(require.resolve('@umijs/bundler-webpack/compiled/@svgr/webpack'))
+      .loader(require.resolve('../loader/svgr'))
       .options({
         svgoConfig: {
-          ...(svgo || {}),
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeTitle: false,
+                },
+              },
+            },
+          ],
+          ...svgo,
         },
         ...svgr,
         svgo: !!svgo,
