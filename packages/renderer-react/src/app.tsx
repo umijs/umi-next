@@ -1,3 +1,5 @@
+// @ts-ignore
+import loadable from '@loadable/component';
 import { Location } from 'history';
 import React from 'react';
 import { Navigator, Router, useRoutes } from 'react-router-dom';
@@ -52,19 +54,10 @@ function Routes() {
   return useRoutes(clientRoutes) || clientRoutes[0].element;
 }
 
-function Loading() {
-  return <div>Loading...</div>;
-}
-
 export function RouteComponent(props: { id: string }) {
   const loader = useAppContext().routeComponents[props.id];
-  const RouteComponent = React.lazy(loader);
+  const RouteComponent = loadable(loader);
 
   // ref: https://reactjs.org/docs/code-splitting.html
-  // TODO: replace with https://github.com/gregberge/loadable-components when we support ssr
-  return (
-    <React.Suspense fallback={<Loading />}>
-      <RouteComponent />
-    </React.Suspense>
-  );
+  return <RouteComponent />;
 }
