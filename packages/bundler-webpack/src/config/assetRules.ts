@@ -43,19 +43,6 @@ export async function addAssetRules(opts: IOpts) {
     });
 
   rule
-    .oneOf('svg')
-    .type('asset')
-    .resourceQuery(/url/)
-    .parser({
-      dataUrlCondition: {
-        maxSize: inlineLimit,
-      },
-    })
-    .generator({
-      filename: `${opts.staticPathPrefix}[name].[hash:8].[ext]`,
-    });
-
-  rule
     .oneOf('fallback')
     .exclude.add(/^$/) /* handle data: resources */
     .add(/\.(js|mjs|jsx|ts|tsx)$/)

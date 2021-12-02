@@ -1,8 +1,8 @@
 import React from 'react';
 // @ts-ignore
-import SvgSmile from '../smile.svg';
+// import SvgSmile from '../smile.svg';
 // @ts-ignore
-import Smileurl from '../smile.svg?url';
+import Smileurl, { ReactComponent as SvgSmile } from '../smile.svg';
 import './global.less';
 // @ts-ignore
 import styles from './index.less';

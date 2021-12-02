@@ -19,7 +19,6 @@ export async function addSVGRules(opts: IOpts) {
       .test(/\.svg$/)
       .issuer(/\.[jt]sx?$/)
       .type('javascript/auto')
-      .resourceQuery(/^((?!url).)*$/)
       //想在 javaScriptRules 中统一处理，可是好像有执行顺序问题
       .use('babel-loader')
       .loader(require.resolve('../../compiled/babel-loader'))
@@ -66,7 +65,11 @@ export async function addSVGRules(opts: IOpts) {
         },
         ...svgr,
         svgo: !!svgo,
-      });
+      })
+      .end()
+      .use('url-loader')
+      .loader(require.resolve('@umijs/bundler-webpack/compiled/url-loader'))
+      .end();
   }
   if (svgo === false) {
     const svgRule = config.module.rule('svg');

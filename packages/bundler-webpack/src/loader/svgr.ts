@@ -44,13 +44,7 @@ function svgrLoader(this: LoaderContext<Config>, contents: string): void {
         callback(err);
         return;
       }
-      tranformSvg(String(result), options, state, (err, content) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-        callback(null, `${content}\n${previousExport}`);
-      });
+      tranformSvg(String(result), options, state, callback);
     });
   }
 }
