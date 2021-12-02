@@ -8,6 +8,7 @@ import fs from 'fs';
 import type { Plugin } from 'vite';
 
 type SVGROption = { [key: string]: any };
+type SVGOOption = { [key: string]: any } | false;
 
 /**
  * an universal tool to transform SVG into React components
@@ -17,7 +18,7 @@ type SVGROption = { [key: string]: any };
  */
 export default function svgrPlugin(
   svgr: SVGROption = {},
-  svgo?: boolean,
+  svgo: SVGOOption = {},
   transformOptions?: TransformOptions,
 ): Plugin {
   return {
@@ -32,10 +33,10 @@ export default function svgrPlugin(
             {
               icon: true,
               svgoConfig: {
-                plugins: [{ removeViewBox: false }],
+                ...(svgo || {}),
               },
               ...svgr,
-              svgo,
+              svgo: !!svgo,
             },
             { componentName: 'ReactComponent' },
           );

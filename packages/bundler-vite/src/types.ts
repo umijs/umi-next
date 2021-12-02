@@ -44,7 +44,7 @@ export interface IConfig {
   proxy?: { [key: string]: ProxyOptions };
   publicPath?: string;
   svgr?: { [key: string]: any };
-  svgo?: boolean;
+  svgo?: { [key: string]: any } | false;
   targets?: { [key: string]: any };
   [key: string]: any;
 }
