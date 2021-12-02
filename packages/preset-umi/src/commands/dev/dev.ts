@@ -1,9 +1,9 @@
+import type { RequestHandler } from '@umijs/bundler-webpack';
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import * as process from 'process';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
-import { createResolver, scan } from '../../libs/scan';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
 import { createRouteMiddleware } from './createRouteMiddleware';
@@ -104,19 +104,6 @@ PORT=8888 umi dev
         });
       });
 
-      // scan and module graph
-      // TODO: module graph
-      if (enableVite) {
-        const resolver = createResolver({
-          alias: api.config.alias,
-        });
-        api.appData.deps = await scan({
-          entry: join(api.paths.absTmpPath, 'umi.ts'),
-          externals: api.config.externals,
-          resolver,
-        });
-      }
-
       // watch package.json change
       const pkgPath = join(api.cwd, 'package.json');
       watch({
@@ -196,6 +183,10 @@ PORT=8888 umi dev
         });
       });
 
+      await api.applyPlugins({
+        key: 'onBeforeCompiler',
+      });
+
       // start dev server
       const beforeMiddlewares = await api.applyPlugins({
         key: 'addBeforeMiddlewares',
@@ -249,7 +240,10 @@ PORT=8888 umi dev
         beforeBabelPresets,
         extraBabelPlugins,
         extraBabelPresets,
-        beforeMiddlewares: [faviconMiddleware].concat(beforeMiddlewares),
+        beforeMiddlewares: ([] as RequestHandler[]).concat([
+          ...beforeMiddlewares,
+          faviconMiddleware,
+        ]),
         afterMiddlewares: [createRouteMiddleware({ api })].concat(middlewares),
         onDevCompileDone(opts: any) {
           api.applyPlugins({
