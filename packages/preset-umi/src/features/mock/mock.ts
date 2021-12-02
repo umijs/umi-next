@@ -15,6 +15,9 @@ export default function (api: IApi) {
         });
       },
     },
+    enableBy() {
+      return api.name === 'dev';
+    },
   });
 
   // context for update mockData

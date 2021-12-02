@@ -1,6 +1,12 @@
-import { lodash } from '@umijs/utils';
+import { chalk, lodash, logger } from '@umijs/utils';
 import assert from 'assert';
-import { EnableBy, IPluginConfig, PluginType, ServiceStage } from '../types';
+import {
+  EnableBy,
+  Env,
+  IPluginConfig,
+  PluginType,
+  ServiceStage,
+} from '../types';
 import { Command, IOpts as ICommandOpts } from './command';
 import { Generator, IGeneratorOpts } from './generator';
 import { Hook, IOpts as IHookOpts } from './hook';
@@ -8,20 +14,41 @@ import { Plugin } from './plugin';
 import { Service } from './service';
 import { makeArray } from './utils';
 
+type Logger = typeof logger;
+
 export class PluginAPI {
   service: Service;
   plugin: Plugin;
+  logger: Logger;
   constructor(opts: { service: Service; plugin: Plugin }) {
     this.service = opts.service;
     this.plugin = opts.plugin;
-    // TODO
     // logger
+    const loggerKeys: (keyof Logger)[] = [
+      'wait',
+      'error',
+      'warn',
+      'ready',
+      'info',
+      'event',
+    ];
+    // @ts-ignore
+    this.logger = loggerKeys.reduce<Logger>((memo, key) => {
+      // @ts-ignore
+      memo[key] = (...message: string[]) => {
+        // @ts-ignore
+        logger[key](chalk.green(`[plugin: ${this.plugin.id}]`), ...message);
+      };
+      return memo;
+    }, {} as any);
   }
 
   describe(opts: {
     key?: string;
     config?: IPluginConfig;
-    enableBy?: EnableBy | (() => boolean);
+    enableBy?:
+      | EnableBy
+      | ((enableByOpts: { config: any; env: Env }) => boolean);
   }) {
     this.plugin.merge(opts);
   }
