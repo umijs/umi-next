@@ -15,7 +15,7 @@ export default {
   scripts: [`console.log('script')`],
   npmClient: 'pnpm',
   // esmi: {},
-  // esm: {
-  //   buildHttp: ['https://cdn.skypack.dev'],
-  // },
+  esm: {
+    buildHttp: ['https://cdn.skypack.dev', 'https://cdn.jsdelivr.net'],
+  },
 };

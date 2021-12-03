@@ -123,7 +123,7 @@ umi build --clean
       const markup = await getMarkup({
         ...markupArgs,
         scripts: ['/umi.js'].concat(markupArgs.scripts),
-        esmScript: !!opts.config.esm || vite,
+        esmScript: vite || !!opts.config.esm,
         path: '/',
       });
       writeFileSync(

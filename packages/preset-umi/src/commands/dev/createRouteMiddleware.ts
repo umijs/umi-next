@@ -16,15 +16,17 @@ window.__vite_plugin_react_preamble_installed__ = true
 export function createRouteMiddleware(opts: { api: IApi }): RequestHandler {
   return async (req, res, next) => {
     const { vite } = opts.api.args;
+    const { userConfig } = opts.api;
     const markupArgs = await getMarkupArgs(opts);
     // @ts-ignore
+    console.log('dev', opts.api.userConfig);
     const requestHandler = await createRequestHandler({
       ...markupArgs,
       scripts: (vite
         ? [viteRefreshScript, '/@vite/client', '/.umi/umi.ts']
         : ['/umi.js']
       ).concat(markupArgs.scripts),
-      esmScript: vite,
+      esmScript: vite || !!userConfig.esm,
     });
     requestHandler(req, res, next);
   };

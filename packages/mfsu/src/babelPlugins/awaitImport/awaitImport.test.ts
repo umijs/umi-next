@@ -37,6 +37,15 @@ test('import as + default', () => {
   );
 });
 
+test('import https', () => {
+  expect(
+    doTransform({
+      code: `import a from 'https://cdn.skypack.dev/a';`,
+      opts: {},
+    }),
+  ).toEqual(`import a from 'https://cdn.skypack.dev/a';`);
+});
+
 test('dynamic import', () => {
   expect(doTransform({ code: `import('a')`, opts: {} })).toEqual(
     `import("mf/a");`,

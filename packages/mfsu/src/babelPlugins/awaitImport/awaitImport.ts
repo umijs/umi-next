@@ -40,7 +40,10 @@ export default function () {
             // import * as x from 'x';
             // import x, * as xx from 'x';
             // import { x } from 'x';
-            if (t.isImportDeclaration(node)) {
+            if (
+              t.isImportDeclaration(node) &&
+              !node.source.value?.startsWith('https')
+            ) {
               const { isMatch, replaceValue } = checkMatch({
                 // @ts-ignore
                 cache: this.cache,
