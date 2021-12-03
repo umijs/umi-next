@@ -19,17 +19,6 @@ export async function addSVGRules(opts: IOpts) {
       .test(/\.svg$/)
       .issuer(/\.[jt]sx?$/)
       .type('javascript/auto')
-      //想在 javaScriptRules 中统一处理，可是好像有执行顺序问题
-      // .use('babel-loader')
-      // .loader(require.resolve('../../compiled/babel-loader'))
-      // .options({
-      //   presets: [
-      //     [
-      //       require.resolve('@umijs/babel-preset-umi'),
-      //     ],
-      //   ],
-      // })
-      // .end()
       .use('svgr-loader')
       .loader(require.resolve('../loader/svgr'))
       .options({
