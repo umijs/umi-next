@@ -54,9 +54,15 @@ function Routes() {
   return useRoutes(clientRoutes) || clientRoutes[0].element;
 }
 
+function Loading() {
+  return <div>Loading...</div>;
+}
+
 export function RouteComponent(props: { id: string }) {
   const loader = useAppContext().routeComponents[props.id];
-  const RouteComponent = loadable(loader);
+  const RouteComponent = loadable(loader, {
+    fallback: <Loading />,
+  });
 
   // ref: https://reactjs.org/docs/code-splitting.html
   return <RouteComponent />;
