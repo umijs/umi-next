@@ -4,6 +4,7 @@ import esbuild, {
   Charset,
   Plugin,
 } from '@umijs/bundler-utils/compiled/esbuild';
+import { winPath } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 
@@ -29,7 +30,7 @@ export function inlineStyle({
   return {
     name: 'style',
     setup({ onResolve, onLoad }) {
-      const cwd = process.cwd();
+      const cwd = winPath(process.cwd());
       const opt: BuildOptions = {
         logLevel: 'silent',
         bundle: true,

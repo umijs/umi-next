@@ -1,7 +1,8 @@
+import { winPath } from '@umijs/utils';
 import { join } from 'path';
 import { eachPkg, getPkgs, setExcludeFolder } from './utils';
 
-const cwd = process.cwd();
+const cwd = winPath(process.cwd());
 eachPkg(getPkgs(), ({ pkg }) => {
   setExcludeFolder({ pkg, cwd });
 });
@@ -17,6 +18,6 @@ eachPkg(
     });
   },
   {
-    base: join(__dirname, '../examples'),
+    base: winPath(join(__dirname, '../examples')),
   },
 );

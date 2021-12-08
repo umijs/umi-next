@@ -1,10 +1,11 @@
 import { Service as CoreService } from '@umijs/core';
+import { winPath } from '@umijs/utils';
 import * as process from 'process';
 import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants';
 
 export class Service extends CoreService {
   constructor(opts?: any) {
-    const cwd = process.cwd();
+    const cwd = winPath(process.cwd());
     super({
       ...opts,
       env: process.env.NODE_ENV,

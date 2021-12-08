@@ -1,9 +1,9 @@
-import { rimraf } from '@umijs/utils';
+import { rimraf, winPath } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import runGenerator from './index';
 
-const fixtures = join(__dirname, '..', 'fixtures');
+const fixtures = winPath(join(__dirname, '..', 'fixtures'));
 
 let oldCwd = process.cwd();
 

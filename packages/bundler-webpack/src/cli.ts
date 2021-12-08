@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { chalk, register, yParser } from '@umijs/utils';
+import { chalk, register, winPath, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { basename, extname, join } from 'path';
@@ -8,7 +8,7 @@ import { dev } from './dev';
 
 const args = yParser(process.argv.slice(2), {});
 const command = args._[0];
-const cwd = process.cwd();
+const cwd = winPath(process.cwd());
 
 const entry = tryPaths([
   join(cwd, 'src/index.tsx'),

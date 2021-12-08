@@ -1,5 +1,5 @@
 import type { Program } from '@swc/core';
-import { chalk } from '@umijs/utils';
+import { chalk, winPath } from '@umijs/utils';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
 import AutoCSSModule from '../swcPlugins/autoCSSModules';
@@ -32,7 +32,7 @@ export async function addJavaScriptRules(opts: IOpts) {
         cwd,
         // import module out of cwd using APP_ROOT
         // issue: https://github.com/umijs/umi/issues/5594
-        ...(process.env.APP_ROOT ? [process.cwd()] : []),
+        ...(process.env.APP_ROOT ? [winPath(process.cwd())] : []),
       ])
       .end()
       .exclude.add(/node_modules/)

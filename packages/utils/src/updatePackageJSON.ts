@@ -2,10 +2,11 @@ import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 import deepmerge from '../compiled/deepmerge';
 import prettier from '../compiled/prettier';
+import { winPath } from './winPath';
 
 function updatePackageJSON({
   opts,
-  cwd = process.cwd(),
+  cwd = winPath(process.cwd()),
 }: {
   opts: object;
   cwd?: string;

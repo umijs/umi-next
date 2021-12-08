@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import { readdirSync, readFileSync, statSync } from 'fs';
 import { extname, join } from 'path';
 import { build } from './build';
@@ -33,7 +34,7 @@ const expects: Record<string, Function> = {
   },
 };
 
-const fixtures = join(__dirname, 'fixtures');
+const fixtures = winPath(join(__dirname, 'fixtures'));
 for (const fixture of readdirSync(fixtures)) {
   if (fixture.startsWith('.')) continue;
   const base = join(fixtures, fixture);

@@ -1,4 +1,4 @@
-import { logger } from '@umijs/utils';
+import { logger, winPath } from '@umijs/utils';
 import type { NextFunction, Request, Response } from 'express';
 import { readFileSync } from 'fs';
 import { extname, join } from 'path';
@@ -50,10 +50,10 @@ export class MFSU {
     this.opts = opts;
     this.opts.mfName = this.opts.mfName || DEFAULT_MF_NAME;
     this.opts.tmpBase =
-      this.opts.tmpBase || join(process.cwd(), DEFAULT_TMP_DIR_NAME);
+      this.opts.tmpBase || winPath(join(process.cwd(), DEFAULT_TMP_DIR_NAME));
     this.opts.mode = this.opts.mode || Mode.development;
     this.opts.getCacheDependency = this.opts.getCacheDependency || (() => ({}));
-    this.opts.cwd = this.opts.cwd || process.cwd();
+    this.opts.cwd = this.opts.cwd || winPath(process.cwd());
     this.depInfo = new DepInfo({ mfsu: this });
     this.depBuilder = new DepBuilder({ mfsu: this });
     this.depInfo.loadCache();

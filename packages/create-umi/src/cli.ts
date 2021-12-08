@@ -1,4 +1,4 @@
-import { chalk, yParser } from '@umijs/utils';
+import { chalk, winPath, yParser } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
@@ -12,7 +12,7 @@ const args = yParser(process.argv.slice(2), {
 
 if (args.version && !args._[0]) {
   args._[0] = 'version';
-  const local = existsSync(join(__dirname, '../.local'))
+  const local = existsSync(winPath(join(__dirname, '../.local')))
     ? chalk.cyan('@local')
     : '';
   const { name, version } = require('../package.json');

@@ -2,6 +2,7 @@ import {
   BaseGenerator,
   installWithNpmClient,
   prompts,
+  winPath,
   yParser,
 } from '@umijs/utils';
 import { join } from 'path';
@@ -90,8 +91,10 @@ export default async ({
   ] as prompts.PromptObject[];
 
   const generator = new BaseGenerator({
-    path: join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
-    target: name ? join(cwd, name) : cwd,
+    path: winPath(
+      join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
+    ),
+    target: name ? winPath(join(cwd, name)) : cwd,
     data: args.default
       ? testData
       : {
