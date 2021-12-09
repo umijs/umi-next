@@ -116,6 +116,10 @@ export default (api: IApi) => {
     // skip umi by default
     delete api.appData.deps['umi'];
 
+    // FIXME: force include react & react-dom
+    api.appData.deps['react'] = api.appData.react.version;
+    api.appData.deps['react-dom'] = api.appData.react.version;
+
     const data = generatePkgData(api);
     const deps = data.pkgInfo.exports.reduce(
       (r, exp) => r.concat(exp.deps.map((dep) => dep.name)),
