@@ -152,7 +152,10 @@ export default (api: IApi) => {
     key: 'esmi',
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          cdnOrigin: Joi.string(),
+          shimUrl: Joi.string(),
+        });
       },
     },
     enableBy: api.EnableBy.config,
@@ -190,6 +193,13 @@ export default (api: IApi) => {
 
     scp.html(JSON.stringify(importmap, null, 2));
     $('head > script:eq(0)').before(scp);
+
+    // append importmap shim script
+    if (api.config.esmi.shimUrl) {
+      $('body > script:eq(0)').before(
+        $(`<script src="${api.config.esmi.shimUrl}"></script>\n`),
+      );
+    }
 
     // preload for importmap modules
     Object.values(importmap.imports).forEach((url) => {
