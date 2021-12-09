@@ -112,13 +112,13 @@ export async function addJavaScriptRules(opts: IOpts) {
       // TODO: support javascript
       rule
         .use('swc-loader')
-        .loader(require.resolve('../../compiled/swc-loader'))
+        .loader(require.resolve('../loader/swc'))
         .options({
           jsc: {
             parser: {
-              syntax: 'typescript',
+              // syntax: 'typescript',
               dynamicImport: true,
-              tsx: true,
+              // tsx: true,
             },
 
             transform: {
