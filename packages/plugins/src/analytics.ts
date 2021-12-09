@@ -4,7 +4,7 @@ export default (api: IApi) => {
   const GA_KEY = process.env.GA_KEY;
 
   const enableBy = (opts: any) => {
-    return opts.config.anlytics || GA_KEY;
+    return opts.config.analytics || GA_KEY;
   };
 
   api.describe({

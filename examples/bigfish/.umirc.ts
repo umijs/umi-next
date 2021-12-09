@@ -5,4 +5,7 @@ export default {
     // dark: true,
   },
   dva: {},
+  analytics: {
+    baidu: 'test',
+  },
 };
