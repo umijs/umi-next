@@ -186,12 +186,15 @@ export default (api: IApi) => {
 
   // append ipmortmap script for HTML
   api.modifyHTML(($) => {
-    const scp = $('<script type="importmap"></script>');
+    const scp = $('<script type="importmap"></script>\n');
 
     scp.html(JSON.stringify(importmap, null, 2));
     $('head > script:eq(0)').before(scp);
 
-    // TODO: polyfill for legacy browser
+    // preload for importmap modules
+    Object.values(importmap.imports).forEach((url) => {
+      scp.before($(`<link rel="modulepreload" href="${url}" />\n`));
+    });
 
     return $;
   });
