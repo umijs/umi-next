@@ -131,17 +131,17 @@ export default class ESMIService {
     const cache = this.getCache(cacheKey);
     const stamp = +new Date();
 
+    // use valid cache first
+    if (cache) {
+      logger.info('ESMi cache used');
+      return cache;
+    }
+
     // log dependency list
     logger.info('\x1b[1m\x1b[32mPre-compiling dependencies on esmi:\x1b[0m');
     data.pkgInfo.exports[0].deps.forEach((dep) => {
       console.log(`  \x1b[33m${dep.name}\x1b[0m`);
     });
-
-    // use valid cache first
-    if (cache) {
-      logger.info('Done, cache used');
-      return cache;
-    }
 
     // get the build ticket id
     const ticketId = await this.build(data);
