@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
+import { axios, logger } from '@umijs/utils';
 import type { IApi } from '../../types';
 
 export interface IImportmapData {
@@ -128,9 +129,17 @@ export default class ESMIService {
   async getImportmap(data: IPkgData) {
     const cacheKey = ESMIService.getCacheKey(data);
     const cache = this.getCache(cacheKey);
+    const stamp = +new Date();
+
+    // log dependency list
+    logger.info('\x1b[1m\x1b[32mPre-compiling dependencies on esmi:\x1b[0m');
+    data.pkgInfo.exports[0].deps.forEach((dep) => {
+      console.log(`  \x1b[33m${dep.name}\x1b[0m`);
+    });
 
     // use valid cache first
     if (cache) {
+      logger.info('Done, cache used');
       return cache;
     }
 
@@ -149,6 +158,9 @@ export default class ESMIService {
         .then((res) => {
           if (res.data.success) {
             this.setCache(cacheKey, res.data.data!);
+            logger.info(
+              `Done, took ${((+new Date() - stamp) / 1000).toFixed(1)}s`,
+            );
 
             return res.data.data;
           }
@@ -156,8 +168,6 @@ export default class ESMIService {
           return next();
         }, next);
     };
-
-    // TODO: timeout + time spend log
 
     return deferrer();
   }
