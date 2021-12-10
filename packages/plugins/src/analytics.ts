@@ -55,15 +55,16 @@ export default (api: IApi) => {
     const { analytics = {} } = api.config;
     const { ga = GA_KEY, baidu } = analytics;
     const rt = [];
+    baidu &&
+      rt.push({
+        content: 'var _hmt = _hmt || [];',
+      });
     if (api.env !== 'development') {
       baidu &&
         rt.push({
           content: baiduTpl(baidu),
         });
-      baidu &&
-        rt.push({
-          content: 'var _hmt = _hmt || [];',
-        });
+
       ga &&
         rt.push({
           content: gaTpl(ga),
