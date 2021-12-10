@@ -20,7 +20,7 @@ export default (api: IApi) => {
         });
       },
     },
-    enableBy: api.EnableBy.register,
+    enableBy: api.EnableBy.config,
   });
 
   const presets = {
