@@ -5,6 +5,7 @@ export default {
     // dark: true,
   },
   dva: {},
+  model: {},
   analytics: {
     baidu: 'test',
   },
