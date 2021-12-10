@@ -1,12 +1,8 @@
-import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
-import * as parser from '@umijs/bundler-utils/compiled/babel/parser';
-import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
-import { readFileSync } from 'fs';
-import { dirname, extname, join } from 'path';
+import { dirname, join, relative } from 'path';
 import { IApi } from 'umi';
-import { chalk, glob, winPath } from 'umi/plugin-utils';
+import { chalk } from 'umi/plugin-utils';
+import { Model, ModelUtils } from './utils/modelUtils';
 import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
@@ -44,7 +40,7 @@ export default (api: IApi) => {
 
   api.modifyAppData((memo) => {
     const models = getAllModels(api);
-    memo.dva = {
+    memo.pluginDva = {
       pkgPath,
       models,
     };
@@ -53,10 +49,14 @@ export default (api: IApi) => {
 
   api.onGenerateFiles((args) => {
     const models = args.isFirstTime
-      ? api.appData.dva.models
+      ? api.appData.pluginDva.models
       : getAllModels(api);
 
-    models;
+    // models.ts
+    api.writeTmpFile({
+      path: 'models.ts',
+      content: ModelUtils.getModelsContent(models),
+    });
 
     // dva.tsx
     api.writeTmpFile({
@@ -65,6 +65,7 @@ export default (api: IApi) => {
 import dva from 'dva';
 import { useRef } from 'react';
 import { useAppContext } from 'umi';
+import { models } from './models';
 
 export function RootContainer(props: any) {
   const { navigator } = useAppContext();
@@ -74,10 +75,9 @@ export function RootContainer(props: any) {
       history: navigator,
       initialState: props.initialState,
     });
-    app.current.model({
-      namespace: 'count',
-      state: 0,
-    });
+    for (const id of Object.keys(models)) {
+      app.current.model(models[id].model);
+    }
     app.current.router(() => props.children);
   }
   return app.current.start()();
@@ -120,84 +120,36 @@ export { connect, useDispatch, useStore, useSelector } from 'dva';`,
     name: 'dva',
     fn() {
       api.logger.info(chalk.green.bold('dva models'));
-      api.appData.dva.models.forEach((model: string) => {
-        api.logger.info(`  - ${model}`);
+      api.appData.pluginDva.models.forEach((model: Model) => {
+        api.logger.info(`  - ${relative(api.cwd, model.file)}`);
       });
     },
   });
 };
 
-export function getAllModels(api: IApi) {
-  return [
-    getModels({
-      base: join(api.paths.absSrcPath, 'models'),
-      pattern: '**/*.{ts,tsx,js,jsx}',
-    }),
-    getModels({
-      base: join(api.paths.absPagesPath),
-      pattern: '**/models/**/*.{ts,tsx,js,jsx}',
-    }),
-    getModels({
-      base: join(api.paths.absPagesPath),
-      pattern: '**/model.{ts,tsx,js,jsx}',
-    }),
-  ];
-}
-
-export function getModels(opts: { base: string; pattern?: string }) {
-  return glob
-    .sync(opts.pattern || '**/*.{ts,js}', {
-      cwd: opts.base,
-      absolute: true,
-    })
-    .map(winPath)
-    .filter((file) => {
-      if (/\.d.ts$/.test(file)) return false;
-      if (/\.(test|e2e|spec).([jt])sx?$/.test(file)) return false;
-      const content = readFileSync(file, 'utf-8');
-      return isModelValid({ content, file });
-    });
-}
-
-export function isModelValid(opts: { content: string; file: string }) {
-  const { file, content } = opts;
-
-  // 标注式声明
-  if (content.startsWith('// @dva-model')) return true;
-
-  // transform with esbuild first
-  // to reduce unexpected ast problem
-  const loader = extname(file).slice(1) as Loader;
-  const result = transformSync(content, {
-    loader,
-    sourcemap: false,
-    minify: false,
-  });
-
-  // transform with babel
-  let ret = false;
-  const ast = parser.parse(result.code, {
-    sourceType: 'module',
-    sourceFilename: file,
-    plugins: [],
-  });
-  traverse(ast, {
-    ExportDefaultDeclaration(path: Babel.NodePath<t.ExportDefaultDeclaration>) {
-      let node: any = path.node.declaration;
-      node = getIdentifierDeclaration(node, path);
+export function getModelUtil(api: IApi | null) {
+  return new ModelUtils(api, {
+    contentTest(content) {
+      return content.startsWith('// @dva-model');
+    },
+    astTest({ node, content }) {
       if (isModelObject(node)) {
-        ret = true;
+        return true;
       } else if (
         content.includes('dva-model-extend') &&
         t.isCallExpression(node) &&
         node.arguments.length === 2 &&
         isModelObject(node.arguments[1])
       ) {
-        ret = true;
+        return true;
       }
+      return false;
     },
   });
-  return ret;
+}
+
+export function getAllModels(api: IApi) {
+  return getModelUtil(api).getAllModels();
 }
 
 function isModelObject(node: t.Node) {
@@ -213,15 +165,4 @@ function isModelObject(node: t.Node) {
       ].includes((property as any).key.name);
     })
   );
-}
-
-function getIdentifierDeclaration(node: t.Node, path: Babel.NodePath) {
-  if (t.isIdentifier(node) && path.scope.hasBinding(node.name)) {
-    let bindingNode = path.scope.getBinding(node.name)!.path.node;
-    if (t.isVariableDeclarator(bindingNode)) {
-      bindingNode = bindingNode.init!;
-    }
-    return bindingNode;
-  }
-  return node;
 }
