@@ -1,4 +1,3 @@
-import path from 'path';
 import { parse as parseImports } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import MagicString from 'magic-string';
 import { join } from 'path';
@@ -174,7 +173,7 @@ export default (api: IApi) => {
       // init esmi service
       service = new Service({
         cdnOrigin: api.config.esmi.cdnOrigin,
-        cacheDir: path.join(api.cwd, '.esmi'),
+        cacheDir: join(api.cwd, '.esmi'),
       });
 
       // init project resolver
