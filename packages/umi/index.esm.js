@@ -5,4 +5,4 @@ export {
   useAppContext,
   useNavigate,
 } from '@umijs/renderer-react';
-export { PluginManager } from './client/client/plugin';
+export { PluginManager, ApplyPluginsType } from './client/client/plugin';

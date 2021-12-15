@@ -9,6 +9,7 @@ export default (api: IApi) => {
       require.resolve('@umijs/plugins/dist/model'),
       require.resolve('@umijs/plugins/dist/analytics'),
       require.resolve('@umijs/plugins/dist/moment2dayjs'),
+      require.resolve('@umijs/plugins/dist/locale'),
     ],
   };
 };

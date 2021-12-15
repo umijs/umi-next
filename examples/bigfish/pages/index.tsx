@@ -1,11 +1,18 @@
 // @ts-ignore
 import { connect } from '@@/plugin-dva';
 // @ts-ignore
+import {
+  FormattedMessage,
+  getAllLocales,
+  SelectLang,
+  useIntl,
+} from '@@/plugin-locale';
+// @ts-ignore
 import { useModel } from '@@/plugin-model';
 // @ts-ignore
 import { Button, DatePicker, Input } from 'antd';
 // @ts-ignore
-import dayjs from 'moment';
+// import dayjs from 'moment';
 import React from 'react';
 
 function mapStateToProps(state: any) {
@@ -14,7 +21,10 @@ function mapStateToProps(state: any) {
 
 export default connect(mapStateToProps)(function HomePage(props: any) {
   const { todos } = useModel('todo');
-  console.log(dayjs().format);
+  // console.log(dayjs.locale);
+  console.log(getAllLocales());
+
+  const intl = useIntl();
 
   return (
     <div>
@@ -29,6 +39,9 @@ export default connect(mapStateToProps)(function HomePage(props: any) {
           <li key={todo}>{todo}</li>
         ))}
       </ul>
+      <FormattedMessage id={`HELLO`} />
+      <div>{intl.formatMessage({ id: 'HELLO' })}</div>
+      <SelectLang />
     </div>
   );
 });

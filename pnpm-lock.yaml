@@ -466,7 +466,10 @@ importers:
       dayjs: ^1.10.7
       dva: ^2.6.0-beta.22
       fast-deep-equal: 3.1.3
+      moment: ^2.29.1
+      react-intl: 3.12.1
       umi: 4.0.0-beta.12
+      warning: ^4.0.3
     dependencies:
       '@umijs/bundler-utils': link:../bundler-utils
       antd: 4.17.2
@@ -475,6 +478,9 @@ importers:
       dayjs: 1.10.7
       dva: 2.6.0-beta.22
       fast-deep-equal: 3.1.3
+      moment: 2.29.1
+      react-intl: 3.12.1
+      warning: 4.0.3
     devDependencies:
       umi: link:../umi
 
@@ -2639,6 +2645,35 @@ packages:
     dev: true
     optional: true
 
+  /@formatjs/intl-displaynames/1.2.10:
+    resolution: {integrity: sha512-GROA2RP6+7Ouu0WnHFF78O5XIU7pBfI19WM1qm93l6MFWibUk67nCfVCK3VAYJkLy8L8ZxjkYT11VIAfvSz8wg==}
+    dependencies:
+      '@formatjs/intl-utils': 2.3.0
+    dev: false
+
+  /@formatjs/intl-listformat/1.4.8:
+    resolution: {integrity: sha512-WNMQlEg0e50VZrGIkgD5n7+DAMGt3boKi1GJALfhFMymslJb5i+5WzWxyj/3a929Z6MAFsmzRIJjKuv+BxKAOQ==}
+    dependencies:
+      '@formatjs/intl-utils': 2.3.0
+    dev: false
+
+  /@formatjs/intl-relativetimeformat/4.5.16:
+    resolution: {integrity: sha512-IQ0haY97oHAH5OYUdykNiepdyEWj3SAT+Fp9ZpR85ov2JNiFx+12WWlxlVS8ehdyncC2ZMt/SwFIy2huK2+6/A==}
+    dependencies:
+      '@formatjs/intl-utils': 2.3.0
+    dev: false
+
+  /@formatjs/intl-unified-numberformat/3.3.7:
+    resolution: {integrity: sha512-KnWgLRHzCAgT9eyt3OS34RHoyD7dPDYhRcuKn+/6Kv2knDF8Im43J6vlSW6Hm1w63fNq3ZIT1cFk7RuVO3Psag==}
+    deprecated: We have renamed the package to @formatjs/intl-numberformat
+    dependencies:
+      '@formatjs/intl-utils': 2.3.0
+    dev: false
+
+  /@formatjs/intl-utils/2.3.0:
+    resolution: {integrity: sha512-KWk80UPIzPmUg+P0rKh6TqspRw0G6eux1PuJr+zz47ftMaZ9QDwbGzHZbtzWkl5hgayM/qrKRutllRC7D/vVXQ==}
+    dev: false
+
   /@gar/promisify/1.1.2:
     resolution: {integrity: sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==}
     dev: true
@@ -4396,6 +4431,10 @@ packages:
     dependencies:
       '@types/node': 16.10.3
     dev: true
+
+  /@types/invariant/2.2.35:
+    resolution: {integrity: sha512-DxX1V9P8zdJPYQat1gHyY0xj3efl8gnMVjiM9iCY6y27lj+PoQWkgjt8jDqmovPqULkKVpKRg8J36iQiA+EtEg==}
+    dev: false
 
   /@types/isomorphic-fetch/0.0.35:
     resolution: {integrity: sha512-DaZNUvLDCAnCTjgwxgiL1eQdxIKEpNLOlTNtAgnZc50bG2copGhRrFN9/PxPBuJe+tZVLCbQ7ls0xveXVRPkvw==}
@@ -8817,6 +8856,24 @@ packages:
     resolution: {integrity: sha512-fn4bQ0Xq8FTej09YC/jqKZwtijpvARlRp6wxL5WTA6yPe2YWSJ5RJh7Nm79rK2qB0wr6iDQzH60XGq5V/7u8YQ==}
     dev: true
 
+  /intl-format-cache/4.3.1:
+    resolution: {integrity: sha512-OEUYNA7D06agqPOYhbTkl0T8HA3QKSuwWh1HiClEnpd9vw7N+3XsQt5iZ0GUEchp5CW1fQk/tary+NsbF3yQ1Q==}
+    dev: false
+
+  /intl-messageformat-parser/3.6.4:
+    resolution: {integrity: sha512-RgPGwue0mJtoX2Ax8EmMzJzttxjnva7gx0Q7mKJ4oALrTZvtmCeAw5Msz2PcjW4dtCh/h7vN/8GJCxZO1uv+OA==}
+    deprecated: We've written a new parser that's 6x faster and is backwards compatible. Please use @formatjs/icu-messageformat-parser
+    dependencies:
+      '@formatjs/intl-unified-numberformat': 3.3.7
+    dev: false
+
+  /intl-messageformat/7.8.4:
+    resolution: {integrity: sha512-yS0cLESCKCYjseCOGXuV4pxJm/buTfyCJ1nzQjryHmSehlptbZbn9fnlk1I9peLopZGGbjj46yHHiTAEZ1qOTA==}
+    dependencies:
+      intl-format-cache: 4.3.1
+      intl-messageformat-parser: 3.6.4
+    dev: false
+
   /invariant/2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
     dependencies:
@@ -12970,6 +13027,25 @@ packages:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
     dev: false
 
+  /react-intl/3.12.1:
+    resolution: {integrity: sha512-cgumW29mwROIqyp8NXStYsoIm27+8FqnxykiLSawWjOxGIBeLuN/+p2srei5SRIumcJefOkOIHP+NDck05RgHg==}
+    peerDependencies:
+      react: ^16.3.0
+    dependencies:
+      '@formatjs/intl-displaynames': 1.2.10
+      '@formatjs/intl-listformat': 1.4.8
+      '@formatjs/intl-relativetimeformat': 4.5.16
+      '@formatjs/intl-unified-numberformat': 3.3.7
+      '@formatjs/intl-utils': 2.3.0
+      '@types/hoist-non-react-statics': 3.3.1
+      '@types/invariant': 2.2.35
+      hoist-non-react-statics: 3.3.2
+      intl-format-cache: 4.3.1
+      intl-messageformat: 7.8.4
+      intl-messageformat-parser: 3.6.4
+      shallow-equal: 1.2.1
+    dev: false
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -13702,6 +13778,10 @@ packages:
     dependencies:
       kind-of: 6.0.3
     dev: true
+
+  /shallow-equal/1.2.1:
+    resolution: {integrity: sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==}
+    dev: false
 
   /shallowequal/1.1.0:
     resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}
