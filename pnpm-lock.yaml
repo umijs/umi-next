@@ -428,13 +428,18 @@ importers:
 
   packages/father:
     specifiers:
+      '@types/loader-runner': 2.2.4
       '@umijs/core': 4.0.0-beta.12
       '@umijs/utils': 4.0.0-beta.12
+      loader-runner: 4.2.0
       v8-compile-cache: 2.3.0
     dependencies:
       '@umijs/core': link:../core
       '@umijs/utils': link:../utils
+      loader-runner: 4.2.0
       v8-compile-cache: 2.3.0
+    devDependencies:
+      '@types/loader-runner': 2.2.4
 
   packages/mfsu:
     specifiers:
@@ -4497,6 +4502,12 @@ packages:
 
   /@types/less/3.0.3:
     resolution: {integrity: sha512-1YXyYH83h6We1djyoUEqTlVyQtCfJAFXELSKW2ZRtjHD4hQ82CC4lvrv5D0l0FLcKBaiPbXyi3MpMsI9ZRgKsw==}
+    dev: true
+
+  /@types/loader-runner/2.2.4:
+    resolution: {integrity: sha512-loD63p9KWQPgTvMBbhu9nD/2AeLqzP7ey/h1cWUK3wzLtilRO1kcCtlJvGrT/LEtOM7bjzaFSX1hxXaOdZdt8g==}
+    dependencies:
+      '@types/node': 16.11.11
     dev: true
 
   /@types/lodash/4.14.177:
@@ -10215,7 +10226,6 @@ packages:
   /loader-runner/4.2.0:
     resolution: {integrity: sha512-92+huvxMvYlMzMt0iIOukcwYBFpkYJdpl2xsZ7LrlayO7E8SOv+JJUEK17B/dJIHAOLMfh2dZZ/Y18WgmGtYNw==}
     engines: {node: '>=6.11.5'}
-    dev: true
 
   /loader-utils/1.4.0:
     resolution: {integrity: sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==}
