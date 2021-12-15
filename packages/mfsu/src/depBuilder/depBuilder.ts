@@ -62,6 +62,7 @@ export class DepBuilder {
         alias: this.opts.mfsu.alias,
         externals: this.opts.mfsu.externals,
       },
+      inlineStyle: true,
     });
     logger.event(
       `[mfsu] compiled with esbuild successfully in ${+new Date() - date} ms`,
@@ -147,10 +148,7 @@ export class DepBuilder {
       }),
     );
     const exposes = opts.deps.reduce<Record<string, string>>((memo, dep) => {
-      memo[`./${dep.shortFile}`] = join(
-        this.opts.mfsu.opts.tmpBase!,
-        dep.filePath,
-      );
+      memo[`./${dep.file}`] = join(this.opts.mfsu.opts.tmpBase!, dep.filePath);
       return memo;
     }, {});
     depConfig.plugins.push(

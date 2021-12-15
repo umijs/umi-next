@@ -35,7 +35,7 @@ interface IOpts {
 
 export class Service {
   private opts: IOpts;
-  appData: Record<string, any> = {};
+  appData: { deps?: Record<string, string>; [key: string]: any } = {};
   args: yParser.Arguments = { _: [], $0: '' };
   commands: Record<string, Command> = {};
   generators: Record<string, Generator> = {};
@@ -225,18 +225,6 @@ export class Service {
       this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
     // setup api.config from modifyConfig and modifyDefaultConfig
-    this.stage = ServiceStage.resolveConfig;
-    const config = await this.applyPlugins({
-      key: 'modifyConfig',
-      initialValue: configManager.getConfig({
-        schemas: this.configSchemas,
-      }).config,
-    });
-    const defaultConfig = await this.applyPlugins({
-      key: 'modifyDefaultConfig',
-      initialValue: this.configDefaults,
-    });
-    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
     const paths = getPaths({
       cwd: this.cwd,
       env: this.env,
@@ -245,6 +233,19 @@ export class Service {
     if (this.config.outputPath) {
       paths.absOutputPath = join(this.cwd, this.config.outputPath);
     }
+    this.stage = ServiceStage.resolveConfig;
+    const config = await this.applyPlugins({
+      key: 'modifyConfig',
+      initialValue: configManager.getConfig({
+        schemas: this.configSchemas,
+      }).config,
+      args: { paths },
+    });
+    const defaultConfig = await this.applyPlugins({
+      key: 'modifyDefaultConfig',
+      initialValue: this.configDefaults,
+    });
+    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
     this.paths = await this.applyPlugins({
       key: 'modifyPaths',
       initialValue: paths,
@@ -351,6 +352,7 @@ export class Service {
         'name',
         'paths',
         'userConfig',
+        'env',
       ],
       staticProps: {
         ApplyPluginsType,
@@ -363,6 +365,9 @@ export class Service {
     let ret = opts.plugin.apply()(proxyPluginAPI);
     if (isPromise(ret)) {
       ret = await ret;
+    }
+    if (opts.plugin.type === 'plugin') {
+      assert(!ret, `plugin should return nothing`);
     }
     if (ret?.presets) {
       ret.presets = ret.presets.map(
@@ -391,8 +396,20 @@ export class Service {
     const { id, key, enableBy } = hook.plugin;
     if (this.skipPluginIds.has(id)) return false;
     if (this.userConfig[key] === false) return false;
-    if (enableBy === EnableBy.config && !(key in this.config)) return false;
-    if (typeof enableBy === 'function') return enableBy();
+    if (
+      enableBy === EnableBy.config &&
+      // this.config is not ready when modifyConfig or modifyDefaultConfig is called
+      // fallback to this.userConfig
+      !(
+        key in
+        (['modifyConfig', 'modifyDefaultConfig'].includes(hook.key)
+          ? this.userConfig
+          : this.config)
+      )
+    )
+      return false;
+    if (typeof enableBy === 'function')
+      return enableBy({ config: this.config, env: this.env });
     // EnableBy.register
     return true;
   }
@@ -410,11 +427,15 @@ export interface IServicePluginAPI {
   name: typeof Service.prototype.name;
   paths: Required<typeof Service.prototype.paths>;
   userConfig: typeof Service.prototype.userConfig;
+  env: typeof Service.prototype.env;
 
   onCheck: IEvent<null>;
   onStart: IEvent<null>;
   modifyAppData: IModify<typeof Service.prototype.appData, null>;
-  modifyConfig: IModify<typeof Service.prototype.config, null>;
+  modifyConfig: IModify<
+    typeof Service.prototype.config,
+    { paths: Record<string, string> }
+  >;
   modifyDefaultConfig: IModify<typeof Service.prototype.config, null>;
   modifyPaths: IModify<typeof Service.prototype.paths, null>;
 

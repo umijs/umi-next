@@ -1,10 +1,20 @@
 {
   "name": "umi",
-  "version": "4.0.0-beta.7",
+  "version": "4.0.0-beta.12",
   "description": "umi",
+  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/umi#readme",
+  "bugs": "https://github.com/umijs/umi-next/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-next"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "index.esm.js",
   "types": "index.d.ts",
+  "bin": {
+    "umi": "bin/umi.js"
+  },
   "files": [
     "dist",
     "index.d.ts",
@@ -12,33 +22,23 @@
     "client",
     "bin"
   ],
-  "bin": {
-    "umi": "bin/umi.js"
-  },
   "scripts": {
     "build": "pnpm tsc",
     "build:client": "pnpm tsc --project ./tsconfig.client.json",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/umijs/umi-next"
+  "dependencies": {
+    "@umijs/core": "4.0.0-beta.12",
+    "@umijs/preset-umi": "4.0.0-beta.12",
+    "@umijs/renderer-react": "4.0.0-beta.12",
+    "@umijs/utils": "4.0.0-beta.12",
+    "v8-compile-cache": "2.3.0"
   },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "https://github.com/umijs/umi-next/issues",
-  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/umi#readme",
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@umijs/core": "4.0.0-beta.7",
-    "@umijs/preset-umi": "4.0.0-beta.7",
-    "@umijs/renderer-react": "4.0.0-beta.7",
-    "@umijs/utils": "4.0.0-beta.7",
-    "v8-compile-cache": "2.3.0"
-  }
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ]
 }

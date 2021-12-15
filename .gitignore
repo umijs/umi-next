@@ -16,3 +16,4 @@
 /packages/*/src/**/fixtures/*/.umi-production
 /packages/father/examples/**/dist
 /packages/father/examples/**/es
+.DS_Store

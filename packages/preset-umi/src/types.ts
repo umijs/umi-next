@@ -5,10 +5,13 @@ import type {
   IAdd,
   IEvent,
   IModify,
+  IRoute as ICoreRoute,
   IServicePluginAPI,
   PluginAPI,
 } from '@umijs/core';
 import { Env } from '@umijs/core';
+import type { CheerioAPI } from '@umijs/utils/compiled/cheerio';
+import type { InlineConfig as ViteInlineConfig } from 'vite';
 
 export type IScript =
   | Partial<{
@@ -53,12 +56,13 @@ export type IEntryImport = {
   source: string;
   specifier?: string;
 };
-
+export type IRoute = ICoreRoute;
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     restartServer: () => void;
     writeTmpFile: (opts: {
       path: string;
+      noPluginDir?: boolean;
       content?: string;
       tpl?: string;
       tplPath?: string;
@@ -73,6 +77,7 @@ export type IApi = PluginAPI &
       origin: Record<string, any>;
       current: Record<string, any>;
     }>;
+    onBeforeCompiler: IEvent<{}>;
     onBuildComplete: IEvent<{
       isFirstCompile: boolean;
       stats: any;
@@ -121,10 +126,12 @@ export type IApi = PluginAPI &
     addHTMLStyles: IAdd<null, IStyle[]>;
     addHTMLLinks: IAdd<null, ILink[]>;
     addHTMLMetas: IAdd<null, IMeta[]>;
+    addLayouts: IAdd<null, { id: string; file: string }[]>;
+    addPolyfillImports: IAdd<null, { source: string; specifier?: string }[]>;
     addRuntimePlugin: IAdd<null, string[]>;
     addRuntimePluginKey: IAdd<null, string[]>;
     modifyHTMLFavicon: IModify<string, {}>;
-    modifyHTML: IModify<string, { path: string }>;
+    modifyHTML: IModify<CheerioAPI, { path: string }>;
     modifyRendererPath: IModify<string, {}>;
     modifyWebpackConfig: IModify<
       webpack.Configuration,
@@ -134,7 +141,7 @@ export type IApi = PluginAPI &
       }
     >;
     modifyViteConfig: IModify<
-      webpack.Configuration,
+      ViteInlineConfig,
       {
         env: Env;
       }

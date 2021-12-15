@@ -10,7 +10,7 @@ function resolveProjectDep(opts: { pkg: any; cwd: string; dep: string }) {
     opts.pkg.devDependencies?.[opts.dep]
   ) {
     return dirname(
-      resolve.sync(`${opts.dep}/package`, {
+      resolve.sync(`${opts.dep}/package.json`, {
         basedir: opts.cwd,
       }),
     );
@@ -67,4 +67,14 @@ export default (api: IApi) => {
       },
     ]);
   }
+
+  // api.paths is ready after register
+  api.modifyConfig((memo, args) => {
+    memo.alias = {
+      ...memo.alias,
+      '@': args.paths.absSrcPath,
+      '@@': args.paths.absTmpPath,
+    };
+    return memo;
+  });
 };
