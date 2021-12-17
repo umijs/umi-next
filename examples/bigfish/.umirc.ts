@@ -25,6 +25,8 @@ export default {
     style: 'less',
     // dark: true,
   },
+  initialState: {},
+  access: {},
   dva: {},
   model: {},
   analytics: {

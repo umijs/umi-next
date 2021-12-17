@@ -6,12 +6,14 @@ import { Model, ModelUtils } from './utils/modelUtils';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
-  const pkgPath = join(__dirname, '../templates/dva.ts');
+  const pkgPath = join(__dirname, '../libs/dva.ts');
 
   api.describe({
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          extraModels: Joi.array().items(Joi.string()),
+        });
       },
     },
     enableBy: api.EnableBy.config,
@@ -47,13 +49,15 @@ export default (api: IApi) => {
     api.writeTmpFile({
       path: 'dva.tsx',
       tpl: `
+// It's faked dva
+// aliased to @umijs/plugins/templates/dva
 import { create, Provider } from 'dva';
 import React, { useRef } from 'react';
-import { useAppContext } from 'umi';
+import { useAppData } from 'umi';
 import { models } from './models';
 
 export function RootContainer(props: any) {
-  const { navigator } = useAppContext();
+  const { navigator } = useAppData();
   const app = useRef<any>();
   if (!app.current) {
     app.current = create(
@@ -73,7 +77,7 @@ export function RootContainer(props: any) {
     for (const id of Object.keys(models)) {
       app.current.model(models[id].model);
     }
-    app.current!.start();
+    app.current.start();
   }
   return <Provider store={app.current!._store}>{props.children}</Provider>;
 }
@@ -144,7 +148,9 @@ export function getModelUtil(api: IApi | null) {
 }
 
 export function getAllModels(api: IApi) {
-  return getModelUtil(api).getAllModels();
+  return getModelUtil(api).getAllModels({
+    extraModels: [...(api.config.dva.extraModels || [])],
+  });
 }
 
 function isModelObject(node: t.Node) {

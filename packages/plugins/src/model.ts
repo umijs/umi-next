@@ -10,24 +10,26 @@ export default (api: IApi) => {
   api.describe({
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          extraModels: Joi.array().items(Joi.string()),
+        });
       },
     },
     enableBy: api.EnableBy.config,
   });
 
-  api.modifyAppData((memo) => {
-    const models = getAllModels(api);
+  api.modifyAppData(async (memo) => {
+    const models = await getAllModels(api);
     memo.pluginModel = {
       models,
     };
     return memo;
   });
 
-  api.onGenerateFiles((args) => {
+  api.onGenerateFiles(async (args) => {
     const models = args.isFirstTime
       ? api.appData.pluginModel.models
-      : getAllModels(api);
+      : await getAllModels(api);
 
     // model.ts
     api.writeTmpFile({
@@ -37,7 +39,7 @@ export default (api: IApi) => {
 
     // index.tsx
     const indexContent = readFileSync(
-      join(__dirname, '../templates/model.tsx'),
+      join(__dirname, '../libs/model.tsx'),
       'utf-8',
     ).replace('fast-deep-equal', winPath(require.resolve('fast-deep-equal')));
     api.writeTmpFile({
@@ -79,10 +81,17 @@ export function dataflowProvider(container, opts) {
   });
 };
 
-function getAllModels(api: IApi) {
+async function getAllModels(api: IApi) {
+  const extraModels = await api.applyPlugins({
+    key: 'addExtraModels',
+    type: api.ApplyPluginsType.add,
+    initialValue: [],
+  });
   return new ModelUtils(api, {
     astTest({ node }) {
       return t.isArrowFunctionExpression(node) || t.isFunctionDeclaration(node);
     },
-  }).getAllModels();
+  }).getAllModels({
+    extraModels: [...extraModels, ...(api.config.model.extraModels || [])],
+  });
 }
