@@ -33,4 +33,5 @@ export default {
   },
   moment2dayjs: {},
   layout: {},
+  request: {},
 };
