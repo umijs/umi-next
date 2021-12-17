@@ -32,4 +32,5 @@ export default {
   },
   moment2dayjs: {},
   layout: {},
+  mfsu: { esbuild: true },
 };
