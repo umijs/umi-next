@@ -103,7 +103,7 @@ export default (
           namespace: inlineStyle ? 'less-file' : 'file',
         };
       });
-      if (!inlineStyle) {
+      if (inlineStyle) {
         onResolve({ filter: /\.less$/, namespace: 'less-file' }, (args) => {
           return { path: args.path, namespace: 'less-content' };
         });
