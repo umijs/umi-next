@@ -100,70 +100,72 @@ export default (
         }
         return {
           path: filePath,
-          namespace: 'less-file',
+          namespace: inlineStyle ? 'less-file' : 'file',
         };
       });
+      if (!inlineStyle) {
+        onResolve({ filter: /\.less$/, namespace: 'less-file' }, (args) => {
+          return { path: args.path, namespace: 'less-content' };
+        });
 
-      onResolve({ filter: /\.less$/, namespace: 'less-file' }, (args) => {
-        return { path: args.path, namespace: 'less-content' };
-      });
+        onResolve(
+          { filter: /^__style_helper__$/, namespace: 'less-file' },
+          (args) => ({
+            path: args.path,
+            namespace: 'style-helper',
+            sideEffects: false,
+          }),
+        );
 
-      onResolve(
-        { filter: /^__style_helper__$/, namespace: 'less-file' },
-        (args) => ({
-          path: args.path,
-          namespace: 'style-helper',
-          sideEffects: false,
-        }),
-      );
+        onLoad({ filter: /.*/, namespace: 'less-file' }, async (args) => ({
+          contents: `
+            import { injectStyle } from "__style_helper__"
+            import css from ${JSON.stringify(args.path)}
+            injectStyle(css)
+          `,
+        }));
+      }
 
-      onLoad({ filter: /.*/, namespace: 'less-file' }, async (args) => ({
-        contents: inlineStyle
-          ? `
-          import { injectStyle } from "__style_helper__"
-          import css from ${JSON.stringify(args.path)}
-          injectStyle(css)
-        `
-          : '',
-      }));
+      onLoad(
+        { filter: /\.less$/, namespace: inlineStyle ? 'less-content' : 'file' },
+        async (args) => {
+          let content = await fs.readFile(args.path, 'utf-8');
+          if (!!alias) {
+            content = await aliasLessImports(content, alias, args.path);
+          }
+          const dir = path.dirname(args.path);
+          const filename = path.basename(args.path);
+          try {
+            const result = await less.render(content, {
+              filename,
+              rootpath: dir,
+              ...lessOptions,
+              paths: [...(lessOptions.paths || []), dir],
+            });
 
-      onLoad({ filter: /\.less$/, namespace: 'less-content' }, async (args) => {
-        let content = await fs.readFile(args.path, 'utf-8');
-        if (!!alias) {
-          content = await aliasLessImports(content, alias, args.path);
-        }
-        const dir = path.dirname(args.path);
-        const filename = path.basename(args.path);
-        try {
-          const result = await less.render(content, {
-            filename,
-            rootpath: dir,
-            ...lessOptions,
-            paths: [...(lessOptions.paths || []), dir],
-          });
-
-          return {
-            contents: result.css,
-            loader: 'text',
-            resolveDir: dir,
-          };
-        } catch (error: any) {
-          return {
-            errors: [
-              {
-                text: error.message,
-                location: {
-                  namespace: 'file',
-                  file: error.filename,
-                  line: error.line,
-                  column: error.column,
+            return {
+              contents: result.css,
+              loader: inlineStyle ? 'text' : 'css',
+              resolveDir: dir,
+            };
+          } catch (error: any) {
+            return {
+              errors: [
+                {
+                  text: error.message,
+                  location: {
+                    namespace: 'file',
+                    file: error.filename,
+                    line: error.line,
+                    column: error.column,
+                  },
                 },
-              },
-            ],
-            resolveDir: dir,
-          };
-        }
-      });
+              ],
+              resolveDir: dir,
+            };
+          }
+        },
+      );
     },
   };
 };
