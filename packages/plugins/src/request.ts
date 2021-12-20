@@ -17,7 +17,7 @@ export default (api: IApi) => {
   api.addRuntimePluginKey(() => ['request']);
 
   const requestTpl = readFileSync(
-    join(__dirname, '../templates/request/request.tpl'),
+    join(__dirname, '../libs/request/request.tpl'),
     'utf-8',
   );
 
