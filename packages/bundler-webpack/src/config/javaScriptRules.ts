@@ -116,9 +116,7 @@ export async function addJavaScriptRules(opts: IOpts) {
         .options({
           jsc: {
             parser: {
-              // syntax: 'typescript',
               dynamicImport: true,
-              // tsx: true,
             },
 
             transform: {
