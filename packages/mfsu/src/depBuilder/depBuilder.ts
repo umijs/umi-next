@@ -45,8 +45,15 @@ export class DepBuilder {
   }
 
   // TODO: support watch and rebuild
-  async buildWithESBuild(opts: { onBuildComplete: Function; deps: Dep[] }) {
-    const entryContent = getESBuildEntry({ deps: opts.deps });
+  async buildWithESBuild(opts: {
+    onBuildComplete: Function;
+    deps: Dep[];
+    CWD_PREFIX: string;
+  }) {
+    const entryContent = getESBuildEntry({
+      deps: opts.deps,
+      CWD_PREFIX: opts.CWD_PREFIX,
+    });
     const ENTRY_FILE = 'esbuild-entry.js';
     const tmpDir = this.opts.mfsu.opts.tmpBase!;
     const entryPath = join(tmpDir, ENTRY_FILE);
@@ -74,6 +81,7 @@ export class DepBuilder {
     this.isBuilding = true;
     await this.writeMFFiles({ deps: opts.deps });
     const newOpts = {
+      CWD_PREFIX: this.opts.mfsu.opts.CWD_PREFIX!,
       ...opts,
       onBuildComplete: () => {
         this.isBuilding = false;

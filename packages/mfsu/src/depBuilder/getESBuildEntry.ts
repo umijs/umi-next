@@ -1,7 +1,7 @@
 import { MF_VA_PREFIX } from '../constants';
 import { Dep } from '../dep/dep';
 
-export function getESBuildEntry(opts: { deps: Dep[] }) {
+export function getESBuildEntry(opts: { deps: Dep[]; CWD_PREFIX: string }) {
   return `
 (function() {
 /******/   "use strict";
@@ -266,7 +266,7 @@ var __webpack_exports__ = {};
 (function() {
   var exports = __webpack_exports__;
   var moduleMap = {
-${opts.deps.map(getDepModuleStr).join(',\n')}
+${opts.deps.map((dep) => getDepModuleStr(dep, opts.CWD_PREFIX)).join(',\n')}
   };
   var get = function(module, getScope) {
     __webpack_require__.R = getScope;
@@ -298,15 +298,18 @@ ${opts.deps.map(getDepModuleStr).join(',\n')}
   `;
 }
 
-function normalizeFile(file: string) {
-  return file.replace(/\//g, '_');
+function normalizeFile(file: string, CWD_PREFIX: string) {
+  return file.replace(CWD_PREFIX, '$CWD$').replace(/\//g, '_');
 }
 
-function getDepModuleStr(dep: Dep) {
+function getDepModuleStr(dep: Dep, CWD_PREFIX: string) {
   return `
 "./${dep.file}": function() {
   return new Promise(resolve => {
-    import('./${MF_VA_PREFIX}${normalizeFile(dep.file)}.js').then(module => {
+    import('./${MF_VA_PREFIX}${normalizeFile(
+    dep.file,
+    CWD_PREFIX,
+  )}.js').then(module => {
       resolve(() => module);
     });
   })

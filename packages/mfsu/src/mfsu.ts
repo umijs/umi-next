@@ -28,6 +28,7 @@ import { WriteCachePlugin } from './webpackPlugins/writeCachePlugin';
 
 interface IOpts {
   cwd?: string;
+  CWD_PREFIX: string;
   excludeNodeNatives?: boolean;
   exportAllMembers?: Record<string, string[]>;
   getCacheDependency?: Function;
@@ -39,6 +40,28 @@ interface IOpts {
   buildDepWithESBuild?: boolean;
 }
 
+/**
+ * 获取真实的前缀
+ * 可能存在情况，包是通过 link 查找的，不在 cwd 文件夹下面
+ * @param cwd
+ * @returns
+ * 例如：
+ * cwd: '/Users/x/Documents/umi-next/examples/bigfish'
+ * mfsu: '/Users/x/Documents/umi-next/packages/mfsu/package.json'
+ * return '/Users/x/Documents/umi-next'
+ */
+const getCwdPrefix = (cwd: string) => {
+  const mfsuPath = require.resolve('../package.json');
+  const cwdArr = cwd.split('/');
+  const mfsuArr = mfsuPath.split('/');
+  for (let key = 0; key < cwdArr.length; key++) {
+    if (cwdArr[key] !== mfsuArr[key]) {
+      cwdArr.length = key;
+      break;
+    }
+  }
+  return cwdArr.join('/');
+};
 export class MFSU {
   public opts: IOpts;
   public alias: Record<string, string> = {};
@@ -54,6 +77,7 @@ export class MFSU {
     this.opts.mode = this.opts.mode || Mode.development;
     this.opts.getCacheDependency = this.opts.getCacheDependency || (() => ({}));
     this.opts.cwd = this.opts.cwd || process.cwd();
+    this.opts.CWD_PREFIX = getCwdPrefix(this.opts.cwd);
     this.depInfo = new DepInfo({ mfsu: this });
     this.depBuilder = new DepBuilder({ mfsu: this });
     this.depInfo.loadCache();
