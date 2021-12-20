@@ -1,6 +1,6 @@
 {
   "name": "@umijs/server",
-  "version": "4.0.0-beta.12",
+  "version": "4.0.0-beta.13",
   "description": "@umijs/server",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/server#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -21,9 +21,9 @@
   },
   "dependencies": {
     "history": "5.1.0",
-    "react": "18.0.0-alpha-4298ddbc5-20211023",
-    "react-dom": "18.0.0-alpha-4298ddbc5-20211023",
-    "react-router-dom": "6.0.2"
+    "react": "18.0.0-rc.0",
+    "react-dom": "18.0.0-rc.0",
+    "react-router-dom": "6.1.1"
   },
   "devDependencies": {
     "@types/express": "4.17.13"

@@ -352,6 +352,7 @@ export class Service {
         'name',
         'paths',
         'userConfig',
+        'env',
       ],
       staticProps: {
         ApplyPluginsType,
@@ -364,6 +365,9 @@ export class Service {
     let ret = opts.plugin.apply()(proxyPluginAPI);
     if (isPromise(ret)) {
       ret = await ret;
+    }
+    if (opts.plugin.type === 'plugin') {
+      assert(!ret, `plugin should return nothing`);
     }
     if (ret?.presets) {
       ret.presets = ret.presets.map(
@@ -423,6 +427,7 @@ export interface IServicePluginAPI {
   name: typeof Service.prototype.name;
   paths: Required<typeof Service.prototype.paths>;
   userConfig: typeof Service.prototype.userConfig;
+  env: typeof Service.prototype.env;
 
   onCheck: IEvent<null>;
   onStart: IEvent<null>;

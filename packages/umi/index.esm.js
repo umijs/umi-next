@@ -1,8 +1,20 @@
 export {
+  createSearchParams,
   Link,
+  matchPath,
+  matchRoutes,
+  NavLink,
   Outlet,
   renderClient,
-  useAppContext,
+  useAppData,
+  useLocation,
+  useMatch,
   useNavigate,
+  useOutlet,
+  useParams,
+  useResolvedPath,
+  useRouteData,
+  useRoutes,
+  useSearchParams,
 } from '@umijs/renderer-react';
 export { PluginManager } from './client/client/plugin';

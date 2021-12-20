@@ -1,4 +1,8 @@
-import { isModelValid } from './dva';
+import { getModelUtil } from './dva';
+
+function isModelValid(opts: { content: string; file: string }) {
+  return getModelUtil(null).isModelValid(opts);
+}
 
 test('isModelValid empty', () => {
   expect(isModelValid({ content: '', file: 'a.ts' })).toEqual(false);

@@ -1,6 +1,6 @@
 {
   "name": "@umijs/renderer-react",
-  "version": "4.0.0-beta.12",
+  "version": "4.0.0-beta.13",
   "description": "@umijs/renderer-react",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/renderer-react#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -21,13 +21,13 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@loadable/component": "5.15.0",
+    "@loadable/component": "5.15.2",
     "history": "5.1.0",
-    "react-router-dom": "6.0.2"
+    "react-router-dom": "6.1.1"
   },
   "devDependencies": {
-    "react": "18.0.0-alpha-f2c381131-20211004",
-    "react-dom": "18.0.0-alpha-f2c381131-20211004"
+    "react": "18.0.0-rc.0",
+    "react-dom": "18.0.0-rc.0"
   },
   "peerDependencies": {
     "react": ">=16.8",

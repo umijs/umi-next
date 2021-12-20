@@ -1,100 +1,97 @@
-import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
-import * as parser from '@umijs/bundler-utils/compiled/babel/parser';
-import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { extname, join } from 'path';
+import { join } from 'path';
 import { IApi } from 'umi';
-import { glob, winPath } from 'umi/plugin-utils';
-import { getIdentifierDeclaration } from './utils/getIdentifierDeclaration';
+import { winPath } from 'umi/plugin-utils';
+import { ModelUtils } from './utils/modelUtils';
+import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
   api.describe({
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          extraModels: Joi.array().items(Joi.string()),
+        });
       },
     },
     enableBy: api.EnableBy.config,
   });
 
-  api.modifyAppData((memo) => {
-    const models = getAllModels(api);
+  api.modifyAppData(async (memo) => {
+    const models = await getAllModels(api);
     memo.pluginModel = {
       models,
     };
     return memo;
   });
 
-  api.onGenerateFiles((args) => {
+  api.onGenerateFiles(async (args) => {
     const models = args.isFirstTime
-      ? api.appData.pluginDva.models
-      : getAllModels(api);
-    models;
+      ? api.appData.pluginModel.models
+      : await getAllModels(api);
+
+    // model.ts
+    api.writeTmpFile({
+      path: 'model.ts',
+      content: ModelUtils.getModelsContent(models),
+    });
+
+    // index.tsx
+    const indexContent = readFileSync(
+      join(__dirname, '../libs/model.tsx'),
+      'utf-8',
+    ).replace('fast-deep-equal', winPath(require.resolve('fast-deep-equal')));
+    api.writeTmpFile({
+      path: 'index.tsx',
+      content: indexContent,
+    });
+
+    // runtime.tsx
+    api.writeTmpFile({
+      path: 'runtime.tsx',
+      content: `
+import React  from 'react';
+import { Provider } from './';
+import { models as rawModels } from './model';
+
+function ProviderWrapper(props: any) {
+  const models = React.useMemo(() => {
+    return Object.keys(rawModels).reduce((memo, key) => {
+      memo[rawModels[key].namespace] = rawModels[key].model;
+      return memo;
+    }, {});
+  }, []);
+  return <Provider models={models} {...props}>{ props.children }</Provider>
+}
+
+export function dataflowProvider(container, opts) {
+  return <ProviderWrapper {...opts}>{ container }</ProviderWrapper>;
+}
+      `,
+    });
+  });
+
+  api.addTmpGenerateWatcherPaths(() => {
+    return [join(api.paths.absSrcPath, 'models')];
+  });
+
+  api.addRuntimePlugin(() => {
+    return [withTmpPath({ api, path: 'runtime.tsx' })];
   });
 };
 
-export function getAllModels(api: IApi) {
-  return [
-    getModels({
-      base: join(api.paths.absSrcPath, 'models'),
-      pattern: '**/*.{ts,tsx,js,jsx}',
-    }),
-    getModels({
-      base: join(api.paths.absPagesPath),
-      pattern: '**/models/**/*.{ts,tsx,js,jsx}',
-    }),
-    getModels({
-      base: join(api.paths.absPagesPath),
-      pattern: '**/model.{ts,tsx,js,jsx}',
-    }),
-  ];
-}
-
-export function getModels(opts: { base: string; pattern?: string }) {
-  return glob
-    .sync(opts.pattern || '**/*.{ts,js}', {
-      cwd: opts.base,
-      absolute: true,
-    })
-    .map(winPath)
-    .filter((file) => {
-      if (/\.d.ts$/.test(file)) return false;
-      if (/\.(test|e2e|spec).([jt])sx?$/.test(file)) return false;
-      const content = readFileSync(file, 'utf-8');
-      return isModelValid({ content, file });
-    });
-}
-
-export function isModelValid(opts: { content: string; file: string }) {
-  const { file, content } = opts;
-
-  // transform with esbuild first
-  // to reduce unexpected ast problem
-  const loader = extname(file).slice(1) as Loader;
-  const result = transformSync(content, {
-    loader,
-    sourcemap: false,
-    minify: false,
+async function getAllModels(api: IApi) {
+  const extraModels = await api.applyPlugins({
+    key: 'addExtraModels',
+    type: api.ApplyPluginsType.add,
+    initialValue: [],
   });
-
-  // transform with babel
-  let ret = false;
-  const ast = parser.parse(result.code, {
-    sourceType: 'module',
-    sourceFilename: file,
-    plugins: [],
-  });
-  traverse(ast, {
-    ExportDefaultDeclaration(path: Babel.NodePath<t.ExportDefaultDeclaration>) {
-      let node: any = path.node.declaration;
-      node = getIdentifierDeclaration(node, path);
-      if (t.isArrowFunctionExpression(node) || t.isFunctionDeclaration(node)) {
-        ret = true;
-      }
+  return new ModelUtils(api, {
+    astTest({ node }) {
+      return t.isArrowFunctionExpression(node) || t.isFunctionDeclaration(node);
     },
+  }).getAllModels({
+    extraModels: [...extraModels, ...(api.config.model.extraModels || [])],
   });
-
-  return ret;
 }

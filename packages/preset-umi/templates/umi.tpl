@@ -2,17 +2,27 @@
 {{{ importsAhead }}}
 import { renderClient } from '{{{ rendererPath }}}';
 import { getRoutes } from './core/route';
-import { getPlugins, getValidKeys } from './core/plugin';
+import { createPluginManager } from './core/plugin';
 import { PluginManager } from 'umi';
 {{{ imports }}}
 
 async function render() {
+  const pluginManager = createPluginManager();
+  const { routes, routeComponents } = await getRoutes(pluginManager);
+
+  // allow user to extend routes
+  pluginManager.applyPlugins({
+    key: 'patchRoutes',
+    type: 'event',
+    args: {
+      routes,
+      routeComponents,
+    },
+  });
   const context = {
-    ...await getRoutes(),
-    pluginManager: PluginManager.create({
-      plugins: getPlugins(),
-      validKeys: getValidKeys(),
-    }),
+    routes,
+    routeComponents,
+    pluginManager,
   };
   return renderClient(context);
 }

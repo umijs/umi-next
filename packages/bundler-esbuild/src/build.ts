@@ -45,6 +45,9 @@ export async function build(opts: IOpts) {
       less({
         modifyVars: opts.config.theme,
         javascriptEnabled: true,
+        alias: opts.config.alias,
+        // ref: https://github.com/umijs/umi-next/pull/214
+        inlineStyle: opts.inlineStyle,
         ...opts.config.lessLoader,
       }),
       opts.config.alias && alias(addCwdPrefix(opts.config.alias, opts.cwd)),
@@ -55,6 +58,9 @@ export async function build(opts: IOpts) {
       // __dirname sham
       __dirname: JSON.stringify('__dirname'),
       'process.env.NODE_ENV': JSON.stringify(opts.mode || 'development'),
+    },
+    loader: {
+      '.svg': 'dataurl',
     },
   });
 }

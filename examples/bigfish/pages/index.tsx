@@ -1,21 +1,22 @@
 // @ts-ignore
-import { connect } from '@@/plugin-dva';
+import { useAccess } from '@@/plugin-access';
+// @ts-ignore
+import { useModel } from '@@/plugin-model';
 // @ts-ignore
 import { Button, DatePicker, Input } from 'antd';
 import React from 'react';
 
-function mapStateToProps(state: any) {
-  return { count: state.count };
-}
-
-export default connect(mapStateToProps)(function HomePage(props: any) {
+export default function HomePage() {
+  const { initialState } = useModel('@@initialState');
+  console.log('initialState', initialState);
+  const access = useAccess();
+  console.log('access', access);
   return (
     <div>
-      <h2>antd</h2>
+      <h2>index page</h2>
       <Button type="primary">Button</Button>
       <Input />
       <DatePicker />
-      <h2>count: {props.count}</h2>
     </div>
   );
-});
+}
