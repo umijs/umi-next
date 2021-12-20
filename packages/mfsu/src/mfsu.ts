@@ -28,7 +28,7 @@ import { WriteCachePlugin } from './webpackPlugins/writeCachePlugin';
 
 interface IOpts {
   cwd?: string;
-  CWD_PREFIX: string;
+  CWD_PREFIX?: string;
   excludeNodeNatives?: boolean;
   exportAllMembers?: Record<string, string[]>;
   getCacheDependency?: Function;

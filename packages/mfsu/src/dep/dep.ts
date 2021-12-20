@@ -41,7 +41,7 @@ export class Dep {
     this.file = opts.file;
     this.version = opts.version;
     this.cwd = opts.cwd;
-    this.shortFile = this.file.replace(opts.mfsu.opts.CWD_PREFIX, '$CWD$');
+    this.shortFile = this.file.replace(opts.mfsu.opts.CWD_PREFIX!, '$CWD$');
     this.normalizedFile = this.shortFile.replace(/\//g, '_').replace(/:/g, '_');
     this.filePath = `${MF_VA_PREFIX}${this.normalizedFile}.js`;
     this.mfsu = opts.mfsu;
