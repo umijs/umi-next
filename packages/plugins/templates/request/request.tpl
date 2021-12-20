@@ -2,9 +2,10 @@ import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-} from '@umijs/utils/compiled/axios';
-import { useRequest } from 'ahooks';
-import { message, notification } from 'antd';
+} from '{{{axiosPath}}}';
+import { useRequest } from '{{{ahooksPkg}}}';
+import { message, notification } from '{{{antdPkg}}}';
+import { ApplyPluginsType } from 'umi';
 import { getPluginManager } from '../core/plugin';
 
 export interface RequestConfig extends AxiosRequestConfig {
@@ -12,14 +13,17 @@ export interface RequestConfig extends AxiosRequestConfig {
     errorPage?: string;
     adaptor?: IAdaptor; // adaptor 用以用户将不满足接口的后端数据修改成 errorInfo
     errorHandler?: IErrorHandler;
+    defaultNoneResponseErrorMessage: string;
+    defaultRequestErrorMessage: string;
   };
+  formatResultAdaptor: IFormatResultAdaptor;
 }
 
 export enum ErrorShowType {
   SILENT = 0,
   WARN_MESSAGE = 1,
   ERROR_MESSAGE = 2,
-  NOTIFICATION = 4,
+  NOTIFICATION = 3,
   REDIRECT = 9,
 }
 
@@ -54,6 +58,10 @@ interface IErrorHandler {
   (error: any, opts: AxiosRequestConfig & { skipErrorHandler?: boolean }): void;
 }
 
+interface IFormatResultAdaptor {
+  (res: AxiosResponse): any;
+}
+
 const defaultErrorHandler: IErrorHandler = (error, opts) => {
   if (opts?.skipErrorHandler) throw error;
   const config = getConfig();
@@ -84,26 +92,34 @@ const defaultErrorHandler: IErrorHandler = (error, opts) => {
         case ErrorShowType.REDIRECT:
           // TODO: redirect
           break;
+        default:
+          message.error(errorMessage);
       }
     }
   } else if (error.request) {
     // 请求已经成功发起，但没有收到响应
     // `error.request` 在浏览器中是 XMLHttpRequest 的实例，
     // 而在node.js中是 http.ClientRequest 的实例
+    message.error(
+      errorConfig?.defaultNoneResponseErrorMessage ||
+        'None response! Please retry.',
+    );
   } else {
     // 发送请求时出了点问题
+    message.error(
+      errorConfig?.defaultRequestErrorMessage || 'Request error, please retry.',
+    );
   }
   throw error;
 };
 
 let requestInstance: AxiosInstance;
 let config: RequestConfig;
-// TODO: type: ApplygPluginsTYPE.modify
 const getConfig = (): RequestConfig => {
   if (config) return config;
   config = getPluginManager().applyPlugins({
     key: 'request',
-    type: 'modify',
+    type: ApplyPluginsType.modify,
     initialValue: {},
   });
   return config;
@@ -116,15 +132,17 @@ const getRequestInstance = (): AxiosInstance => {
 
 const request: IRequest = (url, opts) => {
   const requestInstance = getRequestInstance();
+  const config = getConfig();
   return new Promise((resolve, reject) => {
     requestInstance
       .request({ ...opts, url })
       .then((res) => {
-        resolve(res);
+        const formatResultAdaptor =
+          config?.formatResultAdaptor || ((res) => res.data);
+        resolve(formatResultAdaptor(res));
       })
       .catch((error) => {
         try {
-          const config = getConfig();
           const handler =
             config.errorConfig?.errorHandler || defaultErrorHandler;
           handler(error, opts);
@@ -135,4 +153,10 @@ const request: IRequest = (url, opts) => {
   });
 };
 
-export { useRequest, AxiosRequestConfig, request };
+export {
+  useRequest,
+  AxiosRequestConfig,
+  request,
+  AxiosInstance,
+  AxiosResponse,
+};
