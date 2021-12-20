@@ -26,12 +26,16 @@ export default {
     // dark: true,
   },
   initialState: {},
+  access: {},
   dva: {},
   model: {},
   analytics: {
     baidu: 'test',
   },
   moment2dayjs: {},
-  layout: {},
+  layout: {
+    name: 'Ant Design Pro',
+  },
+  mfsu: { esbuild: true },
   request: {},
 };
