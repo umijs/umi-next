@@ -114,22 +114,6 @@ export async function addJavaScriptRules(opts: IOpts) {
         .use('swc-loader')
         .loader(require.resolve('../loader/swc'))
         .options({
-          jsc: {
-            parser: {
-              dynamicImport: true,
-            },
-
-            transform: {
-              react: {
-                runtime: 'automatic',
-                pragma: 'React.createElement',
-                pragmaFrag: 'React.Fragment',
-                throwIfNamespace: true,
-                development: env === Env.development,
-                useBuiltins: true,
-              },
-            },
-          },
           plugin: (m: Program) => new AutoCSSModule().visitProgram(m),
         });
     } else {

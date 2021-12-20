@@ -1,27 +1,45 @@
-import { transform, transformSync } from '@swc/core';
+import { Config, transform, transformSync } from '@swc/core';
 import type { LoaderContext } from '../../compiled/webpack';
-import type { SwcOptions } from '../types';
+import { Env, SwcOptions } from '../types';
+
+function getBaseOpts(filename: string) {
+  const isTSFile = filename.endsWith('.ts');
+  const isTypeScript = isTSFile || filename.endsWith('.tsx');
+  const swcOpts: Config = {
+    jsc: {
+      parser: {
+        syntax: isTypeScript ? 'typescript' : 'ecmascript',
+        [isTypeScript ? 'tsx' : 'jsx']: !isTSFile,
+        dynamicImport: isTypeScript,
+      },
+      target: 'es2017',
+      transform: {
+        react: {
+          runtime: 'automatic',
+          pragma: 'React.createElement',
+          pragmaFrag: 'React.Fragment',
+          throwIfNamespace: true,
+          development: process.env.NODE_ENV === Env.development,
+          useBuiltins: true,
+        },
+      },
+    },
+    sourceMaps: true,
+  };
+  return swcOpts;
+}
 
 function swcLoader(this: LoaderContext<SwcOptions>, contents: string) {
   // 启用异步模式
   const callback = this.async();
-  const filename = this.resourcePath;
-  const isTSFile = filename.endsWith('.ts');
-  const isTypeScript = isTSFile || filename.endsWith('.tsx');
-  let swcOpts = this.getOptions();
+  const loaderOpts = this.getOptions();
+
+  const swcOpts = {
+    ...loaderOpts,
+    ...getBaseOpts(this.resourcePath),
+  };
 
   const { sync = false, parseMap = false } = swcOpts;
-
-  if (swcOpts?.jsc) {
-    swcOpts.jsc.parser = {
-      ...swcOpts.jsc.parser,
-      syntax: isTypeScript ? 'typescript' : 'ecmascript',
-      [isTypeScript ? 'tsx' : 'jsx']: isTSFile,
-      topLevelAwait: true,
-      dynamicImport: !isTypeScript,
-    };
-    swcOpts.jsc.target = 'es2017';
-  }
 
   try {
     if (sync) {
@@ -32,7 +50,6 @@ function swcLoader(this: LoaderContext<SwcOptions>, contents: string) {
         parseMap ? JSON.parse(output.map!) : output.map,
       );
     } else {
-      console.log('swcOpts >>> ', swcOpts);
       transform(contents, swcOpts).then(
         (output) => {
           callback(
