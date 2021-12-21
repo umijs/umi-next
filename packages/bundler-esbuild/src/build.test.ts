@@ -49,11 +49,7 @@ const expects: Record<string, Function> = {
 
 const fixtures = join(__dirname, 'fixtures');
 for (const fixture of readdirSync(fixtures)) {
-  console.log(fixture);
-
   if (fixture.startsWith('.')) continue;
-  console.log(fixtures);
-  console.log(fixture);
   const base = join(fixtures, fixture);
   if (statSync(base).isFile()) continue;
   if (fixture.startsWith('x-')) continue;

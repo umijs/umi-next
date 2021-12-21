@@ -8,7 +8,7 @@ import { join } from 'path';
 import alias from './plugins/alias';
 import externals from './plugins/externals';
 import less from './plugins/less';
-import style from './plugins/style';
+import { style } from './plugins/style';
 import { IBabelPlugin, IConfig } from './types';
 
 interface IOpts {

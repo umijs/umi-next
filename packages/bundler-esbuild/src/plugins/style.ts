@@ -29,12 +29,12 @@ export interface StylePluginOptions {
 }
 
 // https://github.com/evanw/esbuild/issues/20#issuecomment-802269745
-export default ({
+export function style({
   minify = true,
   charset = 'utf8',
   inlineStyle,
   config,
-}: StylePluginOptions = {}): Plugin => {
+}: StylePluginOptions = {}): Plugin {
   return {
     name: 'style',
     setup({ onResolve, onLoad }) {
@@ -151,4 +151,4 @@ export default ({
       );
     },
   };
-};
+}
