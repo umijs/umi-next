@@ -1,4 +1,4 @@
-import { Mustache, winPath } from '@umijs/utils';
+import { Mustache } from '@umijs/utils';
 import { dirname } from 'path';
 import { IApi } from 'umi';
 
@@ -21,10 +21,82 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from '{{{axiosPath}}}';
-import { useRequest } from '{{{ahooksPkg}}}';
+import useUmiRequest, { UseRequestProvider } from '{{{ahooksPkg}}}';
 import { message, notification } from '{{{antdPkg}}}';
 import { ApplyPluginsType } from 'umi';
 import { getPluginManager } from '../core/plugin';
+
+import {
+  BaseOptions,
+  BasePaginatedOptions,
+  BaseResult,
+  CombineService,
+  LoadMoreFormatReturn,
+  LoadMoreOptions,
+  LoadMoreOptionsWithFormat,
+  LoadMoreParams,
+  LoadMoreResult,
+  OptionsWithFormat,
+  PaginatedFormatReturn,
+  PaginatedOptionsWithFormat,
+  PaginatedParams,
+  PaginatedResult,
+} from '{{{ahooksPkg}}}/lib/types';
+
+type ResultWithData< T = any > = { data?: T; [key: string]: any };
+
+function useRequest<
+  R = any,
+  P extends any[] = any,
+  U = any,
+  UU extends U = any,
+>(
+  service: CombineService<R, P>,
+  options: OptionsWithFormat<R, P, U, UU>,
+): BaseResult<U, P>;
+function useRequest<R extends ResultWithData = any, P extends any[] = any>(
+  service: CombineService<R, P>,
+  options?: BaseOptions<R['data'], P>,
+): BaseResult<R['data'], P>;
+function useRequest<R extends LoadMoreFormatReturn = any, RR = any>(
+  service: CombineService<RR, LoadMoreParams<R>>,
+  options: LoadMoreOptionsWithFormat<R, RR>,
+): LoadMoreResult<R>;
+function useRequest<
+  R extends ResultWithData<LoadMoreFormatReturn | any> = any,
+  RR extends R = any,
+>(
+  service: CombineService<R, LoadMoreParams<R['data']>>,
+  options: LoadMoreOptions<RR['data']>,
+): LoadMoreResult<R['data']>;
+
+function useRequest<R = any, Item = any, U extends Item = any>(
+  service: CombineService<R, PaginatedParams>,
+  options: PaginatedOptionsWithFormat<R, Item, U>,
+): PaginatedResult<Item>;
+function useRequest<Item = any, U extends Item = any>(
+  service: CombineService<
+    ResultWithData<PaginatedFormatReturn<Item>>,
+    PaginatedParams
+  >,
+  options: BasePaginatedOptions<U>,
+): PaginatedResult<Item>;
+function useRequest(service: any, options: any = {}) {
+  return useUmiRequest(service, {
+    formatResult: result => result?.data,
+    requestMethod: (requestOptions: any) => {
+      if (typeof requestOptions === 'string') {
+        return request(requestOptions);
+      }
+      if (typeof requestOptions === 'object') {
+        const { url, ...rest } = requestOptions;
+        return request(url, rest);
+      }
+      throw new Error('request options error');
+    },
+    ...options,
+  });
+}
 
 export interface RequestConfig extends AxiosRequestConfig {
   errorConfig?: {
@@ -73,7 +145,7 @@ interface IRequest {
 }
 
 interface IErrorHandler {
-  (error: any, opts: AxiosRequestConfig & { skipErrorHandler?: boolean }, config: RequestConfig): void;
+  (error: RequestError, opts: AxiosRequestConfig & { skipErrorHandler?: boolean }, config: RequestConfig): void;
 }
 
 interface IFormatResultAdaptor {
@@ -84,13 +156,17 @@ const defaultErrorHandler: IErrorHandler = (error, opts, config) => {
   if (opts?.skipErrorHandler) throw error;
   const { errorConfig } = config;
   if (error.response) {
-    // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
+    // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围 或者 成功响应，success字段为false 由我们抛出的错误
     let errorInfo: IErrorInfo | undefined;
-    const adaptor: IAdaptor =
+    // 不是我们的错误
+    if(error.name === 'ResponseError'){
+      const adaptor: IAdaptor =
       errorConfig?.adaptor || ((errorData) => errorData);
-    errorInfo = adaptor(error.response.data, error.response);
-    error.info = errorInfo;
-    error.data = error.response.data;
+      errorInfo = adaptor(error.response.data, error.response);
+      error.info = errorInfo;
+      error.data = error.response.data;
+    }
+    errorInfo = error.info;
     if (errorInfo) {
       const { errorMessage, errorCode } = errorInfo;
       switch (errorInfo.showType) {
@@ -143,7 +219,24 @@ const getConfig = (): RequestConfig => {
 };
 const getRequestInstance = (): AxiosInstance => {
   if (requestInstance) return requestInstance;
-  requestInstance = axios.create(getConfig());
+  const config = getConfig();
+  requestInstance = axios.create(config);
+
+  // 当响应的数据 success 是 false 的时候，抛出 error 以供 errorHandler 处理。
+  requestInstance.interceptors.response.use((response)=>{
+    const {data} = response;
+    const adaptor = config?.errorConfig?.adaptor || ((resData) => resData);
+    const errorInfo = adaptor(data,response);
+    if(errorInfo.success === false){
+      const error: RequestError = new Error(errorInfo.errorMessage);
+      error.name = 'BizError';
+      error.data = data;
+      error.info = errorInfo;
+      error.response = response;
+      throw error;
+    }
+    return response;
+  })
   return requestInstance;
 };
 
@@ -172,6 +265,7 @@ const request: IRequest = (url, opts) => {
 
 export {
   useRequest,
+  UseRequestProvider,
   AxiosRequestConfig,
   request,
   AxiosInstance,
@@ -181,9 +275,11 @@ export {
 `;
 
   api.onGenerateFiles(() => {
-    const ahooksPkg = winPath(dirname(require.resolve('ahooks')));
-    const axiosPath = winPath(dirname(require.resolve('axios')));
-    const antdPkg = winPath(dirname(require.resolve('antd')));
+    const ahooksPkg = dirname(
+      require.resolve('@ahooksjs/use-request/package.json'),
+    );
+    const axiosPath = dirname(require.resolve('axios/package.json'));
+    const antdPkg = dirname(require.resolve('antd/package.json'));
     api.writeTmpFile({
       path: 'request.ts',
       content: Mustache.render(requestTpl, {

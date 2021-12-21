@@ -477,10 +477,10 @@ importers:
 
   packages/plugins:
     specifiers:
+      '@ahooksjs/use-request': ^2.0.0
       '@ant-design/icons': ^4.7.0
       '@ant-design/pro-layout': ^6.31.7
       '@umijs/bundler-utils': 4.0.0-beta.13
-      ahooks: ^3.0.0
       antd: ^4.17.3
       antd-dayjs-webpack-plugin: ^1.0.6
       axios: ^0.24.0
@@ -492,10 +492,10 @@ importers:
       redux: ^4.1.2
       umi: 4.0.0-beta.13
     dependencies:
+      '@ahooksjs/use-request': 2.8.15
       '@ant-design/icons': 4.7.0
       '@ant-design/pro-layout': 6.31.7_antd@4.17.3
       '@umijs/bundler-utils': link:../bundler-utils
-      ahooks: 3.0.5
       antd: 4.17.3
       antd-dayjs-webpack-plugin: 1.0.6_dayjs@1.10.7
       axios: 0.24.0
@@ -675,6 +675,15 @@ importers:
       yargs-parser: 21.0.0
 
 packages:
+
+  /@ahooksjs/use-request/2.8.15:
+    resolution: {integrity: sha512-xhVaM4fyIiAMdVFuuU5i3CFUdFa/IblF+fvITVMFaUEO3w/V5tVCAF6WIA3T03n1/RPuzRkA7Ao1PFtSGtGelw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0
+    dependencies:
+      lodash.debounce: 4.0.8
+      lodash.throttle: 4.1.1
+    dev: false
 
   /@ant-design/colors/6.0.0:
     resolution: {integrity: sha512-qAZRvPzfdWHtfameEGP2Qvuf838NhergR35o+EuVyB5XvSA98xod5r4utvi4TJ3ywmevm290g9nsCG5MryrdWQ==}
@@ -5010,20 +5019,6 @@ packages:
       indent-string: 4.0.0
     dev: true
 
-  /ahooks/3.0.5:
-    resolution: {integrity: sha512-/l8HoNPzJVoexChfw7zlRD1/VyX1X7F08AVNnwkRwgufu1AfUd96XcIStrRsmADqMQWllluLRodEzPbcKUGUzQ==}
-    engines: {node: '>=8.0.0'}
-    peerDependencies:
-      react: ^16.8.6 || ^17.0
-    dependencies:
-      dayjs: 1.10.7
-      intersection-observer: 0.12.0
-      js-cookie: 3.0.1
-      lodash: 4.17.21
-      resize-observer-polyfill: 1.5.1
-      screenfull: 5.2.0
-    dev: false
-
   /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
     peerDependenciesMeta:
@@ -8971,10 +8966,6 @@ packages:
     resolution: {integrity: sha512-fn4bQ0Xq8FTej09YC/jqKZwtijpvARlRp6wxL5WTA6yPe2YWSJ5RJh7Nm79rK2qB0wr6iDQzH60XGq5V/7u8YQ==}
     dev: true
 
-  /intersection-observer/0.12.0:
-    resolution: {integrity: sha512-2Vkz8z46Dv401zTWudDGwO7KiGHNDkMv417T5ItcNYfmvHR/1qCTVBO9vwH8zZmQ0WkA/1ARwpysR9bsnop4NQ==}
-    dev: false
-
   /invariant/2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
     dependencies:
@@ -9932,11 +9923,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /js-cookie/3.0.1:
-    resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
-    engines: {node: '>=12'}
-    dev: false
-
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -10391,7 +10377,6 @@ packages:
 
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
-    dev: true
 
   /lodash.isequal/4.5.0:
     resolution: {integrity: sha1-QVxEePK8wwEgwizhDtMib30+GOA=}
@@ -10420,6 +10405,10 @@ packages:
     dependencies:
       lodash._reinterpolate: 3.0.0
     dev: true
+
+  /lodash.throttle/4.1.1:
+    resolution: {integrity: sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=}
+    dev: false
 
   /lodash.uniq/4.5.0:
     resolution: {integrity: sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=}
@@ -13871,11 +13860,6 @@ packages:
       ajv-formats: 2.1.1
       ajv-keywords: 5.1.0_ajv@8.8.2
     dev: true
-
-  /screenfull/5.2.0:
-    resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
-    engines: {node: '>=0.10.0'}
-    dev: false
 
   /scroll-into-view-if-needed/2.2.28:
     resolution: {integrity: sha512-8LuxJSuFVc92+0AdNv4QOxRL4Abeo1DgLnGNkn1XlaujPH/3cCFz3QI60r2VNu4obJJROzgnIUw5TKQkZvZI1w==}
