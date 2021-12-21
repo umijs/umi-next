@@ -12,6 +12,7 @@ function getBaseOpts(filename: string) {
         [isTypeScript ? 'tsx' : 'jsx']: !isTSFile,
         dynamicImport: isTypeScript,
       },
+      target: 'es2017',
       transform: {
         react: {
           runtime: 'automatic',
