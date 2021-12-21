@@ -31,10 +31,10 @@ export interface RequestConfig extends AxiosRequestConfig {
     errorPage?: string;
     adaptor?: IAdaptor; // adaptor 用以用户将不满足接口的后端数据修改成 errorInfo
     errorHandler?: IErrorHandler;
-    defaultNoneResponseErrorMessage: string;
-    defaultRequestErrorMessage: string;
+    defaultNoneResponseErrorMessage?: string;
+    defaultRequestErrorMessage?: string;
   };
-  formatResultAdaptor: IFormatResultAdaptor;
+  formatResultAdaptor?: IFormatResultAdaptor;
 }
 
 export enum ErrorShowType {
@@ -73,16 +73,15 @@ interface IRequest {
 }
 
 interface IErrorHandler {
-  (error: any, opts: AxiosRequestConfig & { skipErrorHandler?: boolean }): void;
+  (error: any, opts: AxiosRequestConfig & { skipErrorHandler?: boolean }, config: RequestConfig): void;
 }
 
 interface IFormatResultAdaptor {
   (res: AxiosResponse): any;
 }
 
-const defaultErrorHandler: IErrorHandler = (error, opts) => {
+const defaultErrorHandler: IErrorHandler = (error, opts, config) => {
   if (opts?.skipErrorHandler) throw error;
-  const config = getConfig();
   const { errorConfig } = config;
   if (error.response) {
     // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
@@ -163,7 +162,7 @@ const request: IRequest = (url, opts) => {
         try {
           const handler =
             config.errorConfig?.errorHandler || defaultErrorHandler;
-          handler(error, opts);
+          handler(error, opts, config);
         } catch (e) {
           reject(e);
         }
