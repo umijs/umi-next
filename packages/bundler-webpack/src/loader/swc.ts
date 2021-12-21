@@ -35,8 +35,8 @@ function swcLoader(this: LoaderContext<SwcOptions>, contents: string) {
   const loaderOpts = this.getOptions();
 
   const swcOpts = {
-    ...loaderOpts,
     ...getBaseOpts(this.resourcePath),
+    ...loaderOpts,
   };
 
   const { sync = false, parseMap = false } = swcOpts;
