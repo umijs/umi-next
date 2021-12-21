@@ -21,7 +21,7 @@ import {
 import { Dep } from './dep/dep';
 import { DepBuilder } from './depBuilder/depBuilder';
 import { DepInfo } from './depInfo';
-import { Mode } from './types';
+import { IConfig, Mode } from './types';
 import { makeArray } from './utils/makeArray';
 import { BuildDepPlugin } from './webpackPlugins/buildDepPlugin';
 import { WriteCachePlugin } from './webpackPlugins/writeCachePlugin';
@@ -37,6 +37,7 @@ interface IOpts {
   unMatchLibs?: string[];
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
+  config: IConfig;
 }
 
 export class MFSU {

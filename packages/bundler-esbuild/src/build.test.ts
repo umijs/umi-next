@@ -24,6 +24,13 @@ const expects: Record<string, Function> = {
   externals({ files }: IOpts) {
     expect(files['index.js']).toContain(`module.export = React;`);
   },
+  extraPostCSSPlugins({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("foooooo");`);
+    expect(files['index.css']).toContain(`font-size: 0.14rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.16rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.26rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.3rem;`);
+  },
   less({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("foooooo");`);
     expect(files['index.css']).toContain(`color: red;`);
@@ -42,7 +49,11 @@ const expects: Record<string, Function> = {
 
 const fixtures = join(__dirname, 'fixtures');
 for (const fixture of readdirSync(fixtures)) {
+  console.log(fixture);
+
   if (fixture.startsWith('.')) continue;
+  console.log(fixtures);
+  console.log(fixture);
   const base = join(fixtures, fixture);
   if (statSync(base).isFile()) continue;
   if (fixture.startsWith('x-')) continue;
@@ -52,6 +63,7 @@ for (const fixture of readdirSync(fixtures)) {
     try {
       config = require(join(base, 'config.ts')).default;
     } catch (e) {}
+
     await build({
       clean: true,
       config: {
