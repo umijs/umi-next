@@ -37,7 +37,7 @@ interface IOpts {
   unMatchLibs?: string[];
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
-  config: IConfig;
+  depBuildConfig: IConfig;
 }
 
 export class MFSU {
