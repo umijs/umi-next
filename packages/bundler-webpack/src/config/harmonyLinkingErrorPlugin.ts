@@ -8,6 +8,8 @@ interface IOpts {
   config: Config;
 }
 
+const LINKING_ERROR_TAG = 'was not found in';
+
 class HarmonyLinkingErrorPlugin {
   apply(compiler: Compiler) {
     compiler.hooks.afterCompile.tap(
@@ -19,7 +21,8 @@ class HarmonyLinkingErrorPlugin {
         const harmonyLinkingErrors = compilation.warnings.filter((w) => {
           return (
             w.name === 'ModuleDependencyWarning' &&
-            !(w.module as NormalModule).resource.includes('node_modules')
+            !(w.module as NormalModule).resource.includes('node_modules') &&
+            w.message.includes(LINKING_ERROR_TAG)
           );
         });
         if (!harmonyLinkingErrors.length) {
