@@ -1,4 +1,4 @@
-import { lodash, Mustache, winPath } from '@umijs/utils';
+import { lodash, Mustache } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { IApi } from 'umi';
@@ -57,9 +57,7 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
-  const reactIntlPkgPath = winPath(
-    dirname(require.resolve('react-intl/package')),
-  );
+  const reactIntlPkgPath = dirname(require.resolve('react-intl/package'));
 
   // polyfill
   if (isNeedPolyfill(api.userConfig?.targets || {})) {
@@ -99,14 +97,15 @@ export default (api: IApi) => {
 
   api.onGenerateFiles(async () => {
     const localeTpl = readFileSync(
-      join(winPath(__dirname), '../templates/locale/locale.tpl'),
+      join(__dirname, '../libs/locale/locale.tpl'),
       'utf-8',
     );
     // moment2dayjs
     const resolveKey = api.config.moment2dayjs ? 'dayjs' : 'moment';
-    const momentPkgPath = winPath(
-      dirname(require.resolve(`${resolveKey}/package.json`)),
+    const momentPkgPath = dirname(
+      require.resolve(`${resolveKey}/package.json`),
     );
+
     const { baseSeparator, baseNavigator, antd, title, useLocalStorage } = api
       .config.locale as ILocaleConfig;
     const defaultLocale = api.config.locale?.default || `zh${baseSeparator}CN`;
@@ -163,7 +162,7 @@ export default (api: IApi) => {
     });
 
     const localeExportsTpl = readFileSync(
-      join(__dirname, '../templates/locale/localeExports.tpl'),
+      join(__dirname, '../libs/locale/localeExports.tpl'),
       'utf-8',
     );
     const localeDirName = api.config.singular ? 'locale' : 'locales';
@@ -189,13 +188,13 @@ export default (api: IApi) => {
         })),
         Antd: !!antd,
         DefaultLocale: JSON.stringify(defaultLocale),
-        warningPkgPath: winPath(require.resolve('warning')),
+        warningPkgPath: require.resolve('warning/package'),
         reactIntlPkgPath,
       }),
     });
     // runtime.tsx
     const runtimeTpl = readFileSync(
-      join(__dirname, '../templates/locale/runtime.tpl'),
+      join(__dirname, '../libs/locale/runtime.tpl'),
       'utf-8',
     );
     api.writeTmpFile({
@@ -207,7 +206,7 @@ export default (api: IApi) => {
 
     // SelectLang.tsx
     const selectLang = readFileSync(
-      join(__dirname, '../templates/locale/SelectLang.tpl'),
+      join(__dirname, '../libs/locale/SelectLang.tpl'),
       'utf-8',
     );
 
@@ -234,11 +233,6 @@ export * from './SelectLang.tsx';
   // Runtime Plugin
   api.addRuntimePlugin(() => [withTmpPath({ api, path: 'runtime.tsx' })]);
   api.addRuntimePluginKey(() => ['locale']);
-
-  // Modify entry js
-  // api.addEntryCodeAhead(() => [
-  //   `import { _onCreate } from './plugin-locale/locale';\n_onCreate();`.trim(),
-  // ]);
 
   // watch locale files
   api.addTmpGenerateWatcherPaths(async () => {

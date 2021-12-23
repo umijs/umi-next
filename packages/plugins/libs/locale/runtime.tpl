@@ -1,9 +1,10 @@
 import React from 'react';
 // @ts-ignore
 import { _LocaleContainer } from './locale';
+{{#Title}}
 import { getIntl, getLocale } from './localeExports';
-
-export function rootContainer(container: Element) {
+{{/Title}}
+export function i18nProvider(container: Element) {
   return React.createElement(_LocaleContainer, null, container);
 }
 
@@ -12,9 +13,15 @@ export function patchRoutes({ routes }) {
   // loop all route for patch title field
   const intl = getIntl(getLocale());
   const traverseRoute = (routes) => {
-    routes.forEach(route => {
+    Object.keys(routes).forEach((key) => {
+      const route = routes[key];
       if (route.title) {
-        route.title = intl.messages[route.title] ? intl.formatMessage({ id: route.title }, {}) : route.title;
+        const newTitle = intl.messages[route.title] ? intl.formatMessage({ id: route.title }, {}) : route.title;
+        route.name = intl.messages[route.title] ? intl.formatMessage({ id: route.title }, {}) : route.name;
+        route.title = newTitle;
+      }
+      if (route.routes) {
+        traverseRoute(route.routes);
       }
       if (route.routes) {
         traverseRoute(route.routes);

@@ -3,7 +3,8 @@ import {
   IntlShape,
   MessageDescriptor,
 } from '{{{ reactIntlPkgPath }}}';
-import { ApplyPluginsType, useAppContext } from 'umi';
+import { ApplyPluginsType } from 'umi';
+import { getPluginManager } from '../core/plugin';
 import EventEmitter from 'events';
 // @ts-ignore
 import warning from '{{{ warningPkgPath }}}';
@@ -150,16 +151,15 @@ export const setIntl = (locale: string) => {
  * @returns string
  */
 export const getLocale = () => {
-  //const { pluginManager } = useAppContext();
-  //const runtimeLocale = pluginManager.applyPlugins({
-  //  key: 'locale',
-  //  type: ApplyPluginsType.modify,
-  //  initialValue: {},
-  //});
+  const runtimeLocale = getPluginManager().applyPlugins({
+    key: 'locale',
+    type: ApplyPluginsType.modify,
+    initialValue: {},
+  });
   // runtime getLocale for user define
-  //if (typeof runtimeLocale?.getLocale === 'function') {
-  //  return runtimeLocale.getLocale();
-  //}
+  if (typeof runtimeLocale?.getLocale === 'function') {
+   return runtimeLocale.getLocale();
+  }
   // please clear localStorage if you change the baseSeparator config
   // because changing will break the app
   const lang =
