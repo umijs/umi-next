@@ -1,7 +1,7 @@
 // @ts-ignore
 import { useAccess } from '@@/plugin-access';
 // @ts-ignore
-import { SelectLang, useIntl } from '@@/plugin-locale';
+import { useIntl } from '@@/plugin-locale';
 // @ts-ignore
 import { useModel } from '@@/plugin-model';
 // @ts-ignore
@@ -21,7 +21,6 @@ export default function HomePage() {
       <Input />
       <DatePicker />
       <div>{intl.formatMessage({ id: 'HELLO' })}</div>
-      <SelectLang />
     </div>
   );
 }
