@@ -5,19 +5,16 @@ export {
   matchRoutes,
   NavLink,
   Outlet,
-  // renderer-react
   renderClient,
-  // renderer-react
-  useAppContext,
+  useAppData,
   useLocation,
   useMatch,
   useNavigate,
   useOutlet,
   useParams,
   useResolvedPath,
-  // renderer-react
-  useRouteContext,
+  useRouteData,
   useRoutes,
   useSearchParams,
 } from '@umijs/renderer-react';
-export { PluginManager, ApplyPluginsType } from './client/client/plugin';
+export { ApplyPluginsType, PluginManager } from './client/client/plugin';

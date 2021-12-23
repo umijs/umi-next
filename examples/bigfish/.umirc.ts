@@ -1,16 +1,24 @@
 export default {
   routes: [
-    { path: '/', component: 'index', name: 'index' },
-    { path: '/users', component: 'users', name: 'users' },
+    { path: '/', icon: 'PlaySquareFilled', component: 'index', name: 'index' },
+    { path: '/users', icon: 'SmileFilled', component: 'users', name: 'users' },
     {
       path: '/data-flow',
       component: 'data-flow',
       name: 'data-flow',
+      icon: 'StarFilled',
       routes: [
         {
           path: '/data-flow/use-model',
           component: 'use-model',
           name: 'use-model',
+          icon: 'SwitcherFilled',
+        },
+        {
+          path: '/data-flow/dva',
+          component: 'dva',
+          name: 'dva',
+          icon: 'TagFilled',
         },
       ],
     },
@@ -20,12 +28,18 @@ export default {
     style: 'less',
     // dark: true,
   },
-  // dva: {},
+  initialState: {},
+  access: {},
+  dva: {},
   model: {},
   analytics: {
     baidu: 'test',
   },
   moment2dayjs: {},
-  layout: {},
+  layout: {
+    name: 'Ant Design Pro',
+  },
+  mfsu: { esbuild: true },
+  request: {},
   locale: {},
 };

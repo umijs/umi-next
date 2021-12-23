@@ -1,34 +1,28 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { dirname, join, relative } from 'path';
+import { join, relative } from 'path';
 import { IApi } from 'umi';
 import { chalk } from 'umi/plugin-utils';
 import { Model, ModelUtils } from './utils/modelUtils';
-import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
-  const pkgPath =
-    resolveProjectDep({
-      pkg: api.pkg,
-      cwd: api.cwd,
-      dep: 'dva',
-    }) || dirname(require.resolve('dva/package.json'));
+  const pkgPath = join(__dirname, '../libs/dva.ts');
 
   api.describe({
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          extraModels: Joi.array().items(Joi.string()),
+        });
       },
     },
     enableBy: api.EnableBy.config,
   });
 
   api.modifyAppData((memo) => {
-    const version = require(`${pkgPath}/package.json`).version;
     const models = getAllModels(api);
     memo.pluginDva = {
       pkgPath,
-      version,
       models,
     };
     return memo;
@@ -55,25 +49,37 @@ export default (api: IApi) => {
     api.writeTmpFile({
       path: 'dva.tsx',
       tpl: `
-import dva from 'dva';
-import { useRef } from 'react';
-import { useAppContext } from 'umi';
+// It's faked dva
+// aliased to @umijs/plugins/templates/dva
+import { create, Provider } from 'dva';
+import React, { useRef } from 'react';
+import { useAppData } from 'umi';
 import { models } from './models';
 
 export function RootContainer(props: any) {
-  const { navigator } = useAppContext();
-  const app = useRef();
+  const { navigator } = useAppData();
+  const app = useRef<any>();
   if (!app.current) {
-    app.current = dva({
-      history: navigator,
-      initialState: props.initialState,
-    });
+    app.current = create(
+      {
+        history: navigator,
+      },
+      {
+        initialReducer: {},
+        setupMiddlewares(middlewares: Function[]) {
+          return [...middlewares];
+        },
+        setupApp(app: IDvaApp) {
+          app._history = navigator;
+        },
+      },
+    );
     for (const id of Object.keys(models)) {
       app.current.model(models[id].model);
     }
-    app.current.router(() => props.children);
+    app.current.start();
   }
-  return app.current.start()();
+  return <Provider store={app.current!._store}>{props.children}</Provider>;
 }
       `,
       context: {},
@@ -142,7 +148,9 @@ export function getModelUtil(api: IApi | null) {
 }
 
 export function getAllModels(api: IApi) {
-  return getModelUtil(api).getAllModels();
+  return getModelUtil(api).getAllModels({
+    extraModels: [...(api.config.dva.extraModels || [])],
+  });
 }
 
 function isModelObject(node: t.Node) {
