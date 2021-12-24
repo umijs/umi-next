@@ -27,6 +27,7 @@
     "@umijs/bundler-utils": "4.0.0-beta.13",
     "antd": "^4.17.3",
     "antd-dayjs-webpack-plugin": "^1.0.6",
+    "antd-mobile": "5.0.0-rc.7",
     "axios": "^0.24.0",
     "babel-plugin-import": "^1.13.3",
     "dayjs": "^1.10.7",
