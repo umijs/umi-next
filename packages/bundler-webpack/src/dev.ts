@@ -29,7 +29,9 @@ export async function dev(opts: IOpts) {
     mfsu = new MFSU({
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,
-      depBuildConfig: opts.config as any,
+      depBuildConfig: {
+        extraPostCSSPlugins: opts.config?.extraPostCSSPlugins || [],
+      },
     });
   }
   const webpackConfig = await getConfig({
