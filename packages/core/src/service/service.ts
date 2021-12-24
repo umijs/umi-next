@@ -35,7 +35,7 @@ interface IOpts {
 
 export class Service {
   private opts: IOpts;
-  appData: Record<string, any> = {};
+  appData: { deps?: Record<string, string>; [key: string]: any } = {};
   args: yParser.Arguments = { _: [], $0: '' };
   commands: Record<string, Command> = {};
   generators: Record<string, Generator> = {};
@@ -57,6 +57,7 @@ export class Service {
   } = {};
   // preset is plugin with different type
   plugins: Record<string, Plugin> = {};
+  keyToPluginMap: Record<string, Plugin> = {};
   pluginMethods: Record<string, { plugin: Plugin; fn: Function }> = {};
   skipPluginIds: Set<string> = new Set<string>();
   stage: ServiceStage = ServiceStage.uninitialized;
@@ -215,6 +216,10 @@ export class Service {
     while (plugins.length) {
       await this.initPlugin({ plugin: plugins.shift()!, plugins });
     }
+    // keyToPluginMap
+    for (const id of Object.keys(this.plugins)) {
+      this.keyToPluginMap[this.plugins[id].key] = this.plugins[id];
+    }
     // collect configSchemas and configDefaults
     for (const id of Object.keys(this.plugins)) {
       const { config, key } = this.plugins[id];
@@ -225,18 +230,6 @@ export class Service {
       this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
     // setup api.config from modifyConfig and modifyDefaultConfig
-    this.stage = ServiceStage.resolveConfig;
-    const config = await this.applyPlugins({
-      key: 'modifyConfig',
-      initialValue: configManager.getConfig({
-        schemas: this.configSchemas,
-      }).config,
-    });
-    const defaultConfig = await this.applyPlugins({
-      key: 'modifyDefaultConfig',
-      initialValue: this.configDefaults,
-    });
-    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
     const paths = getPaths({
       cwd: this.cwd,
       env: this.env,
@@ -245,6 +238,19 @@ export class Service {
     if (this.config.outputPath) {
       paths.absOutputPath = join(this.cwd, this.config.outputPath);
     }
+    this.stage = ServiceStage.resolveConfig;
+    const config = await this.applyPlugins({
+      key: 'modifyConfig',
+      initialValue: configManager.getConfig({
+        schemas: this.configSchemas,
+      }).config,
+      args: { paths },
+    });
+    const defaultConfig = await this.applyPlugins({
+      key: 'modifyDefaultConfig',
+      initialValue: this.configDefaults,
+    });
+    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
     this.paths = await this.applyPlugins({
       key: 'modifyPaths',
       initialValue: paths,
@@ -351,6 +357,8 @@ export class Service {
         'name',
         'paths',
         'userConfig',
+        'env',
+        'isPluginEnable',
       ],
       staticProps: {
         ApplyPluginsType,
@@ -363,6 +371,9 @@ export class Service {
     let ret = opts.plugin.apply()(proxyPluginAPI);
     if (isPromise(ret)) {
       ret = await ret;
+    }
+    if (opts.plugin.type === 'plugin') {
+      assert(!ret, `plugin should return nothing`);
     }
     if (ret?.presets) {
       ret.presets = ret.presets.map(
@@ -387,12 +398,23 @@ export class Service {
     return ret || {};
   }
 
-  isPluginEnable(hook: Hook) {
-    const { id, key, enableBy } = hook.plugin;
+  isPluginEnable(hook: Hook | string) {
+    let plugin: Plugin;
+    if ((hook as Hook).plugin) {
+      plugin = (hook as Hook).plugin;
+    } else {
+      plugin = this.keyToPluginMap[hook as string];
+    }
+    const { id, key, enableBy } = plugin;
     if (this.skipPluginIds.has(id)) return false;
     if (this.userConfig[key] === false) return false;
-    if (enableBy === EnableBy.config && !(key in this.config)) return false;
-    if (typeof enableBy === 'function') return enableBy();
+    if (this.config[key] === false) return false;
+    if (enableBy === EnableBy.config) {
+      // TODO: 提供单独的命令用于启用插件
+      return key in this.userConfig;
+    }
+    if (typeof enableBy === 'function')
+      return enableBy({ config: this.config, env: this.env });
     // EnableBy.register
     return true;
   }
@@ -410,11 +432,16 @@ export interface IServicePluginAPI {
   name: typeof Service.prototype.name;
   paths: Required<typeof Service.prototype.paths>;
   userConfig: typeof Service.prototype.userConfig;
+  env: typeof Service.prototype.env;
+  isPluginEnable: typeof Service.prototype.isPluginEnable;
 
   onCheck: IEvent<null>;
   onStart: IEvent<null>;
   modifyAppData: IModify<typeof Service.prototype.appData, null>;
-  modifyConfig: IModify<typeof Service.prototype.config, null>;
+  modifyConfig: IModify<
+    typeof Service.prototype.config,
+    { paths: Record<string, string> }
+  >;
   modifyDefaultConfig: IModify<typeof Service.prototype.config, null>;
   modifyPaths: IModify<typeof Service.prototype.paths, null>;
 

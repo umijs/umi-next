@@ -1,8 +1,9 @@
-import { lodash, pkgUp, resolve, winPath } from '@umijs/utils';
+import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import { lodash, pkgUp, register, resolve, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { basename, dirname, extname, join, relative } from 'path';
-import { EnableBy, IPluginConfig } from '../types';
+import { EnableBy, Env, IPluginConfig } from '../types';
 
 const RE = {
   plugin: /^(@umijs\/|umi-)plugin-/,
@@ -33,7 +34,8 @@ export class Plugin {
   key: string;
   apply: Function;
   config: IPluginConfig = {};
-  enableBy: EnableBy | (() => boolean) = EnableBy.register;
+  enableBy: EnableBy | ((opts: { config: any; env: Env }) => boolean) =
+    EnableBy.register;
 
   constructor(opts: IOpts) {
     this.type = opts.type;
@@ -58,23 +60,28 @@ export class Plugin {
     this.id = this.getId({ pkg, isPkgEntry, pkgJSONPath });
     this.key = this.getKey({ pkg, isPkgEntry });
     this.apply = () => {
+      register.register({
+        implementor: esbuild,
+      });
+      register.clearFiles();
+      let ret;
       try {
-        const ret = require(this.path);
-        // use the default member for es modules
-        return ret.__esModule ? ret.default : ret;
+        ret = require(this.path);
       } catch (e: any) {
         throw new Error(
           `Register ${this.type} ${this.path} failed, since ${e.message}`,
         );
       }
+      for (const file of register.getFiles()) {
+        delete require.cache[file];
+      }
+      register.restore();
+      // use the default member for es modules
+      return ret.__esModule ? ret.default : ret;
     };
   }
 
-  merge(opts: {
-    key?: string;
-    config?: IPluginConfig;
-    enableBy?: EnableBy | (() => boolean);
-  }) {
+  merge(opts: { key?: string; config?: IPluginConfig; enableBy?: any }) {
     if (opts.key) this.key = opts.key;
     if (opts.config) this.config = opts.config;
     if (opts.enableBy) this.enableBy = opts.enableBy;

@@ -8,6 +8,7 @@ import { join } from 'path';
 import alias from './plugins/alias';
 import externals from './plugins/externals';
 import less from './plugins/less';
+import { style } from './plugins/style';
 import { IBabelPlugin, IConfig } from './types';
 
 interface IOpts {
@@ -23,6 +24,7 @@ interface IOpts {
   beforeBabelPresets?: any[];
   extraBabelPlugins?: IBabelPlugin[];
   extraBabelPresets?: IBabelPlugin[];
+  inlineStyle?: boolean;
 }
 
 export async function build(opts: IOpts) {
@@ -43,15 +45,26 @@ export async function build(opts: IOpts) {
       less({
         modifyVars: opts.config.theme,
         javascriptEnabled: true,
+        alias: opts.config.alias,
+        // ref: https://github.com/umijs/umi-next/pull/214
+        inlineStyle: opts.inlineStyle,
+        config: opts.config,
         ...opts.config.lessLoader,
       }),
       opts.config.alias && alias(addCwdPrefix(opts.config.alias, opts.cwd)),
       opts.config.externals && externals(opts.config.externals),
+      style({
+        inlineStyle: opts.inlineStyle,
+        config: opts.config,
+      }),
     ].filter(Boolean) as Plugin[],
     define: {
       // __dirname sham
       __dirname: JSON.stringify('__dirname'),
       'process.env.NODE_ENV': JSON.stringify(opts.mode || 'development'),
+    },
+    loader: {
+      '.svg': 'dataurl',
     },
   });
 }

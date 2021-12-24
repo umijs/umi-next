@@ -9,9 +9,13 @@ export default () => {
       require.resolve('./features/appData/appData'),
       require.resolve('./features/check/check'),
       require.resolve('./features/configPlugins/configPlugins'),
-      require.resolve('./features/transform/transform'),
-      require.resolve('./features/tmpFiles/tmpFiles'),
+      require.resolve('./features/esmi/esmi'),
       require.resolve('./features/favicon/favicon'),
+      require.resolve('./features/mock/mock'),
+      require.resolve('./features/polyfill/polyfill'),
+      require.resolve('./features/tmpFiles/tmpFiles'),
+      require.resolve('./features/transform/transform'),
+      require.resolve('./features/lowImport/lowImport'),
 
       // commands
       require.resolve('./commands/build'),

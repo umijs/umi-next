@@ -11,6 +11,7 @@ import { addCopyPlugin } from './copyPlugin';
 import { addCSSRules } from './cssRules';
 import { addDefinePlugin } from './definePlugin';
 import { addFastRefreshPlugin } from './fastRefreshPlugin';
+import { addHarmonyLinkingErrorPlugin } from './harmonyLinkingErrorPlugin';
 import { addIgnorePlugin } from './ignorePlugin';
 import { addJavaScriptRules } from './javaScriptRules';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
@@ -93,7 +94,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     .path(absOutputPath)
     .filename(useHash ? `[name].[contenthash:8].js` : `[name].js`)
     .chunkFilename(useHash ? `[name].[contenthash:8].async.js` : `[name].js`)
-    .publicPath(userConfig.publicPath || '/')
+    .publicPath(userConfig.publicPath || 'auto')
     .pathinfo(isDev || disableCompress);
 
   // resolve
@@ -162,6 +163,10 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addCompressPlugin(applyOpts);
   // purgecss
   // await applyPurgeCSSWebpackPlugin(applyOpts);
+
+  // handle HarmonyLinkingError
+  await addHarmonyLinkingErrorPlugin(applyOpts);
+
   // analyzer
   if (opts.analyze) {
     await addBundleAnalyzerPlugin(applyOpts);

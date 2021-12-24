@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
@@ -9,8 +10,8 @@ export default (api: IApi) => {
   api.describe({
     key: 'tmpFiles',
     config: {
-      schema(joi) {
-        return joi.boolean();
+      schema(Joi) {
+        return Joi.boolean();
       },
     },
   });
@@ -18,6 +19,7 @@ export default (api: IApi) => {
   api.onGenerateFiles(async (opts) => {
     // umi.ts
     api.writeTmpFile({
+      noPluginDir: true,
       path: 'umi.ts',
       tplPath: join(TEMPLATES_DIR, 'umi.tpl'),
       context: {
@@ -36,6 +38,12 @@ export default (api: IApi) => {
             key: 'addEntryCodeAhead',
             initialValue: [],
           })
+        ).join('\n'),
+        polyfillImports: importsToStr(
+          await api.applyPlugins({
+            key: 'addPolyfillImports',
+            initialValue: [],
+          }),
         ).join('\n'),
         importsAhead: importsToStr(
           await api.applyPlugins({
@@ -58,15 +66,14 @@ export default (api: IApi) => {
       routes = api.appData.routes;
     } else {
       routes = await getRoutes({
-        config: api.config,
-        absSrcPage: api.paths.absSrcPath,
-        absPagesPath: api.paths.absPagesPath,
+        api,
       });
     }
     const hasSrc = api.appData.hasSrcDir;
     // @/pages/
     const prefix = hasSrc ? '../../../src/pages/' : '../../pages/';
     api.writeTmpFile({
+      noPluginDir: true,
       path: 'core/route.ts',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
@@ -97,17 +104,26 @@ export default (api: IApi) => {
       initialValue: [
         // TODO: support these methods
         // 'modifyClientRenderOpts',
-        // 'patchRoutes',
+        'patchRoutes',
         'rootContainer',
-        // 'render',
+        'innerProvider',
+        'i18nProvider',
+        'accessProvider',
+        'dataflowProvider',
+        'outerProvider',
+        'render',
         // 'onRouteChange',
       ],
     });
     api.writeTmpFile({
+      noPluginDir: true,
       path: 'core/plugin.ts',
       tplPath: join(TEMPLATES_DIR, 'plugin.tpl'),
       context: {
-        plugins: plugins.map((plugin, index) => ({ index, path: plugin })),
+        plugins: plugins.map((plugin, index) => ({
+          index,
+          path: winPath(plugin),
+        })),
         validKeys: validKeys,
       },
     });

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Outlet } from 'umi';
 
 export default function Layout() {
+  console.log('rerender layout');
   return (
     <div>
       <h2>global layout</h2>

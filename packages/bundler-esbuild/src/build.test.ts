@@ -24,12 +24,26 @@ const expects: Record<string, Function> = {
   externals({ files }: IOpts) {
     expect(files['index.js']).toContain(`module.export = React;`);
   },
+  extraPostCSSPlugins({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("foooooo");`);
+    expect(files['index.css']).toContain(`font-size: 0.14rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.16rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.26rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.3rem;`);
+  },
   less({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("foooooo");`);
     expect(files['index.css']).toContain(`color: red;`);
+    expect(files['index.css']).toContain(`color: blue;`);
+    expect(files['index.css']).toContain(`color: black;`);
   },
   node_globals_polyfill({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("__dirname", "foooooo");`);
+  },
+  svg({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("foo");`);
+    expect(files['index.js']).toContain(`var smile_default =`);
+    expect(files['index.css']).toContain(`data:image/svg+xml;`);
   },
 };
 
@@ -45,6 +59,7 @@ for (const fixture of readdirSync(fixtures)) {
     try {
       config = require(join(base, 'config.ts')).default;
     } catch (e) {}
+
     await build({
       clean: true,
       config: {

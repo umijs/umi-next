@@ -27,7 +27,7 @@ export default (api: IApi) => {
     return memo;
   });
 
-  api.addMiddlewares(() => [
+  api.addBeforeMiddlewares(() => [
     (req, res, next) => {
       if (
         api.appData.faviconFile &&
@@ -51,6 +51,6 @@ export default (api: IApi) => {
   });
 
   api.modifyHTMLFavicon((memo) => {
-    return api.appData.faviconFile || memo;
+    return `${api.config.publicPath}${api.appData.faviconFile}` || memo;
   });
 };

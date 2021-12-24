@@ -1,7 +1,14 @@
 {
   "name": "@umijs/babel-preset-umi",
-  "version": "4.0.0-beta.5",
+  "version": "4.0.0-beta.13",
   "description": "Official babel preset for umi.",
+  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/babel-preset-umi#readme",
+  "bugs": "https://github.com/umijs/umi-next/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-next"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,24 +19,17 @@
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/umijs/umi-next"
+  "dependencies": {
+    "@babel/runtime": "7.16.3",
+    "@bloomberg/record-tuple-polyfill": "0.0.4",
+    "@umijs/bundler-utils": "4.0.0-beta.13",
+    "@umijs/utils": "4.0.0-beta.13",
+    "core-js": "3.19.2"
   },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "https://github.com/umijs/umi-next/issues",
-  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/babel-preset-umi#readme",
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@babel/runtime": "7.16.0",
-    "@bloomberg/record-tuple-polyfill": "0.0.4",
-    "@umijs/bundler-utils": "4.0.0-beta.5",
-    "@umijs/utils": "4.0.0-beta.5",
-    "core-js": "3.19.0"
-  }
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ]
 }

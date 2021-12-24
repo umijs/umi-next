@@ -12,7 +12,7 @@ const testData = {
   mail: 'xiaohuoni@gmail.com',
   author: 'xiaohuoni',
   org: 'umijs',
-  version: '4.0.0-alpha.1',
+  version: require('../package').version,
   npmClient: 'pnpm',
   registry: 'https://registry.npmjs.org/',
 };
@@ -52,7 +52,7 @@ export default async ({
             value: 'https://registry.npmjs.org/',
             selected: true,
           },
-          { title: 'taobao', value: 'https://registry.npm.taobao.org' },
+          { title: 'taobao', value: 'https://registry.npmmirror.com' },
         ],
       },
     ]);

@@ -1,2 +1,20 @@
-export { Link, Outlet } from '@umijs/renderer-react';
-export { PluginManager } from './client/client/plugin';
+export {
+  createSearchParams,
+  Link,
+  matchPath,
+  matchRoutes,
+  NavLink,
+  Outlet,
+  renderClient,
+  useAppData,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useOutlet,
+  useParams,
+  useResolvedPath,
+  useRouteData,
+  useRoutes,
+  useSearchParams,
+} from '@umijs/renderer-react';
+export { ApplyPluginsType, PluginManager } from './client/client/plugin';

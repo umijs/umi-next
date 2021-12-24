@@ -1,6 +1,8 @@
+import { pkgUp } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
+import { isAbsolute, join } from 'path';
 import { MF_VA_PREFIX } from '../constants';
 import { MFSU } from '../mfsu';
 import { trimFileContent } from '../utils/trimFileContent';
@@ -39,7 +41,7 @@ export class Dep {
     this.file = opts.file;
     this.version = opts.version;
     this.cwd = opts.cwd;
-    this.shortFile = this.file.replace(this.cwd, '$CWD$');
+    this.shortFile = this.file;
     this.normalizedFile = this.shortFile.replace(/\//g, '_').replace(/:/g, '_');
     this.filePath = `${MF_VA_PREFIX}${this.normalizedFile}.js`;
     this.mfsu = opts.mfsu;
@@ -97,5 +99,20 @@ export * from '${this.file}';
         mfsu: opts.mfsu,
       });
     });
+  }
+
+  static getDepVersion(opts: { dep: string; cwd: string }): string {
+    // @ts-ignore
+    if (!!process.binding('natives')[opts.dep]) {
+      return '*';
+    }
+    const dep = isAbsolute(opts.dep)
+      ? opts.dep
+      : join(opts.cwd, 'node_modules', opts.dep);
+    const pkg = pkgUp.sync({
+      cwd: dep,
+    });
+    assert(pkg, `package.json not found for ${opts.dep}`);
+    return require(pkg).version;
   }
 }

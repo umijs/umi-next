@@ -1,6 +1,13 @@
 {
   "name": "@umijs/bundler-utils",
-  "version": "4.0.0-beta.5",
+  "version": "4.0.0-beta.13",
+  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-utils#readme",
+  "bugs": "https://github.com/umijs/umi-next/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-next"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,29 +19,17 @@
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/umijs/umi-next"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "https://github.com/umijs/umi-next/issues",
-  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-utils#readme",
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
-    "@umijs/utils": "4.0.0-beta.5",
-    "esbuild": "0.13.11"
+    "@umijs/utils": "4.0.0-beta.13",
+    "esbuild": "0.14.1"
   },
   "devDependencies": {
     "@babel/code-frame": "7.16.0",
     "@babel/core": "7.16.0",
     "@babel/generator": "7.16.0",
-    "@babel/parser": "7.16.0",
-    "@babel/plugin-proposal-decorators": "7.16.0",
+    "@babel/helper-module-imports": "7.16.0",
+    "@babel/parser": "7.16.4",
+    "@babel/plugin-proposal-decorators": "7.16.4",
     "@babel/plugin-proposal-do-expressions": "7.16.0",
     "@babel/plugin-proposal-export-default-from": "7.16.0",
     "@babel/plugin-proposal-export-namespace-from": "7.16.0",
@@ -42,13 +37,13 @@
     "@babel/plugin-proposal-partial-application": "7.16.0",
     "@babel/plugin-proposal-pipeline-operator": "7.16.0",
     "@babel/plugin-proposal-record-and-tuple": "7.16.0",
-    "@babel/plugin-transform-runtime": "7.16.0",
-    "@babel/preset-env": "7.16.0",
+    "@babel/plugin-transform-runtime": "7.16.4",
+    "@babel/preset-env": "7.16.4",
     "@babel/preset-react": "7.16.0",
     "@babel/preset-typescript": "7.16.0",
     "@babel/register": "7.16.0",
     "@babel/template": "7.16.0",
-    "@babel/traverse": "7.16.0",
+    "@babel/traverse": "7.16.3",
     "@babel/types": "7.16.0",
     "@types/babel__code-frame": "7.0.3",
     "@types/babel__generator": "7.6.3",
@@ -58,6 +53,12 @@
     "cjs-module-lexer": "1.2.2",
     "es-module-lexer": "0.9.3"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ],
   "compiledConfig": {
     "deps": [
       "cjs-module-lexer",

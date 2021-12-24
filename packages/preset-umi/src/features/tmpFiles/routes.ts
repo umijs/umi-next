@@ -1,28 +1,44 @@
-import { addParentRoute, getConventionRoutes } from '@umijs/core';
+import {
+  addParentRoute,
+  getConfigRoutes,
+  getConventionRoutes,
+} from '@umijs/core';
+import { winPath } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { isAbsolute, join } from 'path';
+import { IApi } from '../../types';
 
 // get route config
-export async function getRoutes(opts: {
-  config: Record<string, any>;
-  absSrcPage: string;
-  absPagesPath: string;
-}) {
+export async function getRoutes(opts: { api: IApi }) {
   let routes = null;
-  if (opts.config.routes) {
-    // TODO: support config routes
+  if (opts.api.config.routes) {
+    routes = getConfigRoutes({
+      routes: opts.api.config.routes,
+    });
   } else {
-    routes = getConventionRoutes({ base: opts.absPagesPath });
+    routes = getConventionRoutes({
+      base: opts.api.paths.absPagesPath,
+      prefix: '',
+    });
   }
 
-  const absLayoutPath = join(opts.absSrcPage, 'layouts/index.tsx');
-  if (existsSync(absLayoutPath)) {
+  const absLayoutPath = join(opts.api.paths.absSrcPath, 'layouts/index.tsx');
+  const layouts = await opts.api.applyPlugins({
+    key: 'addLayouts',
+    initialValue: [
+      existsSync(absLayoutPath) && {
+        id: '@@/global-layout',
+        file: absLayoutPath,
+      },
+    ].filter(Boolean),
+  });
+  for (const layout of layouts) {
     addParentRoute({
       addToAll: true,
       target: {
-        id: '@@/global-layout',
+        id: layout.id,
         path: '/',
-        file: absLayoutPath,
+        file: layout.file,
         parentId: undefined,
       },
       routes,
@@ -38,11 +54,12 @@ export async function getRouteComponents(opts: {
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
-      // TODO: support alias
-      const path = isAbsolute(route.file)
-        ? route.file
-        : `${opts.prefix}${route.file}`;
-      return `'${key}': () => import('${path}'),`;
+      if (!route.file) return `// ${key}: no file to import`;
+      const path =
+        isAbsolute(route.file) || route.file.startsWith('@/')
+          ? route.file
+          : `${opts.prefix}${route.file}`;
+      return `'${key}': () => import('${winPath(path)}'),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;

@@ -1,6 +1,8 @@
+import type { Program } from '@swc/core';
 import { chalk } from '@umijs/utils';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
+import AutoCSSModule from '../swcPlugins/autoCSSModules';
 import { Env, IConfig, Transpiler } from '../types';
 import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
 
@@ -19,7 +21,7 @@ export async function addJavaScriptRules(opts: IOpts) {
   const { config, userConfig, cwd, env, name } = opts;
   const isDev = opts.env === Env.development;
   const useFastRefresh =
-    isDev && userConfig.fastRefresh !== false && name === MFSU_NAME;
+    isDev && userConfig.fastRefresh !== false && name !== MFSU_NAME;
 
   const depPkgs = Object.assign({}, es5ImcompatibleVersionsToPkg());
   const srcRules = [
@@ -130,6 +132,7 @@ export async function addJavaScriptRules(opts: IOpts) {
               },
             },
           },
+          plugin: (m: Program) => new AutoCSSModule().visitProgram(m),
         });
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);

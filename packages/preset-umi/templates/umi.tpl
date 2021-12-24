@@ -1,19 +1,37 @@
+{{{ polyfillImports }}}
 {{{ importsAhead }}}
 import { renderClient } from '{{{ rendererPath }}}';
 import { getRoutes } from './core/route';
-import { getPlugins, getValidKeys } from './core/plugin';
-import { PluginManager } from 'umi';
+import { createPluginManager } from './core/plugin';
+import { ApplyPluginsType, PluginManager } from 'umi';
 {{{ imports }}}
 
 async function render() {
+  const pluginManager = createPluginManager();
+  const { routes, routeComponents } = await getRoutes(pluginManager);
+
+  // allow user to extend routes
+  pluginManager.applyPlugins({
+    key: 'patchRoutes',
+    type: 'event',
+    args: {
+      routes,
+      routeComponents,
+    },
+  });
   const context = {
-    ...await getRoutes(),
-    pluginManager: PluginManager.create({
-      plugins: getPlugins(),
-      validKeys: getValidKeys(),
-    }),
+    routes,
+    routeComponents,
+    pluginManager,
   };
-  return renderClient(context);
+
+  return (pluginManager.applyPlugins({
+    key: 'render',
+    type: ApplyPluginsType.compose,
+    initialValue() {
+      return renderClient(context);
+    },
+  }))();
 }
 
 {{{ entryCodeAhead }}}

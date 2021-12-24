@@ -7,31 +7,36 @@ interface IOpts {
   cwd: string;
   env: Env;
   browsers: any;
+  staticPathPrefix: string;
 }
 
 export async function addSVGRules(opts: IOpts) {
   const { config, userConfig } = opts;
-  const { svgr, svgo } = userConfig;
+  const { svgr, svgo = {} } = userConfig;
   if (svgr) {
-    // https://react-svgr.com/docs/webpack/#handle-svg-in-css-sass-or-less
-    // https://github.com/gregberge/svgr/issues/551#issuecomment-883073902
-    // https://github.com/webpack/webpack/issues/9309
     const svgrRule = config.module.rule('svgr');
     svgrRule
       .test(/\.svg$/)
       .issuer(/\.[jt]sx?$/)
       .type('javascript/auto')
-      .use('babel-loader')
-      .loader(require.resolve('@umijs/bundler-webpack/compiled/babel-loader'))
-      .end()
       .use('svgr-loader')
-      .loader(require.resolve('@umijs/bundler-webpack/compiled/@svgr/webpack'))
+      .loader(require.resolve('../loader/svgr'))
       .options({
         svgoConfig: {
-          plugins: [{ removeViewBox: false }],
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeTitle: false,
+                },
+              },
+            },
+          ],
+          ...svgo,
         },
         ...svgr,
-        svgo,
+        svgo: !!svgo,
       })
       .end()
       .use('url-loader')

@@ -4,6 +4,8 @@ import { readFileSync } from 'fs';
 import { extname, join } from 'path';
 import webpack, { Configuration } from 'webpack';
 import { lookup } from '../compiled/mrmime';
+// @ts-ignore
+import WebpackVirtualModules from '../compiled/webpack-virtual-modules';
 import autoExport from './babelPlugins/autoExport';
 import awaitImport from './babelPlugins/awaitImport/awaitImport';
 import { getRealPath } from './babelPlugins/awaitImport/getRealPath';
@@ -35,6 +37,7 @@ interface IOpts {
   unMatchLibs?: string[];
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
+  depBuildConfig: any;
 }
 
 export class MFSU {
@@ -54,6 +57,7 @@ export class MFSU {
     this.opts.cwd = this.opts.cwd || process.cwd();
     this.depInfo = new DepInfo({ mfsu: this });
     this.depBuilder = new DepBuilder({ mfsu: this });
+    this.depInfo.loadCache();
   }
 
   setWebpackConfig(opts: { config: Configuration; depConfig: Configuration }) {
@@ -65,16 +69,36 @@ export class MFSU {
     // set alias and externals with reference for babel plugin
     Object.assign(this.alias, opts.config.resolve?.alias || {});
     this.externals.push(...makeArray(opts.config.externals || []));
+    // entry
+    const entry: Record<string, string> = {};
+    const virtualModules: Record<string, string> = {};
+    Object.keys(opts.config.entry!).forEach((key) => {
+      const virtualPath = `./mfsu-virtual-entry/${key}.js`;
+      virtualModules[virtualPath] =
+        // @ts-ignore
+        opts.config
+          .entry![key].map((entry: string) => `await import('${entry}')`)
+          .join('\n') + `\nexport default 1;`;
+      entry[key] = virtualPath;
+    });
+    opts.config.entry = entry;
+    // plugins
     opts.config.plugins = opts.config.plugins || [];
+
+    // support publicPath auto
+    let publicPath = opts.config.output!.publicPath;
+    if (publicPath === 'auto') {
+      publicPath = '/';
+    }
+
     opts.config.plugins!.push(
       ...[
+        new WebpackVirtualModules(virtualModules),
         new this.opts.implementor.container.ModuleFederationPlugin({
           name: '__',
           remotes: {
             // TODO: support runtime public path
-            [mfName!]: `${mfName}@${
-              opts.config.output!.publicPath
-            }${REMOTE_FILE_FULL}`,
+            [mfName!]: `${mfName}@${publicPath}${REMOTE_FILE_FULL}`,
           },
         }),
         new BuildDepPlugin({
@@ -134,7 +158,6 @@ export class MFSU {
             );
             const content = readFileSync(
               join(this.opts.tmpBase!, relativePath),
-              'utf-8',
             );
             res.send(content);
           });
@@ -164,10 +187,15 @@ export class MFSU {
           }) => {
             this.depInfo.moduleGraph.onFileChange({
               file,
+              // @ts-ignore
               deps: [
                 ...Array.from(data.matched).map((item: any) => ({
                   file: item.sourceValue,
                   isDependency: true,
+                  version: Dep.getDepVersion({
+                    dep: item.sourceValue,
+                    cwd: this.opts.cwd!,
+                  }),
                 })),
                 ...Array.from(data.unMatched).map((item: any) => ({
                   file: getRealPath({
