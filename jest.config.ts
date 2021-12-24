@@ -9,6 +9,6 @@ const config = createJestConfig(
       '<rootDir>/packages/.+/fixtures',
     ],
   },
-  { useEsbuild: true },
+  { useEsbuild: true, hasE2e: false },
 );
 export default config;
