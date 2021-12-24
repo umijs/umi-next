@@ -9,10 +9,9 @@ type AnyConfig<T extends Record<string, any>, U extends Record<string, any>> = {
 type CalculatedConfig<
   T extends Record<string, any>,
   U extends Record<string, any>,
-> = T &
-  {
-    [V in keyof U]: V extends keyof T ? T[V] : U[V];
-  };
+> = T & {
+  [V in keyof U]: V extends keyof T ? T[V] : U[V];
+};
 
 export function mergeConfig<
   T extends Record<string, any>,
