@@ -2,12 +2,14 @@
 
 bug 演示分支，请勿做任何合并操作。
 
-@umijs/plugins/antdmobile 只是为了掩饰保留的最简重现，实际功能并不完整。
+@umijs/plugins/antdmobile 只是为了演示保留的最简重现，实际功能并不完整。
 
 ## 步骤
 
 1、 pnpm i && pnpm build
+
 2、 cd examples/bug-mfsu-cache && pnpm dev
+
 3、 访问 http://127.0.0.1:8000/
 
 ![step1](./step1.jpg)
