@@ -43,7 +43,6 @@ export function createJestConfig(
   config: UmiTestJestConfig,
   options: UmiTestJestOptions = {},
 ): UmiTestJestConfig {
-  const jestDefaults: Config.DefaultOptions = require('jest-config').defaults;
   const { useEsbuild = false, hasE2e = true, svgr = true } = options;
   const testMatchTypes = ['spec', 'test'];
   if (hasE2e) {
@@ -75,7 +74,8 @@ export function createJestConfig(
     transform: {
       ...(useEsbuild
         ? {
-            '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': [
+            // '^.+\\.(ts|jsx|mjs|cjs|js|tsx)$'
+            '^.+\\.ts$': [
               require.resolve('esbuild-jest'),
               {
                 sourcemap: false,
@@ -121,7 +121,6 @@ export function createJestConfig(
       : {}),
   };
   const jestConfig = mergeConfig<UmiTestJestConfig, Config.InitialOptions>(
-    jestDefaults,
     umiTestDefaultsConfig,
     config,
   );
