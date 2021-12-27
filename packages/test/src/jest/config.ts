@@ -27,8 +27,6 @@ export interface UmiTestJestOptions {
   hasE2e?: boolean;
   useEsbuild?: boolean;
   svgr?: boolean;
-  polyfill?: boolean;
-  dom?: 'none' | 'jsdom' | 'happydom';
 }
 
 export function createUmiConfig(config: UmiTestJestConfig): UmiTestJestConfig {
@@ -102,12 +100,12 @@ export function createJestConfig(
           }
         : {}),
     },
-    moduleNameMapper: {
-      '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
-      // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
-      //   './helpers/fileMock',
-      // ),
-    },
+    // moduleNameMapper: {
+    //   '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
+    //   // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
+    //   //   './helpers/fileMock',
+    //   // ),
+    // },
     // TODO: 下面这个五个配置会让执行速度变慢（testPathIgnorePatterns，transformIgnorePatterns，modulePaths，resetMocks，moduleFileExtensions）
     // testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
     // transformIgnorePatterns: [
@@ -118,9 +116,7 @@ export function createJestConfig(
     // resetMocks: true,
     // moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     // 用于设置 jest worker 启动的个数
-    ...(process.env.MAX_WORKERS
-      ? { maxWorkers: Number(process.env.MAX_WORKERS) }
-      : {}),
+    maxWorkers: process.env.MAX_WORKERS ? Number(process.env.MAX_WORKERS) : 5,
   };
   const jestConfig = mergeConfig<UmiTestJestConfig, Config.InitialOptions>(
     jestDefaults,
