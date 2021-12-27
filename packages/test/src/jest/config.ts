@@ -26,6 +26,19 @@ export interface UmiTestJestConfig
 export interface UmiTestJestOptions {
   hasE2e?: boolean;
   useEsbuild?: boolean;
+  svgr?: boolean;
+  polyfill?: boolean;
+  dom?: 'none' | 'jsdom' | 'happydom';
+}
+
+export function createUmiConfig(config: UmiTestJestConfig): UmiTestJestConfig {
+  const umiRootDir = process.env.APP_ROOT || process.cwd();
+  config.moduleNameMapper = {
+    ...config.moduleNameMapper,
+    '^@/(.*)$': `${umiRootDir}/src/$1`,
+    '^@@/(.*)$': `${umiRootDir}/src/.umi/$1`,
+  };
+  return config;
 }
 
 export function createJestConfig(
@@ -33,19 +46,17 @@ export function createJestConfig(
   options: UmiTestJestOptions = {},
 ): UmiTestJestConfig {
   const jestDefaults: Config.DefaultOptions = require('jest-config').defaults;
-  const { useEsbuild = false, hasE2e = true } = options;
+  const { useEsbuild = false, hasE2e = true, svgr = true } = options;
   const testMatchTypes = ['spec', 'test'];
   if (hasE2e) {
     testMatchTypes.push('e2e');
   }
-  const umiRootDir = process.env.APP_ROOT || process.cwd();
-
   const umiTestDefaultsConfig: Config.InitialOptions = {
     testEnvironment: require.resolve('jest-environment-jsdom'),
     setupFiles: [require.resolve('../../helpers/jsdom.js')],
     setupFilesAfterEnv: [require.resolve('../../helpers/setupTests.js')],
-    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     testRunner: require.resolve('jest-circus/runner'),
+    testTimeout: 20000,
     runner: require.resolve('jest-runner'),
     collectCoverageFrom: [
       'packages/*/src/**/*.{js,jsx,ts,tsx}',
@@ -58,26 +69,11 @@ export function createJestConfig(
       '!**/examples/**',
       '!**/*.d.ts',
     ].filter(Boolean),
-    transformIgnorePatterns: [
-      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$',
-      '^.+\\.module\\.(css|sass|scss)$',
-    ],
-    modulePaths: [],
-    moduleNameMapper: {
-      '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
-      // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
-      //   './helpers/fileMock',
-      // ),
-      '^@/(.*)$': `${umiRootDir}/src/$1`,
-      '^@@/(.*)$': `${umiRootDir}/src/.umi/$1`,
-    },
-    resetMocks: true,
     watchPlugins: [
       'jest-watch-typeahead/filename',
       'jest-watch-typeahead/testname',
     ],
     testMatch: [`**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`],
-    testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
     transform: {
       ...(useEsbuild
         ? {
@@ -98,10 +94,29 @@ export function createJestConfig(
             ),
           }),
       '^.+\\.css$': require.resolve('../../helpers/cssTransform.js'),
-      '^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)': require.resolve(
-        '../../helpers/fileTransform.js',
-      ),
+      ...(svgr
+        ? {
+            '^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)': require.resolve(
+              '../../helpers/fileTransform.js',
+            ),
+          }
+        : {}),
     },
+    moduleNameMapper: {
+      '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
+      // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
+      //   './helpers/fileMock',
+      // ),
+    },
+    // TODO: 下面这个五个配置会让执行速度变慢（testPathIgnorePatterns，transformIgnorePatterns，modulePaths，resetMocks，moduleFileExtensions）
+    // testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
+    // transformIgnorePatterns: [
+    //   '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$',
+    //   '^.+\\.module\\.(css|sass|scss)$',
+    // ],
+    // modulePaths: [],
+    // resetMocks: true,
+    // moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     // 用于设置 jest worker 启动的个数
     ...(process.env.MAX_WORKERS
       ? { maxWorkers: Number(process.env.MAX_WORKERS) }
