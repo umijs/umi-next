@@ -100,23 +100,25 @@ export function createJestConfig(
           }
         : {}),
     },
-    // moduleNameMapper: {
-    //   '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
-    //   // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
-    //   //   './helpers/fileMock',
-    //   // ),
-    // },
+    moduleNameMapper: {
+      '^.+\\.module\\.(css|sass|scss)$': require.resolve('identity-obj-proxy'),
+      // '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve(
+      //   './helpers/fileMock',
+      // ),
+    },
     // TODO: 下面这个五个配置会让执行速度变慢（testPathIgnorePatterns，transformIgnorePatterns，modulePaths，resetMocks，moduleFileExtensions）
-    // testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
-    // transformIgnorePatterns: [
-    //   '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$',
-    //   '^.+\\.module\\.(css|sass|scss)$',
-    // ],
-    // modulePaths: [],
-    // resetMocks: true,
-    // moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+    testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
+    transformIgnorePatterns: [
+      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$',
+      '^.+\\.module\\.(css|sass|scss)$',
+    ],
+    modulePaths: [],
+    resetMocks: true,
+    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     // 用于设置 jest worker 启动的个数
-    maxWorkers: process.env.MAX_WORKERS ? Number(process.env.MAX_WORKERS) : 5,
+    ...(process.env.MAX_WORKERS
+      ? { maxWorkers: Number(process.env.MAX_WORKERS) }
+      : {}),
   };
   const jestConfig = mergeConfig<UmiTestJestConfig, Config.InitialOptions>(
     jestDefaults,
