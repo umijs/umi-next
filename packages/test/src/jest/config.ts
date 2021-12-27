@@ -74,6 +74,7 @@ export function createJestConfig(
     transform: {
       ...(useEsbuild
         ? {
+            // TODO: 下面这个配置会让执行速度变慢
             // '^.+\\.(ts|jsx|mjs|cjs|js|tsx)$'
             '^.+\\.ts$': [
               require.resolve('esbuild-jest'),
@@ -106,7 +107,6 @@ export function createJestConfig(
       //   './helpers/fileMock',
       // ),
     },
-    // TODO: 下面这个五个配置会让执行速度变慢（testPathIgnorePatterns，transformIgnorePatterns，modulePaths，resetMocks，moduleFileExtensions）
     testPathIgnorePatterns: ['/node_modules/', '/fixtures/'],
     transformIgnorePatterns: [
       '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs)$',
