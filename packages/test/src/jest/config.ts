@@ -74,9 +74,7 @@ export function createJestConfig(
     transform: {
       ...(useEsbuild
         ? {
-            // TODO: 下面这个配置会让执行速度变慢
-            // '^.+\\.(ts|jsx|mjs|cjs|js|tsx)$'
-            '^.+\\.ts$': [
+            '^.+\\.(ts|jsx|mjs|cjs|js|tsx)$': [
               require.resolve('esbuild-jest'),
               {
                 sourcemap: false,
