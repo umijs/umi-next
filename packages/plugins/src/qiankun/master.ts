@@ -4,12 +4,13 @@ import { IApi } from 'umi';
 import { withTmpPath } from '../utils/withTmpPath';
 import {
   defaultHistoryType,
+  defaultMasterRootId,
   MODEL_EXPORT_NAME,
   qiankunStateForSlaveModelNamespace,
 } from './constants';
 
-export function isMasterEnable(opts: { config: any }) {
-  const masterCfg = opts.config.qiankun?.master;
+export function isMasterEnable(opts: { userConfig: any }) {
+  const masterCfg = opts.userConfig.qiankun?.master;
   if (masterCfg) {
     return masterCfg.enable !== false;
   }
@@ -29,7 +30,7 @@ export default (api: IApi) => {
   api.modifyDefaultConfig((config) => ({
     ...config,
     // TODO: support mountElementId
-    // mountElementId: defaultMasterRootId,
+    mountElementId: defaultMasterRootId,
     qiankun: {
       ...config.qiankun,
       master: {
@@ -40,6 +41,28 @@ export default (api: IApi) => {
   }));
 
   // TODO: modify routes
+  api.modifyRoutes((memo) => {
+    Object.keys(memo).forEach((id) => {
+      const route = memo[id];
+      if (route.microApp) {
+        const appName = route.microApp;
+        // TODO: config base
+        const base = '/';
+        // TODO: config masterHistoryType
+        const masterHistoryType = 'browser';
+        const routeProps = route.microAppProps || {};
+        const normalizedRouteProps = JSON.stringify(routeProps).replace(
+          /"/g,
+          "'",
+        );
+        route.file = `(async () => {
+          const { getMicroAppRouteComponent } = await import('@@/plugin-qiankun-master/getMicroAppRouteComponent');
+          return getMicroAppRouteComponent({ appName: '${appName}', base: '${base}', masterHistoryType: '${masterHistoryType}', routeProps: ${normalizedRouteProps} })
+        })()`;
+      }
+    });
+    return memo;
+  });
 
   // state model for slave app
   api.addRuntimePluginKey(() => [MODEL_EXPORT_NAME]);
@@ -112,7 +135,7 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
             .replace(
               '__USE_MODEL__',
               api.isPluginEnable('model')
-                ? `import { useModel } from '@@/plugin/model'`
+                ? `import { useModel } from '@@/plugin-model'`
                 : `const useModel = null;`,
             )
             .replace(

@@ -23,6 +23,7 @@ export default (api: IApi) => {
       path: 'umi.ts',
       tplPath: join(TEMPLATES_DIR, 'umi.tpl'),
       context: {
+        mountElementId: api.config.mountElementId,
         rendererPath: await api.applyPlugins({
           key: 'modifyRendererPath',
           initialValue: '@umijs/renderer-react',
@@ -74,7 +75,7 @@ export default (api: IApi) => {
     const prefix = hasSrc ? '../../../src/pages/' : '../../pages/';
     api.writeTmpFile({
       noPluginDir: true,
-      path: 'core/route.ts',
+      path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
         routes: JSON.stringify(routes),
