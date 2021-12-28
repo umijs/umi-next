@@ -176,7 +176,7 @@ export class Config {
 
     return {
       config,
-      files,
+      files: lodash.uniq(files),
     };
   }
 
