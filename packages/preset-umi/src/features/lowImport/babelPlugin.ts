@@ -8,6 +8,7 @@ import {
   addNamespace,
 } from '@umijs/bundler-utils/compiled/babel/helper-module-imports';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
+import { basename, extname } from 'path';
 import { IOpts } from './lowImport';
 
 interface IPluginOpts {
@@ -52,9 +53,8 @@ export default function () {
         // import css
         if (name === 'styles' && state.opts.css) {
           const { filename } = state.file.opts;
-          const cssFilename = filename
-            .substring(filename.lastIndexOf('/') + 1)
-            .replace(/\.\w+$/, '.' + state.opts.css);
+          const cssFilename =
+            basename(filename, extname(filename)) + '.' + state.opts.css;
           path.replaceWith(
             addDefault(path, './' + cssFilename, { nameHint: name }),
           );

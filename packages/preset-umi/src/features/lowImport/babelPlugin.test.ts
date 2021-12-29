@@ -10,7 +10,6 @@ interface IOpts {
 function doTransform(opts: IOpts): string {
   return transform(opts.code, {
     filename: opts.filename || 'foo.js',
-    presets: ['@babel/preset-react'],
     plugins: [
       [
         require.resolve('./babelPlugin.ts'),
