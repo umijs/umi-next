@@ -1,7 +1,7 @@
 // Inspired by
 // - https://github.com/google/zx
 // - https://github.com/antfu/unplugin-auto-import
-import { writeFileSync } from 'fs';
+import { readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
 import babelPlugin from './babelPlugin';
@@ -82,6 +82,10 @@ ${dts.join('\n')}
 export {}
     `.trim() + `\n`;
     writeFileSync(join(api.paths.cwd, 'lowImport.d.ts'), content, 'utf-8');
+
+    console.log(123, api.paths);
+    const files = readdirSync(join(api.paths.absSrcPath, 'components'));
+    console.log(files);
   });
 
   api.addBeforeBabelPresets(() => {
