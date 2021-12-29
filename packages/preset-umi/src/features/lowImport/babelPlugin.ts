@@ -12,6 +12,7 @@ import { IOpts } from './lowImport';
 
 interface IPluginOpts {
   opts: IOpts;
+  css: string;
 }
 
 export default function () {
@@ -19,7 +20,7 @@ export default function () {
     visitor: {
       Identifier(
         path: Babel.NodePath<t.Identifier>,
-        state: { opts: IPluginOpts },
+        state: { opts: IPluginOpts; file: any },
       ) {
         const { name } = path.node;
         if (path.scope.hasBinding(path.node.name)) {
@@ -47,6 +48,12 @@ export default function () {
           path.replaceWith(
             addNamespace(path, state.opts.opts.namespaceToLib[name]),
           );
+        }
+        // import css
+        if (name === 'styles' && state.opts.css) {
+          const { filename } = state.file.opts;
+          const cssFilename = filename.replace(/\.\w+$/, '.' + state.opts.css);
+          path.replaceWith(addDefault(path, cssFilename, { nameHint: name }));
         }
       },
       MemberExpression(
