@@ -52,8 +52,12 @@ export default function () {
         // import css
         if (name === 'styles' && state.opts.css) {
           const { filename } = state.file.opts;
-          const cssFilename = filename.replace(/\.\w+$/, '.' + state.opts.css);
-          path.replaceWith(addDefault(path, cssFilename, { nameHint: name }));
+          const cssFilename = filename
+            .substring(filename.lastIndexOf('/') + 1)
+            .replace(/\.\w+$/, '.' + state.opts.css);
+          path.replaceWith(
+            addDefault(path, './' + cssFilename, { nameHint: name }),
+          );
         }
       },
       MemberExpression(
