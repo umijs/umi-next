@@ -63,7 +63,7 @@ export class MFSU {
   }
 
   asyncImport(content: string) {
-    return `;(async () => await import('${content}'))();`;
+    return `(async () => await import('${content}'))();`;
   }
 
   async setWebpackConfig(opts: {
