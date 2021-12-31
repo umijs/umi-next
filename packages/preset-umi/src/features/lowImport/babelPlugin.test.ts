@@ -5,6 +5,7 @@ interface IOpts {
   filename?: string;
   opts?: any;
   css?: string;
+  umiImportItems?: string[];
 }
 
 function doTransform(opts: IOpts): string {
@@ -13,7 +14,11 @@ function doTransform(opts: IOpts): string {
     plugins: [
       [
         require.resolve('./babelPlugin.ts'),
-        { opts: opts.opts.opts, css: opts.css || 'less' },
+        {
+          opts: opts.opts?.opts,
+          css: opts.css || 'less',
+          umiImportItems: opts.umiImportItems,
+        },
       ],
     ],
   })!.code as string;
@@ -123,4 +128,16 @@ test('import styles css', () => {
       css: 'css',
     }),
   ).toEqual(`import _styles from "./index.css";\n_styles.btn;`);
+});
+
+test('import umi', () => {
+  expect(
+    doTransform({
+      code: `Link`,
+      opts: {
+        opts: {},
+      },
+      umiImportItems: ['Link'],
+    }),
+  ).toEqual(`import { Link as _Link } from "umi";\n_Link;`);
 });

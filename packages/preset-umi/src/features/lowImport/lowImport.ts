@@ -26,6 +26,29 @@ export interface IOpts {
   namespaceToLib: Record<string, string>;
 }
 
+const umiImportItems = [
+  'createSearchParams',
+  'Link',
+  'matchPath',
+  'matchRoutes',
+  'NavLink',
+  'Outlet',
+  'renderClient',
+  'useAppData',
+  'useLocation',
+  'useMatch',
+  'useNavigate',
+  'useOutlet',
+  'useParams',
+  'useResolvedPath',
+  'useRouteData',
+  'useRoutes',
+  'useSearchParams',
+  // TODO: 这两个似乎从 umi 引入不了
+  //'ApplyPluginsType',
+  //'PluginManager',
+];
+
 export default (api: IApi) => {
   api.describe({
     key: 'lowImport',
@@ -74,6 +97,12 @@ export default (api: IApi) => {
           .join('\n');
       }
     });
+
+    // umi dts
+    const umiDts = umiImportItems
+      .map((item) => `const ${item}: typeof import('umi')['${item}']`)
+      .join(';\n');
+
     // TODO: styles 的类型提示
     const content =
       `
@@ -81,6 +110,7 @@ export default (api: IApi) => {
 declare global {
 ${dts.join('\n')}
 const styles: any;
+${umiDts}
 }
 export {}
     `.trim() + `\n`;
@@ -92,7 +122,7 @@ export {}
     const css = api.config.lowImport?.css || 'less';
     return [
       {
-        plugins: [[babelPlugin, { opts, css }]],
+        plugins: [[babelPlugin, { opts, css, umiImportItems }]],
       },
     ];
   });

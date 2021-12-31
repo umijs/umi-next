@@ -14,6 +14,7 @@ import { IOpts } from './lowImport';
 interface IPluginOpts {
   opts: IOpts;
   css: string;
+  umiImportItems: string[];
 }
 
 export default function () {
@@ -72,6 +73,11 @@ export default function () {
           path.replaceWith(
             addDefault(path, './' + cssFilename, { nameHint: name }),
           );
+        }
+
+        // import umi
+        if (state.opts.umiImportItems?.includes(name)) {
+          path.replaceWith(addNamed(path, name, 'umi'));
         }
       },
       MemberExpression(
