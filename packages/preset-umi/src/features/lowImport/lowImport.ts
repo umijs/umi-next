@@ -2,7 +2,7 @@
 // - https://github.com/google/zx
 // - https://github.com/antfu/unplugin-auto-import
 import { readdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { basename, extname, join } from 'path';
 import { IApi } from '../../types';
 import babelPlugin from './babelPlugin';
 
@@ -74,6 +74,20 @@ export default (api: IApi) => {
           .join('\n');
       }
     });
+
+    // components dts TODO: 修复 eslint 报错
+    const componentsDts = readdirSync(join(api.paths.absSrcPath, 'components'))
+      .map((item) => basename(item, extname(item)))
+      .map(
+        (item) =>
+          `  ${item}: typeof import('${join(
+            api.paths.absSrcPath,
+            'components',
+            item,
+          )}')`,
+      )
+      .join(',\n');
+
     // TODO: styles 的类型提示
     const content =
       `
@@ -81,22 +95,27 @@ export default (api: IApi) => {
 declare global {
 ${dts.join('\n')}
 const styles: any;
+const components: {
+${componentsDts}
+};
 }
 export {}
     `.trim() + `\n`;
     writeFileSync(join(api.paths.cwd, 'lowImport.d.ts'), content, 'utf-8');
-
-    console.log(123, api.paths);
-    const files = readdirSync(join(api.paths.absSrcPath, 'components'));
-    console.log(files);
   });
 
   api.addBeforeBabelPresets(() => {
     const opts = normalizeLibs(api.appData.lowImport);
     const css = api.config.lowImport?.css || 'less';
+    const components = new Map<string, string>();
+    readdirSync(join(api.paths.absSrcPath, 'components'))
+      .map((item) => basename(item, extname(item)))
+      .forEach((item) => {
+        components.set(item, join(api.paths.absSrcPath, 'components', item));
+      });
     return [
       {
-        plugins: [[babelPlugin, { opts, css }]],
+        plugins: [[babelPlugin, { opts, css, components }]],
       },
     ];
   });

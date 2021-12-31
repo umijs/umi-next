@@ -19,6 +19,8 @@ export default function HomePage() {
       <h2>index page</h2>
       <Button type="primary">Button</Button>
       <Input />
+      <components.MyComponent />
+      <components.MyComponent2 />
       <DatePicker />
       <div>{intl.formatMessage({ id: 'HELLO' })}</div>
     </div>

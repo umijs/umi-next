@@ -5,6 +5,7 @@ interface IOpts {
   filename?: string;
   opts?: any;
   css?: string;
+  components?: Map<string, string>;
 }
 
 function doTransform(opts: IOpts): string {
@@ -13,7 +14,11 @@ function doTransform(opts: IOpts): string {
     plugins: [
       [
         require.resolve('./babelPlugin.ts'),
-        { opts: opts.opts.opts, css: opts.css || 'less' },
+        {
+          opts: opts.opts.opts,
+          css: opts.css || 'less',
+          components: opts.components,
+        },
       ],
     ],
   })!.code as string;
@@ -123,4 +128,16 @@ test('import styles css', () => {
       css: 'css',
     }),
   ).toEqual(`import _styles from "./index.css";\n_styles.btn;`);
+});
+
+test('import components', () => {
+  const components = new Map<string, string>();
+  components.set('MyComponent', './MyComponent');
+  expect(
+    doTransform({
+      code: 'components.MyComponent',
+      opts: { opts: { withObjs: {} } },
+      components,
+    }),
+  ).toEqual(`import _MyComponent from "./MyComponent";\n_MyComponent;`);
 });
