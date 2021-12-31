@@ -6,7 +6,6 @@ import { useIntl } from '@@/plugin-locale';
 import { useModel } from '@@/plugin-model';
 // @ts-ignore
 import { Button, DatePicker, Input } from 'antd';
-import React from 'react';
 
 export default function HomePage() {
   const { initialState } = useModel('@@initialState');

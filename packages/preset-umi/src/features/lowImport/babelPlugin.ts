@@ -15,6 +15,7 @@ interface IPluginOpts {
   opts: IOpts;
   css: string;
   umiImportItems: string[];
+  reactImportItems: string[];
 }
 
 export default function () {
@@ -78,6 +79,14 @@ export default function () {
         // import umi
         if (state.opts.umiImportItems?.includes(name)) {
           path.replaceWith(addNamed(path, name, 'umi'));
+        }
+
+        // import React
+        if (name === 'React') {
+          path.replaceWith(addDefault(path, 'react', { nameHint: name }));
+        }
+        if (state.opts.reactImportItems?.includes(name)) {
+          path.replaceWith(addNamed(path, name, 'react'));
         }
       },
       MemberExpression(

@@ -6,6 +6,7 @@ interface IOpts {
   opts?: any;
   css?: string;
   umiImportItems?: string[];
+  reactImportItems?: string[];
 }
 
 function doTransform(opts: IOpts): string {
@@ -18,6 +19,7 @@ function doTransform(opts: IOpts): string {
           opts: opts.opts?.opts,
           css: opts.css || 'less',
           umiImportItems: opts.umiImportItems,
+          reactImportItems: opts.reactImportItems,
         },
       ],
     ],
@@ -140,4 +142,16 @@ test('import umi', () => {
       umiImportItems: ['Link'],
     }),
   ).toEqual(`import { Link as _Link } from "umi";\n_Link;`);
+});
+
+test('import React', () => {
+  expect(
+    doTransform({
+      code: `React;useState();`,
+      opts: { opts: {} },
+      reactImportItems: ['useState'],
+    }),
+  ).toEqual(
+    `import { useState as _useState } from "react";\nimport _React from "react";\n_React;\n\n_useState();`,
+  );
 });
