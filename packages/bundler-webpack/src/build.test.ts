@@ -64,6 +64,7 @@ const expects: Record<string, Function> = {
   },
   'node-polyfill'({ files }: IOpts) {
     expect(files['index.js']).toContain(`exports.join = function() {`);
+    expect(files['index.js']).toContain(`__webpack_require__.g.foo`);
   },
   'postcss-autoprefixer'({ files }: IOpts) {
     expect(files['index.css']).toContain(
@@ -92,8 +93,8 @@ const expects: Record<string, Function> = {
     expect(files['index.js']).toContain(`var foo = 'foo';`);
   },
   swc({ files }: IOpts) {
-    expect(files['index.js']).toContain(`var a = 'react';`);
-    expect(files['index.js']).toContain(`var myIdentity = identity;`);
+    expect(files['index.js']).toContain(`const a = 'react';`);
+    expect(files['index.js']).toContain(`const myIdentity = identity;`);
   },
   theme({ files }: IOpts) {
     expect(files['index.css']).toContain(`color: green;`);

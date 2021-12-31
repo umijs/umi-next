@@ -32,6 +32,22 @@ test('import', () => {
   ).toEqual(`import { Button as _Button } from "antd";\n_Button;`);
 });
 
+// FIXME: one import for one identifier
+test('multiple imports', () => {
+  expect(
+    doTransform({
+      code: `Button;Button;`,
+      opts: {
+        opts: {
+          identifierToLib: { Button: 'antd' },
+        },
+      },
+    }),
+  ).toEqual(
+    `import { Button as _Button2 } from "antd";\nimport { Button as _Button } from "antd";\n_Button;\n_Button2;`,
+  );
+});
+
 test('import default', () => {
   expect(
     doTransform({
@@ -58,10 +74,36 @@ test('import with objs', () => {
   ).toEqual(`import { QrCode as _QrCode } from "techui";\n_QrCode;`);
 });
 
+test('import do not support member expression', () => {
+  expect(
+    doTransform({
+      code: `a.Button;`,
+      opts: {
+        opts: {
+          identifierToLib: { Button: 'antd' },
+        },
+      },
+    }),
+  ).toEqual(`a.Button;`);
+});
+
+test('import do not support object property', () => {
+  expect(
+    doTransform({
+      code: `const a = { Button: 1 };`,
+      opts: {
+        opts: {
+          identifierToLib: { Button: 'antd' },
+        },
+      },
+    }),
+  ).toEqual(`const a = {\n  Button: 1\n};`);
+});
+
 test('import styles', () => {
   expect(
     doTransform({
-      code: `styles.btn`,
+      code: `styles.btn;`,
       opts: {
         opts: { withObjs: {} },
       },

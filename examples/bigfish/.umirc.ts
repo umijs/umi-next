@@ -46,7 +46,7 @@ export default {
   layout: {
     name: 'Ant Design Pro',
   },
-  mfsu: { esbuild: true },
+  mfsu: {},
   request: {},
   locale: {
     title: true,
