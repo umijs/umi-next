@@ -14,6 +14,7 @@ import { IOpts } from './lowImport';
 interface IPluginOpts {
   opts: IOpts;
   css: string;
+  components: Map<string, string>;
 }
 
 export default function () {
@@ -105,6 +106,16 @@ export default function () {
               property.name,
               state.opts.opts.withObjs[object.name].importFrom,
             ),
+          );
+        }
+        if (
+          object.name === 'components' &&
+          state.opts.components?.has(property.name)
+        ) {
+          path.replaceWith(
+            addDefault(path, state.opts.components?.get(property.name), {
+              nameHint: property.name,
+            }),
           );
         }
       },
