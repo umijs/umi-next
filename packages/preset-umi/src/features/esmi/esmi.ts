@@ -82,13 +82,17 @@ function generatePkgData(api: IApi): IPkgData {
           name: 'default',
           path: 'es/index.js',
           from: '',
-          deps: Object.entries(api.appData.deps!).map(([name, version]) => ({
-            name,
-            version,
-            usedMap: {
-              [name]: { usedNamespace: true, usedNames: [] },
-            },
-          })),
+          deps: Object.entries(api.appData.deps!)
+            // only compile entry imports
+            .filter(([_, { matches }]) => matches.length)
+            // convert to esmi config
+            .map(([name, { version }]) => ({
+              name,
+              version,
+              usedMap: {
+                [name]: { usedNamespace: true, usedNames: [] },
+              },
+            })),
         },
       ],
       assets: [],
@@ -116,8 +120,12 @@ export default (api: IApi) => {
     delete api.appData.deps['umi'];
 
     // FIXME: force include react & react-dom
-    api.appData.deps['react'] = api.appData.react.version;
-    api.appData.deps['react-dom'] = api.appData.react.version;
+    api.appData.deps['react'].version = api.appData.react.version;
+    api.appData.deps['react-dom'] = {
+      version: api.appData.react.version,
+      matches: ['react-dom'],
+      subpaths: [],
+    };
 
     const data = generatePkgData(api);
     const deps = data.pkgInfo.exports.reduce(

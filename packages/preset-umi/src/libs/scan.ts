@@ -1,10 +1,11 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
-import { pkgUp } from '@umijs/utils';
+import { pkgUp, winPath } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
 import { dirname, extname } from 'path';
+import type { Service } from '@umijs/core';
 
 enum ImportType {
   import = 'import',
@@ -73,10 +74,11 @@ export async function scan(opts: {
   entry: string;
   externals: any;
   resolver: any;
-}): Promise<Record<string, string>> {
+}) {
   const cache = new Map<string, any>();
   const queueDeps: string[] = [opts.entry];
-  const ret: Record<string, string> = {};
+  const ret: Service['appData']['deps'] = {};
+
   while (queueDeps.length) {
     const depPath = queueDeps.shift();
     if (cache.has(depPath!)) continue;
@@ -86,7 +88,9 @@ export async function scan(opts: {
     cache.set(depPath!, deps);
 
     for (const dep of deps) {
-      const resolved = await opts.resolver.resolve(dirname(depPath!), dep.url);
+      const resolved = winPath(
+        await opts.resolver.resolve(dirname(depPath!), dep.url),
+      );
       if (
         resolved.includes('node_modules') ||
         resolved.includes('umi-next/packages')
@@ -94,7 +98,45 @@ export async function scan(opts: {
         const pkgPath = pkgUp.sync({ cwd: resolved });
         assert(pkgPath, `package.json for found for ${resolved}`);
         const pkg = require(pkgPath);
-        ret[pkg.name] = pkg.version;
+        const entryResolved = await opts.resolver
+          .resolve(dirname(pkgPath), pkg.name)
+          // alias may resolve error (eg: dva from @umijs/plugins)
+          // fallback to null for mark it as subpath usage
+          .catch(() => null);
+        const isSubpath = entryResolved !== resolved;
+
+        ret[pkg.name] = {
+          version: pkg.version,
+          // collect entry matches
+          matches: [
+            // avoid duplicate
+            ...new Set([
+              ...(ret[pkg.name]?.matches || []),
+              // only collect non-subpath matches
+              ...(!isSubpath
+                ? [
+                    // match origin path from source code
+                    dep.url,
+                    // match resolved absolute path
+                    resolved,
+                    // match no ext name path
+                    resolved.replace(/\/\.[^\.]+$/, ''),
+                    // match parent dir for index module
+                    // cannot to it, will cause exclude rule broken
+                    // ...(/\/index[^\/]+$/.test(resolved) ? [dirname(resolved)] : []),
+                  ]
+                : []),
+            ]),
+          ],
+          // collect subpath matches
+          subpaths: [
+            // avoid duplicate
+            ...new Set([
+              ...(ret[pkg.name]?.subpaths || []),
+              ...(isSubpath ? [dep.url] : []),
+            ]),
+          ],
+        };
       } else if (
         ['.ts', '.tsx', '.js', '.jsx', '.mjs'].includes(extname(resolved))
       ) {
