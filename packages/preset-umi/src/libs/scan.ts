@@ -1,11 +1,11 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
+import type { Service } from '@umijs/core';
 import { pkgUp, winPath } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
 import { dirname, extname } from 'path';
-import type { Service } from '@umijs/core';
 
 enum ImportType {
   import = 'import',
@@ -122,8 +122,9 @@ export async function scan(opts: {
                     // match no ext name path
                     resolved.replace(/\/\.[^\.]+$/, ''),
                     // match parent dir for index module
-                    // cannot to it, will cause exclude rule broken
-                    // ...(/\/index[^\/]+$/.test(resolved) ? [dirname(resolved)] : []),
+                    ...(/\/index[^\/]+$/.test(resolved)
+                      ? [dirname(resolved)]
+                      : []),
                   ]
                 : []),
             ]),
