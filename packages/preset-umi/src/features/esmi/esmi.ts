@@ -1,12 +1,12 @@
 import { parse as parseImports } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import MagicString from 'magic-string';
 import { join } from 'path';
+import type { Plugin, ResolvedConfig } from 'vite';
 import { createResolver, scan } from '../../libs/scan';
-import Service, { IImportmapData, IPkgData } from './Service';
+import type { IApi } from '../../types';
 import requireToImport from './esbuildPlugins/requireToImport';
 import topLevelExternal from './esbuildPlugins/topLevelExternal';
-import type { Plugin, ResolvedConfig } from 'vite';
-import type { IApi } from '../../types';
+import Service, { IImportmapData, IPkgData } from './Service';
 
 let importmap: IImportmapData['importMap'] = { imports: {}, scopes: {} };
 let importmatches: Record<string, string> = {};
