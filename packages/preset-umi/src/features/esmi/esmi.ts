@@ -50,6 +50,7 @@ function esmi(opts: {
       config.optimizeDeps.esbuildOptions!.plugins = [
         // transform require call to import
         requireToImport({ exclude: config.optimizeDeps.exclude }),
+        // make sure vite only external top-level npm imports, and resolve sub-path npm imports
         topLevelExternal({
           exclude: config.optimizeDeps.exclude,
           resolver: opts.resolver,
@@ -169,7 +170,6 @@ export default (api: IApi) => {
 
     // update importmap from esm if there has new import
     if (hasNewDep) {
-      // TODO: add local cache and restore
       importmap = (await service.getImportmap(data))?.importMap!;
 
       // update matches map to dep name

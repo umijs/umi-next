@@ -1,7 +1,7 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
 import type { Service } from '@umijs/core';
-import { pkgUp, winPath } from '@umijs/utils';
+import { pkgUp } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
@@ -88,9 +88,7 @@ export async function scan(opts: {
     cache.set(depPath!, deps);
 
     for (const dep of deps) {
-      const resolved = winPath(
-        await opts.resolver.resolve(dirname(depPath!), dep.url),
-      );
+      const resolved = await opts.resolver.resolve(dirname(depPath!), dep.url);
       if (
         resolved.includes('node_modules') ||
         resolved.includes('umi-next/packages')
