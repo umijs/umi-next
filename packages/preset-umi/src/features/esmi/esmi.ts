@@ -1,36 +1,60 @@
 import { parse as parseImports } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import MagicString from 'magic-string';
 import { join } from 'path';
-import type { Plugin, ResolvedConfig } from 'vite';
 import { createResolver, scan } from '../../libs/scan';
-import type { IApi } from '../../types';
 import Service, { IImportmapData, IPkgData } from './Service';
+import requireToImport from './esbuildPlugins/requireToImport';
+import topLevelExternal from './esbuildPlugins/topLevelExternal';
+import type { Plugin, ResolvedConfig } from 'vite';
+import type { IApi } from '../../types';
 
 let importmap: IImportmapData['importMap'] = { imports: {}, scopes: {} };
+let importmatches: Record<string, string> = {};
 
 /**
  * esmi vite plugin
  */
-function esmi(opts: { handleHotUpdate?: Plugin['handleHotUpdate'] }): Plugin {
+function esmi(opts: {
+  handleHotUpdate?: Plugin['handleHotUpdate'];
+  resolver: ReturnType<typeof createResolver>;
+}): Plugin {
   return {
     name: 'preset-umi:esmi',
 
     configResolved(config: ResolvedConfig) {
       const { include, exclude } = config.optimizeDeps;
 
+      config.optimizeDeps.include ??= [];
+
       // do not pre-compile deps which will be loaded by importmap (for top-level deps)
       if (include?.length) {
         config.optimizeDeps.include = include!.filter(
-          (item) => !importmap.imports[item],
+          (item) => !importmatches[item] && !importmap.imports[item],
         );
       }
 
-      // exclude pre-compile deps which within importmap by default (for nested deps)
-      config.optimizeDeps.exclude = (exclude || []).concat(
-        Object.keys(importmap.imports).filter((item) =>
-          exclude?.includes(item),
-        ),
-      );
+      // exclude pre-compile deps
+      config.optimizeDeps.exclude = [
+        ...new Set([
+          // deps from user config
+          ...(exclude || []),
+          // deps from local scan
+          ...Object.keys(importmatches),
+          // deps from esmi analyze result
+          ...Object.keys(importmap.imports),
+        ]),
+      ];
+
+      // apply esbuild plugins
+      config.optimizeDeps.esbuildOptions ??= {};
+      config.optimizeDeps.esbuildOptions!.plugins = [
+        // transform require call to import
+        requireToImport({ exclude: config.optimizeDeps.exclude }),
+        topLevelExternal({
+          exclude: config.optimizeDeps.exclude,
+          resolver: opts.resolver,
+        }),
+      ].concat(config.optimizeDeps.esbuildOptions!.plugins || []);
     },
 
     transform(source) {
@@ -44,9 +68,18 @@ function esmi(opts: { handleHotUpdate?: Plugin['handleHotUpdate'] }): Plugin {
           const { n: specifier, s: start, e: end } = item;
 
           // replace npm package to CDN url for matched imports
-          if (specifier && importmap.imports[specifier]) {
-            s ??= new MagicString(source);
-            s.overwrite(start, end, importmap.imports[specifier]);
+          if (specifier) {
+            const replacement =
+              // search from local scan matches first (for alias)
+              (importmatches[specifier] &&
+                importmap.imports[importmatches[specifier]]) ||
+              // search from esmi analyze result
+              importmap.imports[specifier];
+
+            if (replacement) {
+              s ??= new MagicString(source);
+              s.overwrite(start, end, replacement);
+            }
           }
         });
 
@@ -139,6 +172,21 @@ export default (api: IApi) => {
       // TODO: add local cache and restore
       importmap = (await service.getImportmap(data))?.importMap!;
 
+      // update matches map to dep name
+      importmatches = Object.keys(api.appData.deps).reduce<
+        Record<string, string>
+      >((r, dep) => {
+        // filter subpath imports
+        if (!api.appData.deps![dep].subpaths.length) {
+          // map all matches to dep name
+          api.appData.deps![dep].matches.forEach((m) => {
+            r[m] = dep;
+          });
+        }
+
+        return r;
+      }, {});
+
       // because we will replaced package name to CDN url in vite plugin
       // so we must append scope rules for the CDN url like the import specifier
       // example:
@@ -229,6 +277,7 @@ export default (api: IApi) => {
 
             // TODO: refresh page when importmap changed
           },
+          resolver,
         }),
       );
 
