@@ -60,7 +60,9 @@ export async function getRouteComponents(opts: {
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
-      if (!route.file) return `// ${key}: no file to import`;
+      if (!route.file) {
+        return `'${key}': () => import('./EmptyRoute'),`;
+      }
       // e.g.
       // component: () => <h1>foo</h1>
       // component: (() => () => <h1>foo</h1>)()
