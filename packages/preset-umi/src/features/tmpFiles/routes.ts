@@ -42,6 +42,7 @@ export async function getRoutes(opts: { api: IApi }) {
         parentId: undefined,
       },
       routes,
+      test: layout.test,
     });
   }
 
