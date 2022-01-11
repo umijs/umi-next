@@ -84,7 +84,6 @@ importers:
       '@ant-design/pro-form': ^1.52.5
       '@ant-design/pro-layout': 6.28.1
       '@ant-design/pro-table': ^2.61.9
-      '@antv/g2plot': ^2.4.5
       '@antv/l7-react': ^2.3.9
       '@umijs/pro': 4.0.0-beta.15
       ahooks: ^3.1.4
@@ -105,7 +104,6 @@ importers:
       '@ant-design/pro-form': 1.52.5_c46ab08eacfe6b80ae231603f582d79d
       '@ant-design/pro-layout': 6.28.1_c46ab08eacfe6b80ae231603f582d79d
       '@ant-design/pro-table': 2.61.9_c46ab08eacfe6b80ae231603f582d79d
-      '@antv/g2plot': 2.4.5
       '@antv/l7-react': 2.3.9_react-dom@17.0.2+react@17.0.2
       '@umijs/pro': link:../../packages/pro
       ahooks: 3.1.4_react@17.0.2
