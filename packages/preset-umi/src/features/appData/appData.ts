@@ -35,6 +35,7 @@ export default (api: IApi) => {
     stage: Number.NEGATIVE_INFINITY,
   });
 
+  // used in esmi and vite
   api.register({
     key: 'updateAppDataDeps',
     async fn() {
