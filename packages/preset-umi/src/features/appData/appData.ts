@@ -3,6 +3,7 @@ import { getNpmClient } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { expandJSPaths } from '../../commands/dev/watch';
+import { createResolver, scan } from '../../libs/scan';
 import { IApi } from '../../types';
 import { getRoutes } from '../tmpFiles/routes';
 
@@ -32,6 +33,32 @@ export default (api: IApi) => {
       }
     },
     stage: Number.NEGATIVE_INFINITY,
+  });
+
+  api.register({
+    key: 'updateAppDataDeps',
+    async fn() {
+      const resolver = createResolver({
+        alias: api.config.alias,
+      });
+
+      api.appData.deps = await scan({
+        entry: join(api.paths.absTmpPath, 'umi.ts'),
+        externals: api.config.externals,
+        resolver,
+      });
+
+      // skip umi by default
+      delete api.appData.deps['umi'];
+
+      // FIXME: force include react & react-dom
+      api.appData.deps['react'].version = api.appData.react.version;
+      api.appData.deps['react-dom'] = {
+        version: api.appData.react.version,
+        matches: ['react-dom'],
+        subpaths: [],
+      };
+    },
   });
 
   async function getAppJsInfo() {
