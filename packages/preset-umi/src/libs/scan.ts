@@ -97,7 +97,7 @@ export async function scan(opts: {
         assert(pkgPath, `package.json for found for ${resolved}`);
         const pkg = require(pkgPath);
         const entryResolved = await opts.resolver
-          .resolve(dirname(pkgPath), pkg.name)
+          .resolve(dirname(pkgPath), '.')
           // alias may resolve error (eg: dva from @umijs/plugins)
           // fallback to null for mark it as subpath usage
           .catch(() => null);
