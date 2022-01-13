@@ -1,5 +1,6 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
+import { isDepPath } from '@umijs/bundler-utils';
 import type { Service } from '@umijs/core';
 import { pkgUp } from '@umijs/utils';
 import assert from 'assert';
@@ -89,10 +90,7 @@ export async function scan(opts: {
 
     for (const dep of deps) {
       const resolved = await opts.resolver.resolve(dirname(depPath!), dep.url);
-      if (
-        resolved.includes('node_modules') ||
-        resolved.includes('umi-next/packages')
-      ) {
+      if (isDepPath(resolved)) {
         const pkgPath = pkgUp.sync({ cwd: resolved });
         assert(pkgPath, `package.json for found for ${resolved}`);
         const pkg = require(pkgPath);
