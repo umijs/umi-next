@@ -1,6 +1,6 @@
+import { isDepPath } from '@umijs/bundler-utils';
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
-import { isDepPath } from '@umijs/bundler-utils';
 import type { Service } from '@umijs/core';
 import { pkgUp } from '@umijs/utils';
 import assert from 'assert';
@@ -28,17 +28,25 @@ export async function scanContent(opts: {
 }): Promise<{ deps: Dep[] }> {
   await init;
   const [imports] = parse(opts.content);
-  const deps = imports.map((imp) => {
-    let importType = ImportType.import;
-    if (imp.d > -1) importType = ImportType.dynamicImport;
-    if (opts.content.slice(imp.ss, imp.se).startsWith('export ')) {
-      importType = ImportType.export;
-    }
-    return {
-      url: imp.n as string,
-      importType,
-    };
-  });
+  const deps = imports
+    .filter(
+      (imp) =>
+        // exclude type import
+        !new RegExp(`^import type|({|,)\\s*type ${imp.n}`).test(
+          opts.content.slice(imp.ss, imp.se),
+        ),
+    )
+    .map((imp) => {
+      let importType = ImportType.import;
+      if (imp.d > -1) importType = ImportType.dynamicImport;
+      if (opts.content.slice(imp.ss, imp.se).startsWith('export ')) {
+        importType = ImportType.export;
+      }
+      return {
+        url: imp.n as string,
+        importType,
+      };
+    });
   return { deps };
 }
 
