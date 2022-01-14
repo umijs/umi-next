@@ -37,7 +37,7 @@ export async function scanContent(opts: {
         return (
           // skip dynamicImport
           imp.d > -1 ||
-          // import a from or import a
+          // import a from or import a,
           /^import\s+[a-zA-Z_$][\w_$]*(\s+from|\s*,)/.test(stmt) ||
           // export a from or export *
           /^export\s+([a-zA-Z_$][\w_$]*\s+from|\*)/.test(stmt) ||
