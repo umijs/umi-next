@@ -30,11 +30,23 @@ export async function scanContent(opts: {
   const [imports] = parse(opts.content);
   const deps = imports
     .filter(
-      (imp) =>
-        // exclude type import
-        !new RegExp(`^import type|({|,)\\s*type ${imp.n}`).test(
-          opts.content.slice(imp.ss, imp.se),
-        ),
+      // exclude all type-only deps
+      (imp) => {
+        const stmt = opts.content.slice(imp.ss, imp.se);
+
+        return (
+          // skip dynamicImport
+          imp.d > -1 ||
+          // import a from or import a
+          /^import\s+[a-zA-Z_$][\w_$]*(\s+from|\s*,)/.test(stmt) ||
+          // export a from or export *
+          /^export\s+([a-zA-Z_$][\w_$]*\s+from|\*)/.test(stmt) ||
+          // { a, type b } or { type a, b }
+          /(?<!type\s+){(\s*(?!type)[a-zA-Z_$]|.*,\s*(?!type)[a-zA-Z_$])/.test(
+            stmt,
+          )
+        );
+      },
     )
     .map((imp) => {
       let importType = ImportType.import;
