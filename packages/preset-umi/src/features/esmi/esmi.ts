@@ -149,6 +149,9 @@ export default (api: IApi) => {
       type: api.ApplyPluginsType.event,
     });
 
+    // skip umi by default
+    delete api.appData.deps!['umi'];
+
     const data = generatePkgData(api);
     const deps = data.pkgInfo.exports.reduce(
       (r, exp) => r.concat(exp.deps.map((dep) => dep.name)),

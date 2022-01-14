@@ -51,9 +51,6 @@ export default (api: IApi) => {
         resolver,
       });
 
-      // skip umi by default
-      delete api.appData.deps['umi'];
-
       // FIXME: force include react & react-dom
       api.appData.deps['react'].version = api.appData.react.version;
       api.appData.deps['react-dom'] = {
