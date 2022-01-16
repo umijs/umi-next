@@ -27,7 +27,7 @@
     "@svgr/core": "6.0.0",
     "@umijs/bundler-utils": "4.0.0-beta.16",
     "@umijs/utils": "4.0.0-beta.16",
-    "@vitejs/plugin-legacy": "1.6.3",
+    "@vitejs/plugin-legacy": "1.6.4",
     "@vitejs/plugin-react": "1.1.0",
     "postcss-preset-env": "7.0.1",
     "rollup-plugin-copy": "3.4.0",
