@@ -24,7 +24,7 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@svgr/core": "6.0.0",
+    "@svgr/core": "6.1.2",
     "@umijs/bundler-utils": "4.0.0-beta.16",
     "@umijs/utils": "4.0.0-beta.16",
     "@vitejs/plugin-legacy": "1.6.3",
