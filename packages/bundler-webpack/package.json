@@ -39,7 +39,7 @@
     "@umijs/utils": "4.0.0-beta.16",
     "css-loader": "6.5.1",
     "es5-imcompatible-versions": "^0.1.73",
-    "jest-worker": "27.4.2",
+    "jest-worker": "27.4.5",
     "node-libs-browser": "2.2.1",
     "postcss": "^8.4.4",
     "postcss-preset-env": "7.0.1",
