@@ -176,6 +176,16 @@ importers:
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
       react-router-dom: 6.2.1_757a802188413a36d4f24237d13b8e90
 
+  examples/conventionRoutes:
+    specifiers:
+      '@umijs/pro': 4.0.0-beta.16
+      react: 16.14.0
+      react-dom: 16.14.0
+    dependencies:
+      '@umijs/pro': link:../../packages/pro
+      react: 16.14.0
+      react-dom: 16.14.0_react@16.14.0
+
   examples/libs:
     specifiers:
       '@codesandbox/sandpack-react': 0.9.10
