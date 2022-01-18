@@ -225,6 +225,17 @@ export default function EmptyRoute() {
           );
         }
       }
+      // plugins types.ts
+      exports.push('// plugins types.ts');
+
+      for (const plugin of plugins) {
+        let file: string;
+        if (!existsSync(join(api.paths.absTmpPath, plugin, 'types.d.ts'))) {
+          continue;
+        }
+        file = join(api.paths.absTmpPath, plugin, 'types.d');
+        exports.push(`export * from '${file}';`);
+      }
       api.writeTmpFile({
         noPluginDir: true,
         path: 'exports.ts',
