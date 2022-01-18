@@ -134,7 +134,6 @@ export function style({
               loader: inlineStyle ? 'text' : 'css',
             };
           } catch (error: any) {
-            console.log(outputFiles![0].text);
             return {
               errors: [
                 {
