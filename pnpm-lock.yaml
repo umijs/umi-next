@@ -176,7 +176,7 @@ importers:
       react-dom: 18.0.0-rc.0_react@18.0.0-rc.0
       react-router-dom: 6.2.1_757a802188413a36d4f24237d13b8e90
 
-  examples/conventionRoutes:
+  examples/convention-routes:
     specifiers:
       '@umijs/pro': 4.0.0-beta.16
       react: 16.14.0
