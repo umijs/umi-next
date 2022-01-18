@@ -1,7 +1,6 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
-import { winPath } from '@umijs/utils';
-import { dirname, extname } from 'path';
+import { extname } from 'path';
 
 export async function parseModule(opts: { content: string; path: string }) {
   let content = opts.content;
@@ -18,12 +17,10 @@ export async function parseModule(opts: { content: string; path: string }) {
 }
 
 export function isDepPath(path: string) {
-  const umiMonorepoPath = winPath(dirname(dirname(__dirname))).match(
-    /([^/]+\/packages)$/,
-  )?.[1];
+  const umiMonorepoPaths = ['umi/packages/', 'umi-next/packages/'];
 
   return (
     path.includes('node_modules') ||
-    (umiMonorepoPath && path.includes(umiMonorepoPath))
+    umiMonorepoPaths.some((p) => path.includes(p))
   );
 }
