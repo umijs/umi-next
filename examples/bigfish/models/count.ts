@@ -1,4 +1,7 @@
-export default {
+import { DvaModel } from 'umi';
+
+export type CountModelState = number;
+const CountModel: DvaModel<CountModelState> = {
   namespace: 'count',
   state: 0,
   reducers: {
@@ -12,3 +15,4 @@ export default {
     },
   },
 };
+export default CountModel;

@@ -1,20 +1,22 @@
 // @ts-ignore
-import { connect } from '@@/plugin-dva';
-// @ts-ignore
 import dayjs from 'moment';
-import React from 'react';
+import React, { FC } from 'react';
+import { connect, ConnectProps, CountModelState } from 'umi';
 
-function mapStateToProps(state: any) {
+function mapStateToProps(state: { count: CountModelState }) {
   return { count: state.count };
 }
-
-export default connect(mapStateToProps)(function HomePage(props: any) {
+interface HomePageProps extends ConnectProps {
+  count: CountModelState;
+}
+const HomePage: FC<HomePageProps> = ({ count, dispatch }) => {
   return (
     <div>
       <h2>dva</h2>
       <p>dayjs: {dayjs().format()}</p>
-      <p>count: {props.count}</p>
-      <button onClick={() => props.dispatch({ type: 'count/add' })}>+</button>
+      <p>count: {count}</p>
+      <button onClick={() => dispatch?.({ type: 'count/add' })}>+</button>
     </div>
   );
-});
+};
+export default connect(mapStateToProps)(HomePage);

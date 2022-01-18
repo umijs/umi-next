@@ -39,7 +39,9 @@ export default defineConfig({
   },
   initialState: {},
   access: {},
-  dva: {},
+  dva: {
+    enableModelsReExport: true,
+  },
   model: {},
   analytics: {
     baidu: 'test',
