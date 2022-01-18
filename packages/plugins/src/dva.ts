@@ -1,7 +1,7 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { join, relative } from 'path';
+import { extname, join, relative } from 'path';
 import { IApi } from 'umi';
-import { chalk } from 'umi/plugin-utils';
+import { chalk, winPath } from 'umi/plugin-utils';
 import { Model, ModelUtils } from './utils/modelUtils';
 import { withTmpPath } from './utils/withTmpPath';
 
@@ -13,6 +13,7 @@ export default (api: IApi) => {
       schema(Joi) {
         return Joi.object({
           extraModels: Joi.array().items(Joi.string()),
+          enableModelsReExport: Joi.boolean(),
         });
       },
     },
@@ -103,6 +104,79 @@ export function dataflowProvider(container, opts) {
       path: 'index.ts',
       content: `
 export { connect, useDispatch, useStore, useSelector } from 'dva';`,
+    });
+
+    // types.d.ts
+    api.writeTmpFile({
+      path: 'types.d.ts',
+      tpl: `
+export interface ConnectProps {
+      dispatch?: Dispatch;
+}
+type RequiredConnectProps = Required<ConnectProps>
+export type ConnectRC<
+      T = {},
+      > = React.ForwardRefRenderFunction<any, T & RequiredConnectProps>;
+interface Action<T = any> {
+      type: T
+}
+interface AnyAction extends Action {
+      // Allows any extra properties to be defined in an action.
+      [extraProps: string]: any
+}
+interface Dispatch<A extends Action = AnyAction> {
+      <T extends A>(action: T): T
+}
+interface EffectsCommandMap {
+      put: <A extends AnyAction>(action: A) => any,
+      call: Function,
+      select: Function,
+      take: Function,
+      cancel: Function,
+      [key: string]: any,
+}
+interface Action<T = any> {
+      type: T
+}
+export type Reducer<S = any, A extends Action = AnyAction> = (prevState: S, action: A) => S;
+export type Effect = (action: AnyAction, effects: EffectsCommandMap) => void;
+type EffectType = 'takeEvery' | 'takeLatest' | 'watcher' | 'throttle';
+type EffectWithType = [Effect, { type: EffectType }];
+export type Subscription = (api: SubscriptionAPI, done: Function) => void;
+
+export interface ReducersMapObject<T> {
+      [key: string]: Reducer<T>,
+}
+export interface EffectsMapObject {
+      [key: string]: Effect | EffectWithType,
+}
+export interface SubscriptionAPI {
+      dispatch: Dispatch<any>,
+}
+export interface SubscriptionsMapObject {
+      [key: string]: Subscription,
+}
+export interface DvaModel<T, E = EffectsMapObject, R = ReducersMapObject<T>> {
+      namespace: string,
+      state?: T,
+      reducers?: R,
+      effects?: E,
+      subscriptions?: SubscriptionsMapObject,
+}
+${
+  api.config.dva?.enableModelsReExport
+    ? models
+        .map((model: { file: string; namespace: string }) => {
+          const { file, namespace } = model;
+          // prettier-ignore
+          // export type { IndexModelState } from '/Users/xiaohuoni/next-alita-app/src/models/index';
+          return `export type { ${namespace.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())}ModelState } from '${winPath(file.replace(extname(file), ''))}';`;
+        })
+        .join('\r\n')
+    : ''
+}
+      `,
+      context: {},
     });
   });
 
