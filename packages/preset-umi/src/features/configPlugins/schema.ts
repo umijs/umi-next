@@ -6,7 +6,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
     base: (Joi) => Joi.string(),
     conventionRoutes: (Joi) =>
       Joi.object({
-        exclude: Joi.array().items(Joi.alternatives(Joi.string(), Joi.any())),
+        exclude: Joi.array().items(Joi.any()),
       }),
     favicon: (Joi) => Joi.string(),
     headScripts: (Joi) => Joi.array(),

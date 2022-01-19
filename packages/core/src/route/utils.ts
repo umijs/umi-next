@@ -22,10 +22,10 @@ export function findParentRouteId(
 
 const routeModuleExts = ['.js', '.jsx', '.ts', '.tsx', '.md', '.mdx'];
 export function isRouteModuleFile(opts: { file: string; exclude?: RegExp[] }) {
+  // TODO: add cache strategy
   for (const excludeRegExp of opts.exclude || []) {
     if (
       opts.file &&
-      !opts.file.startsWith('() =>') &&
       excludeRegExp instanceof RegExp &&
       excludeRegExp.test(opts.file)
     ) {
