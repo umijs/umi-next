@@ -33,6 +33,12 @@ test('normal', () => {
       parentId: undefined,
       file: 'd.ts',
     },
+    'index/index': {
+      path: '/',
+      id: 'index/index',
+      parentId: undefined,
+      file: 'index/index.ts',
+    },
   });
 });
 
@@ -54,6 +60,12 @@ test('exclude', () => {
       id: 'd',
       parentId: undefined,
       file: 'd.ts',
+    },
+    'index/index': {
+      path: '/',
+      id: 'index/index',
+      parentId: undefined,
+      file: 'index/index.ts',
     },
   });
 });
