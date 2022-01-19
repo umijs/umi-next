@@ -200,6 +200,9 @@ promise new Promise(resolve => {
       ],
     );
 
+    // ensure topLevelAwait enabled
+    lodash.set(opts.config, 'experiments.topLevelAwait', true);
+
     /**
      * depConfig
      */

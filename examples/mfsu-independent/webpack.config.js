@@ -59,9 +59,6 @@ const config = {
     modules: false,
     entrypoints: false,
   },
-  experiments: {
-    topLevelAwait: true,
-  }
 };
 
 // [mfsu] 4. inject mfsu webpack config
