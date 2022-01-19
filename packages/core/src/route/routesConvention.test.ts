@@ -35,6 +35,7 @@ test('normal', () => {
     },
   });
 });
+
 test('exclude', () => {
   expect(
     getConventionRoutes({
