@@ -1,5 +1,4 @@
 import { exec } from 'child_process';
-import fs from 'fs';
 import * as path from 'path';
 import { IApi } from 'umi';
 
@@ -19,15 +18,6 @@ export default (api: IApi) => {
 
     tailwind.on('error', (m: any) => {
       api.logger.error('tailwindcss service encounter an error: ' + m);
-    });
-
-    /** 如果 generatedPath 还没有文件，引入会报错，因此提前建立一个空文件 */
-    fs.open(generatedPath, 'r', function (err) {
-      if (err) {
-        fs.writeFile(generatedPath, '', function (err) {
-          if (err) console.log(err);
-        });
-      }
     });
 
     /** 将生成的 css 文件加入到 import 中 */
