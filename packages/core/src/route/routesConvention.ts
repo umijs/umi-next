@@ -25,7 +25,7 @@ export function getConventionRoutes(opts: {
     dir: opts.base,
     visitor: (file) => {
       const routeId = createRouteId(file);
-      if (isRouteModuleFile({ file, exclude: opts.exclude })) {
+      if (isRouteModuleFile({ file: winPath(file), exclude: opts.exclude })) {
         files[routeId] = winPath(file);
       }
     },
