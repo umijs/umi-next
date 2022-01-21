@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-// @ts-ignore
 import MoonIcon from './icons/moon.png';
-// @ts-ignore
 import SunIcon from './icons/sun.png';
 
 export default () => {
