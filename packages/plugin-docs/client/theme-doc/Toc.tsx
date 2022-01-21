@@ -15,9 +15,12 @@ export default () => {
       className="w-full lg:mx-12 mb-12 border
       border-gray-100 p-8 rounded-xl z-20"
     >
+      <p className="text-lg font-extrabold">{route.titles[0].title}</p>
       <ul>
         {titles.map((item: any) => {
-          return <li>{item.title}</li>;
+          return (
+            <li className="mt-3 text-gray-600 cursor-pointer">{item.title}</li>
+          );
         })}
       </ul>
     </div>

@@ -25,7 +25,7 @@ export default (props: any) => {
 
         <div className="w-full flex flex-row justify-center overflow-x-hidden">
           <div className="container flex flex-row justify-center">
-            <div className="w-full lg:w-1/2 px-4 lg:px-0 m-8 z-20">
+            <div className="w-full lg:w-1/2 px-4 lg:px-0 m-8 z-20 lg:py-12">
               <div className="lg:hidden">
                 <Toc />
               </div>
@@ -50,7 +50,7 @@ export default (props: any) => {
            justify-center h-screen z-10 pt-20 hidden lg:block"
         >
           <div className="container flex flex-row justify-start">
-            <div className="w-80 top-32">
+            <div className="w-2/3 top-32">
               <Toc />
             </div>
           </div>
