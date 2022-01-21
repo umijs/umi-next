@@ -25,32 +25,33 @@ export default () => {
   });
 
   return (
-    <div>
-      <ul>
-        {(matchedNav.children || []).map((item) => {
-          return (
-            <li key={item.title}>
-              <div>
-                <h3>{item.title}</h3>
-                <div className="pl-4">
-                  {item.children.map((child: any) => {
-                    const to = `${matchedNav.path}/${child}`;
-                    const id = to.slice(1);
-                    const title = appData.routes[id].titles?.[0]?.title || null;
-                    return (
-                      <div key={child}>
-                        <components.Link to={`${matchedNav.path}/${child}`}>
-                          {title}
-                        </components.Link>
-                      </div>
-                    );
-                  })}
-                </div>
+    <ul className="h-[calc(100vh-8rem)] overflow-y-scroll w-64 px-8 pb-12 fadeout">
+      {(matchedNav.children || []).map((item) => {
+        return (
+          <li key={item.title}>
+            <div>
+              <p className="text-xl font-extrabold my-6">{item.title}</p>
+              <div className="pl-4">
+                {item.children.map((child: any) => {
+                  const to = `${matchedNav.path}/${child}`;
+                  const id = to.slice(1);
+                  const title = appData.routes[id].titles?.[0]?.title || null;
+                  return (
+                    <div
+                      key={child}
+                      className="text-gray-700 my-2 hover:text-blue-400 transition-all"
+                    >
+                      <components.Link to={`${matchedNav.path}/${child}`}>
+                        {title}
+                      </components.Link>
+                    </div>
+                  );
+                })}
               </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
   );
 };

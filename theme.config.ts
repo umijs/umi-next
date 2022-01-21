@@ -1,5 +1,6 @@
 export default {
   title: 'UmiJS',
+  logo: 'https://avatars.githubusercontent.com/u/33895495?s=200&v=4',
   navs: [
     {
       path: '/docs',
