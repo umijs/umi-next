@@ -61,7 +61,7 @@ export function RootContainer(props: any) {
   if (!app.current) {
     app.current = create(
       {
-        history: history,
+        history,
       },
       {
         initialReducer: {},
