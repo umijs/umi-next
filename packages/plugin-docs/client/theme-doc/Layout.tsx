@@ -29,7 +29,7 @@ export default (props: any) => {
               <div className="lg:hidden">
                 <Toc />
               </div>
-              {props.children}
+              <article className="flex-1">{props.children}</article>
             </div>
           </div>
         </div>
