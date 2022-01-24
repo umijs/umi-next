@@ -88,17 +88,13 @@ function search(routes: any, keyword: string): SearchResultItem[] {
   const result: SearchResultItem[] = [];
 
   Object.keys(routes).map((path) => {
-    const route = routes[path];
-    if (!route.titles) return;
     if (path.toLowerCase().includes(keyword.toLowerCase())) {
       result.push({
         path: path.split('/').slice(1).join(' > '),
         href: '/' + path,
       });
     }
-  });
 
-  Object.keys(routes).map((path) => {
     const route = routes[path];
     if (!route.titles) return;
     route.titles
