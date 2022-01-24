@@ -1,3 +1,100 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+article h1 {
+  @apply text-4xl font-bold tracking-tight mt-2 my-4;
+}
+
+article h2 {
+  @apply text-3xl font-semibold tracking-tight mt-10;
+  @apply pb-1 border-b;
+}
+
+article h3 {
+  @apply text-2xl font-semibold tracking-tight mt-8;
+}
+
+article h4 {
+  @apply text-xl font-semibold tracking-tight mt-8;
+}
+
+article h5 {
+  @apply text-lg font-semibold tracking-tight mt-8;
+}
+
+article h6 {
+  @apply text-base font-semibold tracking-tight mt-8;
+}
+
+article p {
+  @apply text-base font-light leading-8 mt-4 text-gray-700;
+}
+
+article ul {
+  @apply list-disc ml-6 mt-6;
+}
+
+article li {
+  @apply mt-2;
+}
+
+article ol {
+  @apply list-decimal ml-6 mt-6;
+}
+
+article blockquote {
+  @apply italic pl-6 border-l-2 border-gray-300 text-gray-700;
+}
+
+article h2 a {
+  @apply no-underline;
+}
+
+article code {
+  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md;
+  font-size: 0.9em;
+  padding: 2px 0.25em;
+  box-decoration-break: clone;
+  font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+}
+
+article inlinecode {
+  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md px-1.5 py-0.5 text-xs;
+}
+
+article pre {
+  /* content-visibility: auto; */
+  contain: paint;
+  @apply p-4 bg-slate-100 rounded-xl my-8 overflow-x-auto font-medium subpixel-antialiased;
+}
+
+article pre code {
+  line-height: 1.25rem;
+  @apply relative p-0 text-sm text-current bg-transparent rounded-none border-none inline-block min-w-full;
+}
+
+article pre code .line.highlighted {
+  @apply before:block before:absolute before:h-5 before:bg-gray-500 before:bg-opacity-10 before:-inset-x-4 before:pointer-events-none before:select-none;
+}
+
+article a code {
+  @apply text-current no-underline;
+}
+
+article a {
+  @apply text-blue-600 mx-1 hover:text-blue-300 transition;
+  background-image: linear-gradient(#fff 60%, rgba(130, 199, 255, 0.28) 55%);
+}
+
+/*article pre {*/
+/*  @apply pt-12;*/
+/*}*/
+
+article hr {
+  @apply my-8;
+}
+
+.fadeout {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 80%, transparent 100%);
+}

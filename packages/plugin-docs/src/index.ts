@@ -1,5 +1,7 @@
+import { existsSync } from 'fs';
 import { join } from 'path';
 import { IApi } from 'umi';
+import { parseTitle } from './markdown';
 
 export default (api: IApi) => {
   api.modifyDefaultConfig((memo) => {
@@ -25,28 +27,33 @@ export default (api: IApi) => {
 
   api.onPatchRoute(({ route }) => {
     if (route.__content) {
-      const firstLine = route.__content.trim().split('\n')[0];
-      let title = '';
-      if (firstLine.startsWith('# ')) {
-        title = firstLine.slice(2);
-      }
-      route.title = title;
+      route.titles = parseTitle({
+        content: route.__content,
+      });
     }
   });
 
   api.onGenerateFiles(() => {
+    const themeConfigPath = join(api.cwd, 'theme.config.ts');
+    const themeExists = existsSync(themeConfigPath);
     api.writeTmpFile({
       path: 'Layout.tsx',
       content: `
 import React from 'react';
-import { useOutlet, useAppData, Link } from 'umi';
+import { useOutlet, useAppData, useLocation, Link } from 'umi';
 import { Layout } from '${require.resolve('../client/theme-doc')}';
+${
+  themeExists
+    ? `import themeConfig from '${themeConfigPath}'`
+    : `const themeConfig = {}`
+}
 
 export default () => {
   const outlet = useOutlet();
   const appData = useAppData();
+  const location = useLocation();
   return (
-    <Layout appData={appData} components={{Link}}>
+    <Layout appData={appData} components={{Link}} themeConfig={themeConfig} location={location}>
       <div>{ outlet }</div>
     </Layout>
   );
