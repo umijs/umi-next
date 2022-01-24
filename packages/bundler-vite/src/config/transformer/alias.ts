@@ -3,6 +3,8 @@ import type { IConfigProcessor } from '.';
 /**
  * transform umi alias to vite alias
  */
+console.log('alias 执行');
+
 export default (function alias(userConfig) {
   const config: ReturnType<IConfigProcessor> = {};
 
