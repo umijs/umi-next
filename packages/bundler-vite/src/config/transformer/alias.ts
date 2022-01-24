@@ -3,10 +3,16 @@ import type { IConfigProcessor } from '.';
 /**
  * transform umi alias to vite alias
  */
-console.log('alias 执行');
 
 export default (function alias(userConfig) {
-  const config: ReturnType<IConfigProcessor> = {};
+  const config: ReturnType<IConfigProcessor> = {
+    resolve: {
+      alias: [
+        // to support less-loader ~ for local deps, refer: https://github.com/vitejs/vite/issues/2185
+        { find: /^~/, replacement: '' },
+      ],
+    },
+  };
 
   if (typeof userConfig.alias === 'object') {
     config.resolve = {
