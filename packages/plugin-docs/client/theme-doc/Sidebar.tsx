@@ -30,7 +30,9 @@ export default () => {
         return (
           <li key={item.title}>
             <div>
-              <p className="text-xl font-extrabold my-6">{item.title}</p>
+              <p className="text-xl font-extrabold my-6 dark:text-white">
+                {item.title}
+              </p>
               {item.children.map((child: any) => {
                 const to = `${matchedNav.path}/${child}`;
                 const id = to.slice(1);
@@ -42,7 +44,7 @@ export default () => {
                       key={child}
                       className="my-2 hover:text-blue-400 transition-all
                        bg-blue-50 text-blue-400 px-4 py-1
-                       rounded-lg cursor-default"
+                       rounded-lg cursor-default dark:bg-blue-900 dark:text-blue-200"
                     >
                       {title}
                     </div>
@@ -53,7 +55,7 @@ export default () => {
                   <components.Link to={`${matchedNav.path}/${child}`}>
                     <div
                       key={child}
-                      className="text-gray-700 my-2 hover:text-blue-400 transition-all px-4 py-1"
+                      className="text-gray-700 my-2 hover:text-blue-400 transition-all px-4 py-1 dark:text-blue-200 dark:hover:text-blue-400"
                     >
                       {title}
                     </div>

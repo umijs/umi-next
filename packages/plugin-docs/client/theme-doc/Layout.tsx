@@ -14,10 +14,10 @@ export default (props: any) => {
         location: props.location,
       }}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col dark:bg-gray-900 min-h-screen transition-all">
         <div
-          className="z-30 sticky top-0 before:bg-white before:bg-opacity-[.85]
-           before:backdrop-blur-md before:absolute before:block
+          className="z-30 sticky top-0 dark:before:bg-gray-800 before:bg-white before:bg-opacity-[.85]
+           before:backdrop-blur-md before:absolute before:block dark:before:bg-opacity-[.85]
            before:w-full before:h-full before:z-[-1]"
         >
           <Head />

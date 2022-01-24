@@ -10,7 +10,7 @@ export default () => {
   return (
     <div
       className="w-full flex flex-row items-center justify-between
-      border-b-gray-100 border-b-2 pt-4 pb-4 px-8"
+      border-b-gray-100 border-b-2 pt-4 pb-4 px-8 dark:border-b-gray-800"
     >
       <Logo />
       <div className="flex flex-row items-center">
