@@ -21,6 +21,7 @@ export default () => {
         setToggle(false);
         return;
       }
+      setToggle(true);
     }
 
     if (toggle) {

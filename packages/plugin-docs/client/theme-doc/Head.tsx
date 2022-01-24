@@ -46,7 +46,7 @@ interface HamburgerButtonProps {
 
 function HamburgerButton(props: HamburgerButtonProps) {
   const barClass =
-    'block absolute h-0.5 w-5 bg-current transform' +
+    'block absolute h-0.5 w-5 bg-current transform dark:bg-white' +
     ' transition duration-500 ease-in-out';
 
   return (

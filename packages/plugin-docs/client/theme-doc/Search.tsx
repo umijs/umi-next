@@ -71,7 +71,7 @@ export default () => {
             >
               <p
                 className="p-2 bg-white hover:bg-gray-50 transition
-                 duration-300 group-focus:bg-blue-200"
+                 duration-300 group-focus:bg-blue-200 dark:bg-gray-700"
               >
                 {r.path}
               </p>
