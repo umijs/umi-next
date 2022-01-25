@@ -13,8 +13,6 @@ import React from 'react';
 ${result}`;
   result = result.replace('/* @jsxRuntime classic */', '');
   result = result.replace('/* @jsx mdx */', '');
-  const title = result.match(/<h1>{`(.*?)`}<\/h1>/)[1];
-  result = `${result}\nMDXContent.title = '${title}';`;
 
   return { result };
 }
