@@ -104,3 +104,11 @@ article hr {
     transparent 100%
   );
 }
+
+/** Anchor with offset for headings */
+a.anchor {
+  display: block;
+  position: relative;
+  top: -60px;
+  visibility: hidden;
+}
