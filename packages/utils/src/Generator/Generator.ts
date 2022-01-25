@@ -38,33 +38,33 @@ class Generator {
   copyTpl(opts: { templatePath: string; target: string; context: object }) {
     const tpl = readFileSync(opts.templatePath, 'utf-8');
     const content = Mustache.render(tpl, opts.context);
-    fsExtra.mkdirpSync(dirname(opts.target));
-    console.log(`${chalk.green('Write:')} ${relative(this.cwd, opts.target)}`);
-    writeFileSync(opts.target, content, 'utf-8');
+    const realTargetPath = this.getRealPath(opts.target, opts.context);
+    fsExtra.mkdirpSync(dirname(realTargetPath));
+    console.log(
+      `${chalk.green('Write:')} ${relative(this.cwd, realTargetPath)}`,
+    );
+    writeFileSync(realTargetPath, content, 'utf-8');
     this.renameFile({
-      target: opts.target,
+      target: realTargetPath,
       data: opts.context,
     });
   }
 
-  renameFile(opts: { target: string; data: Record<string, any> }) {
-    const lastItem = basename(opts.target);
-    lastItem.replace(/(?<={{)(\w)+(?=}})/g, (substring) => {
-      if (substring) {
-        const value = opts.data[substring];
-        if (value) {
-          const renameFileName = lastItem.replace(/({{)(\w)+(}})/g, value);
-          fsExtra.renameSync(
-            opts.target,
-            join(dirname(opts.target), renameFileName),
-          );
-          console.log(
-            `${chalk.green('Rename: ')} ${lastItem} => ${renameFileName}`,
-          );
-        }
-      }
-      return substring;
+  getRealPath(value: string, data: Record<string, any>) {
+    return value.replace(/({{)(\w)+(}})/g, (v) => {
+      const name = v.slice(2, -2);
+      return v ? data[name] : v;
     });
+  }
+
+  renameFile(opts: { target: string; data: Record<string, any> }) {
+    const realTargetPath = this.getRealPath(opts.target, opts.data);
+    fsExtra.renameSync(opts.target, realTargetPath);
+    console.log(
+      `${chalk.green('Rename: ')} ${basename(opts.target)} => ${basename(
+        realTargetPath,
+      )}`,
+    );
   }
 
   copyDirectory(opts: { path: string; context: object; target: string }) {
@@ -85,10 +85,11 @@ class Generator {
       } else {
         console.log(`${chalk.green('Copy: ')} ${file}`);
         const absTarget = join(opts.target, file);
-        fsExtra.mkdirpSync(dirname(absTarget));
-        copyFileSync(absFile, absTarget);
+        const realTargetPath = this.getRealPath(absTarget, opts.context);
+        fsExtra.mkdirpSync(dirname(realTargetPath));
+        copyFileSync(absFile, realTargetPath);
         this.renameFile({
-          target: absTarget,
+          target: realTargetPath,
           data: opts.context,
         });
       }
