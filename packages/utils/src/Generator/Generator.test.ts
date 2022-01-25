@@ -26,6 +26,7 @@ test('normal', async () => {
       this.copyDirectory({
         context: {
           foo: 'bar',
+          pageName: 'ceshi',
         },
         path: join(cwd, './dir'),
         target: join(dist, './dir'),
@@ -43,5 +44,8 @@ test('normal', async () => {
   );
   expect(readFileSync(join(dist, './dir', 'b.js'), 'utf-8').trim()).toEqual(
     `alert('abc');`,
+  );
+  expect(readFileSync(join(dist, './dir', 'ceshi.js'), 'utf-8').trim()).toEqual(
+    `alert('bar');`,
   );
 });

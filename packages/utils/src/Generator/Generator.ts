@@ -1,5 +1,5 @@
 import { copyFileSync, readFileSync, statSync, writeFileSync } from 'fs';
-import { dirname, join, relative } from 'path';
+import { basename, dirname, join, relative } from 'path';
 import chalk from '../../compiled/chalk';
 import fsExtra from '../../compiled/fs-extra';
 import glob from '../../compiled/glob';
@@ -41,6 +41,30 @@ class Generator {
     fsExtra.mkdirpSync(dirname(opts.target));
     console.log(`${chalk.green('Write:')} ${relative(this.cwd, opts.target)}`);
     writeFileSync(opts.target, content, 'utf-8');
+    this.renameFile({
+      target: opts.target,
+      data: opts.context,
+    });
+  }
+
+  renameFile(opts: { target: string; data: Record<string, any> }) {
+    const lastItem = basename(opts.target);
+    lastItem.replace(/(?<={{)(\w)+(?=}})/g, (substring) => {
+      if (substring) {
+        const value = opts.data[substring];
+        if (value) {
+          const renameFileName = lastItem.replace(/({{)(\w)+(}})/g, value);
+          fsExtra.renameSync(
+            opts.target,
+            join(dirname(opts.target), renameFileName),
+          );
+          console.log(
+            `${chalk.green('Rename: ')} ${lastItem} => ${renameFileName}`,
+          );
+        }
+      }
+      return substring;
+    });
   }
 
   copyDirectory(opts: { path: string; context: object; target: string }) {
@@ -63,6 +87,10 @@ class Generator {
         const absTarget = join(opts.target, file);
         fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(absFile, absTarget);
+        this.renameFile({
+          target: absTarget,
+          data: opts.context,
+        });
       }
     });
   }
