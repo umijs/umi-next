@@ -105,10 +105,11 @@ article hr {
   );
 }
 
+html {
+  scroll-behavior: smooth
+}
+
 /** Anchor with offset for headings */
-a.anchor {
-  display: block;
-  position: relative;
-  top: -60px;
-  visibility: hidden;
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: 3em;
 }
