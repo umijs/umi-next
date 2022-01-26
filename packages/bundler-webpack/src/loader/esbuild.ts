@@ -31,8 +31,8 @@ async function esbuildLoader(
 
     if (handler.length) {
       await init;
-      const [imports, exports] = parse(code);
       handler.forEach((handle) => {
+        const [imports, exports] = parse(code);
         code = handle({ code, imports, exports, filePath });
       });
     }

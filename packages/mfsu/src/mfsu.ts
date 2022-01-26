@@ -23,6 +23,8 @@ import {
 import { Dep } from './dep/dep';
 import { DepBuilder } from './depBuilder/depBuilder';
 import { DepInfo } from './depInfo';
+import autoExportHandler from './esbuildHandlers/autoExport';
+import getAwaitImportHandler from './esbuildHandlers/awaitImport';
 import { Mode } from './types';
 import { makeArray } from './utils/makeArray';
 import { BuildDepPlugin } from './webpackPlugins/buildDepPlugin';
@@ -305,5 +307,18 @@ promise new Promise(resolve => {
 
   getBabelPlugins() {
     return [autoExport, [awaitImport, this.getAwaitImportCollectOpts()]];
+  }
+
+  getEsbuildLoaderHandler() {
+    const cache = new Map<string, any>();
+    const checkOpts = this.getAwaitImportCollectOpts();
+
+    return [
+      autoExportHandler,
+      getAwaitImportHandler({
+        cache,
+        opts: checkOpts,
+      }),
+    ];
   }
 }
