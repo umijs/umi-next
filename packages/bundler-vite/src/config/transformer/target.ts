@@ -1,3 +1,4 @@
+import legacyPlugin from '@vitejs/plugin-legacy';
 import type { IConfigProcessor } from '.';
 
 /**
@@ -10,6 +11,12 @@ export default (function target(userConfig) {
   if (typeof userConfig.targets === 'object') {
     config.build!.target = Object.entries(userConfig.targets).map(
       ([name, ver]) => `${name}${ver}`,
+    );
+  }
+
+  if (userConfig.targets?.ie <= 11) {
+    config.plugins?.push(
+      legacyPlugin(userConfig.legacy === true ? {} : userConfig.legacy),
     );
   }
 
