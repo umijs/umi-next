@@ -1,4 +1,6 @@
 import legacyPlugin from '@vitejs/plugin-legacy';
+// @ts-ignore
+import polyfill from 'rollup-plugin-polyfill';
 import type { IConfigProcessor } from '.';
 
 /**
@@ -14,10 +16,17 @@ export default (function target(userConfig) {
     );
   }
 
-  if (userConfig.targets?.ie <= 11) {
-    config.plugins?.push(
-      legacyPlugin(userConfig.legacy === true ? {} : userConfig.legacy),
-    );
+  // refer: https://caniuse.com/?search=esm
+  if (
+    userConfig.targets.ie <= 11 ||
+    userConfig.targets.edg < 16 ||
+    userConfig.targets.firefox < 60 ||
+    userConfig.targets.chrome < 61 ||
+    userConfig.targets.safari < 11 ||
+    userConfig.targets.opera < 48 ||
+    userConfig.targets.ios < 11
+  ) {
+    config.plugins?.push(legacyPlugin({}), polyfill({}));
   }
 
   return config;
