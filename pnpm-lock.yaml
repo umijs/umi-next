@@ -656,6 +656,7 @@ importers:
       '@ahooksjs/use-request': ^2.0.0
       '@ant-design/icons': ^4.7.0
       '@ant-design/pro-layout': ^6.31.7
+      '@types/react-helmet': ^6.1.0
       '@umijs/bundler-utils': 4.0.0-beta.16
       antd: ^4.17.3
       antd-dayjs-webpack-plugin: ^1.0.6
@@ -668,6 +669,7 @@ importers:
       lodash: ^4.17.21
       moment: ^2.29.1
       qiankun: ^2.6.3
+      react-helmet: ^6.1.0
       react-intl: 3.12.1
       react-redux: ^7.2.6
       redux: ^4.1.2
@@ -677,6 +679,7 @@ importers:
       '@ahooksjs/use-request': 2.8.15_react@17.0.2
       '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
       '@ant-design/pro-layout': 6.31.7_a165223a0ab2e98be2a290f70e5039d2
+      '@types/react-helmet': 6.1.5
       '@umijs/bundler-utils': link:../bundler-utils
       antd: 4.17.4_react-dom@17.0.2+react@17.0.2
       antd-dayjs-webpack-plugin: 1.0.6_dayjs@1.10.7
@@ -689,6 +692,7 @@ importers:
       lodash: 4.17.21
       moment: 2.29.1
       qiankun: 2.6.3
+      react-helmet: 6.1.0_react@17.0.2
       react-intl: 3.12.1_react@17.0.2
       react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
       redux: 4.1.2
@@ -6310,6 +6314,12 @@ packages:
     dependencies:
       '@types/react': 17.0.37
     dev: true
+
+  /@types/react-helmet/6.1.5:
+    resolution: {integrity: sha512-/ICuy7OHZxR0YCAZLNg9r7I9aijWUWvxaPR6uTuyxe8tAj5RL4Sw1+R6NhXUtOsarkGYPmaHdBDvuXh2DIN/uA==}
+    dependencies:
+      '@types/react': 17.0.37
+    dev: false
 
   /@types/react-redux/7.1.20:
     resolution: {integrity: sha512-q42es4c8iIeTgcnB+yJgRTTzftv3eYYvCZOh1Ckn2eX/3o5TdsQYKUWpLoLuGlcY/p+VAhV9IOEZJcWk/vfkXw==}
@@ -17186,6 +17196,22 @@ packages:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
     dev: false
 
+  /react-fast-compare/3.2.0:
+    resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
+    dev: false
+
+  /react-helmet/6.1.0_react@17.0.2:
+    resolution: {integrity: sha512-4uMzEY9nlDlgxr61NL3XbKRy1hEkXmKNXhjbAIOVw5vcFrsdYbH2FEwcNyWvWinl103nXgzYNlns9ca+8kFiWw==}
+    peerDependencies:
+      react: '>=16.3.0'
+    dependencies:
+      object-assign: 4.1.1
+      prop-types: 15.7.2
+      react: 17.0.2
+      react-fast-compare: 3.2.0
+      react-side-effect: 2.1.1_react@17.0.2
+    dev: false
+
   /react-intl/3.12.1_react@17.0.2:
     resolution: {integrity: sha512-cgumW29mwROIqyp8NXStYsoIm27+8FqnxykiLSawWjOxGIBeLuN/+p2srei5SRIumcJefOkOIHP+NDck05RgHg==}
     peerDependencies:
@@ -17378,6 +17404,14 @@ packages:
       history: 5.2.0
       react: 18.0.0-rc.0
     dev: true
+
+  /react-side-effect/2.1.1_react@17.0.2:
+    resolution: {integrity: sha512-2FoTQzRNTncBVtnzxFOk2mCpcfxQpenBMbk5kSVBg5UcPqV9fRbgY2zhb7GTWWOlpFmAxhClBDlIq8Rsubz1yQ==}
+    peerDependencies:
+      react: ^16.3.0 || ^17.0.0
+    dependencies:
+      react: 17.0.2
+    dev: false
 
   /react-sortable-hoc/2.0.0_react-dom@17.0.2+react@17.0.2:
     resolution: {integrity: sha512-JZUw7hBsAHXK7PTyErJyI7SopSBFRcFHDjWW5SWjcugY0i6iH7f+eJkY8cJmGMlZ1C9xz1J3Vjz0plFpavVeRg==}

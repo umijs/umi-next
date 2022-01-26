@@ -2,7 +2,7 @@
 import { Button, DatePicker, Input } from 'antd';
 import React from 'react';
 // @ts-ignore
-import { history, useAccess, useIntl, useModel } from 'umi';
+import { Helmet, history, useAccess, useIntl, useModel } from 'umi';
 
 export default function HomePage() {
   const { initialState } = useModel('@@initialState');
@@ -12,6 +12,9 @@ export default function HomePage() {
   const intl = useIntl();
   return (
     <div>
+      <Helmet>
+        <title>My Title</title>
+      </Helmet>
       <h2>index page</h2>
       <Button type="primary">Button</Button>
       <Input />
