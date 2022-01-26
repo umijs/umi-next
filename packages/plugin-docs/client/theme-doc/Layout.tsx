@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ThemeContext } from './context';
 import Head from './Head';
 import Sidebar from './Sidebar';
@@ -7,16 +7,6 @@ import Toc from './Toc';
 
 export default (props: any) => {
   const [isMenuOpened, setIsMenuOpened] = useState(false);
-
-  useEffect(() => {
-    if (window.location.hash.length !== 0) {
-      const hash = window.location.hash;
-      window.location.hash = '';
-      setTimeout(() => {
-        window.location.hash = hash;
-      }, 500);
-    }
-  }, []);
 
   return (
     <ThemeContext.Provider
