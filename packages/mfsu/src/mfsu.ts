@@ -319,6 +319,6 @@ promise new Promise(resolve => {
         cache,
         opts: checkOpts,
       }),
-    ];
+    ] as any[];
   }
 }

@@ -1,6 +1,9 @@
-import type { IEsbuildLoaderHandlerParams } from '@umijs/bundler-webpack';
+interface IOpts {
+  exports: string[];
+  code: string;
+}
 
-export default function autoExportHandler(opts: IEsbuildLoaderHandlerParams) {
+export default function autoExportHandler(opts: IOpts) {
   if (!opts.exports.length) {
     return `${opts.code};\nexport const __mfsu = 1;`;
   }

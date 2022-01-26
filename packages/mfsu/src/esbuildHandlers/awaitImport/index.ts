@@ -1,4 +1,4 @@
-import type { IEsbuildLoaderHandlerParams } from '@umijs/bundler-webpack';
+import type { ImportSpecifier } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { checkMatch } from '../../babelPlugins/awaitImport/checkMatch';
 
 interface IParams {
@@ -6,8 +6,14 @@ interface IParams {
   opts: any;
 }
 
+interface IOpts {
+  code: string;
+  imports: ImportSpecifier[];
+  filePath: string;
+}
+
 export default function getAwaitImportHandler(params: IParams) {
-  return function awaitImportHandler(opts: IEsbuildLoaderHandlerParams) {
+  return function awaitImportHandler(opts: IOpts) {
     let offset = 0;
 
     let { code } = opts;
