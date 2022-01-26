@@ -260,52 +260,50 @@ promise new Promise(resolve => {
     ];
   }
 
+  private getAwaitImportCollectOpts() {
+    return {
+      onTransformDeps: () => {},
+      onCollect: ({
+        file,
+        data,
+      }: {
+        file: string;
+        data: {
+          unMatched: Set<{ sourceValue: string }>;
+          matched: Set<{ sourceValue: string }>;
+        };
+      }) => {
+        this.depInfo.moduleGraph.onFileChange({
+          file,
+          // @ts-ignore
+          deps: [
+            ...Array.from(data.matched).map((item: any) => ({
+              file: item.sourceValue,
+              isDependency: true,
+              version: Dep.getDepVersion({
+                dep: item.sourceValue,
+                cwd: this.opts.cwd!,
+              }),
+            })),
+            ...Array.from(data.unMatched).map((item: any) => ({
+              file: getRealPath({
+                file,
+                dep: item.sourceValue,
+              }),
+              isDependency: false,
+            })),
+          ],
+        });
+      },
+      exportAllMembers: this.opts.exportAllMembers,
+      unMatchLibs: this.opts.unMatchLibs,
+      remoteName: this.opts.mfName,
+      alias: this.alias,
+      externals: this.externals,
+    };
+  }
+
   getBabelPlugins() {
-    return [
-      autoExport,
-      [
-        awaitImport,
-        {
-          onTransformDeps: () => {},
-          onCollect: ({
-            file,
-            data,
-          }: {
-            file: string;
-            data: {
-              unMatched: Set<{ sourceValue: string }>;
-              matched: Set<{ sourceValue: string }>;
-            };
-          }) => {
-            this.depInfo.moduleGraph.onFileChange({
-              file,
-              // @ts-ignore
-              deps: [
-                ...Array.from(data.matched).map((item: any) => ({
-                  file: item.sourceValue,
-                  isDependency: true,
-                  version: Dep.getDepVersion({
-                    dep: item.sourceValue,
-                    cwd: this.opts.cwd!,
-                  }),
-                })),
-                ...Array.from(data.unMatched).map((item: any) => ({
-                  file: getRealPath({
-                    file,
-                    dep: item.sourceValue,
-                  }),
-                  isDependency: false,
-                })),
-              ],
-            });
-          },
-          exportAllMembers: this.opts.exportAllMembers,
-          unMatchLibs: this.opts.unMatchLibs,
-          remoteName: this.opts.mfName,
-          alias: this.alias,
-          externals: this.externals,
-        },
-      ],
-    ];
+    return [autoExport, [awaitImport, this.getAwaitImportCollectOpts()]];
   }
 }
