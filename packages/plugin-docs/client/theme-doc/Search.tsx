@@ -46,6 +46,11 @@ export default () => {
     key('escape', () => {
       (document.activeElement as HTMLElement).blur();
     });
+
+    return () => {
+      key.unbind(searchHotKey);
+      key.unbind('escape');
+    };
   }, []);
 
   const result = search(appData.routes, keyword);
