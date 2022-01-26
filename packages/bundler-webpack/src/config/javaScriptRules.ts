@@ -3,6 +3,7 @@ import { chalk } from '@umijs/utils';
 import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
+import autoCssModulesHandler from '../esbuildHandler/autoCssModules';
 import { esbuildLoaderPath } from '../loader/esbuild';
 import AutoCSSModule from '../swcPlugins/autoCSSModules';
 import { Env, IConfig, Transpiler } from '../types';
@@ -128,7 +129,7 @@ export async function addJavaScriptRules(opts: IOpts) {
         .loader(esbuildLoaderPath)
         .options({
           target: isDev ? 'esnext' : 'es2015',
-          handler: opts.extraEsbuildLoaderHandler,
+          handler: [autoCssModulesHandler, ...opts.extraEsbuildLoaderHandler],
         });
       // esbuild loader can not auto import `React`
       config.plugin('react-provide-plugin').use(ProvidePlugin, [
