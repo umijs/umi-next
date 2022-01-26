@@ -18,14 +18,22 @@ export default (function target(userConfig) {
 
   // refer: https://caniuse.com/?search=esm
   if (
-    userConfig.targets.ie <= 11 ||
-    userConfig.targets.edg < 16 ||
-    userConfig.targets.firefox < 60 ||
-    userConfig.targets.chrome < 61 ||
-    userConfig.targets.safari < 11 ||
-    userConfig.targets.opera < 48 ||
-    userConfig.targets.ios < 11
+    userConfig.targets &&
+    (userConfig.targets.ie <= 11 ||
+      userConfig.targets.edge < 16 ||
+      userConfig.targets.firefox < 60 ||
+      userConfig.targets.chrome < 61 ||
+      userConfig.targets.safari < 11 ||
+      userConfig.targets.opera < 48 ||
+      userConfig.targets.ios < 11)
   ) {
+    if (userConfig.targets.ie <= 11) {
+      config.plugins?.push(
+        legacyPlugin({
+          additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+        }),
+      );
+    }
     config.plugins?.push(legacyPlugin({}), polyfill({}));
   }
 
