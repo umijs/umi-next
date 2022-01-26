@@ -4,7 +4,6 @@ import type { IConfigProcessor } from '.';
 /**
  * transform umi alias to vite alias
  */
-
 export default (function alias(userConfig) {
   const config: ReturnType<IConfigProcessor> = {
     resolve: {
@@ -15,10 +14,10 @@ export default (function alias(userConfig) {
     },
   };
 
-  // alias: { foo: bar }  foo/hoo > bar/foo
-  // alias: { foo$: bar } foo/hoo > foo/hoo
+  // alias: { foo:  bar } foo > bar, foo/hoo > bar/foo
+  // alias: { foo$: bar } foo > bar, foo/hoo > foo/hoo
   if (userConfig.alias) {
-    const suffix = Object.entries<string>(userConfig.alias).map(
+    const userAlias = Object.entries<string>(userConfig.alias).map(
       ([name, target]) => ({
         // supports webpack suffix $ and less-loader prefix ~
         // example:
@@ -28,7 +27,7 @@ export default (function alias(userConfig) {
         replacement: target,
       }),
     );
-    (config.resolve?.alias as Alias[]).push(...suffix);
+    (config.resolve?.alias as Alias[]).push(...userAlias);
   }
 
   return config;
