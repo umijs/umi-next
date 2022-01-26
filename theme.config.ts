@@ -5,6 +5,10 @@ export default {
   title: 'UmiJS',
   logo: UmiLogo,
   github: 'https://github.com/umijs/umi',
+  i18n: [
+    { locale: 'en-US', text: 'English' },
+    { locale: 'zh-CN', text: '简体中文' },
+  ],
   navs: [
     {
       path: '/docs',
@@ -23,6 +27,15 @@ export default {
             'api/runtime-config',
             'api/commands',
             'api/plugin-api',
+          ],
+        },
+        {
+          title: 'Introduce',
+          children: [
+            'introduce/introduce',
+            'introduce/philosophy',
+            'introduce/contributing',
+            'introduce/upgrade-to-umi-4',
           ],
         },
         {
