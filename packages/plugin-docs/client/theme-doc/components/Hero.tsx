@@ -27,34 +27,41 @@ function Hero(props: HeroProps) {
         alt=""
       />
 
-      <div className="w-1/2 z-20">
+      <div className="px-8 container lg:px-32 xl:px-64 z-20">
         <div className="flex flex-col items-center">
           {typeof props.title === 'string' && (
-            <h1 className="text-white text-7xl font-extrabold">
+            <h1 className="text-white text-xl lg:text-7xl font-extrabold text-center">
               {props.title}
             </h1>
           )}
 
           {props.title instanceof Array &&
             props.title.map((t, i) => (
-              <h1 className="text-white text-7xl font-extrabold" key={i}>
+              <h1
+                className="text-white text-xl lg:text-7xl
+                  font-extrabold text-center"
+                key={i}
+              >
                 {t}
               </h1>
             ))}
 
           {!props.title && <DefaultTitle />}
 
-          <p className="text-white text-center my-12 opacity-70 text-lg">
+          <p
+            className="text-white text-center my-12
+               opacity-70 text-lg text-center"
+          >
             {props.description}
           </p>
 
-          <div className="flex flex-row">
+          <div className="flex flex-row items-center">
             {props.buttons?.map((button, i) => (
               <button
                 onClick={() => (window.location.href = button.href)}
                 key={i}
                 className="text-white text-lg bg-blue-600 py-2 min-w-36 mx-4 px-4 rounded-xl shadow-xl
-            shadow-blue-900 hover:shadow-blue-700 transition-all"
+                  shadow-blue-900 hover:shadow-blue-700 transition-all"
               >
                 {button.label}
               </button>
@@ -80,19 +87,34 @@ function DefaultTitle() {
   return (
     <>
       <div className="flex flex-row mb-4">
-        <h1 className="text-white text-7xl font-extrabold">一款</h1>
+        <h1
+          className="text-white text-5xl lg:text-7xl
+              font-extrabold text-center"
+        >
+          一款
+        </h1>
         <h1
           className={cx(
-            'text-blue-300 text-7xl font-extrabold mx-1',
-            'transition-all duration-700 delay-100',
+            'text-blue-300 text-5xl lg:text-7xl font-extrabold mx-1',
+            'transition-all duration-700 delay-100 text-center',
             !isPlugged && 'translate-y-[-5rem]',
           )}
         >
           插件化
         </h1>
-        <h1 className="text-white text-7xl font-extrabold">的</h1>
+        <h1
+          className="text-center text-white text-5xl
+              lg:text-7xl font-extrabold"
+        >
+          的
+        </h1>
       </div>
-      <h1 className="text-white text-7xl font-extrabold">企业级前端应用框架</h1>
+      <h1
+        className="text-center text-white text-3xl
+            lg:text-7xl font-extrabold"
+      >
+        企业级前端应用框架
+      </h1>
     </>
   );
 }
