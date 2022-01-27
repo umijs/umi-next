@@ -27,7 +27,7 @@ export default (function alias(userConfig) {
         replacement: target,
       }),
     );
-    (config.resolve?.alias as Alias[]).push(...userAlias);
+    (config.resolve!.alias as Alias[]).push(...userAlias);
   }
 
   return config;
