@@ -1,10 +1,13 @@
 import cx from 'classnames';
 import React, { useEffect, useState } from 'react';
+import Github from '../icons/github.svg';
 import HeroBackground from '../icons/hero-bg.svg';
+import Star from '../icons/star.png';
 
 interface HeroProps {
   title?: string | string[];
   description?: string;
+  githubRepo?: string;
   buttons?: {
     label: string;
     href: string;
@@ -56,6 +59,8 @@ function Hero(props: HeroProps) {
                 {button.label}
               </button>
             ))}
+
+            {props.githubRepo && <GithubStars repo={props.githubRepo} />}
           </div>
         </div>
       </div>
@@ -89,6 +94,33 @@ function DefaultTitle() {
       </div>
       <h1 className="text-white text-7xl font-extrabold">企业级前端应用框架</h1>
     </>
+  );
+}
+
+function GithubStars(props: { repo: string }) {
+  const [stars, setStars] = useState<number>();
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  async function refresh() {
+    try {
+      const res = await fetch('https://api.github.com/repos/' + props.repo);
+      setStars((await res.json()).stargazers_count);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  if (!stars) return null;
+
+  return (
+    <div className="flex flex-row items-center">
+      <img src={Github} className="w-4 h-4 mr-2 invert" alt="" />
+      <p className="text-white">{stars}</p>
+      <img src={Star} className="w-4 h-4 ml-2 invert" alt="" />
+    </div>
   );
 }
 
