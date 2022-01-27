@@ -46,7 +46,7 @@ export default (function target(userConfig) {
     const legacyOpts: Options = {
       targets: getBrowserlist(userConfig.targets),
     };
-    if (userConfig.targets.ie && userConfig.targets.ie <= 11) {
+    if (userConfig.targets['ie'] && userConfig.targets['ie'] <= 11) {
       legacyOpts.polyfills = ['regenerator-runtime/runtime'];
     }
     config.plugins!.push(legacyPlugin(legacyOpts));
