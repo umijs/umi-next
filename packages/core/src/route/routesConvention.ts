@@ -1,7 +1,6 @@
 import { winPath } from '@umijs/utils';
-import assert from 'assert';
 import { existsSync, lstatSync, readdirSync, statSync } from 'fs';
-import { extname, join, relative, resolve } from 'path';
+import { extname, relative, resolve } from 'path';
 import { defineRoutes } from './defineRoutes';
 import {
   byLongestFirst,
@@ -11,20 +10,21 @@ import {
 } from './utils';
 
 // opts.base: path of pages
-export function getConventionRoutes(opts: { base: string; prefix?: string }) {
+export function getConventionRoutes(opts: {
+  base: string;
+  prefix?: string;
+  exclude?: RegExp[];
+}) {
   const files: { [routeId: string]: string } = {};
-  assert(
-    existsSync(opts.base) && statSync(opts.base).isDirectory(),
-    `Convention routes base not found.`,
-  );
+  if (!(existsSync(opts.base) && statSync(opts.base).isDirectory())) {
+    return {};
+  }
   visitFiles({
     dir: opts.base,
     visitor: (file) => {
       const routeId = createRouteId(file);
-      if (isRouteModuleFile({ file })) {
+      if (isRouteModuleFile({ file: winPath(file), exclude: opts.exclude })) {
         files[routeId] = winPath(file);
-      } else {
-        throw new Error(`Invalid route module file: ${join(opts.base, file)}`);
       }
     },
   });
@@ -65,7 +65,7 @@ function visitFiles(opts: {
       visitFiles({ ...opts, dir: file });
     } else if (
       stat.isFile() &&
-      ['.tsx', '.ts', '.js', '.jsx'].includes(extname(file))
+      ['.tsx', '.ts', '.js', '.jsx', '.md', '.mdx'].includes(extname(file))
     ) {
       opts.visitor(relative(opts.baseDir, file));
     }
@@ -73,7 +73,7 @@ function visitFiles(opts: {
 }
 
 function createRoutePath(routeId: string): string {
-  const path = routeId
+  let path = routeId
     // routes/$ -> routes/*
     // routes/nested/$.tsx (with a "routes/nested.tsx" layout)
     .replace(/^\$$/, '*')
@@ -84,5 +84,7 @@ function createRoutePath(routeId: string): string {
     .replace(/\$/g, ':')
     // routes/not.nested -> routes/not/nested
     .replace(/\./g, '/');
-  return /\b\/?index$/.test(path) ? path.replace(/\/?index$/, '') : path;
+  path = /\b\/?index$/.test(path) ? path.replace(/\/?index$/, '') : path;
+  path = /\b\/?README$/.test(path) ? path.replace(/\/?README$/, '') : path;
+  return path;
 }

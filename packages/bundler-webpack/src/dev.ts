@@ -35,6 +35,13 @@ export async function dev(opts: IOpts) {
       },
       mfName: opts.config.mfsu?.mfName,
       runtimePublicPath: opts.config.runtimePublicPath,
+      tmpBase: join(opts.cwd, 'node_modules/.cache/mfsu'),
+      getCacheDependency() {
+        return {
+          version: require('../package.json').version,
+          esbuildMode: !!opts.config.mfsu?.esbuild,
+        };
+      },
     });
   }
   const webpackConfig = await getConfig({
@@ -51,11 +58,11 @@ export async function dev(opts: IOpts) {
       ...(opts.beforeBabelPresets || []),
       ...(opts.extraBabelPresets || []),
     ],
+    extraEsbuildLoaderHandler: mfsu?.getEsbuildLoaderHandler() || [],
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     hmr: true,
     analyze: process.env.ANALYZE,
-    // disable cache since it's conflict with mfsu
     cache: opts.cache,
   });
   const depConfig = await getConfig({
