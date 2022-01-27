@@ -42,7 +42,7 @@ export default (function target(userConfig) {
     }
     return false;
   }
-  if (isLegacyBrowser(userConfig.targets)) {
+  if (isLegacyBrowser(userConfig.targets || {})) {
     const legacyOpts: Options = {
       targets: getBrowserlist(userConfig.targets),
     };
