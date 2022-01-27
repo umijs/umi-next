@@ -45,13 +45,11 @@ export default (function target(userConfig) {
   if (isLegacyBrowser(userConfig.targets)) {
     const legacyOpts: Options = {
       targets: getBrowserlist(userConfig.targets),
-      // polyfills: []
     };
     if (userConfig.targets.ie <= 11) {
       legacyOpts.polyfills = ['regenerator-runtime/runtime'];
     }
     config.plugins!.push(legacyPlugin(legacyOpts));
   }
-
   return config;
 } as IConfigProcessor);
