@@ -4,7 +4,7 @@ import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
 import { MFSU_NAME } from './constants';
 import { createServer } from './server/server';
-import { Env, IConfig } from './types';
+import { Env, IConfig, Transpiler } from './types';
 
 type IOpts = {
   afterMiddlewares?: any[];
@@ -24,7 +24,9 @@ type IOpts = {
 } & Pick<IConfigOpts, 'cache'>;
 
 export async function dev(opts: IOpts) {
-  const enableMFSU = opts.config.mfsu !== false;
+  // swc currently not support Top level await, should use esbuild in development env.
+  const enableMFSU =
+    opts.config.mfsu !== false && opts.config.srcTranspiler !== Transpiler.swc;
   let mfsu: MFSU | null = null;
   if (enableMFSU) {
     mfsu = new MFSU({
