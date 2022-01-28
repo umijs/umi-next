@@ -1,4 +1,5 @@
 import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
+import { logger } from '@umijs/utils';
 import { join } from 'path';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
@@ -24,11 +25,14 @@ type IOpts = {
 } & Pick<IConfigOpts, 'cache'>;
 
 export async function dev(opts: IOpts) {
-  // swc currently not support Top level await, should use esbuild in development env.
-  const enableMFSU =
-    opts.config.mfsu !== false && opts.config.srcTranspiler !== Transpiler.swc;
+  const enableMFSU = opts.config.mfsu !== false;
   let mfsu: MFSU | null = null;
   if (enableMFSU) {
+    if (opts.config.srcTranspiler === Transpiler.swc) {
+      logger.warn(
+        `Swc currently not supported for use with mfsu, recommended you use srcTranspiler: 'esbuild' in dev.`,
+      );
+    }
     mfsu = new MFSU({
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,
