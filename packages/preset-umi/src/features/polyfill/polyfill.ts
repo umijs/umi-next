@@ -2,6 +2,7 @@ import { transform } from '@umijs/bundler-utils/compiled/babel/core';
 import { Transpiler } from '@umijs/bundler-webpack/dist/types';
 import { dirname } from 'path';
 import { IApi } from '../../types';
+import { getCorejsVersion } from '../../utils/getCorejsVersion';
 
 export default (api: IApi) => {
   api.describe({
@@ -40,7 +41,7 @@ export {};
             require.resolve('@umijs/bundler-utils/compiled/babel/preset-env'),
             {
               useBuiltIns: 'entry',
-              corejs: '3',
+              corejs: getCorejsVersion(),
               modules: false,
               targets: api.config.targets,
             },
