@@ -124,7 +124,12 @@ export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
     }
     found.exact = false;
     found.routes = found.routes || [];
-    found.routes.push(microAppRoute);
+    if (microAppRoute.insertIndex) {
+      found.routes.splice(microAppRoute.insertIndex, 0, microAppRoute);
+    }
+    else {
+      found.routes.push(microAppRoute);
+    }
   } else {
     throw new Error(
       `[plugin-qiankun]: path "${microAppRoute.insert}" not found`,
