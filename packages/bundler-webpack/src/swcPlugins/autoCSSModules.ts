@@ -7,6 +7,11 @@ class AutoCSSModule extends Visitor {
     return expression;
   }
 
+  /**
+   * call path:
+   *   visitProgram -> visitModule -> visitModuleItems -> visitModuleItem -> visitImportDeclaration
+   * @see https://github.com/swc-project/swc/blob/main/node-swc/src/Visitor.ts#L189
+   */
   visitModuleItem(n: ModuleItem) {
     if (n.type === 'ImportDeclaration') {
       return this.visitImportDeclaration(n);
