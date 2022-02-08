@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+article h1 {
+  @apply text-4xl font-bold tracking-tight mt-2 my-4 dark:text-white;
+}
+
+article h2 {
+  @apply text-3xl font-semibold tracking-tight mt-10 dark:text-white;
+  @apply pb-1 border-b;
+}
+
+article h3 {
+  @apply text-2xl font-semibold tracking-tight mt-8 dark:text-white;
+}
+
+article h4 {
+  @apply text-xl font-semibold tracking-tight mt-8 dark:text-white;
+}
+
+article h5 {
+  @apply text-lg font-semibold tracking-tight mt-8 dark:text-white;
+}
+
+article h6 {
+  @apply text-base font-semibold tracking-tight mt-8 dark:text-white;
+}
+
+article p {
+  @apply text-base font-light leading-8 mt-4 text-gray-700 dark:text-white;
+}
+
+article ul {
+  @apply list-disc ml-6 mt-6 dark:text-white;
+}
+
+article li {
+  @apply mt-2 dark:text-white;
+}
+
+article ol {
+  @apply list-decimal ml-6 mt-6 dark:text-white;
+}
+
+article blockquote {
+  @apply italic pl-6 border-l-2 border-gray-300 text-gray-700 dark:text-white;
+}
+
+article h2 a {
+  @apply no-underline dark:text-white;
+}
+
+article code {
+  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md dark:text-white;
+  font-size: 0.9em;
+  padding: 2px 0.25em;
+  box-decoration-break: clone;
+  font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+}
+
+article inlinecode {
+  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md px-1.5 py-0.5 text-xs dark:text-white dark:bg-gray-700;
+}
+
+article pre {
+  /* content-visibility: auto; */
+  contain: paint;
+  @apply p-4 bg-slate-100 dark:bg-slate-800 rounded-xl my-8 overflow-x-auto font-medium subpixel-antialiased dark:text-white;
+}
+
+article pre code {
+  line-height: 1.25rem;
+  @apply relative p-0 text-sm text-current bg-transparent rounded-none border-none inline-block min-w-full dark:text-white;
+}
+
+article pre code .line.highlighted {
+  @apply before:block before:absolute before:h-5 before:bg-gray-500 before:bg-opacity-10 before:-inset-x-4 before:pointer-events-none before:select-none dark:text-white;
+}
+
+article a code {
+  @apply text-current no-underline dark:text-white;
+}
+
+article a {
+  @apply text-blue-600 mx-1 hover:text-blue-300 transition dark:text-blue-400;
+  background-image: linear-gradient(transparent 60%, rgba(130, 199, 255, 0.28) 55%);
+}
+
+.link-with-underline {
+  @apply text-blue-600 mx-1 hover:text-blue-300 transition dark:text-blue-400;
+  background-image: linear-gradient(transparent 60%, rgba(130, 199, 255, 0.28) 55%);
+}
+
+/*article pre {*/
+/*  @apply pt-12;*/
+/*}*/
+
+article hr {
+  @apply my-8;
+}
+
+.fadeout {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 10%,
+    black 80%,
+    transparent 100%
+  );
+}
+
+html {
+  scroll-behavior: smooth
+}
+
+/** Anchor with offset for headings */
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: 3em;
+}
+
+@layer components {
+
+  .features-dark {
+    @apply bg-gray-900;
+    background-image: radial-gradient(#2a2a2a 20%, transparent 20%);
+    background-size: 6px 6px;
+    width: 100%;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .features {
+    background-image: radial-gradient(#f8f8f5 20%, transparent 20%);
+    background-color: white;
+    background-size: 6px 6px;
+    width: 100%;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .features::-webkit-scrollbar {
+    display: none;
+  }
+}

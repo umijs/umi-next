@@ -39,7 +39,7 @@ import { assert, eachPkg, getPkgs } from './utils';
   logger.event('check npm ownership');
   const whoami = (await $`npm whoami`).stdout.trim();
   await Promise.all(
-    ['umi', '@umijs/pro', '@umijs/core'].map(async (pkg) => {
+    ['umi', '@umijs/core'].map(async (pkg) => {
       const owners = (await $`npm owner ls ${pkg}`).stdout
         .trim()
         .split('\n')
@@ -60,6 +60,7 @@ import { assert, eachPkg, getPkgs } from './utils';
   // build packages
   logger.event('build packages');
   await $`npm run build:release`;
+  await $`npm run build:extra`;
 
   // generate changelog
   // TODO

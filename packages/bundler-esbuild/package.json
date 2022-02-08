@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-esbuild",
-  "version": "4.0.0-beta.15",
+  "version": "4.0.0-rc.1",
   "description": "@umijs/bundler-esbuild",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-esbuild#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -23,14 +23,14 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@umijs/bundler-utils": "4.0.0-beta.15",
-    "@umijs/utils": "4.0.0-beta.15",
+    "@umijs/bundler-utils": "4.0.0-rc.1",
+    "@umijs/utils": "4.0.0-rc.1",
     "enhanced-resolve": "5.8.3",
     "less": "4.1.2",
     "less-plugin-aliases": "^1.0.3",
-    "postcss": "^8.4.4",
+    "postcss": "^8.4.6",
     "postcss-flexbugs-fixes": "5.0.2",
-    "postcss-preset-env": "7.0.1"
+    "postcss-preset-env": "7.3.1"
   },
   "devDependencies": {
     "@alitajs/postcss-plugin-px2rem": "^0.0.1",

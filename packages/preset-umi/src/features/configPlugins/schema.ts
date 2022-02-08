@@ -4,6 +4,11 @@ import { NpmClientEnum } from '@umijs/utils';
 export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
     base: (Joi) => Joi.string(),
+    conventionRoutes: (Joi) =>
+      Joi.object({
+        exclude: Joi.array().items(Joi.any()),
+        base: Joi.string(),
+      }),
     favicon: (Joi) => Joi.string(),
     headScripts: (Joi) => Joi.array(),
     history: (Joi) =>

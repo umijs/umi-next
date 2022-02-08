@@ -1,7 +1,10 @@
 import type { Program } from '@swc/core';
 import { chalk } from '@umijs/utils';
+import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
+import autoCssModulesHandler from '../esbuildHandler/autoCssModules';
+import { esbuildLoaderPath } from '../loader/esbuild';
 import AutoCSSModule from '../swcPlugins/autoCSSModules';
 import { Env, IConfig, Transpiler } from '../types';
 import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
@@ -13,6 +16,7 @@ interface IOpts {
   env: Env;
   extraBabelPlugins: any[];
   extraBabelPresets: any[];
+  extraEsbuildLoaderHandler: any[];
   babelPreset: any;
   name?: string;
 }
@@ -52,6 +56,9 @@ export async function addJavaScriptRules(opts: IOpts) {
       })
       .end(),
   ] as Config.Rule<Config.Module>[];
+  if (userConfig.mdx) {
+    srcRules.push(config.module.rule('markdown').test(/\.mdx?$/));
+  }
   const depRules = [
     config.module
       .rule('dep')
@@ -109,17 +116,40 @@ export async function addJavaScriptRules(opts: IOpts) {
           ].filter(Boolean),
         });
     } else if (srcTranspiler === Transpiler.swc) {
-      // TODO: support javascript
       rule
         .use('swc-loader')
         .loader(require.resolve('../loader/swc'))
         .options({
           plugin: (m: Program) => new AutoCSSModule().visitProgram(m),
+          targets: userConfig.targets,
         });
+    } else if (srcTranspiler === Transpiler.esbuild) {
+      rule
+        .use('esbuild-loader')
+        .loader(esbuildLoaderPath)
+        .options({
+          target: isDev ? 'esnext' : 'es2015',
+          handler: [autoCssModulesHandler, ...opts.extraEsbuildLoaderHandler],
+        });
+      // esbuild loader can not auto import `React`
+      config.plugin('react-provide-plugin').use(ProvidePlugin, [
+        {
+          React: 'react',
+        },
+      ]);
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);
     }
   });
+
+  if (userConfig.mdx) {
+    config.module
+      .rule('mdx')
+      .test(/\.mdx?$/)
+      .use('mdx-loader')
+      .loader(userConfig.mdx?.loader)
+      .options(userConfig.mdx?.loaderOptions);
+  }
 
   const depTranspiler = userConfig.depTranspiler || Transpiler.none;
   depRules.forEach((_rule) => {

@@ -26,10 +26,13 @@ import Generator from './Generator/Generator';
 import installDeps from './installDeps';
 import * as logger from './logger';
 import updatePackageJSON from './updatePackageJSON';
+export * from './getCorejsVersion';
 export * from './importLazy';
+export * from './isStyleFile';
 export * from './npmClient';
 export * from './randomColor/randomColor';
 export * as register from './register';
+export * from './tryPaths';
 export * from './winPath';
 export {
   address,

@@ -1,10 +1,11 @@
 import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
+import { logger } from '@umijs/utils';
 import { join } from 'path';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
 import { MFSU_NAME } from './constants';
 import { createServer } from './server/server';
-import { Env, IConfig } from './types';
+import { Env, IConfig, Transpiler } from './types';
 
 type IOpts = {
   afterMiddlewares?: any[];
@@ -27,6 +28,11 @@ export async function dev(opts: IOpts) {
   const enableMFSU = opts.config.mfsu !== false;
   let mfsu: MFSU | null = null;
   if (enableMFSU) {
+    if (opts.config.srcTranspiler === Transpiler.swc) {
+      logger.warn(
+        `Swc currently not supported for use with mfsu, recommended you use srcTranspiler: 'esbuild' in dev.`,
+      );
+    }
     mfsu = new MFSU({
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,
@@ -35,6 +41,13 @@ export async function dev(opts: IOpts) {
       },
       mfName: opts.config.mfsu?.mfName,
       runtimePublicPath: opts.config.runtimePublicPath,
+      tmpBase: join(opts.cwd, 'node_modules/.cache/mfsu'),
+      getCacheDependency() {
+        return {
+          version: require('../package.json').version,
+          esbuildMode: !!opts.config.mfsu?.esbuild,
+        };
+      },
     });
   }
   const webpackConfig = await getConfig({
@@ -51,12 +64,12 @@ export async function dev(opts: IOpts) {
       ...(opts.beforeBabelPresets || []),
       ...(opts.extraBabelPresets || []),
     ],
+    extraEsbuildLoaderHandler: mfsu?.getEsbuildLoaderHandler() || [],
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     hmr: true,
     analyze: process.env.ANALYZE,
-    // disable cache since it's conflict with mfsu
-    // cache: opts.cache,
+    cache: opts.cache,
   });
   const depConfig = await getConfig({
     cwd: opts.cwd,

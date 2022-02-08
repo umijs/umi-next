@@ -1,0 +1,42 @@
+{
+  "name": "@umijs/plugin-docs",
+  "version": "4.0.0-rc.1",
+  "description": "@umijs/plugin-docs",
+  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/plugin-docs#readme",
+  "bugs": "https://github.com/umijs/umi-next/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-next"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "client"
+  ],
+  "scripts": {
+    "build": "pnpm tsc",
+    "build:css": "tailwindcss -i ./client/theme-doc/tailwind.css -o ./client/theme-doc/tailwind.out.css",
+    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
+    "build:extra": "pnpm build:css",
+    "dev": "pnpm build -- --watch"
+  },
+  "dependencies": {
+    "@mdx-js/mdx": "1.6.22",
+    "keymaster": "^1.6.2",
+    "remark-slug": "6.1.0"
+  },
+  "devDependencies": {
+    "@types/keymaster": "^1.6.30",
+    "classnames": "^2.3.1",
+    "tailwindcss": "^3.0.19",
+    "umi": "4.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ]
+}

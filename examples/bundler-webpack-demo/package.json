@@ -4,14 +4,14 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "4.0.0-beta.15"
+    "umi": "4.0.0-rc.1"
   },
   "devDependencies": {
-    "@types/react": "^17.0.37",
+    "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
-    "history": "^5.1.0",
+    "history": "^5.2.0",
     "react": "^18.0.0-rc.0",
     "react-dom": "^18.0.0-rc.0",
-    "react-router-dom": "^6.1.1"
+    "react-router-dom": "^6.2.1"
   }
 }
