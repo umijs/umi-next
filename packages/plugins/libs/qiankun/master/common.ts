@@ -1,5 +1,4 @@
 // @ts-nocheck
-/* eslint-disable */
 /**
  * @author Kuitos
  * @since 2019-06-20
@@ -28,20 +27,20 @@ function testPathWithStaticPrefix(pathPrefix: string, realPath: string) {
   return pathRegex.test(normalizedPath);
 }
 
-// function testPathWithDynamicRoute(dynamicRoute: string, realPath: string) {
-//   // FIXME 这个是旧的使用方式才会调到的 api，先临时这么苟一下消除报错，引导用户去迁移吧
-//   const pathToRegexp = require('path-to-regexp');
-//   return pathToRegexp(dynamicRoute, { strict: true, end: false }).test(
-//     realPath,
-//   );
-// }
-//
-// export function testPathWithPrefix(pathPrefix: string, realPath: string) {
-//   return (
-//     testPathWithStaticPrefix(pathPrefix, realPath) ||
-//     testPathWithDynamicRoute(pathPrefix, realPath)
-//   );
-// }
+function testPathWithDynamicRoute(dynamicRoute: string, realPath: string) {
+  // FIXME 这个是旧的使用方式才会调到的 api，先临时这么苟一下消除报错，引导用户去迁移吧
+  const pathToRegexp = require('path-to-regexp');
+  return pathToRegexp(dynamicRoute, { strict: true, end: false }).test(
+    realPath,
+  );
+}
+
+export function testPathWithPrefix(pathPrefix: string, realPath: string) {
+  return (
+    testPathWithStaticPrefix(pathPrefix, realPath) ||
+    testPathWithDynamicRoute(pathPrefix, realPath)
+  );
+}
 
 export function patchMicroAppRoute(
   route: any,
@@ -95,13 +94,14 @@ export function patchMicroAppRoute(
 const recursiveSearch = (
   routes: IRouteProps[],
   path: string,
+  fatherPath: string,
 ): IRouteProps | null => {
   for (let i = 0; i < routes.length; i++) {
     if (routes[i].path === path) {
-      return routes[i];
+      return [ routes[i], routes, i, fatherPath ];
     }
     if (routes[i].routes && routes[i].routes?.length) {
-      const found = recursiveSearch(routes[i].routes || [], path);
+      const found = recursiveSearch(routes[i].routes || [], path, routes[i].path);
       if (found) {
         return found;
       }
@@ -111,24 +111,59 @@ const recursiveSearch = (
 };
 
 export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
-  const found = recursiveSearch(routes, microAppRoute.insert);
+  const mod = microAppRoute.insert
+  ? 'insert'
+  : (
+    microAppRoute.insertBefore
+    ? 'insertBefore'
+    : (
+      microAppRoute.insertAfter
+      ? 'insertAfter'
+      : undefined
+    )
+  );
+  const taget = microAppRoute.insert || microAppRoute.insertBefore || microAppRoute.insertAfter;
+  const [ found, foundFatherRoutes, index, fatherPath ] = recursiveSearch(routes, taget, '/');
   if (found) {
-    if (
-      !microAppRoute.path ||
-      !found.path ||
-      !microAppRoute.path.startsWith(found.path)
-    ) {
-      throw new Error(
-        `[plugin-qiankun]: path "${microAppRoute.path}" need to starts with "${found.path}"`,
-      );
-    }
-    found.exact = false;
-    found.routes = found.routes || [];
-    if (microAppRoute.insertIndex) {
-      found.routes.splice(microAppRoute.insertIndex, 0, microAppRoute);
-    }
-    else {
-      found.routes.push(microAppRoute);
+    switch (mod) {
+      case 'insert':
+        if (
+          !microAppRoute.path ||
+          !found.path ||
+          !microAppRoute.path.startsWith(found.path)
+        ) {
+          throw new Error(
+            `[plugin-qiankun]: path "${microAppRoute.path}" need to starts with "${found.path}"`,
+          );
+        }
+        found.exact = false;
+        found.routes = found.routes || [];
+        found.routes.push(microAppRoute)
+        break;
+      case 'insertBefore':
+        if (
+          !microAppRoute.path ||
+          !found.path ||
+          !microAppRoute.path.startsWith(fatherPath)
+        ) {
+          throw new Error(
+            `[plugin-qiankun]: path "${microAppRoute.path}" need to starts with "${fatherPath}"`,
+          );
+        }
+        foundFatherRoutes.splice(index, 0, microAppRoute)
+        break;
+      case 'insertAfter':
+        if (
+          !microAppRoute.path ||
+          !found.path ||
+          !microAppRoute.path.startsWith(fatherPath)
+        ) {
+          throw new Error(
+            `[plugin-qiankun]: path "${microAppRoute.path}" need to starts with "${fatherPath}"`,
+          );
+        }
+        foundFatherRoutes.splice(index + 1, 0, microAppRoute)
+        break;
     }
   } else {
     throw new Error(
