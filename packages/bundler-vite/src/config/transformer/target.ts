@@ -1,5 +1,6 @@
 import type { Options } from '@vitejs/plugin-legacy';
 import legacyPlugin from '@vitejs/plugin-legacy';
+import * as lite from 'caniuse-lite';
 import type { IConfigProcessor } from '.';
 import { getBrowserlist } from './css';
 
@@ -11,19 +12,16 @@ export default (function target(userConfig) {
 
   // convert { ie: 11 } to ['ie11']
   if (typeof userConfig.targets === 'object') {
-    config.build!.target = Object.entries(userConfig.targets).map(
-      ([name, ver]) => `${name}${ver}`,
-    );
+    config.build!.target = Object.entries(userConfig.targets)
+      .filter(([name]) => {
+        return ['chrome', 'edge', 'firefox', 'ios', 'node', 'safari'].includes(
+          name,
+        );
+      })
+      .map(([name, ver]) => `${name}${ver}`);
   }
-  const LEGACY_BROWSERS: Record<string, number> = {
-    ie: 12,
-    edge: 16,
-    firefox: 60,
-    chrome: 61,
-    safari: 11,
-    opera: 48,
-    ios: 11,
-  };
+  const { features, feature: unpackFeature } = lite;
+  const { stats } = unpackFeature(features['es6-module']);
 
   // targets: {} > false
   // targets: { edge: 11 } > true
@@ -34,19 +32,19 @@ export default (function target(userConfig) {
       const version = targets[browserName];
       if (
         version &&
-        LEGACY_BROWSERS[browserName] &&
-        version < LEGACY_BROWSERS[browserName]
+        stats[browserName] &&
+        stats[browserName]?.version === 'n'
       ) {
         return true;
       }
     }
     return false;
   }
-  if (isLegacyBrowser(userConfig.targets || {})) {
+  if (userConfig.targets && isLegacyBrowser(userConfig.targets)) {
     const legacyOpts: Options = {
       targets: getBrowserlist(userConfig.targets),
     };
-    if (userConfig.targets['ie'] && userConfig.targets['ie'] <= 11) {
+    if (userConfig.targets.ie && userConfig.targets.ie <= 11) {
       legacyOpts.polyfills = ['regenerator-runtime/runtime'];
     }
     config.plugins!.push(legacyPlugin(legacyOpts));

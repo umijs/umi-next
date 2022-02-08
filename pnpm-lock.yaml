@@ -128,11 +128,13 @@ importers:
     specifiers:
       '@ant-design/icons': ^4.7.0
       '@umijs/pro': 4.0.0-beta.18
+      caniuse-lite: ^1.0.30001309
       react: 16.14.0
       react-dom: 16.14.0
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@16.14.0+react@16.14.0
       '@umijs/pro': link:../../packages/pro
+      caniuse-lite: 1.0.30001309
       react: 16.14.0
       react-dom: 16.14.0_react@16.14.0
 
@@ -457,6 +459,7 @@ importers:
       '@umijs/utils': 4.0.0-beta.18
       '@vitejs/plugin-legacy': 1.6.3
       '@vitejs/plugin-react': 1.1.0
+      caniuse-lite: ^1.0.30001309
       express: 4.17.1
       postcss-preset-env: 7.0.1
       rollup-plugin-copy: 3.4.0
@@ -469,6 +472,7 @@ importers:
       '@umijs/utils': link:../utils
       '@vitejs/plugin-legacy': 1.6.3_vite@2.7.6
       '@vitejs/plugin-react': 1.1.0
+      caniuse-lite: 1.0.30001309
       postcss-preset-env: 7.0.1
       rollup-plugin-copy: 3.4.0
       rollup-plugin-polyfill: 3.0.0
@@ -7417,7 +7421,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.18.1
-      caniuse-lite: 1.0.30001283
+      caniuse-lite: 1.0.30001309
       fraction.js: 4.1.2
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -7912,7 +7916,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001283
+      caniuse-lite: 1.0.30001309
       electron-to-chromium: 1.4.8
       escalade: 3.1.1
       node-releases: 2.0.1
@@ -8111,8 +8115,8 @@ packages:
   /caniuse-lite/1.0.30001272:
     resolution: {integrity: sha512-DV1j9Oot5dydyH1v28g25KoVm7l8MTxazwuiH3utWiAS6iL/9Nh//TGwqFEeqqN8nnWYQ8HHhUq+o4QPt9kvYw==}
 
-  /caniuse-lite/1.0.30001283:
-    resolution: {integrity: sha512-9RoKo841j1GQFSJz/nCXOj0sD7tHBtlowjYlrqIUS812x9/emfBLBt6IyMz1zIaYc/eRL8Cs6HPUVi2Hzq4sIg==}
+  /caniuse-lite/1.0.30001309:
+    resolution: {integrity: sha512-Pl8vfigmBXXq+/yUz1jUwULeq9xhMJznzdc/xwl4WclDAuebcTHVefpz8lE/bMI+UN7TOkSSe7B7RnZd6+dzjA==}
 
   /capture-exit/2.0.0:
     resolution: {integrity: sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g==}
@@ -16091,7 +16095,7 @@ packages:
     dependencies:
       autoprefixer: 10.4.0_postcss@8.4.4
       browserslist: 4.18.1
-      caniuse-lite: 1.0.30001283
+      caniuse-lite: 1.0.30001309
       css-blank-pseudo: 2.0.0_postcss@8.4.4
       css-has-pseudo: 2.0.0_postcss@8.4.4
       css-prefers-color-scheme: 5.0.0_postcss@8.4.4
