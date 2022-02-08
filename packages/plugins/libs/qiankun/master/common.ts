@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 /**
  * @author Kuitos
  * @since 2019-06-20
@@ -27,20 +28,20 @@ function testPathWithStaticPrefix(pathPrefix: string, realPath: string) {
   return pathRegex.test(normalizedPath);
 }
 
-function testPathWithDynamicRoute(dynamicRoute: string, realPath: string) {
-  // FIXME 这个是旧的使用方式才会调到的 api，先临时这么苟一下消除报错，引导用户去迁移吧
-  const pathToRegexp = require('path-to-regexp');
-  return pathToRegexp(dynamicRoute, { strict: true, end: false }).test(
-    realPath,
-  );
-}
-
-export function testPathWithPrefix(pathPrefix: string, realPath: string) {
-  return (
-    testPathWithStaticPrefix(pathPrefix, realPath) ||
-    testPathWithDynamicRoute(pathPrefix, realPath)
-  );
-}
+// function testPathWithDynamicRoute(dynamicRoute: string, realPath: string) {
+//   // FIXME 这个是旧的使用方式才会调到的 api，先临时这么苟一下消除报错，引导用户去迁移吧
+//   const pathToRegexp = require('path-to-regexp');
+//   return pathToRegexp(dynamicRoute, { strict: true, end: false }).test(
+//     realPath,
+//   );
+// }
+//
+// export function testPathWithPrefix(pathPrefix: string, realPath: string) {
+//   return (
+//     testPathWithStaticPrefix(pathPrefix, realPath) ||
+//     testPathWithDynamicRoute(pathPrefix, realPath)
+//   );
+// }
 
 export function patchMicroAppRoute(
   route: any,
