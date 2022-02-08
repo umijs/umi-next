@@ -47,6 +47,9 @@ test('dynamic import', async () => {
   expect(await doTransform({ code: `() => import('a');` })).toEqual(
     `() => import("mf/a");`,
   );
+  expect(await doTransform({ code: `await import('a');` })).toEqual(
+    `await import("mf/a");`,
+  );
 });
 
 test('export member', async () => {
