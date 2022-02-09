@@ -62,29 +62,21 @@ const getUnusedExportMap = (
   includedFileMap: FileDictionary,
   compilation: Compilation,
 ): ExportDictionary => {
-  console.log(
-    '-------------- includedFileMap --------------: ',
-    includedFileMap,
-  );
-
   const unusedExportMap: ExportDictionary = {};
 
   compilation.chunks.forEach((chunk) => {
-    compilation.chunkGraph.getChunkModules(chunk).forEach((module) => {
-      outputUnusedExportMap(
-        compilation,
-        chunk,
-        module,
-        includedFileMap,
-        unusedExportMap,
-      );
-    });
+    compilation.chunkGraph
+      .getChunkModules(chunk)
+      .forEach((module, moduleIndex) => {
+        outputUnusedExportMap(
+          compilation,
+          chunk,
+          module,
+          includedFileMap,
+          unusedExportMap,
+        );
+      });
   });
-
-  console.log(
-    '-------------- unusedExportMap --------------: ',
-    unusedExportMap,
-  );
 
   return unusedExportMap;
 };
@@ -97,25 +89,18 @@ const outputUnusedExportMap = (
   unusedExportMap: ExportDictionary,
 ) => {
   if (!module.resource) return;
-
   const path = convertToUnixPath(module.resource);
   if (!/^((?!(node_modules)).)*$/.test(path)) return;
 
-  console.log('===> path: ', path);
   const providedExports =
     compilation.chunkGraph.moduleGraph.getProvidedExports(module);
-  console.log('===> providedExports: ', providedExports);
-
   const usedExports = compilation.chunkGraph.moduleGraph.getUsedExports(
     module,
     chunk.runtime,
   );
-  const usedExportsArr =
-    usedExports instanceof Set ? Array.from(usedExports) : [];
-  console.log('===> usedExports: ', usedExports, usedExportsArr);
 
   if (
-    // usedExports !== true &&
+    usedExports !== true &&
     providedExports !== true &&
     includedFileMap[path]
   ) {
@@ -125,8 +110,7 @@ const outputUnusedExportMap = (
       }
     } else if (providedExports instanceof Array) {
       const unusedExports = providedExports.filter(
-        (item) =>
-          usedExportsArr instanceof Array && !usedExportsArr.includes(item),
+        (item) => usedExports && !usedExports.has(item),
       );
 
       if (unusedExports.length) {
@@ -148,7 +132,7 @@ const logUnusedExportMap = (unusedExportMap: ExportDictionary): void => {
     const unusedExports = unusedExportMap[filePath];
 
     logStr += [
-      `${fileIndex + 1}. `,
+      `\n${fileIndex + 1}. `,
       chalk.yellow(`${filePath}\n`),
       '    >>>  ',
       chalk.yellow(`${unusedExports.join(',  ')}`),
@@ -162,7 +146,7 @@ const logUnusedExportMap = (unusedExportMap: ExportDictionary): void => {
     chalk.yellow(
       `There are ${numberOfUnusedExport} unused exports in ${
         Object.keys(unusedExportMap).length
-      } files:\n`,
+      } files:`,
     ),
     logStr,
     chalk.red.bold('\nPlease be careful if you want to remove them (¬º-°)¬.\n'),
