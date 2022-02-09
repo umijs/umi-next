@@ -1,5 +1,4 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
-import { Transpiler } from '@umijs/bundler-webpack/dist/types';
 import { dirname } from 'path';
 import { IApi } from '../../types';
 
@@ -13,10 +12,7 @@ export default (api: IApi) => {
         });
       },
     },
-    enableBy: ({ userConfig }) => {
-      if (userConfig.srcTranspiler === Transpiler.swc) {
-        return false;
-      }
+    enableBy: () => {
       return process.env.BABEL_POLYFILL !== 'none';
     },
   });
