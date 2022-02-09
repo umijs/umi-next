@@ -11,6 +11,7 @@ import { addCompressPlugin } from './compressPlugin';
 import { addCopyPlugin } from './copyPlugin';
 import { addCSSRules } from './cssRules';
 import { addDefinePlugin } from './definePlugin';
+import { addDetectDeadCodePlugin } from './detectDeadCodePlugin';
 import { addFastRefreshPlugin } from './fastRefreshPlugin';
 import { addForkTSCheckerPlugin } from './forkTSCheckerPlugin';
 import { addHarmonyLinkingErrorPlugin } from './harmonyLinkingErrorPlugin';
@@ -19,7 +20,6 @@ import { addJavaScriptRules } from './javaScriptRules';
 import { addManifestPlugin } from './manifestPlugin';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
-import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
 import { addSVGRules } from './svgRules';
 
@@ -112,22 +112,22 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   config.resolve
     .set('symlinks', true)
     .modules
-      .add('node_modules')
-      .end()
+    .add('node_modules')
+    .end()
     .alias
-      .merge(userConfig.alias || {})
-      .end()
+    .merge(userConfig.alias || {})
+    .end()
     .extensions
-      .merge([
-        '.wasm',
-        '.mjs',
-        '.js',
-        '.jsx',
-        '.ts',
-        '.tsx',
-        '.json'
-      ])
-      .end();
+    .merge([
+      '.wasm',
+      '.mjs',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.json'
+    ])
+    .end();
 
   // externals
   config.externals(userConfig.externals || []);
@@ -159,12 +159,14 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addDefinePlugin(applyOpts);
   // fast refresh
   await addFastRefreshPlugin(applyOpts);
-  // progress
-  await addProgressPlugin(applyOpts);
+  // detect-dead-code-plugin
+  await addDetectDeadCodePlugin(applyOpts);
   // fork-ts-checker
   await addForkTSCheckerPlugin(applyOpts);
   // copy
   await addCopyPlugin(applyOpts);
+  // manifest
+  await addManifestPlugin(applyOpts);
   // manifest
   await addManifestPlugin(applyOpts);
   // hmr

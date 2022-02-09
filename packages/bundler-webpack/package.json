@@ -39,6 +39,7 @@
     "@umijs/utils": "4.0.0-rc.1",
     "css-loader": "6.6.0",
     "es5-imcompatible-versions": "^0.1.73",
+    "fast-glob": "^3.2.11",
     "jest-worker": "27.5.0",
     "node-libs-browser": "2.2.1",
     "postcss": "^8.4.6",
