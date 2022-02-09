@@ -14,8 +14,7 @@ const defaultOptions: Options = {
   exclude: [],
   failOnHint: false,
   detectUnusedFiles: true,
-  // TODO: unusedExport 还有点问题，调试好了再开启
-  detectUnusedExport: false,
+  detectUnusedExport: true,
 };
 
 class DetectDeadCodePlugin {
