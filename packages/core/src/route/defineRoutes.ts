@@ -1,5 +1,5 @@
-import { IRoute } from '../types';
-import { createRouteId } from './utils';
+import { IRoute } from '../types.js';
+import { createRouteId } from './utils.js';
 
 export function defineRoutes(callback: (defineRoute: Function) => void) {
   const routes = Object.create(null);

@@ -1,10 +1,12 @@
 import { lodash, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
+import { createRequire } from 'module';
 import { join } from 'path';
-import { AsyncSeriesWaterfallHook } from '../../compiled/tapable';
-import { Config } from '../config/config';
-import { DEFAULT_FRAMEWORK_NAME } from '../constants';
+// @ts-ignore
+import tapable from '../../compiled/tapable/index.js';
+import { Config } from '../config/config.js';
+import { DEFAULT_FRAMEWORK_NAME } from '../constants.js';
 import {
   ApplyPluginsType,
   ConfigChangeType,
@@ -14,15 +16,18 @@ import {
   IModify,
   PluginType,
   ServiceStage,
-} from '../types';
-import { Command } from './command';
-import { loadEnv } from './env';
-import { Generator } from './generator';
-import { Hook } from './hook';
-import { getPaths } from './path';
-import { Plugin } from './plugin';
-import { PluginAPI } from './pluginAPI';
-import { isPromise } from './utils';
+} from '../types.js';
+import { Command } from './command.js';
+import { loadEnv } from './env.js';
+import { Generator } from './generator.js';
+import { Hook } from './hook.js';
+import { getPaths } from './path.js';
+import { Plugin } from './plugin.js';
+import { PluginAPI } from './pluginAPI.js';
+import { isPromise } from './utils.js';
+
+const { AsyncSeriesWaterfallHook } = tapable;
+const require = createRequire(import.meta.url);
 
 interface IOpts {
   cwd: string;

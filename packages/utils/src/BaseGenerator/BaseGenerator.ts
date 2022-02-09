@@ -1,8 +1,8 @@
 import { copyFileSync, statSync } from 'fs';
 import { basename, dirname, join } from 'path';
-import fsExtra from '../../compiled/fs-extra';
-import prompts from '../../compiled/prompts';
-import Generator from '../Generator/Generator';
+import fsExtra from '../../compiled/fs-extra/index.js';
+import prompts from '../../compiled/prompts/index.js';
+import Generator from '../Generator/Generator.js';
 
 interface IOpts {
   path: string;

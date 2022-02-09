@@ -1,7 +1,7 @@
 import { prompts } from '@umijs/utils';
-import { Plugin } from './plugin';
-import { PluginAPI } from './pluginAPI';
-import { IServicePluginAPI } from './service';
+import { Plugin } from './plugin.js';
+import { PluginAPI } from './pluginAPI.js';
+import { IServicePluginAPI } from './service.js';
 
 export enum GeneratorType {
   generate = 'generate',

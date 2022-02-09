@@ -4,9 +4,9 @@ import {
   prompts,
   updatePackageJSON,
 } from '@umijs/utils';
-import { GeneratorType, IGeneratorOpts } from './generator';
-import { PluginAPI } from './pluginAPI';
-import { IServicePluginAPI } from './service';
+import { GeneratorType, IGeneratorOpts } from './generator.js';
+import { PluginAPI } from './pluginAPI.js';
+import { IServicePluginAPI } from './service.js';
 
 export default (api: PluginAPI & IServicePluginAPI) => {
   api.registerCommand({

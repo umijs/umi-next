@@ -1,11 +1,11 @@
 import { copyFileSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { dirname, join, relative } from 'path';
-import chalk from '../../compiled/chalk';
-import fsExtra from '../../compiled/fs-extra';
-import glob from '../../compiled/glob';
-import Mustache from '../../compiled/mustache';
-import prompts from '../../compiled/prompts';
-import yParser from '../../compiled/yargs-parser';
+import chalk from '../../compiled/chalk/index.js';
+import fsExtra from '../../compiled/fs-extra/index.js';
+import glob from '../../compiled/glob/index.js';
+import Mustache from '../../compiled/mustache/index.js';
+import prompts from '../../compiled/prompts/index.js';
+import yParser from '../../compiled/yargs-parser/index.js';
 
 interface IOpts {
   cwd: string;

@@ -6,13 +6,13 @@ import {
   IPluginConfig,
   PluginType,
   ServiceStage,
-} from '../types';
-import { Command, IOpts as ICommandOpts } from './command';
-import { Generator, IGeneratorOpts } from './generator';
-import { Hook, IOpts as IHookOpts } from './hook';
-import { Plugin } from './plugin';
-import { Service } from './service';
-import { makeArray } from './utils';
+} from '../types.js';
+import { Command, IOpts as ICommandOpts } from './command.js';
+import { Generator, IGeneratorOpts } from './generator.js';
+import { Hook, IOpts as IHookOpts } from './hook.js';
+import { Plugin } from './plugin.js';
+import { Service } from './service.js';
+import { makeArray } from './utils.js';
 
 type Logger = typeof logger;
 

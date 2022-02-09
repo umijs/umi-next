@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
-import deepmerge from '../compiled/deepmerge';
-import prettier from '../compiled/prettier';
+import deepmerge from '../compiled/deepmerge/index.js';
+import prettier from '../compiled/prettier/index.js';
 
 function updatePackageJSON({
   opts,

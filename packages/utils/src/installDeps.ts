@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import { join } from 'path';
-import execa from '../compiled/execa';
+import execa from '../compiled/execa/index.js';
 
 interface IInstallDeps {
   devDependencies?: string[];

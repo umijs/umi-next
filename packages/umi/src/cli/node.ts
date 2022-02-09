@@ -1,9 +1,12 @@
 import { logger } from '@umijs/utils';
+import { fileURLToPath } from 'url';
 import {
   EXCLUDE_NODE_VERSION,
   FRAMEWORK_NAME,
   MIN_NODE_VERSION,
-} from '../constants';
+} from '../constants.js';
+
+const __filename = fileURLToPath(import.meta.url);
 
 export function checkVersion() {
   const v = parseInt(process.version.slice(1));

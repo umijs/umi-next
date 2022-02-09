@@ -1,5 +1,5 @@
 import { yParser } from '@umijs/utils';
-import { Plugin } from './plugin';
+import { Plugin } from './plugin.js';
 
 export interface IOpts {
   name: string;

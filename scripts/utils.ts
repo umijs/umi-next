@@ -1,6 +1,9 @@
-import * as logger from '@umijs/utils/src/logger';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+// @ts-ignore
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function getPkgs(opts?: { base?: string }): string[] {
   const base = opts?.base || join(__dirname, '../packages');
@@ -25,7 +28,7 @@ export function eachPkg(
 
 export function assert(v: unknown, message: string) {
   if (!v) {
-    logger.error(message);
+    console.error(message);
     process.exit(1);
   }
 }

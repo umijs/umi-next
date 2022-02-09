@@ -1,5 +1,5 @@
-import prompts from '../../compiled/prompts';
-import BaseGenerator from './BaseGenerator';
+import prompts from '../../compiled/prompts/index.js';
+import BaseGenerator from './BaseGenerator.js';
 
 const generateFile = async ({
   path,

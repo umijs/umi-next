@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Plugin } from './plugin';
+import { Plugin } from './plugin.js';
 
 export interface IOpts {
   plugin: Plugin;

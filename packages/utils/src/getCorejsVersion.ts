@@ -1,7 +1,7 @@
-import { readJsonSync } from '../compiled/fs-extra';
+import fsExtra from '../compiled/fs-extra/index.js';
 
 export const getCorejsVersion = (pkgPath: string) => {
-  const pkg = readJsonSync(pkgPath, { encoding: 'utf-8' });
+  const pkg = fsExtra.readJsonSync(pkgPath, { encoding: 'utf-8' });
   const version =
     pkg.dependencies['core-js']?.split('.').slice(0, 2).join('.') || '3';
   return version;
