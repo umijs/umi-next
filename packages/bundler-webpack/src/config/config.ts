@@ -20,6 +20,7 @@ import { addJavaScriptRules } from './javaScriptRules';
 import { addManifestPlugin } from './manifestPlugin';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
+import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
 import { addSVGRules } from './svgRules';
 
@@ -159,14 +160,14 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addDefinePlugin(applyOpts);
   // fast refresh
   await addFastRefreshPlugin(applyOpts);
+  // progress
+  await addProgressPlugin(applyOpts);
   // detect-dead-code-plugin
   await addDetectDeadCodePlugin(applyOpts);
   // fork-ts-checker
   await addForkTSCheckerPlugin(applyOpts);
   // copy
   await addCopyPlugin(applyOpts);
-  // manifest
-  await addManifestPlugin(applyOpts);
   // manifest
   await addManifestPlugin(applyOpts);
   // hmr
