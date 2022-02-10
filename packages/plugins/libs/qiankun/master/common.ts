@@ -96,7 +96,7 @@ const recursiveSearch = (
   routes: IRouteProps[],
   path: string,
   parentPath: string,
-): [IRouteProps | null, IRouteProps[], number, string] => {
+): [IRouteProps, IRouteProps[], number, string] | null => {
   for (let i = 0; i < routes.length; i++) {
     if (routes[i].path === path) {
       return [ routes[i], routes, i, parentPath ];
@@ -120,7 +120,7 @@ export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
     : undefined
   );
   const target = microAppRoute.insert || microAppRoute.insertBefore;
-  const [ found, foundParentRoutes, index, parentPath ] = recursiveSearch(routes, target, '/');
+  const [ found, foundParentRoutes = [], index = 0, parentPath ] = recursiveSearch(routes, target, '/') || [];
   if (found) {
     switch (mod) {
       case 'insert':
