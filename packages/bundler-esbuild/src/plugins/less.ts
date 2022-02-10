@@ -87,7 +87,7 @@ export default (
       onResolve({ filter: /\.less$/, namespace: 'file' }, async (args) => {
         let filePath = args.path;
         let isMatchedAlias = false;
-        let isImportFromDeps = false;
+        // first match alias
         if (!!alias) {
           const aliasMatchPath = await aliasLessImportPath(
             filePath,
@@ -97,24 +97,21 @@ export default (
           if (aliasMatchPath) {
             isMatchedAlias = true;
             filePath = aliasMatchPath;
-          } else {
-            // if alias not matched, identify whether import from deps (node_modules)
-            if (!path.isAbsolute(filePath) && !filePath.startsWith('.')) {
-              isImportFromDeps = true;
-            }
           }
-        } else {
-          //没有别名也要对路径进行处理
-          isImportFromDeps = false;
         }
+        // if alias not matched, identify whether import from deps (node_modules)
         if (!isMatchedAlias) {
-          filePath = isImportFromDeps
-            ? await resolve(process.cwd(), filePath)
-            : path.resolve(
-                process.cwd(),
-                path.relative(process.cwd(), args.resolveDir),
-                args.path,
-              );
+          const isImportFromDeps =
+            !path.isAbsolute(filePath) && !filePath.startsWith('.');
+          if (isImportFromDeps) {
+            filePath = await resolve(process.cwd(), filePath);
+          } else {
+            filePath = path.resolve(
+              process.cwd(),
+              path.relative(process.cwd(), args.resolveDir),
+              args.path,
+            );
+          }
         }
         return {
           path: filePath,
