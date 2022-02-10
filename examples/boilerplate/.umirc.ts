@@ -18,9 +18,7 @@ export default {
   chainWebpack(memo: any) {
     memo;
   },
-  mfsu: {
-    esbuild: true,
-  },
+  mfsu: {},
   // fastRefresh: false,
   // favicon: 'https://sivers.com/favicon.ico',
   headScripts: [`console.log('head script')`],

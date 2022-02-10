@@ -31,7 +31,7 @@ export default (api: IApi) => {
       tplPath: join(TEMPLATES_DIR, 'umi.tpl'),
       context: {
         mountElementId: api.config.mountElementId,
-        rendererPath,
+        rendererPath: winPath(rendererPath),
         entryCode: (
           await api.applyPlugins({
             key: 'addEntryCode',
@@ -164,7 +164,7 @@ export default function EmptyRoute() {
       path: 'core/history.ts',
       tplPath: join(TEMPLATES_DIR, 'history.tpl'),
       context: {
-        rendererPath,
+        rendererPath: winPath(rendererPath),
       },
     });
   });
@@ -182,8 +182,8 @@ export default function EmptyRoute() {
       const exports = [];
       // @umijs/renderer-react
       exports.push('// @umijs/renderer-react');
-      const rendererReactPath = dirname(
-        require.resolve('@umijs/renderer-react/package.json'),
+      const rendererReactPath = winPath(
+        dirname(require.resolve('@umijs/renderer-react/package.json')),
       );
       exports.push(
         `export { ${(
@@ -195,7 +195,7 @@ export default function EmptyRoute() {
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
       const umiDir = process.env.UMI_DIR!;
-      const umiPluginPath = join(umiDir, 'client/client/plugin.js');
+      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
       exports.push(
         `export { ${(
           await getExports({

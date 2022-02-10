@@ -1,4 +1,4 @@
-import { pkgUp } from '@umijs/utils';
+import { pkgUp, winPath } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
@@ -38,12 +38,12 @@ export class Dep {
     cwd: string;
     mfsu: MFSU;
   }) {
-    this.file = opts.file;
+    this.file = winPath(opts.file);
     this.version = opts.version;
-    this.cwd = opts.cwd;
+    this.cwd = winPath(opts.cwd);
     this.shortFile = this.file;
     this.normalizedFile = this.shortFile.replace(/\//g, '_').replace(/:/g, '_');
-    this.filePath = `${MF_VA_PREFIX}${this.normalizedFile}.js`;
+    this.filePath = winPath(`${MF_VA_PREFIX}${this.normalizedFile}.js`);
     this.mfsu = opts.mfsu;
   }
 

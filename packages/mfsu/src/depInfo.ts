@@ -1,4 +1,4 @@
-import { fsExtra, lodash, logger } from '@umijs/utils';
+import { fsExtra, lodash, logger, winPath } from '@umijs/utils';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { MFSU } from './mfsu';
@@ -56,13 +56,15 @@ export class DepInfo {
     logger.info('MFSU write cache');
     writeFileSync(
       this.cacheFilePath,
-      JSON.stringify(
-        {
-          cacheDependency: this.cacheDependency,
-          moduleGraph: this.moduleGraph.toJSON(),
-        },
-        null,
-        2,
+      winPath(
+        JSON.stringify(
+          {
+            cacheDependency: this.cacheDependency,
+            moduleGraph: this.moduleGraph.toJSON(),
+          },
+          null,
+          2,
+        ),
       ),
       'utf-8',
     );
