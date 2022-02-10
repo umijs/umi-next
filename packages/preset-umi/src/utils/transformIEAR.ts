@@ -69,8 +69,8 @@ export const IEAR_REG_EXP = new RegExp(
     '(?:',
     // match quotes ($2)
     `('|")`,
-    // match absolute file path ($3)
-    `(\\/.*[^\\\\])\\2`,
+    // match absolute file path, *nix & windows ($3)
+    `((?:\\/|[a-zA-Z]:[\\/\\\\]).*[^\\\\])\\2`,
     ')',
   ].join(''),
   // match full-content
@@ -88,6 +88,9 @@ export default function transformIEAR(
   api: IApi,
 ) {
   return content.replace(IEAR_REG_EXP, (_, prefix, quote, absPath) => {
+    path = winPath(path);
+    absPath = winPath(absPath);
+
     if (absPath.startsWith(api.paths.absTmpPath)) {
       // transform .umi absolute imports
       absPath = winPath(relative(dirname(path), absPath)).replace(

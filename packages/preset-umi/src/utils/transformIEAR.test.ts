@@ -85,4 +85,26 @@ describe('transform path for import/export/await-import/require', () => {
         .replace('/path/to/node_modules', '@fs/path/to/node_modules'),
     );
   });
+
+  it('compatible with windows filesystem', () => {
+    const cases = [
+      "import module from 'C:\\path\\to\\.umi\\plugin-tmp';",
+      "import winPath from 'C:/path/to/.umi/plugin-win-path';",
+    ];
+
+    expect(
+      transformIEAR(
+        {
+          content: cases.join('\n'),
+          path: 'C:/path/to/.umi/plugin-self/index.ts',
+        },
+        { paths: { absTmpPath: 'C:/path/to/.umi' } } as any,
+      ),
+    ).toEqual(
+      cases
+        .join('\n')
+        .replace('C:\\path\\to\\.umi\\', '../')
+        .replace('C:/path/to/.umi', '..'),
+    );
+  });
 });
