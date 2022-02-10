@@ -3,8 +3,7 @@ import {
   Compilation,
   Module,
 } from '@umijs/bundler-webpack/compiled/webpack';
-import { chalk } from '@umijs/utils';
-import fg from 'fast-glob';
+import { chalk, glob } from '@umijs/utils';
 import path from 'path';
 import { DeadCodeParams } from '../types';
 
@@ -28,7 +27,9 @@ type ExportDictionary = Record<string, string[]>;
 const detectDeadCode = (compilation: Compilation, options: Options) => {
   const assets: string[] = getWebpackAssets(compilation);
   const compiledFilesDictionary: FileDictionary = convertFilesToDict(assets);
-  const includedFiles: string[] = fg.sync(getPattern(options));
+  const includedFiles: string[] = getPattern(options)
+    .map((pattern) => glob.sync(pattern))
+    .flat();
 
   const unusedFiles: string[] = options.detectUnusedFiles
     ? includedFiles.filter((file) => !compiledFilesDictionary[file])
@@ -65,17 +66,15 @@ const getUnusedExportMap = (
   const unusedExportMap: ExportDictionary = {};
 
   compilation.chunks.forEach((chunk) => {
-    compilation.chunkGraph
-      .getChunkModules(chunk)
-      .forEach((module, moduleIndex) => {
-        outputUnusedExportMap(
-          compilation,
-          chunk,
-          module,
-          includedFileMap,
-          unusedExportMap,
-        );
-      });
+    compilation.chunkGraph.getChunkModules(chunk).forEach((module) => {
+      outputUnusedExportMap(
+        compilation,
+        chunk,
+        module,
+        includedFileMap,
+        unusedExportMap,
+      );
+    });
   });
 
   return unusedExportMap;
