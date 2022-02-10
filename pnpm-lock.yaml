@@ -128,7 +128,7 @@ importers:
     specifiers:
       '@ant-design/icons': ^4.7.0
       '@umijs/pro': 4.0.0-beta.18
-      caniuse-lite: ^1.0.30001309
+      caniuse-lite: 1.0.30001309
       react: 16.14.0
       react-dom: 16.14.0
     dependencies:
@@ -455,11 +455,12 @@ importers:
   packages/bundler-vite:
     specifiers:
       '@svgr/core': 6.0.0
+      '@types/caniuse-lite': 1.0.1
       '@umijs/bundler-utils': 4.0.0-beta.18
       '@umijs/utils': 4.0.0-beta.18
       '@vitejs/plugin-legacy': 1.6.3
       '@vitejs/plugin-react': 1.1.0
-      caniuse-lite: ^1.0.30001309
+      caniuse-lite: 1.0.30001309
       express: 4.17.1
       postcss-preset-env: 7.0.1
       rollup-plugin-copy: 3.4.0
@@ -479,6 +480,7 @@ importers:
       rollup-plugin-visualizer: 5.5.2
       vite: 2.7.6
     devDependencies:
+      '@types/caniuse-lite': 1.0.1
       express: 4.17.1
 
   packages/bundler-webpack:
@@ -6038,6 +6040,10 @@ packages:
       '@types/keyv': 3.1.2
       '@types/node': 16.11.11
       '@types/responselike': 1.0.0
+    dev: true
+
+  /@types/caniuse-lite/1.0.1:
+    resolution: {integrity: sha512-enW8d/vdojHAhr1C/0BqsNkhz/0ik2WCuAJIp9EClP+mHkR8xXBJ2OGeXHZ6cPqDjVKvWBRe9tY/Nr9r4yQSuA==}
     dev: true
 
   /@types/color-convert/2.0.0:

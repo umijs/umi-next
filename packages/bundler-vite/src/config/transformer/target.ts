@@ -14,6 +14,7 @@ export default (function target(userConfig) {
   if (typeof userConfig.targets === 'object') {
     config.build!.target = Object.entries(userConfig.targets)
       .filter(([name]) => {
+        //https://esbuild.github.io/api/#target
         return ['chrome', 'edge', 'firefox', 'ios', 'node', 'safari'].includes(
           name,
         );
@@ -23,18 +24,14 @@ export default (function target(userConfig) {
   const { features, feature: unpackFeature } = lite;
   const { stats } = unpackFeature(features['es6-module']);
 
-  // targets: {} > false
-  // targets: { edge: 11 } > true
-  // targets: { edge: 20 } > false
+  // targets: {} => false
+  // targets: { edge: 11 } => true
+  // targets: { edge: 20 } => false
   // refer: https://caniuse.com/?search=esm
   function isLegacyBrowser(targets: Record<string, number>) {
     for (const browserName of Object.keys(targets)) {
       const version = targets[browserName];
-      if (
-        version &&
-        stats[browserName] &&
-        stats[browserName]?.version === 'n'
-      ) {
+      if (version && stats[browserName]?.version === 'n') {
         return true;
       }
     }
