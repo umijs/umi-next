@@ -1,4 +1,7 @@
-import fork from './fork';
+import { createRequire } from 'module';
+import fork from './fork.js';
+
+const require = createRequire(import.meta.url);
 
 export function dev() {
   const child = fork({

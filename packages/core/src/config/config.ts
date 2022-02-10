@@ -1,18 +1,22 @@
-import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import esbuild from '@umijs/bundler-utils/compiled/esbuild/index.js';
 import { chokidar, lodash, register } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
+import { createRequire } from 'module';
 import { join } from 'path';
-import joi from '../../compiled/@hapi/joi';
-import { diff } from '../../compiled/just-diff';
+import joi from '../../compiled/@hapi/joi/index.js';
+import justDiff from '../../compiled/just-diff/index.js';
 import {
   DEFAULT_CONFIG_FILES,
   LOCAL_EXT,
   SHORT_ENV,
   WATCH_DEBOUNCE_STEP,
-} from '../constants';
-import { Env } from '../types';
-import { addExt, getAbsFiles } from './utils';
+} from '../constants.js';
+import { Env } from '../types.js';
+import { addExt, getAbsFiles } from './utils.js';
+
+const require = createRequire(import.meta.url);
+const { diff } = justDiff;
 
 interface IOpts {
   cwd: string;

@@ -1,8 +1,11 @@
 import { Service as CoreService } from '@umijs/core';
 import { existsSync } from 'fs';
+import { createRequire } from 'module';
 import { dirname, join } from 'path';
-import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants';
-import { getCwd } from './cwd';
+import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants.js';
+import { getCwd } from './cwd.js';
+
+const require = createRequire(import.meta.url);
 
 export class Service extends CoreService {
   constructor(opts?: any) {

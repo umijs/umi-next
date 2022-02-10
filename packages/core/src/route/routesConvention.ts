@@ -1,13 +1,13 @@
 import { winPath } from '@umijs/utils';
 import { existsSync, lstatSync, readdirSync, statSync } from 'fs';
 import { extname, relative, resolve } from 'path';
-import { defineRoutes } from './defineRoutes';
+import { defineRoutes } from './defineRoutes.js';
 import {
   byLongestFirst,
   createRouteId,
   findParentRouteId,
   isRouteModuleFile,
-} from './utils';
+} from './utils.js';
 
 // opts.base: path of pages
 export function getConventionRoutes(opts: {

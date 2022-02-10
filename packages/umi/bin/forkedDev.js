@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-require('v8-compile-cache');
-require('../dist/cli/forkedDev');
+import 'v8-compile-cache';
+import '../dist/cli/forkedDev.js';

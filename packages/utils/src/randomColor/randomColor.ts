@@ -1,4 +1,4 @@
-import color from '../../compiled/color';
+import color from '../../compiled/color/index.js';
 
 const ratio = 0.618033988749895;
 let hue = Math.random();

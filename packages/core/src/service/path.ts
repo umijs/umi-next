@@ -1,7 +1,7 @@
 import { winPath } from '@umijs/utils';
 import { existsSync, statSync } from 'fs';
 import { join } from 'path';
-import { Env } from '../types';
+import { Env } from '../types.js';
 
 function winJoin(...args: string[]) {
   return winPath(join(...args));

@@ -4,7 +4,7 @@
  * 2. https://github.com/microsoft/rushstack/blob/90301e9/libraries/node-core-library/src/Import.ts#L175
  */
 
-import importLazyInternal from '../compiled/import-lazy';
+import importLazyInternal from '../compiled/import-lazy/index.js';
 
 export function importLazy(
   moduleName: string,

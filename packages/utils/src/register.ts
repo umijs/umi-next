@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs';
+import { createRequire } from 'module';
 
 let registered = false;
 let files: string[] = [];
@@ -18,6 +19,8 @@ function transform(opts: { extname: string; implementor: any }) {
     mod._compile(code, filename);
   };
 }
+
+const require = createRequire(import.meta.url);
 
 export function register(opts: { implementor: any }) {
   files = [];

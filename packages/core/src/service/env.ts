@@ -1,6 +1,9 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { parse } from '../../compiled/dotenv';
+// @ts-ignore
+import dotenv from '../../compiled/dotenv/index.js';
+
+const { parse } = dotenv;
 
 export function loadEnv(opts: { cwd: string; envFile: string }) {
   const files = [

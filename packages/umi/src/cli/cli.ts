@@ -1,13 +1,13 @@
 import { logger, yParser } from '@umijs/utils';
-import { DEV_COMMAND } from '../constants';
-import { Service } from '../service/service';
-import { dev } from './dev';
+import { DEV_COMMAND } from '../constants.js';
+import { Service } from '../service/service.js';
+import { dev } from './dev.js';
 import {
   checkLocal,
   checkVersion as checkNodeVersion,
   setNoDeprecation,
   setNodeTitle,
-} from './node';
+} from './node.js';
 
 interface IOpts {
   presets?: string[];

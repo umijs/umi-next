@@ -1,10 +1,12 @@
-import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import esbuild from '@umijs/bundler-utils/compiled/esbuild/index.js';
 import { lodash, pkgUp, register, resolve, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
+import { createRequire } from 'module';
 import { basename, dirname, extname, join, relative } from 'path';
-import { EnableBy, Env, IPluginConfig } from '../types';
+import { EnableBy, Env, IPluginConfig } from '../types.js';
 
+const require = createRequire(import.meta.url);
 const RE = {
   plugin: /^(@umijs\/|umi-)plugin-/,
   preset: /^(@umijs\/|umi-)preset-/,

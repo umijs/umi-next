@@ -1,4 +1,4 @@
-import { assert, compose, isPromiseLike } from './utils';
+import { assert, compose, isPromiseLike } from './utils.js';
 
 export enum ApplyPluginsType {
   compose = 'compose',

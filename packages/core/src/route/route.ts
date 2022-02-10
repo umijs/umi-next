@@ -3,6 +3,6 @@
 // config route
 // programming route
 
-export * from './routesConfig';
-export * from './routesConvention';
-export * from './routeUtils';
+export * from './routesConfig.js';
+export * from './routesConvention.js';
+export * from './routeUtils.js';
