@@ -1,12 +1,13 @@
 import { Compilation, Compiler } from '@umijs/bundler-webpack/compiled/webpack';
 import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import { InnerCallback } from 'tapable';
-import { DeadCodeParams, IConfig } from '../types';
+import { DeadCodeParams, Env, IConfig } from '../types';
 import detectDeadcode, { disabledFolders, Options } from './detectDeadCode';
 
 interface IOpts {
   userConfig: IConfig;
   config: Config;
+  env: Env;
 }
 
 const defaultOptions: Options = {
@@ -56,8 +57,9 @@ class DetectDeadCodePlugin {
 
 export async function addDetectDeadCodePlugin(opts: IOpts) {
   const { config, userConfig } = opts;
+  const isDev = opts.env === Env.development;
 
-  if (userConfig.deadCode) {
+  if (userConfig.deadCode && !isDev) {
     config
       .plugin('detect-dead-code-plugin')
       .use(DetectDeadCodePlugin, [userConfig.deadCode]);
