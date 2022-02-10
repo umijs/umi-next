@@ -62,10 +62,10 @@ export const aliasLessImportPath = async (
     : filePath;
   const keys = sortByAffix({ arr: Object.keys(alias), affix: '$' });
   for (const key of keys) {
-    const pathSegments = aliaPath.split(path.sep);
+    const pathSegments = aliaPath.split('/');
     if (pathSegments[0] === key) {
       pathSegments[0] = alias[key];
-      aliaPath = pathSegments.join(path.sep);
+      aliaPath = pathSegments.join('/');
       aliaPath = path.extname(aliaPath) ? aliaPath : `${aliaPath}.less`;
       return await resolve(importer, aliaPath);
     }
