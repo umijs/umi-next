@@ -24,7 +24,7 @@ async function getMasterRuntime() {
 
 // modify route with "microApp" attribute to use real component
 function patchMicroAppRouteComponent(routes: any[]) {
-  const insertRoutes = microAppRuntimeRoutes.filter(r => r.insert || r.insertBefore || r.insertAfter);
+  const insertRoutes = microAppRuntimeRoutes.filter(r => r.insert || r.insertBefore);
   // 先处理 insert 配置
   insertRoutes.forEach((route) => {
     insertRoute(routes, route);
@@ -59,7 +59,7 @@ function patchMicroAppRouteComponent(routes: any[]) {
       };
 
       patchRoute(microAppRoute);
-      if (!microAppRoute.insert && !microAppRoute.insertBefore && !microAppRoute.insertAfter) {
+      if (!microAppRoute.insert && !microAppRoute.insertBefore) {
         rootRoutes.unshift(microAppRoute);
       }
     });
