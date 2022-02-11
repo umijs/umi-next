@@ -112,14 +112,14 @@ const recursiveSearch = (
 };
 
 export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
-  const mod = microAppRoute.insert
+  const mod = (microAppRoute.insert || microAppRoute.appendChildTo)
   ? 'insert'
   : (
     microAppRoute.insertBefore
     ? 'insertBefore'
     : undefined
   );
-  const target = microAppRoute.insert || microAppRoute.insertBefore;
+  const target = microAppRoute.insert || microAppRoute.insertBefore || microAppRoute.appendChildTo;
   const [ found, foundParentRoutes = [], index = 0, parentPath ] = recursiveSearch(routes, target, '/') || [];
   if (found) {
     switch (mod) {
@@ -152,7 +152,7 @@ export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
     }
   } else {
     throw new Error(
-      `[plugin-qiankun]: path "${microAppRoute.insert}" not found`,
+      `[plugin-qiankun]: path "${target}" not found`,
     );
   }
 }
