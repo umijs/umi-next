@@ -1,7 +1,6 @@
 import alias from './alias';
-// import hoistAlias from './alias';
 
-describe('replace alias is successful', () => {
+describe('alias config transformer', () => {
   test('no alias', () => {
     expect(alias({}, {})).toEqual({
       resolve: {
@@ -9,6 +8,7 @@ describe('replace alias is successful', () => {
       },
     });
   });
+
   test('normal alias replacement', () => {
     expect(
       alias(
@@ -33,9 +33,9 @@ describe('replace alias is successful', () => {
       },
     });
   });
-  //多层递归 alias
 
-  test('Multi-layer alias replacement', () => {
+  //多层递归 alias
+  test('Multi-level alias replacement', () => {
     expect(
       alias(
         {

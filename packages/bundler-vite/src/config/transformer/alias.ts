@@ -5,7 +5,11 @@ import type { IConfigProcessor } from '.';
  * transform umi alias to vite alias
  */
 function hoistAlias(alias: Alias[]) {
-  function fn(oAlias: Alias[], replacement: string, index: number): string {
+  function getFinalReplacement(
+    oAlias: Alias[],
+    replacement: string,
+    index: number,
+  ): string {
     //过滤重复配置，防止死循环
     const newAlias = oAlias.slice();
     newAlias.splice(index, 1);
@@ -17,14 +21,14 @@ function hoistAlias(alias: Alias[]) {
           newAlias[i].find,
           newAlias[i].replacement,
         );
-        return fn(newAlias, replacement, i);
+        return getFinalReplacement(newAlias, replacement, i);
       }
     }
     return replacement;
   }
 
   alias.forEach((rule: Alias, index: number, alias: Alias[]) => {
-    rule.replacement = fn(alias, rule.replacement, index);
+    rule.replacement = getFinalReplacement(alias, rule.replacement, index);
   });
   return alias;
 }
@@ -51,9 +55,10 @@ export default (function alias(userConfig) {
         replacement: target,
       }),
     );
+    const wholeAlias: Alias[] = config.resolve!.alias as Alias[];
 
-    (config.resolve!.alias as Alias[]).unshift(...userAlias);
-    config.resolve!.alias = hoistAlias(config.resolve!.alias as Alias[]);
+    wholeAlias.unshift(...userAlias);
+    config.resolve!.alias = hoistAlias(wholeAlias);
   }
 
   return config;
