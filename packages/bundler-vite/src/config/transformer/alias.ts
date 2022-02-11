@@ -1,9 +1,6 @@
 import type { Alias } from 'vite';
 import type { IConfigProcessor } from '.';
 
-/**
- * transform umi alias to vite alias
- */
 function hoistAlias(alias: Alias[]) {
   function getFinalReplacement(
     oAlias: Alias[],
@@ -32,6 +29,10 @@ function hoistAlias(alias: Alias[]) {
   });
   return alias;
 }
+
+/**
+ * transform umi alias to vite alias
+ */
 export default (function alias(userConfig) {
   const config: ReturnType<IConfigProcessor> = {
     resolve: {
