@@ -6537,7 +6537,6 @@ declare class Module extends DependenciesBlock {
 		runtimeTemplate: RuntimeTemplate,
 		type?: string
 	): Source;
-	resource?: string;
 	size(type?: string): number;
 	libIdent(options: LibIdentOptions): null | string;
 	nameForCondition(): null | string;

@@ -30,7 +30,6 @@ export class Config {
   public mainConfigFile: string | null;
   public prevConfig: any;
   public files: string[] = [];
-
   constructor(opts: IOpts) {
     this.opts = opts;
     this.mainConfigFile = Config.getMainConfigFile(this.opts);
@@ -186,25 +185,15 @@ export class Config {
   static validateConfig(opts: { config: any; schemas: ISchema }) {
     const errors = new Map<string, Error>();
     const configKeys = new Set(Object.keys(opts.config));
-    const schemasKeys = Object.keys(opts.schemas);
-
-    for (const schemasKey of schemasKeys) {
-      configKeys.delete(schemasKey);
-
-      if (!opts.config[schemasKey]) continue;
-
-      const schema = opts.schemas[schemasKey](joi);
-
+    for (const key of Object.keys(opts.schemas)) {
+      configKeys.delete(key);
+      if (!opts.config[key]) continue;
+      const schema = opts.schemas[key](joi);
       // invalid schema
-      assert(
-        joi.isSchema(schema),
-        `schema for config ${schemasKey} is not valid.`,
-      );
-
-      const { error } = schema.validate(opts.config[schemasKey]);
-      if (error) errors.set(schemasKey, error);
+      assert(joi.isSchema(schema), `schema for config ${key} is not valid.`);
+      const { error } = schema.validate(opts.config[key]);
+      if (error) errors.set(key, error);
     }
-
     // invalid config values
     assert(
       errors.size === 0,
@@ -213,7 +202,6 @@ ${Array.from(errors.keys()).map((key) => {
   return `Invalid value for ${key}:\n${errors.get(key)!.message}`;
 })}`,
     );
-
     // invalid config keys
     assert(
       configKeys.size === 0,
