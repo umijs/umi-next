@@ -1,5 +1,6 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
-import { dirname } from 'path';
+import { getCorejsVersion } from '@umijs/utils';
+import { dirname, join } from 'path';
 import { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -26,7 +27,7 @@ export default (api: IApi) => {
     const { code } = transform(
       `
 ${coreJsImports}
-import 'regenerator-runtime/runtime';
+import '${require.resolve('regenerator-runtime/runtime')}';
 export {};
 `,
       {
@@ -36,7 +37,9 @@ export {};
             require.resolve('@umijs/bundler-utils/compiled/babel/preset-env'),
             {
               useBuiltIns: 'entry',
-              corejs: '3',
+              corejs: getCorejsVersion(
+                join(__dirname, '../../../package.json'),
+              ),
               modules: false,
               targets: api.config.targets,
             },

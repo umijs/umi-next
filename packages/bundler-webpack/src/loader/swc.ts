@@ -2,29 +2,41 @@ import { Config, transform, transformSync } from '@swc/core';
 import type { LoaderContext } from '../../compiled/webpack';
 import { Env, SwcOptions } from '../types';
 
-function getBaseOpts(filename: string) {
+function getBaseOpts({ filename }: { filename: string }) {
   const isTSFile = filename.endsWith('.ts');
   const isTypeScript = isTSFile || filename.endsWith('.tsx');
+  const isDev = process.env.NODE_ENV === Env.development;
+
+  /**
+   * Not use swc auto polyfill , depend on `preset-umi/features/polyfill/polyfill` imported polyfill file
+   *
+   * @issue https://github.com/swc-project/swc/issues/2607
+   *        https://github.com/swc-project/swc/issues/1604
+   */
   const swcOpts: Config = {
+    module: {
+      // @ts-ignore
+      type: 'es6',
+      ignoreDynamic: true,
+    },
     jsc: {
       parser: {
         syntax: isTypeScript ? 'typescript' : 'ecmascript',
         [isTypeScript ? 'tsx' : 'jsx']: !isTSFile,
         dynamicImport: isTypeScript,
       },
-      target: 'es2017',
+      target: 'es2015',
       transform: {
         react: {
           runtime: 'automatic',
           pragma: 'React.createElement',
           pragmaFrag: 'React.Fragment',
           throwIfNamespace: true,
-          development: process.env.NODE_ENV === Env.development,
+          development: isDev,
           useBuiltins: true,
         },
       },
     },
-    sourceMaps: true,
   };
   return swcOpts;
 }
@@ -34,12 +46,18 @@ function swcLoader(this: LoaderContext<SwcOptions>, contents: string) {
   const callback = this.async();
   const loaderOpts = this.getOptions();
 
-  const swcOpts = {
-    ...getBaseOpts(this.resourcePath),
-    ...loaderOpts,
-  };
+  const { sync = false, parseMap = false, ...otherOpts } = loaderOpts;
+  const filename = this.resourcePath;
 
-  const { sync = false, parseMap = false } = swcOpts;
+  const swcOpts = {
+    ...getBaseOpts({
+      filename,
+    }),
+    filename,
+    sourceMaps: this.sourceMap,
+    sourceFileName: filename,
+    ...otherOpts,
+  };
 
   try {
     if (sync) {
