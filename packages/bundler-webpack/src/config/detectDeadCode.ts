@@ -87,8 +87,8 @@ const outputUnusedExportMap = (
   includedFileMap: FileDictionary,
   unusedExportMap: ExportDictionary,
 ) => {
-  if (!module.resource) return;
-  const path = convertToUnixPath(module.resource);
+  if (!(module as any).resource) return;
+  const path = convertToUnixPath((module as any).resource);
   if (!/^((?!(node_modules)).)*$/.test(path)) return;
 
   const providedExports =
