@@ -51,7 +51,7 @@ const aliasLessImports = async (
   return ctx;
 };
 
-const aliasLessImportPath = async (
+export const aliasLessImportPath = async (
   filePath: string,
   alias: Record<string, string>,
   importer: string,
@@ -62,10 +62,10 @@ const aliasLessImportPath = async (
     : filePath;
   const keys = sortByAffix({ arr: Object.keys(alias), affix: '$' });
   for (const key of keys) {
-    const value = alias[key];
-    const filter = new RegExp(`^${key}`);
-    if (filter.test(aliaPath)) {
-      aliaPath = aliaPath.replace(filter, value);
+    const pathSegments = aliaPath.split('/');
+    if (pathSegments[0] === key) {
+      pathSegments[0] = alias[key];
+      aliaPath = pathSegments.join('/');
       aliaPath = path.extname(aliaPath) ? aliaPath : `${aliaPath}.less`;
       return await resolve(importer, aliaPath);
     }
@@ -86,21 +86,32 @@ export default (
     setup({ onResolve, onLoad }) {
       onResolve({ filter: /\.less$/, namespace: 'file' }, async (args) => {
         let filePath = args.path;
+        let isMatchedAlias = false;
+        // first match alias
         if (!!alias) {
-          filePath =
-            (await aliasLessImportPath(filePath, alias, args.path)) ||
-            path.resolve(
+          const aliasMatchPath = await aliasLessImportPath(
+            filePath,
+            alias,
+            args.path,
+          );
+          if (aliasMatchPath) {
+            isMatchedAlias = true;
+            filePath = aliasMatchPath;
+          }
+        }
+        // if alias not matched, identify whether import from deps (node_modules)
+        if (!isMatchedAlias) {
+          const isImportFromDeps =
+            !path.isAbsolute(filePath) && !filePath.startsWith('.');
+          if (isImportFromDeps) {
+            filePath = await resolve(process.cwd(), filePath);
+          } else {
+            filePath = path.resolve(
               process.cwd(),
               path.relative(process.cwd(), args.resolveDir),
               args.path,
             );
-        } else {
-          //没有别名也要对路径进行处理
-          filePath = path.resolve(
-            process.cwd(),
-            path.relative(process.cwd(), args.resolveDir),
-            args.path,
-          );
+          }
         }
         return {
           path: filePath,
