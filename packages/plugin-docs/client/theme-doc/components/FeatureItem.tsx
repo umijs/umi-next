@@ -13,7 +13,7 @@ interface Feature {
  * */
 function FeatureItem(props: Feature) {
   return (
-    <div className="w-full lg:w-1/3 flex flex-row items-center justify-center mb-8 lg:mb-16">
+    <div className="w-full md:w-1/2 lg:w-1/3 flex flex-row items-center justify-center mb-8 lg:mb-16">
       <div
         className="flex flex-col w-5/6 lg:w-3/4 items-center
       bg-white dark:bg-gray-800 py-12 px-6 justify-center
