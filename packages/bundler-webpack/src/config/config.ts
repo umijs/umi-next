@@ -1,3 +1,4 @@
+import { DEFAULT_BROWSER_TARGETS } from '@umijs/utils';
 import { join } from 'path';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
@@ -51,9 +52,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   const { userConfig } = opts;
   const isDev = opts.env === Env.development;
   const config = new Config();
-  userConfig.targets = userConfig.targets || {
-    chrome: 80,
-  };
+  userConfig.targets ||= DEFAULT_BROWSER_TARGETS;
   const useHash = !!(opts.hash || (userConfig.hash && !isDev));
   const applyOpts = {
     name: opts.name,
