@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useRef } from 'react';
+import React, { PropsWithChildren } from 'react';
 
 /**
  * Features 组件是文档首页第二个 Feature 区块的容器，
@@ -7,13 +7,6 @@ import React, { PropsWithChildren, useEffect, useRef } from 'react';
 function Features(
   props: PropsWithChildren<{ title?: string; subtitle?: string }>,
 ) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    /** 组件加载完毕后，移动滑动条到某个 Feature Item 上，否则初始状态是歪的*/
-    if (ref) ref.current?.scrollTo(600, 0);
-  }, [ref]);
-
   return (
     <div className="w-screen py-36 features dark:features-dark min-h-screen">
       {(props.title || props.subtitle) && (
@@ -38,7 +31,6 @@ function Features(
       )}
       <div className="w-full flex flex-row justify-center">
         <div
-          ref={ref}
           className="w-full flex flex-row flex-wrap
        features pb-12 dark:features-dark container"
         >
