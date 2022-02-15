@@ -1,22 +1,21 @@
 // @ts-ignore
-import mdx from '@mdx-js/mdx';
-import remarkSlug from 'remark-slug';
+import { createProcessor } from '../compiled/@mdx-js/mdx';
+// @ts-ignore
+import rehypeSlug from '../compiled/rehype-slug';
 
 export async function compile(opts: { content: string }) {
-  let result = await mdx(opts.content, {
-    remarkPlugins: [remarkSlug],
-    rehypePlugins: [],
-    compilers: [],
+  const compiler = createProcessor({
+    jsx: true,
+    remarkPlugins: [],
+    rehypePlugins: [rehypeSlug],
   });
-  result = `
-import React, { useEffect } from 'react';
-${result}`;
-  result = result.replace('/* @jsxRuntime classic */', '');
-  result = result.replace('/* @jsx mdx */', '');
-
+  let result = String(await compiler.process(opts.content));
   result = result.replace(
-    'return <MDXLayout',
+    'function MDXContent(props = {}) {',
     `
+import { useEffect } from 'react';
+
+function MDXContent(props = {}) {
 
   useEffect(() => {
     if (window.location.hash.length !== 0) {
@@ -26,8 +25,7 @@ ${result}`;
     }
   }, []);
 
-return <MDXLayout`,
+`,
   );
-
   return { result };
 }
