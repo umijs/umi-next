@@ -1,5 +1,6 @@
+import { DEFAULT_BROWSER_TARGETS } from '@umijs/bundler-webpack';
 import { getSchemas } from '@umijs/bundler-webpack/dist/schema';
-import { DEFAULT_BROWSER_TARGETS, resolve } from '@umijs/utils';
+import { resolve } from '@umijs/utils';
 import { dirname } from 'path';
 import { IApi } from '../../types';
 import { getSchemas as getExtraSchemas } from './schema';

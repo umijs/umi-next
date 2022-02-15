@@ -1,8 +1,11 @@
-import { DEFAULT_BROWSER_TARGETS } from '@umijs/utils';
 import { join } from 'path';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
-import { DEFAULT_DEVTOOL, DEFAULT_OUTPUT_PATH } from '../constants';
+import {
+  DEFAULT_BROWSER_TARGETS,
+  DEFAULT_DEVTOOL,
+  DEFAULT_OUTPUT_PATH,
+} from '../constants';
 import { RuntimePublicPathPlugin } from '../plugins/RuntimePublicPathPlugin';
 import { Env, IConfig } from '../types';
 import { getBrowsersList } from '../utils/browsersList';
