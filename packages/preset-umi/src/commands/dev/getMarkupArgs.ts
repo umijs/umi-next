@@ -1,3 +1,4 @@
+import { prettier } from '@umijs/utils';
 import cheerio from '@umijs/utils/compiled/cheerio';
 import { IApi } from '../../types';
 
@@ -48,10 +49,9 @@ export async function getMarkupArgs(opts: { api: IApi }) {
         args,
       });
       let html = $.html();
-      // TODO: prettier html
-      // html = prettier.format(html, {
-      //   parser: 'html',
-      // });
+      html = prettier.format(html, {
+        parser: 'html',
+      });
       return html;
     },
   };
