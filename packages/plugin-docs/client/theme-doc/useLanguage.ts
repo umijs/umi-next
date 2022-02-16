@@ -9,7 +9,7 @@ interface useLanguageResult {
 }
 
 function useLanguage(): useLanguageResult {
-  const { themeConfig, location } = useThemeContext()!;
+  const { themeConfig, location, appData } = useThemeContext()!;
 
   const languages = themeConfig.i18n;
   let currentLanguage: { locale: string; text: string } | undefined = undefined;
@@ -40,13 +40,33 @@ function useLanguage(): useLanguageResult {
       return;
     }
 
+    let p = location.pathname.split('/');
+    p.shift();
+
+    // 在首页进行语言切换
+    if (p.length === 1 && p[0] === '') {
+      // 首页没有这个语言，回到默认语言的首页
+      if (!appData.routes['README.' + locale]) {
+        isFromPath && (window.location.pathname = location.pathname);
+        return;
+      }
+      window.location.pathname = locale;
+      return;
+    }
+
+    // 如果要跳转的页面没有当前语言，fallback 到默认语言
+    if (!appData.routes[p.join('/') + '.' + locale]) {
+      isFromPath && (window.location.pathname = location.pathname);
+      return;
+    }
+
     // 当前在默认语言，切换到其他语言
     if (!isFromPath) {
       window.location.pathname = locale + location.pathname;
       return;
     }
 
-    let p = location.pathname.split('/');
+    p = location.pathname.split('/');
     p[1] = locale;
     window.location.pathname = p.join('/');
   }
