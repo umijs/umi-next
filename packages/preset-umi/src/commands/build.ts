@@ -1,3 +1,4 @@
+import htmlMini from '@umijs/bundler-utils/compiled/html-minifier-terser';
 import { getMarkup } from '@umijs/server';
 import { importLazy, logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
@@ -152,9 +153,28 @@ umi build --clean
         esmScript: !!opts.config.esm || vite,
         path: '/',
       });
+
+      const minifyMarkUp = await htmlMini.minify(markup, {
+        /**
+         * @refer https://github.com/jantimon/html-webpack-plugin/blob/main/index.js#L197
+         *        https://github.com/facebook/create-react-app/blob/main/packages/react-scripts/config/webpack.config.js#L615
+         */
+        collapseWhitespace: true,
+        keepClosingSlash: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeComments: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      });
+
       writeFileSync(
         join(api.paths.absOutputPath, 'index.html'),
-        markup,
+        minifyMarkUp,
         'utf-8',
       );
       logger.event('build index.html');
