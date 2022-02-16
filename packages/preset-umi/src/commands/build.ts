@@ -111,37 +111,26 @@ umi build --clean
         clean: api.args.clean,
       };
 
-      let stats: any;
       if (api.args.vite) {
-        stats = await bundlerVite.build(opts);
+        await bundlerVite.build(opts);
       } else {
-        stats = await bundlerWebpack.build(opts);
-      }
-
-      function getAssetsMap(stats: any) {
-        if (api.args.vite) {
-          // TODO: FIXME: vite
-          return { 'umi.js': 'umi.js', 'umi.css': 'umi.css' };
-        }
-
-        let ret: Record<string, string> = {};
-        for (const asset of stats.toJson().entrypoints['umi'].assets) {
-          if (/^umi\..+?\.js$/.test(asset.name)) {
-            ret['umi.js'] = asset.name;
-          }
-          if (/^umi\..+?\.css$/.test(asset.name)) {
-            ret['umi.css'] = asset.name;
-          }
-        }
-        return ret;
+        await bundlerWebpack.build(opts);
       }
 
       function getAsset(name: string) {
-        return assetsMap[name] ? [`/${assetsMap[name]}`] : [];
+        // TODO: FIXME: vite
+        if (api.args.vite) {
+          const assetsMap: Record<string, string[]> = {
+            'umi.js': ['umi.js'],
+            'umi.css': ['umi.css'],
+          };
+          return assetsMap[name];
+        }
+        // webpack: auto inject
+        return [];
       }
 
       // generate html
-      const assetsMap = getAssetsMap(stats);
       const { vite } = api.args;
       const markupArgs = await getMarkupArgs({ api });
       // @ts-ignore

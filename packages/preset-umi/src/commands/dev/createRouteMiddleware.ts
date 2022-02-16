@@ -26,8 +26,8 @@ export function createRouteMiddleware(opts: { api: IApi }): RequestHandler {
     // @ts-ignore
     const requestHandler = await createRequestHandler({
       ...markupArgs,
-      styles: ['/umi.css'].concat(markupArgs.styles),
-      scripts: (vite ? viteScripts : ['/umi.js']).concat(markupArgs.scripts!),
+      styles: [].concat(markupArgs.styles),
+      scripts: (vite ? viteScripts : []).concat(markupArgs.scripts!),
       esmScript: vite,
     });
     requestHandler(req, res, next);
