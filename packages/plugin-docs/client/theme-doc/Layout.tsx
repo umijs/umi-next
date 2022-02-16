@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { Fragment, useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import Announcement from './components/Announcement';
 import { ThemeContext } from './context';
 import Head from './Head';
@@ -52,7 +53,12 @@ export default (props: any) => {
         <div className="g-glossy-firefox" id="firefox-head-bg" />
 
         {window.location.pathname === '/' ? (
-          <div id="article-body">{props.children}</div>
+          <div id="article-body">
+            <Helmet>
+              <title>UmiJS - 插件化的企业级前端应用框架</title>
+            </Helmet>
+            {props.children}
+          </div>
         ) : (
           <Fragment>
             <div

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 
@@ -31,6 +32,9 @@ export default () => {
       className="w-full lg:m-12 mb-12 border
       border-gray-100 p-8 rounded-xl z-20"
     >
+      <Helmet>
+        <title>{route.titles[0].title} | UmiJS</title>
+      </Helmet>
       <p className="text-lg font-extrabold dark:text-white">
         {route.titles[0].title}
       </p>
