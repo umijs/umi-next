@@ -1,3 +1,4 @@
+import { winPath } from '@umijs/utils';
 import fs, { existsSync } from 'fs';
 import { join } from 'path';
 import { IApi } from 'umi';
@@ -63,14 +64,12 @@ export default (api: IApi) => {
         }
       });
     }
-
+    const themeDco = winPath(join(__dirname, '..', 'client', 'theme-doc'));
     // @TODO: 需要能够动态解析 theme 中导出的组件，现在是硬编码
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-export { Message, Hero, Features, FeatureItem } from '${require.resolve(
-        '../client/theme-doc',
-      )}';
+export { Message, Hero, Features, FeatureItem } from '${themeDco}';
     `,
     });
 
@@ -79,7 +78,7 @@ export { Message, Hero, Features, FeatureItem } from '${require.resolve(
       content: `
 import React from 'react';
 import { useOutlet, useAppData, useLocation, Link } from 'umi';
-import { Layout } from '${require.resolve('../client/theme-doc')}';
+import { Layout } from '${themeDco}';
 ${
   themeExists
     ? `import themeConfig from '${themeConfigPath}'`
