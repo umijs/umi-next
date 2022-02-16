@@ -83,7 +83,7 @@ export async function getMarkup(
   }
 
   const favicon = opts.favicon
-    ? `<link rel="shortcut icon" href="${opts.favicon}">`
+    ? `<link rel="shortcut icon" href="${opts.favicon}" />`
     : '';
   const metas = (opts.metas || []).map((meta) =>
     getTagContent({ attrs: meta, tagName: 'meta' }),
