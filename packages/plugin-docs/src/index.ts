@@ -7,6 +7,22 @@ import { parseTitle } from './markdown';
 
 export default (api: IApi) => {
   api.modifyDefaultConfig((memo) => {
+    // 把用户当前有设置在 docs/locales 下的语系放到配置中，方便后续使用
+    const locales: { [locale: string]: { [key: string]: string } } = {};
+    const localesPath = join(api.cwd, 'docs/locales');
+    if (existsSync(localesPath)) {
+      fs.readdirSync(localesPath).forEach((file) => {
+        if (file.endsWith('.json')) {
+          const filePath = join(localesPath, file);
+          const content = fs.readFileSync(filePath).toString();
+          const json = JSON.parse(content);
+          const localeName = file.replace('.json', '');
+          locales[localeName] = json;
+        }
+      });
+    }
+    api.userConfig.locales = locales;
+
     memo.conventionRoutes = {
       ...memo.conventionRoutes,
       base: join(api.cwd, 'docs'),
@@ -42,6 +58,25 @@ export default (api: IApi) => {
         route.path = route.path.replace(/README$/, '');
       }
     }
+
+    // 检查当前处理的路由是否存在其他语言的文档，没有的话做 fallback 处理
+    if (api.userConfig.locales) {
+      const defaultLangFile = route.file.replace(
+        /(.[a-z]{2}-[A-Z]{2})?.md$/,
+        '',
+      );
+      api.modifyRoutes((r) => {
+        Object.keys(api.userConfig.locales).map((l) => {
+          if (r[defaultLangFile] && !r[defaultLangFile + '.' + l]) {
+            r[defaultLangFile + '.' + l] = {
+              ...r[defaultLangFile],
+              path: `/${l}/${r[defaultLangFile].path}`,
+            };
+          }
+        });
+        return r;
+      });
+    }
   });
 
   api.onGenerateFiles(() => {
@@ -57,22 +92,9 @@ export default (api: IApi) => {
     const themeExists = existsSync(themeConfigPath);
 
     // 将 docs/locales 目录下的 json 文件注入到 themeConfig.locales 中
-    let injectLocale = 'themeConfig.locales = {};';
-    const localesPath = join(api.cwd, 'docs/locales');
-    if (existsSync(localesPath)) {
-      fs.readdirSync(localesPath).forEach((file) => {
-        if (file.endsWith('.json')) {
-          const filePath = join(localesPath, file);
-          const content = fs.readFileSync(filePath).toString();
-          const json = JSON.parse(content);
-          const localeName = file.replace('.json', '');
-          injectLocale += `themeConfig.locales['${localeName}'] = ${JSON.stringify(
-            json,
-          )};
-`;
-        }
-      });
-    }
+    let injectLocale = `themeConfig.locales = ${JSON.stringify(
+      api.userConfig.locales,
+    )};`;
 
     // exports don't start with $ will be MDX Component
     const [_, exports] = parseModuleSync({
