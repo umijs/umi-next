@@ -5,7 +5,9 @@ import { IConfig } from '../types';
  * support externals like webpack
  * @note  only support key:value format
  */
-export default function externals(externals: IConfig['externals']): Plugin {
+export default function externals(
+  externals: NonNullable<IConfig['externals']>,
+): Plugin {
   return {
     name: 'bundler-vite:externals',
     resolveId(id) {
