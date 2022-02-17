@@ -134,6 +134,29 @@ copy: ['foo.js', 'bar']
     - foo.js
 ```
 
+## deadCode
+
+* 类型：`{}`
+* 默认值：`false`
+
+检测未使用的文件和导出，仅在 build 阶段开启。
+
+比如：
+
+```
+deadCode: {}
+```
+
+然后执行 build，如有发现，会有类似信息抛出。
+
+```
+Warning: There are 3 unused files:
+ 1. /mock/a.ts
+ 2. /mock/b.ts
+ 3. /pages/index.module.less
+ Please be careful if you want to remove them (¬º-°)¬.
+```
+
 ## define
 
 * 类型：`Record<string, string>`
@@ -364,12 +387,12 @@ metas: [
 
 ## mfsu
 
-* 类型：`{ esbuild: boolean; mfName: string }`
+* 类型：`{ esbuild: boolean; mfName: string; cacheDirectory: string }`
 * 默认值：`{ mfName: 'mf' }`
 
 配置基于 Module Federation 的提速功能。
 
-关于参数。`esbuild` 配为 `true` 后会让依赖的预编译走 esbuild，从而让首次启动更快，缺点是二次编译不会有 webpack 的物理缓存，稍慢一些；`mfName` 是此方案的 remote 库的全局变量，默认是 mf，通常在微前端中为了让主应用和子应用不冲突才会进行配置。
+关于参数。`esbuild` 配为 `true` 后会让依赖的预编译走 esbuild，从而让首次启动更快，缺点是二次编译不会有 webpack 的物理缓存，稍慢一些；`mfName` 是此方案的 remote 库的全局变量，默认是 mf，通常在微前端中为了让主应用和子应用不冲突才会进行配置；`cacheDirectory` 可以自定义缓存目录，默认是 `node_modules/.cache/mfsu`。
 
 示例，
 
