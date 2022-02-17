@@ -29,6 +29,8 @@ export default (props: any) => {
     };
   }, []);
 
+  const { title, description } = props.themeConfig;
+
   return (
     <ThemeContext.Provider
       value={{
@@ -55,7 +57,10 @@ export default (props: any) => {
         {window.location.pathname === '/' ? (
           <div id="article-body">
             <Helmet>
-              <title>UmiJS - 插件化的企业级前端应用框架</title>
+              <title>
+                {title}
+                {description ? ` - ${description}` : ''}
+              </title>
             </Helmet>
             {props.children}
           </div>

@@ -11,7 +11,7 @@ function getLinkFromTitle(title: string) {
 }
 
 export default () => {
-  const { location, appData } = useThemeContext()!;
+  const { location, appData, themeConfig } = useThemeContext()!;
   const lang = useLanguage();
   const route =
     appData.routes[
@@ -33,7 +33,9 @@ export default () => {
       border-gray-100 p-8 rounded-xl z-20"
     >
       <Helmet>
-        <title>{route.titles[0].title} | UmiJS</title>
+        <title>
+          {route.titles[0].title} | {themeConfig.title}
+        </title>
       </Helmet>
       <p className="text-lg font-extrabold dark:text-white">
         {route.titles[0].title}
