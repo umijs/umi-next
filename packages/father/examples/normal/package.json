@@ -1,6 +1,7 @@
 {
   "scripts": {
     "build": "../../bin/father.js build",
+    "precompile": "../../bin/father.js precompile",
     "version": "../../bin/father.js version"
   }
 }

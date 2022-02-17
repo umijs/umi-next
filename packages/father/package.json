@@ -26,6 +26,8 @@
   "dependencies": {
     "@umijs/core": "4.0.0-rc.1",
     "@umijs/utils": "4.0.0-rc.1",
+    "@vercel/ncc": "^0.33.3",
+    "dts-packer": "^0.0.3",
     "v8-compile-cache": "2.3.0"
   },
   "publishConfig": {
