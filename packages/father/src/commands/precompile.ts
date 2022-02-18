@@ -40,51 +40,73 @@ export default (api: IApi) => {
       args;
       logger.info(`precompile`);
       const base = process.cwd();
+      console.log('base', base);
       const pkg = readJSONSync(join(base, 'package.json'));
       const pkgDeps = pkg.dependencies || {};
 
       const {
         pkgs = [
           'autoprefixer',
-          'babel-loader',
-          'copy-webpack-plugin',
-          'css-loader',
-          'css-minimizer-webpack-plugin',
-          'cssnano',
-          'compression',
-          'connect-history-api-fallback',
-          'express',
-          'fork-ts-checker-webpack-plugin',
-          'http-proxy-middleware',
-          'less',
-          'less-loader',
-          'mini-css-extract-plugin',
-          'postcss-flexbugs-fixes',
-          'postcss-loader',
-          'purgecss-webpack-plugin',
-          'sass-loader',
-          'schema-utils',
-          'style-loader',
-          'speed-measure-webpack-plugin',
-          'svgo-loader',
-          'tapable',
-          'terser',
-          'terser-webpack-plugin',
-          'url-loader',
-          'webpack-5-chain',
-          'webpack-bundle-analyzer',
-          'webpack-dev-middleware',
-          'webpack-manifest-plugin',
-          'webpack-sources',
-          'ws',
-          './bundles/webpack/bundle',
-          './bundles/react-refresh/babel',
+          // 'babel-loader',
+          // 'copy-webpack-plugin',
+          // 'css-loader',
+          // 'css-minimizer-webpack-plugin',
+          // 'cssnano',
+          // 'compression',
+          // 'connect-history-api-fallback',
+          // 'express',
+          // 'fork-ts-checker-webpack-plugin',
+          // 'http-proxy-middleware',
+          // 'less',
+          // 'less-loader',
+          // 'mini-css-extract-plugin',
+          // 'postcss-flexbugs-fixes',
+          // 'postcss-loader',
+          // 'purgecss-webpack-plugin',
+          // 'sass-loader',
+          // 'schema-utils',
+          // 'style-loader',
+          // 'speed-measure-webpack-plugin',
+          // 'svgo-loader',
+          // 'tapable',
+          // 'terser',
+          // 'terser-webpack-plugin',
+          // 'url-loader',
+          // 'webpack-5-chain',
+          // 'webpack-bundle-analyzer',
+          // 'webpack-dev-middleware',
+          // 'webpack-manifest-plugin',
+          // 'webpack-sources',
+          // 'ws',
+          // './bundles/webpack/bundle',
+          // './bundles/react-refresh/babel',
         ],
-        externals,
-        excludeDtsDeps,
-        extraDtsDeps,
-        extraDtsExternals,
-        noMinify,
+        externals = {
+          '@swc/core': '@swc/core',
+          '@babel/core': '@umijs/bundler-utils/compiled/babel/core',
+          'es-module-lexer': '@umijs/bundler-utils/compiled/es-module-lexer',
+          esbuild: '@umijs/bundler-utils/compiled/esbuild',
+          express: '$$LOCAL',
+          'jest-worker': 'jest-worker',
+          less: '$$LOCAL',
+          cssnano: '$$LOCAL',
+          postcss: 'postcss',
+          tapable: '$$LOCAL',
+          terser: '$$LOCAL',
+          'terser-webpack-plugin': '$$LOCAL',
+          typescript: 'typescript',
+          'uglify-js': 'uglify-js',
+          'url-loader': '$$LOCAL',
+          webpack: '$$LOCAL',
+          'webpack/lib/NormalModule': '../webpack/NormalModule',
+          'webpack-5-chain': '$$LOCAL',
+          'webpack-sources': '$$LOCAL',
+          ws: '$$LOCAL',
+        },
+        excludeDtsDeps = [],
+        extraDtsDeps = [],
+        extraDtsExternals = [],
+        noMinify = [],
         clean,
       } = args;
 
@@ -116,7 +138,7 @@ export default (api: IApi) => {
         });
       });
 
-      function buildDep(opts: IOpts) {
+      async function buildDep(opts: IOpts) {
         const nodeModulesPath = join(opts.base, 'node_modules');
         const target = join(opts.base, opts.target);
 
@@ -131,12 +153,19 @@ export default (api: IApi) => {
           if (opts.pkgName === 'mini-css-extract-plugin') {
             resolvePath = 'mini-css-extract-plugin/dist/index';
           }
+          console.log(
+            'resolvePath',
+            resolvePath,
+            'nodeModulesPath',
+            nodeModulesPath,
+          );
           entry = require.resolve(resolvePath, {
             paths: [nodeModulesPath],
           });
         } else {
           entry = join(opts.base);
         }
+        console.log('entry', entry);
         if (!opts.dtsOnly) {
           if (opts.isDependency) {
             ensureDirSync(target);
@@ -159,7 +188,8 @@ export default (api: IApi) => {
             );
           } else {
             const filesToCopy: string[] = [];
-            const { code, assets } = ncc(entry, {
+            debugger;
+            const res = await ncc(entry, {
               externals: opts.webpackExternals,
               minify: !!opts.minify,
               target: 'es5',
@@ -185,8 +215,10 @@ export default (api: IApi) => {
               },
             });
 
+            const { code, assets } = res;
+            debugger;
             // assets
-            console.log('filesToCopy', filesToCopy);
+            console.log('filesToCopy', filesToCopy, assets);
             for (const key of Object.keys(assets)) {
               const asset = assets[key];
               const data = asset.source;

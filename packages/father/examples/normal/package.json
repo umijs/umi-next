@@ -3,5 +3,8 @@
     "build": "../../bin/father.js build",
     "precompile": "../../bin/father.js precompile",
     "version": "../../bin/father.js version"
+  },
+  "devDependencies": {
+    "autoprefixer": "10.4.2"
   }
 }
