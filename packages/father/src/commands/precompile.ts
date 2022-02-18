@@ -40,7 +40,6 @@ export default (api: IApi) => {
       args;
       logger.info(`precompile`);
       const base = process.cwd();
-      console.log('base', base);
       const pkg = readJSONSync(join(base, 'package.json'));
       const pkgDeps = pkg.dependencies || {};
 
@@ -153,19 +152,12 @@ export default (api: IApi) => {
           if (opts.pkgName === 'mini-css-extract-plugin') {
             resolvePath = 'mini-css-extract-plugin/dist/index';
           }
-          console.log(
-            'resolvePath',
-            resolvePath,
-            'nodeModulesPath',
-            nodeModulesPath,
-          );
           entry = require.resolve(resolvePath, {
             paths: [nodeModulesPath],
           });
         } else {
           entry = join(opts.base);
         }
-        console.log('entry', entry);
         if (!opts.dtsOnly) {
           if (opts.isDependency) {
             ensureDirSync(target);
@@ -188,7 +180,6 @@ export default (api: IApi) => {
             );
           } else {
             const filesToCopy: string[] = [];
-            debugger;
             const res = await ncc(entry, {
               externals: opts.webpackExternals,
               minify: !!opts.minify,
@@ -216,9 +207,7 @@ export default (api: IApi) => {
             });
 
             const { code, assets } = res;
-            debugger;
             // assets
-            console.log('filesToCopy', filesToCopy, assets);
             for (const key of Object.keys(assets)) {
               const asset = assets[key];
               const data = asset.source;
