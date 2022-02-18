@@ -129,7 +129,7 @@ umi build --clean
           if (/^umi(\..+)?\.js$/.test(asset.name)) {
             ret['umi.js'] = asset.name;
           }
-          if (/^umi(\..+)+?\.css$/.test(asset.name)) {
+          if (/^umi(\..+)?\.css$/.test(asset.name)) {
             ret['umi.css'] = asset.name;
           }
         }
