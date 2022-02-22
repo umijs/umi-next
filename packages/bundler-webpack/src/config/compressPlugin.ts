@@ -3,7 +3,7 @@ import CSSMinimizerWebpackPlugin from '@umijs/bundler-webpack/compiled/css-minim
 import TerserPlugin from '../../compiled/terser-webpack-plugin';
 import Config from '../../compiled/webpack-5-chain';
 import ESBuildCSSMinifyPlugin from '../plugins/ESBuildCSSMinifyPlugin';
-import { ParcelCssMinifyPlugin } from '../plugins/ParcelCssMinifyPlugin';
+import { ParcelCSSMinifyPlugin } from '../plugins/ParcelCSSMinifyPlugin';
 import { CSSMinifier, Env, IConfig, JSMinifier } from '../types';
 
 interface IOpts {
@@ -63,10 +63,10 @@ export async function addCompressPlugin(opts: IOpts) {
           parallel: true,
         },
       ]);
-  } else if (cssMinifier === CSSMinifier.parcelCss) {
+  } else if (cssMinifier === CSSMinifier.parcelCSS) {
     config.optimization
       .minimizer(`css-${cssMinifier}`)
-      .use(ParcelCssMinifyPlugin);
+      .use(ParcelCSSMinifyPlugin);
   } else if (cssMinifier !== CSSMinifier.none) {
     throw new Error(`Unsupported cssMinifier ${userConfig.cssMinifier}.`);
   }

@@ -1,8 +1,8 @@
 import { transform, type TransformOptions } from '@parcel/css';
 import { Buffer } from 'buffer';
 import { join } from 'path';
-import type { Compilation, Compiler } from '../../compiled/webpack';
 import { RawSource, SourceMapSource } from '../../compiled/webpack-sources';
+import type { Compilation, Compiler } from '../../compiled/webpack/types';
 
 const pkgPath = join(__dirname, '../../package.json');
 const pkg = require(pkgPath);
@@ -12,7 +12,7 @@ type MinifyPluginOpts = Omit<TransformOptions, 'filename' | 'code' | 'minify'>;
 const PLUGIN_NAME = 'parcel-css-minify-plugin';
 const CSS_FILE_REG = /\.css(?:\?.*)?$/i;
 
-export class ParcelCssMinifyPlugin {
+export class ParcelCSSMinifyPlugin {
   private readonly options: MinifyPluginOpts;
 
   constructor(opts: MinifyPluginOpts = {}) {
