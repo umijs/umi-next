@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-vite",
-  "version": "4.0.0-rc.1",
+  "version": "4.0.0-rc.2",
   "description": "@umijs/bundler-vite",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-vite#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -25,20 +25,20 @@
   },
   "dependencies": {
     "@svgr/core": "6.2.1",
-    "@umijs/bundler-utils": "4.0.0-rc.1",
-    "@umijs/utils": "4.0.0-rc.1",
+    "@umijs/bundler-utils": "4.0.0-rc.2",
+    "@umijs/utils": "4.0.0-rc.2",
     "@vitejs/plugin-legacy": "1.7.1",
     "@vitejs/plugin-react": "1.2.0",
     "caniuse-lite": "1.0.30001309",
-    "postcss-preset-env": "7.3.3",
+    "postcss-preset-env": "7.4.1",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-polyfill": "3.0.0",
     "rollup-plugin-visualizer": "5.5.4",
-    "vite": "2.8.2"
+    "vite": "2.8.4"
   },
   "devDependencies": {
     "@types/caniuse-lite": "1.0.1",
-    "express": "4.17.2"
+    "express": "4.17.3"
   },
   "publishConfig": {
     "access": "public"

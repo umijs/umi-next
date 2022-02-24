@@ -52,7 +52,7 @@ function generateTempEntry(cwd: string, entry: IOpts['entry']) {
 
       fs.writeFileSync(
         entryFilePath,
-        `<html><body><script type="module" src="${entry[name]}"></script></body></html>`,
+        `<html><head></head><body><script type="module" src="${entry[name]}"></script></body></html>`,
         'utf8',
       );
 
@@ -102,7 +102,9 @@ export async function build(opts: IOpts): Promise<void> {
               // use temp html entry for vite build
               input: tmpHtmlEntry,
               // remove temp html entry after build
-              plugins: [deleteOutputFiles(Object.values(tmpHtmlEntry))],
+              plugins: [
+                deleteOutputFiles(Object.values(tmpHtmlEntry), beforeDelete),
+              ],
             }
           : // fallback to vite default entry
             {},
@@ -113,10 +115,26 @@ export async function build(opts: IOpts): Promise<void> {
 
   try {
     result.stats = await viteBuilder(viteBuildConfig);
+
     result.time = +new Date() - startTms;
   } catch (err: any) {
     result.err = err;
   }
+  var headpart;
+  var bodypart;
+  function beforeDelete(files: any) {
+    if (files.source) {
+      const r4 = /<(?:html|head|\/head|\/body|body|\/html)>/g;
+      const strlist: string[] = files.source.split(r4);
+      headpart = strlist[2];
+      bodypart = strlist[4];
+    }
+  }
+  result.stats.extraHtml = { head: headpart, body: bodypart };
+  console.log('--------------');
+
+  console.log('result.stats.extraHtml');
+  console.log(result.stats.extraHtml);
 
   opts.onBuildComplete && opts.onBuildComplete(result);
 }

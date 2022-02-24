@@ -35,4 +35,19 @@ export default (api: IApi) => {
 
     return memo;
   });
+
+  // add script modules and links to vite output htmldocument,to meet targets whether or not support ESM
+  let buildstats: any;
+  api.onBuildComplete(({ err, stats }) => {
+    if (!err) {
+      buildstats = stats;
+    }
+  });
+  api.modifyHTML(($) => {
+    if (buildstats) {
+      $('head').append(buildstats.extraHtml.head);
+      $('body').append(buildstats.extraHtml.body);
+    }
+    return $;
+  });
 };

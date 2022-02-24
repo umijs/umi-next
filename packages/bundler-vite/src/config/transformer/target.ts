@@ -31,7 +31,7 @@ export default (function target(userConfig) {
   function isLegacyBrowser(targets: Record<string, number>) {
     for (const browserName of Object.keys(targets)) {
       const version = targets[browserName];
-      if (version && stats[browserName]?.version === 'n') {
+      if (version && stats[browserName]?.[version] === 'n') {
         return true;
       }
     }
@@ -40,10 +40,10 @@ export default (function target(userConfig) {
   if (userConfig.targets && isLegacyBrowser(userConfig.targets)) {
     const legacyOpts: Options = {
       targets: getBrowserlist(userConfig.targets),
+      polyfills: false,
+      ignoreBrowserslistConfig: true,
     };
-    if (userConfig.targets.ie && userConfig.targets.ie <= 11) {
-      legacyOpts.polyfills = ['regenerator-runtime/runtime'];
-    }
+
     config.plugins!.push(legacyPlugin(legacyOpts));
   }
   return config;
