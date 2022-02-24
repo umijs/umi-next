@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { build as viteBuilder, mergeConfig } from 'vite';
 import { getConfig } from './config/config';
-import { deleteOutputFiles } from './plugins/deleteOutputFiles';
+import deleteOutputFiles from './plugins/deleteOutputFiles';
 import { Env, IBabelPlugin, IConfig } from './types';
 
 interface IOpts {
@@ -115,7 +115,6 @@ export async function build(opts: IOpts): Promise<void> {
 
   try {
     result.stats = await viteBuilder(viteBuildConfig);
-
     result.time = +new Date() - startTms;
   } catch (err: any) {
     result.err = err;
@@ -131,10 +130,5 @@ export async function build(opts: IOpts): Promise<void> {
     }
   }
   result.stats.extraHtml = { head: headpart, body: bodypart };
-  console.log('--------------');
-
-  console.log('result.stats.extraHtml');
-  console.log(result.stats.extraHtml);
-
   opts.onBuildComplete && opts.onBuildComplete(result);
 }

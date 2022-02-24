@@ -4,7 +4,7 @@ import type { Plugin } from 'vite';
  * delete specific files from output map
  * @param files file list which will be removed
  */
-export function deleteOutputFiles(
+export default function deleteOutputFiles(
   files: string[],
   beforeDelete: Function,
 ): Plugin {
