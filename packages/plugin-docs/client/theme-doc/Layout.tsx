@@ -33,7 +33,7 @@ export default (props: any) => {
 
   const isHomePage =
     window.location.pathname === '/' ||
-    window.location.pathname.replace(/\/[a-z]{2}-[A-Z]{2}/, '') === '/';
+    window.location.pathname.replace(/[a-z]{2}-[A-Z]{2}\/?/, '') === '/';
 
   return (
     <ThemeContext.Provider
