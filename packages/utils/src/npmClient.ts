@@ -31,7 +31,7 @@ export const installWithNpmClient = ({
   cwd?: string;
 }): void => {
   const { spawnSync } = require('child_process');
-  const npm = spawnSync(npmClient, [npmClient === 'yarn' ? '' : 'install'], {
+  const npm = spawnSync(process.platform ==='win32'? (npmClient + '.cmd') : npmClient, [npmClient === 'yarn' ? '' : 'install'], {
     stdio: 'inherit',
     cwd,
   });
