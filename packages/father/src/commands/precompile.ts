@@ -37,77 +37,24 @@ export default (api: IApi) => {
     name: 'precompile',
     description: 'precompile',
     fn({ args }) {
-      args;
-      logger.info(`precompile`);
+      logger.info(`precompile`, args);
+
       const base = process.cwd();
       const pkg = readJSONSync(join(base, 'package.json'));
       const pkgDeps = pkg.dependencies || {};
+      const { deps = {} } = args;
 
       const {
-        pkgs = [
-          'autoprefixer',
-          // 'babel-loader',
-          // 'copy-webpack-plugin',
-          // 'css-loader',
-          // 'css-minimizer-webpack-plugin',
-          // 'cssnano',
-          // 'compression',
-          // 'connect-history-api-fallback',
-          // 'express',
-          // 'fork-ts-checker-webpack-plugin',
-          // 'http-proxy-middleware',
-          // 'less',
-          // 'less-loader',
-          // 'mini-css-extract-plugin',
-          // 'postcss-flexbugs-fixes',
-          // 'postcss-loader',
-          // 'purgecss-webpack-plugin',
-          // 'sass-loader',
-          // 'schema-utils',
-          // 'style-loader',
-          // 'speed-measure-webpack-plugin',
-          // 'svgo-loader',
-          // 'tapable',
-          // 'terser',
-          // 'terser-webpack-plugin',
-          // 'url-loader',
-          // 'webpack-5-chain',
-          // 'webpack-bundle-analyzer',
-          // 'webpack-dev-middleware',
-          // 'webpack-manifest-plugin',
-          // 'webpack-sources',
-          // 'ws',
-          // './bundles/webpack/bundle',
-          // './bundles/react-refresh/babel',
-        ],
-        externals = {
-          '@swc/core': '@swc/core',
-          '@babel/core': '@umijs/bundler-utils/compiled/babel/core',
-          'es-module-lexer': '@umijs/bundler-utils/compiled/es-module-lexer',
-          esbuild: '@umijs/bundler-utils/compiled/esbuild',
-          express: '$$LOCAL',
-          'jest-worker': 'jest-worker',
-          less: '$$LOCAL',
-          cssnano: '$$LOCAL',
-          postcss: 'postcss',
-          tapable: '$$LOCAL',
-          terser: '$$LOCAL',
-          'terser-webpack-plugin': '$$LOCAL',
-          typescript: 'typescript',
-          'uglify-js': 'uglify-js',
-          'url-loader': '$$LOCAL',
-          webpack: '$$LOCAL',
-          'webpack/lib/NormalModule': '../webpack/NormalModule',
-          'webpack-5-chain': '$$LOCAL',
-          'webpack-sources': '$$LOCAL',
-          ws: '$$LOCAL',
-        },
-        excludeDtsDeps = [],
-        extraDtsDeps = [],
-        extraDtsExternals = [],
+        pkgs = [],
+        externals = {},
+        declaration: {
+          excludeDtsDeps = [],
+          extraDtsDeps = [],
+          extraDtsExternals = [],
+        } = {},
         noMinify = [],
         clean,
-      } = args;
+      } = deps;
 
       const webpackExternals: Record<string, string> = {};
       const dtsExternals = [...extraDtsDeps, ...extraDtsExternals];
@@ -119,7 +66,6 @@ export default (api: IApi) => {
         } else {
           webpackExternals[name] = val;
         }
-        // const nodeModulesPath = join(base, 'node_modules');
       });
       pkgs.forEach((dep: string) => {
         const isDep = dep.charAt(0) !== '.';
@@ -326,10 +272,6 @@ export default (api: IApi) => {
                   ),
                   'utf-8',
                 );
-              }
-              if (opts.pkgName === 'lodash') {
-                // TODO
-                // fs.copySync()
               }
             }
           }
