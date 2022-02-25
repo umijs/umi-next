@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "../../bin/father.js build",
-    "precompile": "../../bin/father.js precompile",
+    "precompile": "../../bin/father.js precompile --clean",
     "version": "../../bin/father.js version"
   },
   "devDependencies": {

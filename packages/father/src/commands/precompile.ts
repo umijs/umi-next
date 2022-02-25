@@ -38,11 +38,13 @@ export default (api: IApi) => {
     description: 'precompile',
     fn({ args }) {
       logger.info(`precompile`, args);
+      const config = api.config;
+      const { clean } = args;
 
       const base = process.cwd();
       const pkg = readJSONSync(join(base, 'package.json'));
       const pkgDeps = pkg.dependencies || {};
-      const { deps = {} } = args;
+      const { deps = {} } = config;
 
       const {
         pkgs = [],
@@ -53,7 +55,6 @@ export default (api: IApi) => {
           extraDtsExternals = [],
         } = {},
         noMinify = [],
-        clean,
       } = deps;
 
       const webpackExternals: Record<string, string> = {};
