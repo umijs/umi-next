@@ -90,8 +90,12 @@ import { assert, eachPkg, getPkgs } from './utils';
     if (pkg.dependencies['umi']) pkg.dependencies['umi'] = version;
     if (pkg.dependencies['@umijs/pro'])
       pkg.dependencies['@umijs/pro'] = version;
+    if (pkg.dependencies['@umijs/plugins'])
+      pkg.dependencies['@umijs/plugins'] = version;
+    if (pkg.dependencies['@umijs/bundler-vite'])
+      pkg.dependencies['@umijs/bundler-vite'] = version;
     // for mfsu-independent example update dep version
-    if (pkg?.devDependencies?.['@umijs/mfsu']) {
+    if (pkg.devDependencies?.['@umijs/mfsu']) {
       pkg.devDependencies['@umijs/mfsu'] = version;
     }
     delete pkg.version;
