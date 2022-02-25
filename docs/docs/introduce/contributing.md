@@ -6,7 +6,7 @@
 
 ### node 和 pnpm
 
-开发 Umi 需要 node 14+ 和 pnpm。node 推荐用 nvm 安装，避免权限问题的同时还随时切换 node 版本；pnpm 去[他的官网](https://pnpm.io/installation)选择一种方式安装即可。
+开发 Umi 需要 node 16+ 和 pnpm。node 推荐用 nvm 安装，避免权限问题的同时还随时切换 node 版本；pnpm 去[他的官网](https://pnpm.io/installation)选择一种方式安装即可。
 
 ### Clone 项目
 
@@ -28,6 +28,13 @@ $ pnpm i
 本地开发 Umi 必开命令，用于编译 src 下的 TypeScript 文件到 dist 目录，同时监听文件变更，有变更时增量编译。
 
 ```bash
+$ pnpm dev
+```
+
+如果觉得比较慢，也可以只跑特定 pacakge 的 dev 命令，比如。
+
+```bash
+$ cd packages/umi
 $ pnpm dev
 ```
 

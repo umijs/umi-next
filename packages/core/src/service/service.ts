@@ -38,7 +38,12 @@ export class Service {
   appData: {
     deps?: Record<
       string,
-      { version: string; matches: string[]; subpaths: string[] }
+      {
+        version: string;
+        matches: string[];
+        subpaths: string[];
+        external?: boolean;
+      }
     >;
     [key: string]: any;
   } = {};
@@ -478,5 +483,6 @@ export interface IServicePluginAPI {
   EnableBy: typeof EnableBy;
   ServiceStage: typeof ServiceStage;
 
+  registerPresets: (presets: any[]) => void;
   registerPlugins: (plugins: (Plugin | {})[]) => void;
 }
