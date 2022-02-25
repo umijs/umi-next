@@ -1,3 +1,4 @@
+// @ts-ignore
 import { history } from 'umi';
 import { useThemeContext } from './context';
 
