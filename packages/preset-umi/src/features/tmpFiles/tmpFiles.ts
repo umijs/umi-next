@@ -3,7 +3,7 @@ import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi } from '../../types';
+import { IApi, IApiMiddleware } from '../../types';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -26,6 +26,36 @@ export default (api: IApi) => {
         ),
       }),
     );
+
+    // API Routes
+
+    const apiRoutes = Object.keys(api.appData.routes)
+      .filter((key) => api.appData.routes[key].file.startsWith('api/'))
+      .map((k) => api.appData.routes[k]);
+
+    apiRoutes.map((apiRoute) => {
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: apiRoute.file,
+        tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
+        context: {
+          apiRootDirPath: api.paths.absTmpPath + '/api',
+          handlerPath: api.paths.absPagesPath + apiRoute.file,
+        },
+      });
+    });
+
+    const middlewares: IApiMiddleware[] = await api.applyPlugins({
+      key: 'addApiMiddlewares',
+    });
+
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: 'api/_middlewares.ts',
+      tplPath: join(TEMPLATES_DIR, 'middlewares.tpl'),
+      context: { middlewares },
+    });
+
     // umi.ts
     api.writeTmpFile({
       noPluginDir: true,
