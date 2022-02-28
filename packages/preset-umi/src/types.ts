@@ -52,6 +52,10 @@ export type IMeta = Partial<{
   name: string;
   scheme: string;
 }>;
+export type IApiMiddleware = {
+  name: string;
+  path: string;
+};
 export type IEntryImport = {
   source: string;
   specifier?: string;
@@ -122,6 +126,7 @@ export type IApi = PluginAPI &
     addExtraBabelPlugins: IAdd<null, any[]>;
     addBeforeBabelPresets: IAdd<null, any[]>;
     addBeforeBabelPlugins: IAdd<null, any[]>;
+    addApiMiddlewares: IAdd<null, IApiMiddleware[]>;
     addBeforeMiddlewares: IAdd<null, RequestHandler[]>;
     addMiddlewares: IAdd<null, RequestHandler[]>;
     addHTMLHeadScripts: IAdd<null, IScript[]>;
