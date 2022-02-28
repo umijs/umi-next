@@ -49,7 +49,7 @@ export default (api: IApi) => {
     targets: DEFAULT_BROWSER_TARGETS,
   };
 
-  const bundleSchemas = api.userConfig.vite
+  const bundleSchemas = api.config.vite
     ? getViteSchemas()
     : getWebpackSchemas();
   const extraSchemas = getExtraSchemas();
