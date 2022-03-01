@@ -41,7 +41,7 @@ export default (api: IApi) => {
         tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
         context: {
           apiRootDirPath: api.paths.absTmpPath + '/api',
-          handlerPath: api.paths.absPagesPath + apiRoute.file,
+          handlerPath: api.paths.absSrcPath + '/api/' + apiRoute.file,
         },
       });
     });

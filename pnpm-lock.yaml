@@ -9,6 +9,7 @@ importers:
       '@types/react': ^17.0.39
       '@types/react-dom': ^17.0.11
       '@types/resolve': ^1.20.1
+      '@umijs/bundler-esbuild': workspace:*
       '@umijs/bundler-utils': workspace:*
       '@umijs/bundler-vite': workspace:*
       '@umijs/bundler-webpack': workspace:*
@@ -44,6 +45,7 @@ importers:
       '@types/react': 17.0.39
       '@types/react-dom': 17.0.11
       '@types/resolve': 1.20.1
+      '@umijs/bundler-esbuild': link:packages/bundler-esbuild
       '@umijs/bundler-utils': link:packages/bundler-utils
       '@umijs/bundler-vite': link:packages/bundler-vite
       '@umijs/bundler-webpack': link:packages/bundler-webpack
@@ -723,6 +725,7 @@ importers:
       '@types/multer': 1.4.7
       '@umijs/ast': 4.0.0-rc.3
       '@umijs/babel-preset-umi': 4.0.0-rc.3
+      '@umijs/bundler-esbuild': 4.0.0-rc.3
       '@umijs/bundler-utils': 4.0.0-rc.3
       '@umijs/bundler-vite': 4.0.0-rc.3
       '@umijs/bundler-webpack': 4.0.0-rc.3
@@ -747,6 +750,7 @@ importers:
       '@types/multer': 1.4.7
       '@umijs/ast': link:../ast
       '@umijs/babel-preset-umi': link:../babel-preset-umi
+      '@umijs/bundler-esbuild': link:../bundler-esbuild
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/bundler-vite': link:../bundler-vite
       '@umijs/bundler-webpack': link:../bundler-webpack

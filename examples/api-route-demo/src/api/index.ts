@@ -1,4 +1,4 @@
+// import type { VercelRequest, VercelResponse } from '@vercel/node';
 export default function (req: any, res: any) {
-  const name = req.query.name;
-  res.status(200).json({ message: 'Hello, ' + name });
+  res.end('HELLO WORLD');
 }

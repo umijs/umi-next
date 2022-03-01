@@ -26,6 +26,7 @@
     "@types/multer": "1.4.7",
     "@umijs/ast": "4.0.0-rc.3",
     "@umijs/babel-preset-umi": "4.0.0-rc.3",
+    "@umijs/bundler-esbuild": "4.0.0-rc.3",
     "@umijs/bundler-utils": "4.0.0-rc.3",
     "@umijs/bundler-vite": "4.0.0-rc.3",
     "@umijs/bundler-webpack": "4.0.0-rc.3",

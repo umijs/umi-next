@@ -1,3 +1,4 @@
+import * as bundlerEsbuild from '@umijs/bundler-esbuild';
 import { getMarkup } from '@umijs/server';
 import { importLazy, logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
@@ -119,6 +120,22 @@ umi build --clean
       } else {
         stats = await bundlerWebpack.build(opts);
       }
+
+      const apiRoutePaths = Object.keys(api.appData.apiRoutes).map(
+        (key) =>
+          api.paths.absTmpPath + '/api/' + api.appData.apiRoutes[key].file,
+      );
+
+      await bundlerEsbuild.buildApiRoutes({
+        format: 'esm',
+        outExtension: { '.js': '.mjs' },
+        bundle: true,
+        entryPoints: [
+          ...apiRoutePaths,
+          api.paths.absTmpPath + '/api/_middlewares.ts',
+        ],
+        outdir: api.paths.absSrcPath + '/../api',
+      });
 
       function getAssetsMap(stats: any) {
         if (api.args.vite) {
