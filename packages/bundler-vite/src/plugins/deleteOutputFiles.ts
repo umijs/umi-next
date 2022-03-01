@@ -4,10 +4,10 @@ import type { Plugin } from 'vite';
  * delete specific files from output map
  * @param files file list which will be removed
  */
-type a = Parameters<NonNullable<Plugin['generateBundle']>>[1]['file'];
+type fileType = Parameters<NonNullable<Plugin['generateBundle']>>[1]['file'];
 export default function deleteOutputFiles(
   files: string[],
-  beforeDelete: (file: a) => void,
+  beforeDelete: (file: fileType) => void,
 ): Plugin {
   return {
     name: 'bundler-vite:delete-output-files',
