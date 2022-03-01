@@ -120,6 +120,12 @@ importers:
       querystring: 0.2.1
       rc-util: 5.18.1
 
+  examples/api-route-demo:
+    specifiers:
+      umi: 4.0.0-rc.3
+    dependencies:
+      umi: link:../../packages/umi
+
   examples/bigfish:
     specifiers:
       '@ant-design/icons': ^4.7.0
