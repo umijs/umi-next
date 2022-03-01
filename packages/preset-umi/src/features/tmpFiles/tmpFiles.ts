@@ -1,4 +1,5 @@
 import { parseModule } from '@umijs/bundler-utils';
+import { IRoute } from '@umijs/core';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
@@ -29,14 +30,14 @@ export default (api: IApi) => {
 
     // API Routes
 
-    const apiRoutes = Object.keys(api.appData.routes)
-      .filter((key) => api.appData.routes[key].file.startsWith('api/'))
-      .map((k) => api.appData.routes[k]);
+    const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
+      (k) => api.appData.apiRoutes[k],
+    );
 
     apiRoutes.map((apiRoute) => {
       api.writeTmpFile({
         noPluginDir: true,
-        path: apiRoute.file,
+        path: 'api/' + apiRoute.file,
         tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
         context: {
           apiRootDirPath: api.paths.absTmpPath + '/api',
