@@ -2,13 +2,13 @@ import type { RequestHandler } from '@umijs/bundler-webpack';
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
-import * as process from 'process';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
 import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
 import { getBabelOpts } from './getBabelOpts';
+import { printMemoryUsage } from './utils';
 import {
   addUnWatch,
   createDebouncedHandler,
@@ -41,7 +41,7 @@ umi dev
 PORT=8888 umi dev
 `,
     async fn() {
-      const enableVite = api.args.vite;
+      const enableVite = !!api.config.vite;
 
       // clear tmp except cache
       clearTmp(api.paths.absTmpPath);
@@ -248,6 +248,7 @@ PORT=8888 umi dev
         ]),
         afterMiddlewares: [createRouteMiddleware({ api })].concat(middlewares),
         onDevCompileDone(opts: any) {
+          printMemoryUsage();
           api.applyPlugins({
             key: 'onDevCompileDone',
             args: opts,

@@ -4,6 +4,7 @@ import { build as viteBuilder, mergeConfig } from 'vite';
 import { getConfig } from './config/config';
 import deleteOutputFiles from './plugins/deleteOutputFiles';
 import { Env, IBabelPlugin, IConfig } from './types';
+import { cheerio } from '@umijs/utils';
 
 interface IOpts {
   cwd: string;
@@ -65,6 +66,7 @@ function generateTempEntry(cwd: string, entry: IOpts['entry']) {
 }
 
 export async function build(opts: IOpts): Promise<void> {
+  let extraHtmlPart;
   const startTms = +new Date();
   const result: IBuildResult = {
     isFirstCompile: true,
@@ -103,7 +105,14 @@ export async function build(opts: IOpts): Promise<void> {
               input: tmpHtmlEntry,
               // remove temp html entry after build
               plugins: [
-                deleteOutputFiles(Object.values(tmpHtmlEntry), beforeDelete),
+                deleteOutputFiles(Object.values(tmpHtmlEntry),
+                  (file) => {
+                    if ('source' in file) {
+                      const $ = cheerio.load(file.source);
+                      extraHtmlPart={ head: $('head').html(), body:  $('body').html() }
+                    }
+                  }
+                ),
               ],
             }
           : // fallback to vite default entry
@@ -119,16 +128,6 @@ export async function build(opts: IOpts): Promise<void> {
   } catch (err: any) {
     result.err = err;
   }
-  var headpart;
-  var bodypart;
-  function beforeDelete(files: any) {
-    if (files.source) {
-      const r4 = /<(?:html|head|\/head|\/body|body|\/html)>/g;
-      const strlist: string[] = files.source.split(r4);
-      headpart = strlist[2];
-      bodypart = strlist[4];
-    }
-  }
-  result.stats.extraHtml = { head: headpart, body: bodypart };
+  result.stats.extraHtml = extraHtmlPart;
   opts.onBuildComplete && opts.onBuildComplete(result);
 }

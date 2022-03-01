@@ -6,6 +6,7 @@ import { IApi } from '../types';
 import { clearTmp } from '../utils/clearTmp';
 import { getBabelOpts } from './dev/getBabelOpts';
 import { getMarkupArgs } from './dev/getMarkupArgs';
+import { printMemoryUsage } from './dev/utils';
 
 const bundlerWebpack: typeof import('@umijs/bundler-webpack') = importLazy(
   '@umijs/bundler-webpack',
@@ -95,7 +96,7 @@ umi build --clean
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),
         },
-        ...(api.args.vite
+        ...(api.config.vite
           ? { modifyViteConfig }
           : { babelPreset, chainWebpack, modifyWebpackConfig }),
         beforeBabelPlugins,
@@ -103,6 +104,7 @@ umi build --clean
         extraBabelPlugins,
         extraBabelPresets,
         onBuildComplete(opts: any) {
+          printMemoryUsage();
           api.applyPlugins({
             key: 'onBuildComplete',
             args: opts,
@@ -112,14 +114,14 @@ umi build --clean
       };
 
       let stats: any;
-      if (api.args.vite) {
+      if (api.config.vite) {
         stats = await bundlerVite.build(opts);
       } else {
         stats = await bundlerWebpack.build(opts);
       }
 
       function getAssetsMap(stats: any) {
-        if (api.args.vite) {
+        if (api.config.vite) {
           // TODO: FIXME: vite
           // vite features provides required css and js documents
           return {};
@@ -158,7 +160,7 @@ umi build --clean
         markup,
         'utf-8',
       );
-      logger.event('build index.html');
+      logger.event('Build index.html');
 
       // print size
     },
