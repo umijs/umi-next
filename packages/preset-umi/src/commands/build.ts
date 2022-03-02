@@ -134,7 +134,7 @@ umi build --clean
           ...apiRoutePaths,
           api.paths.absTmpPath + '/api/_middlewares.ts',
         ],
-        outdir: api.paths.absSrcPath + '/../api',
+        outdir: api.paths.absSrcPath + '/../.output/server/pages/api',
       });
 
       function getAssetsMap(stats: any) {
