@@ -41,9 +41,14 @@ api.describe({
 ```
 这个例子中，插件的 `key` 为 `foo`，因此配置中的键名为 `foo`，配置的类型是字符串，默认值为 "Hello, Umi!"，当配置 `foo` 发生变化时，dev 只会重新生成临时文件。该插件只有在用户配置了 `foo` 之后才会启用。
 
+### isPluginEnable
+```ts
+api.isPluginEnable(hook: Hook | string)
+```
+
 ### register <span id = 'register'/>
 ```ts
-register({ key: string, fn, before?: string, stage?: number})
+api.register({ key: string, fn, before?: string, stage?: number})
 ```
 为 `api.applyPlugins` 注册可供其使用的 hook。
 
@@ -51,6 +56,8 @@ register({ key: string, fn, before?: string, stage?: number})
 - `fn` 是 hook 的定义，可以是同步的，也可以是异步的（返回一个 Promise 即可）
 - `stage` 用于调整执行顺序，默认为 0，设为 -1 或更少会提前执行，设为 1 或更多会后置执行。
 - `before` 同样用于调整执行的顺序，传入的值为注册的 hook 的名称。注意：**`register` 注册的 hook 的名称是所在 umi 插件的 id。** stage 和 before 的更多用法参考 [tapable](https://github.com/webpack/tapable)
+
+注意： 相较于 umi@3， umi@4 去除了 `pluginId` 参数。
 
 fn 的写法需要结合即将使用的 applyPlugins 的 type 参数来确定：
 - `api.ApplyPluginsType.add` `applyPlugins` 将按照 hook 顺序来将它们的返回值拼接成一个数组。此时 `fn` 需要有返回值，`fn` 将获取 `applyPlugins` 的参数 `args` 来作为自己的参数。`applyPlugins` 的 `initialValue` 必须是一个数组，它的默认值是空数组。当 `key` 以 `'add'` 开头且没有显式地声明 `type` 时，`applyPlugins` 会默认按此类型执行。
@@ -102,3 +109,96 @@ api.applyPlugins({
     console.log(data); // { a: 1, b: 2 }
 });
 ```
+
+### registerCommand
+```ts
+api.registerCommand({ name: string, description?: string, options?: string, details?: string, fn, alias?: string | string[] })
+```
+注册命令。
+- `alias` 为别名，比如 generate 的别名 g
+- `fn` 的参数为 `{ args }`， args 的格式同 [yargs](https://github.com/yargs/yargs) 的解析结果，需要注意的是 `_` 里的 command 本身被去掉了，比如执行`umi generate page foo`，`args._` 为 `['page','foo']`
+
+### registerMethod
+```ts
+api.registerMethod({ name: string, fn? })
+```
+往 api 上注册一个名为 `'name'` 的方法。
+
+- 当传入了 fn 时，执行 fn
+- 当没有传入 fn 时，`registerMethod` 会将 `name` 作为 `api.register` 的 `key` 并且将其柯里化后作为 `fn`。这种情况下相当于注册了一个 `register` 的快捷调用方式，便于注册 hook。
+
+注意： 
+- 相较于 umi@3， umi@4 去除了 exitsError 参数。
+- 通常不建议注册额外的方法，因为它们不会有 ts 提示，直接使用 `api.register()` 是一个更安全的做法。
+
+e.g.1
+```ts
+api.registerMethod({
+  name: foo,
+  // 有 fn
+  fn: (args) => {
+    console.log(args);
+  }
+})
+api.foo('hello, umi!'); // hello, umi!
+```
+该例子中，我们往api上注册了一个 foo 方法，该方法会把参数 console 到控制台。
+
+e.g.2
+```ts
+import api from './api';
+
+api.registerMethod({
+  name: 'addFoo'
+  // 没有 fn
+})
+
+api.addFoo( args => args );
+api.addFoo( args => args * 2 );
+
+api.applyPlugins({
+  key: 'addFoo',
+  args: 1
+}).then((data)=>{
+  console.log(data); // [ 1, 2 ]
+});
+```
+该例子中，我们没有向 `api.registerMethod` 中传入 fn。此时，我们相当于往 api 上注册了一个"注册器"：`addFoo`。每次调用该方法都相当于调用了 `register({ key: 'addFoo', fn })`。因此当我们使用 `api.applyPlugins` 的时候（由于我们的方法是 add 型的，可以不用显式声明其 type ）就可以获取刚刚注册的 hook 的值。
+
+### registerPresets
+```ts
+api.registerPresets( presets: string[] )
+```
+注册插件集，参数为路径数组。该 api 必须在 initPresets stage 执行，即只可以在 preset 中注册其他 presets
+
+e.g.
+```ts
+api.registerPresets([
+  './preset',
+  require.resolve('./preset_foo')
+])
+```
+
+### registerPlugins
+```ts
+api.registerPlugins( plugins: string[] )
+```
+注册插件，参数为路径数组。该 api 必须在 initPresets 和 initPlugins stage 执行。
+
+e.g.
+```ts
+api.registerPlugins([
+  './plugin',
+  require.resolve('./plugin_foo')
+])
+```
+
+注意： 相较于 umi@3 ，umi@4 不再支持在 `registerPresets` 和 `registerPlugins` 中直接传入插件对象了，现在只允许传入插件的路径。
+
+### registerGenerator
+
+### skipPlugins
+```ts
+api.skipPlugins( ids: string[])
+```
+声明哪些插件需要被禁用，参数为插件 id 的数组
