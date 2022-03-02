@@ -2,7 +2,7 @@ import { parseModule } from '@umijs/bundler-utils';
 import { IRoute } from '@umijs/core';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi, IApiMiddleware } from '../../types';
 import { importsToStr } from './importsToStr';
@@ -40,6 +40,7 @@ export default (api: IApi) => {
         path: 'api/' + apiRoute.file,
         tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
         context: {
+          adapterPath: resolve(__dirname, '../apiRoute/vercel/index.js'),
           apiRootDirPath: api.paths.absTmpPath + '/api',
           handlerPath: api.paths.absSrcPath + '/api/' + apiRoute.file,
         },

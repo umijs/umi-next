@@ -135,6 +135,17 @@ umi build --clean
           api.paths.absTmpPath + '/api/_middlewares.ts',
         ],
         outdir: api.paths.absSrcPath + '/../.output/server/pages/api',
+        // resolve path like "@fs/Users/xxx/..." as "/Users/xxx/..."
+        plugins: [
+          {
+            name: 'alias',
+            setup(build: any) {
+              build.onResolve({ filter: /^@fs/ }, (args: any) => ({
+                path: args.path.replace(/^@fs/, ''),
+              }));
+            },
+          },
+        ],
       });
 
       function getAssetsMap(stats: any) {

@@ -1,4 +1,6 @@
-// import type { VercelRequest, VercelResponse } from '@vercel/node';
-export default function (req: any, res: any) {
-  res.end('HELLO WORLD');
+import { UmiApiRequest, UmiApiResponse } from 'umi';
+
+export default function (req: UmiApiRequest, res: UmiApiResponse) {
+  console.log(req.pathName);
+  res.status(200).json({ hello: 'world' });
 }
