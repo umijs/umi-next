@@ -1,10 +1,10 @@
+import { cheerio } from '@umijs/utils';
 import fs from 'fs';
 import path from 'path';
 import { build as viteBuilder, mergeConfig } from 'vite';
 import { getConfig } from './config/config';
 import deleteOutputFiles from './plugins/deleteOutputFiles';
 import { Env, IBabelPlugin, IConfig } from './types';
-import { cheerio } from '@umijs/utils';
 
 interface IOpts {
   cwd: string;
@@ -105,14 +105,15 @@ export async function build(opts: IOpts): Promise<void> {
               input: tmpHtmlEntry,
               // remove temp html entry after build
               plugins: [
-                deleteOutputFiles(Object.values(tmpHtmlEntry),
-                  (file) => {
-                    if ('source' in file) {
-                      const $ = cheerio.load(file.source);
-                      extraHtmlPart={ head: $('head').html(), body:  $('body').html() }
-                    }
+                deleteOutputFiles(Object.values(tmpHtmlEntry), (file) => {
+                  if (file.type === 'asset') {
+                    const $ = cheerio.load(file.source);
+                    extraHtmlPart = {
+                      head: $('head').html(),
+                      body: $('body').html(),
+                    };
                   }
-                ),
+                }),
               ],
             }
           : // fallback to vite default entry
@@ -124,10 +125,10 @@ export async function build(opts: IOpts): Promise<void> {
 
   try {
     result.stats = await viteBuilder(viteBuildConfig);
+    result.stats.extraHtml = extraHtmlPart;
     result.time = +new Date() - startTms;
   } catch (err: any) {
     result.err = err;
   }
-  result.stats.extraHtml = extraHtmlPart;
   opts.onBuildComplete && opts.onBuildComplete(result);
 }

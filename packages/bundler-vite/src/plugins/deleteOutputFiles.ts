@@ -1,10 +1,10 @@
 import type { Plugin } from 'vite';
+type fileType = Parameters<NonNullable<Plugin['generateBundle']>>[1]['file'];
 
 /**
  * delete specific files from output map
  * @param files file list which will be removed
  */
-type fileType = Parameters<NonNullable<Plugin['generateBundle']>>[1]['file'];
 export default function deleteOutputFiles(
   files: string[],
   beforeDelete: (file: fileType) => void,
