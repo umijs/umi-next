@@ -14,7 +14,7 @@ export default (function target(userConfig) {
   if (typeof userConfig.targets === 'object') {
     config.build!.target = Object.entries(userConfig.targets)
       .filter(([name]) => {
-        //https://esbuild.github.io/api/#target
+        // refer: https://esbuild.github.io/api/#target
         return ['chrome', 'edge', 'firefox', 'ios', 'node', 'safari'].includes(
           name,
         );
@@ -39,7 +39,7 @@ export default (function target(userConfig) {
   }
   if (userConfig.targets && isLegacyBrowser(userConfig.targets)) {
     const legacyOpts: Options = {
-      targets: getBrowserlist(userConfig.targets) as string | string[],
+      targets: getBrowserlist(userConfig.targets),
       polyfills: false,
       ignoreBrowserslistConfig: true,
     };
