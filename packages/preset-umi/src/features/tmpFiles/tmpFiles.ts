@@ -1,10 +1,9 @@
 import { parseModule } from '@umijs/bundler-utils';
-import { IRoute } from '@umijs/core';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi, IApiMiddleware } from '../../types';
+import { IApi } from '../../types';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -27,36 +26,6 @@ export default (api: IApi) => {
         ),
       }),
     );
-
-    // API Routes
-
-    const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
-      (k) => api.appData.apiRoutes[k],
-    );
-
-    apiRoutes.map((apiRoute) => {
-      api.writeTmpFile({
-        noPluginDir: true,
-        path: 'api/' + apiRoute.file,
-        tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
-        context: {
-          adapterPath: resolve(__dirname, '../apiRoute/vercel/index.js'),
-          apiRootDirPath: api.paths.absTmpPath + '/api',
-          handlerPath: api.paths.absSrcPath + '/api/' + apiRoute.file,
-        },
-      });
-    });
-
-    const middlewares: IApiMiddleware[] = await api.applyPlugins({
-      key: 'addApiMiddlewares',
-    });
-
-    api.writeTmpFile({
-      noPluginDir: true,
-      path: 'api/_middlewares.ts',
-      tplPath: join(TEMPLATES_DIR, 'middlewares.tpl'),
-      context: { middlewares },
-    });
 
     // umi.ts
     api.writeTmpFile({
