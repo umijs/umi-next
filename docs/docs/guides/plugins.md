@@ -130,6 +130,8 @@ export default{
 
 ## umi 插件的机制及其生命周期
 
+![umi 插件机制](https://gw.alipayobjects.com/mdn/rms_ffea06/afts/img/A*GKNdTZgPQCIAAAAAAAAAAAAAARQnAQ)
+
 ### 生命周期
 
 - init stage: 该阶段 umi 将加载各类配置信息。包括：加载 `.env` 文件； require `package.json`  ；加载用户的配置信息； resolve 所有的插件（内置插件、环境变量、用户配置依次进行）。
@@ -162,40 +164,12 @@ umi 为 PluginAPI 对象的 get() 方法进行了 proxy， 具体规则如下：
 - static props: 如果 prop 是参数 staticProps 数组中的属性（这些属性是静态变量，诸如一些类型定义和常量），则将其返回。
 - 否则返回 api 的属性
 
-因此，umi 提供给插件的 api 绝大多数都是依靠 `registerMethod()` 来实现的。这也是 umi 将框架和功能进行解耦的体现： umi 的 service 只提供插件的管理功能，而 api 都依靠插件来提供。
+因此，umi 提供给插件的 api 绝大多数都是依靠 `registerMethod()` 来实现的，你可以直接使用我们的这些 api 快速地在插件中注册 hook。这也是 umi 将框架和功能进行解耦的体现： umi 的 service 只提供插件的管理功能，而 api 都依靠插件来提供。
 
-### Command 和 preset-umi
-umi 的核心功能都靠内置的 Command 和 preset-umi 插件集来实现。
+### preset-umi
+umi-core 提供了一套插件的注册及管理机制。而 umi 的核心功能都靠 [preset-umi](https://github.com/umijs/umi-next/tree/master/packages/preset-umi) 来实现。
 
-## 内置插件
-为方便查找，以下插件通过字母排序。
-
-<!-- TODO:  各个插件的使用方法-->
-
-### access
-
-### analytics
-
-### antd
-
-### dva
-
-### icons
-
-### initial-state
-
-### layout
-
-### locale
-
-### model
-
-### moment2dayjs
-
-### qiankun
-
-### request
-
-### tailwindcss
-
-### unocss
+preset-umi 其实就是内置的一个插件集，它提供的插件分为三大类：
+- registerMethods 这类插件注册了一些上述提到的"注册器"，以供开发者快速地注册 hook，这类方法也占据了 PluginAPI 中的大多数。
+- features 这类插件为 umi 提供了一些特性，例如 appData、lowImport、mock 等。
+- commands 这类插件注册了各类 command， 提供了 umi cli 的各种功能。umi 能够在终端中正常运行，依靠的就是 command 提供的功能。
