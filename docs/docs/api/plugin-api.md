@@ -202,3 +202,335 @@ api.registerPlugins([
 api.skipPlugins( ids: string[])
 ```
 声明哪些插件需要被禁用，参数为插件 id 的数组
+
+## 扩展方法
+通过`api.registerMethod()` 扩展的方法，它们的作用都是注册一些 hook 以供使用，因此都需要接收一个 fn。这些方法中的大部分都按照 `add-` `modify-` `on-` 的方式命名，它们分别对应了 `api.ApplyPluginsType`的三种方式，不同方式接收的 fn 不太相同，详见 [register](#register) 一节。
+
+注意： 下文提到的所有 fn 都可以是同步的或者异步的（返回一个 Promise 即可）。fn 都可以被
+
+```ts
+{
+  fn,
+  name?: string,
+  before?: string | string[],
+  stage: number,
+}
+
+```
+代替。其中各个参数的作用详见 [tapable](https://github.com/webpack/tapable)
+
+### addBeforeBabelPlugins
+增加额外的 Babel 插件。传入的 fn 不需要参数，且需要返回一个 Babel 插件或插件数组。
+```ts
+api.addBeforeBabelPlugins(() => {
+  // 返回一个 Babel 插件（来源于 Babel 官网的例子）
+  return () => {
+    visitor: {
+      Identifier(path) {
+        const name = path.node.name;
+        path.node.name = name.split("").reverse().join("");
+      }
+    }
+  }
+})
+```
+
+### addBeforeBabelPresets
+增加额外的 Babel 插件集。传入的 fn 不需要参数，且需要返回一个 Babel 插件集( presets )或插件集数组。
+```ts
+api.addBeforeBabelPresets(() => {
+  // 返回一个 Babel 插件集
+  return () => {
+    return {
+      plugins: ["Babel_Plugin_A","Babel_Plugin_B"]
+    }
+  }
+})
+```
+
+### addBeforeMiddlewares
+在 webpack-dev-middleware 之前添加中间件。传入的 fn 不需要参数，且需要返回一个 express 中间件或其数组。
+```ts
+api.addBeforeMiddlewares(() => {
+  return (req, res, next) => {
+    if(false) {
+      res.end('end');
+    }
+    next();
+  }
+})
+```
+
+### addEntryCode
+在入口文档的最后面添加代码（render 后）。传入的 fn 不需要参数，且需要返回一个 string 或者 string 数组。
+```ts
+api.addEntryCode(() => `console.log('I am after render!)`);
+```
+
+### addEntryCodeAhead
+在入口文档的最前面添加代码（render 前，import 后）。传入的 fn 不需要参数，且需要返回一个 string 或者 string 数组。
+```ts
+api.addEntryCodeAhead(() => `console.log('I am before render!')`)
+```
+
+### addEntryImports
+在入口文件中添加 import 语句 （import 最后面）。传入的 fn 不需要参数，其需要返回一个 `{source: string, specifier?: string}` 或其数组。
+```ts
+api.addEntryImports(() => ({
+  source: '/modulePath/xxx.js',
+  specifier: 'moduleName'
+}))
+```
+
+### addEntryImportsAhead
+在入口文件中添加 import 语句 （import 最前面）。传入的 fn 不需要参数，其需要返回一个 `{source: string, specifier?: string}` 或其数组。
+```ts
+api.addEntryImportsAhead(() => ({
+  source: 'anyPackage'
+}))
+```
+
+### addExtraBabelPlugins
+添加额外的 Babel 插件。 传入的 fn 不需要参数，且需要返回一个 Babel 插件或插件数组。
+
+### addExtraBabelPresets
+添加额外的 Babel 插件集。传入的 fn 不需要参数，且需要返回一个 Babel 插件集或其数组。
+
+### addHTMLHeadScripts  <span id = 'addHTMLHeadScripts'/>
+往 HTML 的 `<head>` 元素里添加 Script。传入的 fn 不需要参数，且需要返回一个 string（想要加入的代码） 或者 `{ async?: boolean, charset?: string, crossOrigin?: string | null, defer?: boolean, src?: string, type?: string, content?: string }` 或者它们的数组。
+```ts
+api.addHTMLHeadScripts(() => `console.log('I am in HTML-head')`)
+```
+
+### addHTMLLinks 
+往 HTML 里添加 Link 标签。 传入的 fn 不需要参数，返回的对象或其数组接口如下：
+```ts
+{  
+  as?: string, crossOrigin: string | null, 
+  disabled?: boolean,
+  href?: string,
+  hreflang?: string,
+  imageSizes?: string,
+  imageSrcset?: string,
+  integrity?: string,
+  media?: string,
+  referrerPolicy?: string,
+  rel?: string,
+  rev?: string,
+  target?: string,
+  type?: string 
+}
+```
+
+### addHTMLMetas
+往 HTML 里添加 Meta 标签。 传入的 fn 不需要参数，返回的对象或其数组接口如下：
+```ts
+{
+  content?: string,
+  httpEquiv?: string,
+  name?: string,
+  scheme?: string  
+}
+```
+
+### addHTMLScripts
+往 HTML 尾部添加 Script。 传入的 fn 不需要参数，返回的对象接口同 [addHTMLHeadScripts](#addHTMLHeadScripts) 
+
+### addHTMLStyles
+往 HTML 里添加 Style 标签。 传入的 fn 不需要参数，返回一个 string （style 标签里的代码）或者 `{ type?: string, content?: string }`，或者它们的数组。
+
+
+### addLayouts
+添加全局 layout 组件。 传入的 fn 不需要参数，返回 `{ id?: string, file: string }`
+
+### addMiddlewares
+添加中间件，在 route 中间件之后。 传入的 fn 不需要参数，返回 express 中间件。
+
+### addPolyfillImports
+添加补丁 import，在整个应用的最前面执行。 传入的 fn 不需要参数，返回 `{ source: string, specifier?:string }`
+
+### addRuntimePlugin
+添加运行时插件，传入的 fn 不需要参数，返回 string ，表示插件的路径。
+
+### addRuntimePluginKey
+添加运行时插件的 Key， 传入的 fn 不需要参数，返回 string ，表示插件的路径。
+
+### addTmpGenerateWatcherPaths
+添加监听路径，变更时会重新生成临时文件。传入的 fn 不需要参数，返回 string，表示要监听的路径。
+
+### chainWebpack
+通过 [webpack-chain](https://github.com/neutrinojs/webpack-chain) 的方式修改 webpack 配置。传入一个fn，该 fn 不需要返回值。它将接收两个参数：
+- `memo` 对应 webpack-chain 的 config
+- `args:{ webpack, env }`  `arg.webpack` 是 webpack 实例， `args.env` 代表当前的运行环境。
+
+e.g.
+```ts
+api.chainWebpack(( memo, { webpack, env}) => {
+  // set alias
+  memo.resolve.alias.set('a','path/to/a');
+  // Delete progess bar plugin
+  memo.plugins.delete('progess');
+})
+```
+
+### modifyAppData （umi@4 新增）
+
+修改 app 元数据。传入的 fn 接收 appData 并且返回它。
+```ts
+api.modifyAppData((memo) => {
+  memo.foo = 'foo';
+  return memo;
+})
+```
+
+### modifyConfig
+修改配置，相较于用户的配置，这份是最终传给 Umi 使用的配置。传入的 fn 接收 config 作为第一个参数，并且返回它。另外 fn 可以接收 `{ paths }` 作为第二个参数。`paths` 保存了 umi 的各个路径。
+```ts
+api.modifyConfig((memo, { path }) => {
+  memo.alias = {
+    ...memo.alias,
+    '@': paths.absSrcPath
+  }
+  return memo;
+})
+```
+
+### modifyDefaultConfig
+修改默认配置。传入的 fn 接收 config 并且返回它。
+
+### modifyHTML
+修改 HTML，基于 cheerio 的 ast。传入的 fn 接收 cheerioAPI 并且返回它。另外 fn 还可以接收`{ path }` 作为它的第二个参数，该参数代表路由的 path
+```ts
+api.modifyHTML(($, { path }) => {
+  $('h2').addClass('welcome');
+  return $;
+})
+```
+
+### modifyHTMLFavicon
+修改 HTML 的 favicon 路径。 传入的 fn 接收原本的 favicon 路径(string 类型)并且返回它。 
+
+### modifyPaths
+修改 paths，比如 absOutputPath、absTmpPath。传入的 fn 接收 paths 并且返回它。
+
+paths 的接口如下：
+```ts
+paths:{
+  cwd?: string;
+  absSrcPath?: string;
+  absPagesPath?: string;
+  absTmpPath?: string;
+  absNodeModulesPath?: string;
+  absOutputPath?: string;
+}
+```
+
+### modifyRendererPath
+修改 renderer path。传入的 fn 接收原本的 path （string 类型）并且返回它。
+
+### modifyRoutes
+修改路由。 传入的 fn 接收 id-route 的 map 并且返回它。其中 route 的接口如下：
+```ts
+interface IRoute {
+  path: string;
+  file: string;
+  id: string;
+  parentId?: string;
+  [key: string]: any;
+}
+```
+e.g.
+```ts
+api.modifyRoutes((memo) => {
+  Object.keys(memo).forEach((id) => {
+    const route = memo[id];
+    if(route.path === '/'){
+      route.path = '/redirect'
+    }
+  });
+  return memo;
+})
+```
+### modifyViteConfig
+修改 vite 最终配置。 传入的 fn 接收 vite 的 Config 对象作为第一个参数并且返回它。另外 fn 还可以接收 `{ env }` 作为第二个参数，可以通过该参数获取当前的环境。
+```ts
+api.modifyViteConfig((memo, { env }) => {
+  if(env === 'development'){
+    // do something
+  }
+  return memo;
+})
+```
+### modifyWebpackConfig
+修改 webpack 最终配置。传入的 fn 接收 webpack 的 Config 对象作为第一个参数并且返回它。另外 fn 还可以接收 `{ webpack, env }` 作为第二个参数，其中 webpack 是 webpack 实例，env 代表当前环境。
+
+```ts
+api.modifyWebpackConfig((memo, { webpack, env }) => {
+  // do something
+  
+  return memo;
+})
+```
+
+### onBeforeCompiler
+generate 之后，webpack / vite compiler 之前。传入的 fn 不接收任何参数。
+
+### onBuildComplete
+build 完成时。传入的 fn 接收 `{ isFirstCompile: boolean, stats, time: number, err?: Error }` 作为参数。
+
+### onCheck
+检查时，在 onStart 之前执行。传入的 fn 不接收任何参数
+
+### onCheckCode
+检查代码时。传入的 fn 接收的参数接口如下：
+```ts
+args: {
+  file: string;
+  code: string;
+  isFromTmp: boolean;
+  imports: {
+    source: string;
+    loc: any;
+    default: string;
+    namespace: string;
+    specifiers: Record<string, string>;
+  }[];
+  exports: any[];
+  cjsExports: string[]; 
+}
+```
+
+### onCheckConfig
+检查 config 时。传入的 fn 接收 `{ config, userConfig }`作为参数，它们分别表示实际的配置和用户的配置。
+
+### onCheckPkgJSON
+检查 package.json 时。传入的 fn 接收 `{origin?, current}` 作为参数。它们的类型都是 package.json 对象
+
+### onDevCompileDone
+dev 完成时。传入的 fn 接收的参数接口如下：
+```ts
+args: {
+  isFirstCompile: boolean;
+  stats: any;
+  time: number; 
+}
+```
+
+### onGenerateFiles
+生成临时文件时，随着文件变化会频繁触发，有缓存。 传入的 fn 接收的参数接口如下：
+```ts
+args: {
+  isFirstTime?: boolean;
+  files?: {
+    event: string;
+    path: string;
+  } | null;
+}
+```
+
+### onPkgJSONChanged
+package.json 变更时。传入的 fn 接收 `{origin?, current}` 作为参数。它们的类型都是 package.json 对象
+
+
+### onStart
+启动时。传入的 fn 不接收任何参数。
