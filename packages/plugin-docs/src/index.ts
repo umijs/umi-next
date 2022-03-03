@@ -1,9 +1,26 @@
-import fs, { existsSync } from 'fs';
+import { parseModuleSync } from '@umijs/bundler-utils';
+import { winPath } from '@umijs/utils';
+import fs, { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from 'umi';
 import { parseTitle } from './markdown';
 
 export default (api: IApi) => {
+  // 把用户当前有设置在 docs/locales 下的语系放到变量 locales 中，方便后续使用
+  const locales: { [locale: string]: { [key: string]: string } } = {};
+  const localesPath = join(api.cwd, 'docs/locales');
+  if (existsSync(localesPath)) {
+    fs.readdirSync(localesPath).forEach((file) => {
+      if (file.endsWith('.json')) {
+        const filePath = join(localesPath, file);
+        const content = fs.readFileSync(filePath).toString();
+        const json = JSON.parse(content);
+        const localeName = file.replace('.json', '');
+        locales[localeName] = json;
+      }
+    });
+  }
+
   api.modifyDefaultConfig((memo) => {
     memo.conventionRoutes = {
       ...memo.conventionRoutes,
@@ -42,34 +59,54 @@ export default (api: IApi) => {
     }
   });
 
+  // 检查路由是否存在其他语言，没有的话做 fallback 处理
+  api.modifyRoutes((r) => {
+    if (!locales) return r;
+    for (const route in r) {
+      if (r[route].path.match(/^[a-z]{2}-[A-Z]{2}\/.*/)) continue;
+      const defaultLangFile = r[route].file.replace(
+        /(.[a-z]{2}-[A-Z]{2})?.md$/,
+        '',
+      );
+      Object.keys(locales).map((l) => {
+        if (r[defaultLangFile] && !r[defaultLangFile + '.' + l]) {
+          r[defaultLangFile + '.' + l] = {
+            ...r[defaultLangFile],
+            path: `/${l}/${r[defaultLangFile].path}`,
+          };
+        }
+      });
+    }
+    return r;
+  });
+
   api.onGenerateFiles(() => {
+    // theme path
+    let theme =
+      api.config.docs?.theme || require.resolve('../client/theme-doc/index.ts');
+    if (theme === 'blog') {
+      theme = require.resolve('../client/theme-blog/index.ts');
+    }
+    theme = winPath(theme);
+
     const themeConfigPath = join(api.cwd, 'theme.config.ts');
     const themeExists = existsSync(themeConfigPath);
 
     // 将 docs/locales 目录下的 json 文件注入到 themeConfig.locales 中
-    let injectLocale = 'themeConfig.locales = {};';
-    const localesPath = join(api.cwd, 'docs/locales');
-    if (existsSync(localesPath)) {
-      fs.readdirSync(localesPath).forEach((file) => {
-        if (file.endsWith('.json')) {
-          const filePath = join(localesPath, file);
-          const content = fs.readFileSync(filePath).toString();
-          const json = JSON.parse(content);
-          const localeName = file.replace('.json', '');
-          injectLocale += `themeConfig.locales['${localeName}'] = ${JSON.stringify(
-            json,
-          )};
-`;
-        }
-      });
-    }
+    let injectLocale = `themeConfig.locales = ${JSON.stringify(locales)};`;
 
-    // @TODO: 需要能够动态解析 theme 中导出的组件，现在是硬编码
+    // exports don't start with $ will be MDX Component
+    const [_, exports] = parseModuleSync({
+      content: readFileSync(theme, 'utf-8'),
+      path: theme,
+    });
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-export { Message, Hero, Features, FeatureItem } from '${require.resolve(
-        '../client/theme-doc',
+export { ${exports
+        .filter((item) => !item.startsWith('$'))
+        .join(', ')} } from '${require.resolve(
+        '../client/theme-doc/index.ts',
       )}';
     `,
     });
@@ -79,7 +116,9 @@ export { Message, Hero, Features, FeatureItem } from '${require.resolve(
       content: `
 import React from 'react';
 import { useOutlet, useAppData, useLocation, Link } from 'umi';
-import { Layout } from '${require.resolve('../client/theme-doc')}';
+import { $Layout as Layout } from '${require.resolve(
+        '../client/theme-doc/index.ts',
+      )}';
 ${
   themeExists
     ? `import themeConfig from '${themeConfigPath}'`

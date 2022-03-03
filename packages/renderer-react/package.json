@@ -1,6 +1,6 @@
 {
   "name": "@umijs/renderer-react",
-  "version": "4.0.0-rc.1",
+  "version": "4.0.0-rc.4",
   "description": "@umijs/renderer-react",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/renderer-react#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@loadable/component": "5.15.2",
-    "history": "5.2.0",
-    "react-router-dom": "6.2.1"
+    "history": "5.3.0",
+    "react-router-dom": "6.2.2"
   },
   "devDependencies": {
     "react": "17.0.2",

@@ -6,6 +6,7 @@ import { IApi } from '../types';
 import { clearTmp } from '../utils/clearTmp';
 import { getBabelOpts } from './dev/getBabelOpts';
 import { getMarkupArgs } from './dev/getMarkupArgs';
+import { printMemoryUsage } from './dev/utils';
 
 const bundlerWebpack: typeof import('@umijs/bundler-webpack') = importLazy(
   '@umijs/bundler-webpack',
@@ -95,7 +96,7 @@ umi build --clean
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),
         },
-        ...(api.args.vite
+        ...(api.config.vite
           ? { modifyViteConfig }
           : { babelPreset, chainWebpack, modifyWebpackConfig }),
         beforeBabelPlugins,
@@ -103,6 +104,7 @@ umi build --clean
         extraBabelPlugins,
         extraBabelPresets,
         onBuildComplete(opts: any) {
+          printMemoryUsage();
           api.applyPlugins({
             key: 'onBuildComplete',
             args: opts,
@@ -110,20 +112,46 @@ umi build --clean
         },
         clean: api.args.clean,
       };
-      if (api.args.vite) {
-        await bundlerVite.build(opts);
+
+      let stats: any;
+      if (api.config.vite) {
+        stats = await bundlerVite.build(opts);
       } else {
-        await bundlerWebpack.build(opts);
+        stats = await bundlerWebpack.build(opts);
+      }
+
+      function getAssetsMap(stats: any) {
+        if (api.config.vite) {
+          // TODO: FIXME: vite
+          // vite features provides required css and js documents
+          return {};
+        }
+
+        let ret: Record<string, string> = {};
+        for (const asset of stats.toJson().entrypoints['umi'].assets) {
+          if (/^umi(\..+)?\.js$/.test(asset.name)) {
+            ret['umi.js'] = asset.name;
+          }
+          if (/^umi(\..+)?\.css$/.test(asset.name)) {
+            ret['umi.css'] = asset.name;
+          }
+        }
+        return ret;
+      }
+
+      function getAsset(name: string) {
+        return assetsMap[name] ? [`/${assetsMap[name]}`] : [];
       }
 
       // generate html
+      const assetsMap = getAssetsMap(stats);
       const { vite } = api.args;
       const markupArgs = await getMarkupArgs({ api });
       // @ts-ignore
       const markup = await getMarkup({
         ...markupArgs,
-        styles: ['/umi.css'].concat(markupArgs.styles),
-        scripts: ['/umi.js'].concat(markupArgs.scripts),
+        styles: getAsset('umi.css').concat(markupArgs.styles),
+        scripts: getAsset('umi.js').concat(markupArgs.scripts),
         esmScript: !!opts.config.esm || vite,
         path: '/',
       });
@@ -132,7 +160,7 @@ umi build --clean
         markup,
         'utf-8',
       );
-      logger.event('build index.html');
+      logger.event('Build index.html');
 
       // print size
     },

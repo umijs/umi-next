@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 
@@ -10,7 +11,7 @@ function getLinkFromTitle(title: string) {
 }
 
 export default () => {
-  const { location, appData } = useThemeContext()!;
+  const { location, appData, themeConfig } = useThemeContext()!;
   const lang = useLanguage();
   const route =
     appData.routes[
@@ -31,10 +32,15 @@ export default () => {
       className="w-full lg:m-12 mb-12 border
       border-gray-100 p-8 rounded-xl z-20"
     >
+      <Helmet>
+        <title>
+          {route.titles[0].title} | {themeConfig.title}
+        </title>
+      </Helmet>
       <p className="text-lg font-extrabold dark:text-white">
         {route.titles[0].title}
       </p>
-      <ul className="max-h-[calc(100vh-360px)] overflow-y-scroll py-2">
+      <ul className="max-h-[calc(100vh-360px)] overflow-y-auto py-2">
         {titles.map((item: any) => {
           return (
             <li

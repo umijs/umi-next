@@ -3,6 +3,7 @@ import UmiLogo from './packages/plugin-docs/client/theme-doc/icons/umi.png';
 
 export default {
   title: 'UmiJS',
+  description: '插件化的企业级前端应用框架',
   logo: UmiLogo,
   github: 'https://github.com/umijs/umi',
   i18n: [
@@ -94,7 +95,11 @@ export default {
       children: [
         {
           title: 'Blog',
-          children: ['umi-4-rc', 'mfsu-faster-then-vite'],
+          children: [
+            'umi-4-rc',
+            'mfsu-faster-then-vite',
+            'mfsu-independent-usage',
+          ],
         },
       ],
     },
