@@ -38,44 +38,47 @@ export default (api: IApi) => {
         });
       },
     },
+    enableBy: () => {
+      const hasApiRoutes = fs.existsSync(join(api.paths.absSrcPath, 'api'));
+      if (!hasApiRoutes) return false;
+
+      const config = api.userConfig.apiRoute;
+      if (!config) {
+        logger.warn(
+          'Directory ./src/api exists, but config.apiRoute is not set. API route feature will not be enabled!',
+        );
+        return false;
+      }
+      if (!config.platform) {
+        logger.warn(
+          'Please set config.apiRoute.platform to enable API route feature!',
+        );
+        return false;
+      }
+
+      const platform = getPlatform(config.platform);
+      if (!platform) {
+        logger.warn(
+          'There is an invalid value of config.apiRoute.platform: ' +
+            config.platform +
+            ', so API route feature will not be enabled!',
+        );
+        return false;
+      }
+
+      if (platform !== ServerlessPlatform.Vercel) {
+        logger.warn(
+          'Current version of Umi only supports deploying API routes to Vercel, so API route feature will not be enabled!',
+        );
+        return false;
+      }
+
+      return true;
+    },
   });
 
   // 生成中间产物时，将 API 路由与插件注册的中间件封装到临时文件目录下
   api.onGenerateFiles(async () => {
-    const hasApiRoutes = fs.existsSync(join(api.paths.absSrcPath, 'api'));
-    if (!hasApiRoutes) return;
-
-    const config = api.userConfig.apiRoute;
-    if (!config) {
-      logger.warn(
-        'Directory ./src/api exists, but config.apiRoute is not set. API route feature will not be enabled!',
-      );
-      return;
-    }
-    if (!config.platform) {
-      logger.warn(
-        'Please set config.apiRoute.platform to enable API route feature!',
-      );
-      return;
-    }
-
-    const platform = getPlatform(config.platform);
-    if (!platform) {
-      logger.warn(
-        'There is an invalid value of config.apiRoute.platform: ' +
-          config.platform +
-          ', so API route feature will not be enabled!',
-      );
-      return;
-    }
-
-    if (platform !== 'vercel') {
-      logger.warn(
-        'Current version of Umi only supports deploying API routes to Vercel, so API route feature will not be enabled!',
-      );
-      return;
-    }
-
     // @TODO: 根据 platform 的值执行不同 Adapter 的流程
 
     const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
