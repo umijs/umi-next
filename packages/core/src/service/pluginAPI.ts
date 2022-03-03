@@ -168,9 +168,9 @@ export class PluginAPI {
     }
   }
 
-  skipPlugins(ids: string[]) {
-    ids.forEach((id) => {
-      this.service.skipPluginIds.add(id);
+  skipPlugins(keys: string[]) {
+    keys.forEach((key) => {
+      this.service.skipPluginIds.add(this.service.keyToPluginMap[key].id);
     });
   }
 
