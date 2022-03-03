@@ -4,7 +4,7 @@ import { logger } from '@umijs/utils';
 import fs from 'fs';
 import { join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi, IApiMiddleware } from '../../types';
+import type { IApi, IApiMiddleware } from '../../types';
 
 enum ServerlessPlatform {
   Vercel = 'vercel',
