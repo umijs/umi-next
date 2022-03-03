@@ -1,10 +1,12 @@
-import * as bundlerEsbuild from '@umijs/bundler-esbuild';
 import { IRoute } from '@umijs/core';
 import { logger } from '@umijs/utils';
 import fs from 'fs';
 import { join, resolve } from 'path';
+import { matchRoutes } from 'react-router';
 import { TEMPLATES_DIR } from '../../constants';
 import type { IApi, IApiMiddleware } from '../../types';
+import DevServerAdapterBuild from './dev-server/esbuild';
+import VercelAdapterBuild from './vercel/esbuild';
 
 enum ServerlessPlatform {
   Vercel = 'vercel',
@@ -26,7 +28,7 @@ function getPlatform(p: string) {
 }
 
 export default (api: IApi) => {
-  let isApiRoutesGenerated = false;
+  let platform: ServerlessPlatform | undefined;
 
   // 注册 API 路由相关配置项
   api.describe({
@@ -56,7 +58,7 @@ export default (api: IApi) => {
         return false;
       }
 
-      const platform = getPlatform(config.platform);
+      platform = getPlatform(config.platform);
       if (!platform) {
         logger.warn(
           'There is an invalid value of config.apiRoute.platform: ' +
@@ -108,40 +110,89 @@ export default (api: IApi) => {
       tplPath: join(TEMPLATES_DIR, 'middlewares.tpl'),
       context: { middlewares },
     });
-
-    isApiRoutesGenerated = true;
   });
+
+  // 开发阶段，透过中间件拦截对 API 路由的请求，在这里直接进行处理
+  api.addBeforeMiddlewares(() => [
+    async (req, res, next) => {
+      if (req.path.startsWith('/api')) {
+        const path = req.path.replace('/api', '');
+
+        const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
+          (k) => api.appData.apiRoutes[k],
+        );
+
+        const matches = matchRoutes(
+          apiRoutes.map((r) => ({ path: r.path })),
+          path,
+        );
+
+        if (!matches || matches?.length === 0) {
+          logger.warn(`404 - ${req.path}`);
+          next();
+          return;
+        }
+
+        const matchedApiRoute = apiRoutes.find(
+          (r) =>
+            r.path === matches[0].pathname ||
+            '/' + r.path === matches[0].pathname,
+        );
+
+        if (!matchedApiRoute) {
+          logger.warn(`404 - ${req.path}`);
+          next();
+          return;
+        }
+
+        await require(join(
+          api.paths.cwd,
+          '.output/server/pages/api',
+          matchedApiRoute.file,
+        ).replace('.ts', '.js')).default(req, res);
+
+        return;
+      }
+
+      next();
+    },
+  ]);
+
+  api.addTmpGenerateWatcherPaths(() => [api.paths.absApiRoutesPath]);
 
   // 编译时，将打包好的临时文件根据用户指定的目标平台进行打包
   api.onBeforeCompiler(async () => {
-    if (!isApiRoutesGenerated) return;
-
-    // @TODO: 根据 platform 的值执行不同 Adapter 的流程
-
     const apiRoutePaths = Object.keys(api.appData.apiRoutes).map((key) =>
       join(api.paths.absTmpPath, 'api', api.appData.apiRoutes[key].file),
     );
 
-    await bundlerEsbuild.buildApiRoutes({
-      format: 'esm',
-      outExtension: { '.js': '.mjs' },
-      bundle: true,
-      entryPoints: [
-        ...apiRoutePaths,
-        resolve(api.paths.absTmpPath, 'api/_middlewares.ts'),
-      ],
-      outdir: resolve(api.paths.cwd, '.output/server/pages/api'),
-      // resolve path like "@fs/Users/xxx/..." as "/Users/xxx/..."
-      plugins: [
-        {
-          name: 'alias',
-          setup(build: any) {
-            build.onResolve({ filter: /^@fs/ }, (args: any) => ({
-              path: args.path.replace(/^@fs/, ''),
-            }));
-          },
-        },
-      ],
-    });
+    if (api.env === 'development') {
+      await DevServerAdapterBuild(api, apiRoutePaths);
+      return;
+    }
+
+    if (fs.existsSync(join(api.paths.cwd, '.output/server/pages/api'))) {
+      await fs.rmdirSync(join(api.paths.cwd, '.output/server/pages/api'), {
+        recursive: true,
+      });
+    }
+
+    switch (platform) {
+      case ServerlessPlatform.Vercel:
+        await VercelAdapterBuild(api, apiRoutePaths);
+        return;
+      case ServerlessPlatform.Netlify:
+        logger.error('API routes bundle failed: Netlify is not supported yet!');
+        return;
+      case ServerlessPlatform.Worker:
+        logger.error(
+          'API routes bundle failed: Cloudflare Worker is not supported yet!',
+        );
+        return;
+      default:
+        throw new Error(
+          `API routes bundle failed: Unsupported platform: ${platform}`,
+        );
+    }
   });
 };
