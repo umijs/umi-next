@@ -48,13 +48,13 @@ export default (api: IApi) => {
     const config = api.userConfig.apiRoute;
     if (!config) {
       logger.warn(
-        '侦测到 ./src/api 目录存在，但没有配置 config.apiRoute 选项，因此 API 路由功能将不会生效！',
+        'Directory ./src/api exists, but config.apiRoute is not set. API route feature will not be enabled!',
       );
       return;
     }
     if (!config.platform) {
       logger.warn(
-        '请设置 config.apiRoute.platform 配置项，否则 API 路由功能将不会生效！',
+        'Please set config.apiRoute.platform to enable API route feature!',
       );
       return;
     }
@@ -62,16 +62,16 @@ export default (api: IApi) => {
     const platform = getPlatform(config.platform);
     if (!platform) {
       logger.warn(
-        '配置项 config.apiRoute.platform 输入了无效的值：' +
+        'There is an invalid value of config.apiRoute.platform: ' +
           config.platform +
-          '，因此 API 路由功能将不会生效！',
+          ', so API route feature will not be enabled!',
       );
       return;
     }
 
     if (platform !== 'vercel') {
       logger.warn(
-        '当前版本的 Umi 仅支持将 API 路由部署到 Vercel，因此 API 路由功能将不会生效！',
+        'Current version of Umi only supports deploying API routes to Vercel, so API route feature will not be enabled!',
       );
       return;
     }
