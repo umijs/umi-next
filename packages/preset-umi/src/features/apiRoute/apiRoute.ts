@@ -42,7 +42,7 @@ export default (api: IApi) => {
 
   // 生成中间产物时，将 API 路由与插件注册的中间件封装到临时文件目录下
   api.onGenerateFiles(async () => {
-    const hasApiRoutes = fs.existsSync(api.paths.absSrcPath + '/api');
+    const hasApiRoutes = fs.existsSync(join(api.paths.absSrcPath, 'api'));
     if (!hasApiRoutes) return;
 
     const config = api.userConfig.apiRoute;
@@ -85,12 +85,12 @@ export default (api: IApi) => {
     apiRoutes.map((apiRoute) => {
       api.writeTmpFile({
         noPluginDir: true,
-        path: 'api/' + apiRoute.file,
+        path: join('api', apiRoute.file),
         tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
         context: {
           adapterPath: resolve(__dirname, '../apiRoute/vercel/index.js'),
-          apiRootDirPath: api.paths.absTmpPath + '/api',
-          handlerPath: api.paths.absSrcPath + '/api/' + apiRoute.file,
+          apiRootDirPath: join(api.paths.absTmpPath, 'api'),
+          handlerPath: join(api.paths.absSrcPath, 'api', apiRoute.file),
         },
       });
     });
@@ -115,8 +115,8 @@ export default (api: IApi) => {
 
     // @TODO: 根据 platform 的值执行不同 Adapter 的流程
 
-    const apiRoutePaths = Object.keys(api.appData.apiRoutes).map(
-      (key) => api.paths.absTmpPath + '/api/' + api.appData.apiRoutes[key].file,
+    const apiRoutePaths = Object.keys(api.appData.apiRoutes).map((key) =>
+      join(api.paths.absTmpPath, 'api', api.appData.apiRoutes[key].file),
     );
 
     await bundlerEsbuild.buildApiRoutes({
@@ -125,9 +125,9 @@ export default (api: IApi) => {
       bundle: true,
       entryPoints: [
         ...apiRoutePaths,
-        api.paths.absTmpPath + '/api/_middlewares.ts',
+        resolve(api.paths.absTmpPath, 'api/_middlewares.ts'),
       ],
-      outdir: api.paths.absSrcPath + '/../.output/server/pages/api',
+      outdir: resolve(api.paths.cwd, '.output/server/pages/api'),
       // resolve path like "@fs/Users/xxx/..." as "/Users/xxx/..."
       plugins: [
         {
