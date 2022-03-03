@@ -9,6 +9,7 @@ importers:
       '@types/react': ^17.0.39
       '@types/react-dom': ^17.0.13
       '@types/resolve': ^1.20.1
+      '@umijs/bundler-esbuild': workspace:*
       '@umijs/bundler-utils': workspace:*
       '@umijs/bundler-vite': workspace:*
       '@umijs/bundler-webpack': workspace:*
@@ -44,6 +45,7 @@ importers:
       '@types/react': 17.0.39
       '@types/react-dom': 17.0.13
       '@types/resolve': 1.20.1
+      '@umijs/bundler-esbuild': link:packages/bundler-esbuild
       '@umijs/bundler-utils': link:packages/bundler-utils
       '@umijs/bundler-vite': link:packages/bundler-vite
       '@umijs/bundler-webpack': link:packages/bundler-webpack
@@ -119,6 +121,12 @@ importers:
       numeral: 2.0.6
       querystring: 0.2.1
       rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
+
+  examples/api-route-demo:
+    specifiers:
+      umi: 4.0.0-rc.3
+    dependencies:
+      umi: 4.0.0-rc.3_react-dom@17.0.2+react@17.0.2
 
   examples/bigfish:
     specifiers:
@@ -719,15 +727,15 @@ importers:
     specifiers:
       '@types/body-parser': 1.19.2
       '@types/multer': 1.4.7
-      '@umijs/ast': 4.0.0-rc.3
-      '@umijs/babel-preset-umi': 4.0.0-rc.3
-      '@umijs/bundler-utils': 4.0.0-rc.3
-      '@umijs/bundler-vite': 4.0.0-rc.3
-      '@umijs/bundler-webpack': 4.0.0-rc.3
-      '@umijs/core': 4.0.0-rc.3
-      '@umijs/renderer-react': 4.0.0-rc.3
-      '@umijs/server': 4.0.0-rc.3
-      '@umijs/utils': 4.0.0-rc.3
+      '@umijs/ast': 4.0.0-rc.4
+      '@umijs/babel-preset-umi': 4.0.0-rc.4
+      '@umijs/bundler-utils': 4.0.0-rc.4
+      '@umijs/bundler-vite': 4.0.0-rc.4
+      '@umijs/bundler-webpack': 4.0.0-rc.4
+      '@umijs/core': 4.0.0-rc.4
+      '@umijs/renderer-react': 4.0.0-rc.4
+      '@umijs/server': 4.0.0-rc.4
+      '@umijs/utils': 4.0.0-rc.4
       body-parser: 1.19.2
       core-js: 3.21.1
       current-script-polyfill: 1.0.0
