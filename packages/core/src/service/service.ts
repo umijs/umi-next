@@ -123,7 +123,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tAdd.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage,
               before: hook.before,
             },
@@ -140,7 +140,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tModify.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage,
               before: hook.before,
             },
@@ -156,7 +156,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tEvent.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage || 0,
               before: hook.before,
             },
