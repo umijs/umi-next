@@ -35,6 +35,6 @@ async function turbo(opts: {
   const extraCmd = opts.extra ? `-- -- ${opts.extra}` : '';
   const cacheCmd = opts.cache === false ? '--no-cache' : '';
   return cmd(
-    `turbo run ${opts.cmd} --scope="${opts.scope}" --no-deps --include-dependencies ${cacheCmd} ${extraCmd}`,
+    `turbo run ${opts.cmd} --cache-dir=".turbo" --scope="${opts.scope}" --no-deps --include-dependencies ${cacheCmd} ${extraCmd}`,
   );
 }
