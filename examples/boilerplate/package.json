@@ -1,4 +1,5 @@
 {
+  "name": "@example/boilerplate",
   "scripts": {
     "build": "umi build",
     "dev": "umi dev",

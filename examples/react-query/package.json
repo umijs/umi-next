@@ -1,4 +1,5 @@
 {
+  "name": "@example/react-query",
   "scripts": {
     "build": "umi build",
     "dev": "umi dev",

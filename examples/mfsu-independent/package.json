@@ -1,4 +1,5 @@
 {
+  "name": "@example/mfsu-independent",
   "scripts": {
     "build": "webpack",
     "dev": "webpack serve --config webpack.config.js",
