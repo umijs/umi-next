@@ -535,3 +535,101 @@ package.json 变更时。传入的 fn 接收 `{origin?, current}` 作为参数�
 
 ### onStart
 启动时。传入的 fn 不接收任何参数。
+
+
+## 属性
+从 api 可以直接访问到的属性，这些属性有一部分来自于 service
+
+### appData
+
+### args
+命令行参数，这里去除了命令本身。
+
+e.g.
+- `$ umi dev --foo`,  args 为 `{ _:[], foo: true }`
+- `$ umi g page index --typescript --less` , args 为 `{ _: [ 'page', 'index''], typescript: true, less: true }`
+
+### config
+最终的配置（取决于你访问的时机，可能是当前收集到的最终配置）
+
+### cwd
+当前路径
+
+### env
+即 `process.env.NODE_ENV` 可能有 `development`、`production` 和 `test`
+
+### logger
+插件日志对象，包含 `{ log, info, debug, error, warn, profile }`，他们都是方法。其中 `api.logger.profile` 可用于性能耗时记录。
+
+```ts
+api.logger.profile('barId');
+setTimeout(()=>{
+  api.logger.profile('barId');
+})
+// => [PROFILE] Completed in *ms;
+```
+
+### name
+当前命令的名称，例如 `$ umi dev `， `name` 就是 `dev`
+
+### paths
+项目相关的路径：
+- `absNodeModulesPath`，node_modules 目录绝对路径
+- `absOutputPath`，输出路径，默认是 ./dist
+- `absPagesPath`，pages 目录绝对路径
+- `absSrcPath`，src 目录绝对路径，需注意 src 目录是可选的，如果没有 src 目录，absSrcPath 等同于 cwd
+- `absTmpPath`，临时目录绝对路径
+- `cwd`，当前路径
+
+注意： 注册阶段不能获取到。因此不能在插件里直接获取，要在 hook 里使用。
+
+### pkg
+当前项目的 `package.json` 对象
+
+### pkgPath
+当前项目的 `package.json` 的绝对路径。
+
+### plugin
+当前插件的对象。
+- `type` 插件类型，有 preset 和 plugin 两种
+- `path` 插件路径
+- `id` 插件 id
+- `key` 插件 key
+- `config` 插件的配置
+- `enableBy` 插件的启用方式
+
+注意： 注册阶段使用的 plugin 对象是你 `describe` 之前的对象。
+
+### service
+umi 的 `Service` 实例。通常不需要用到，除非你知道为什么。
+
+### userConfig
+用户的配置，从 `.umirc` 或 `config/config` 中读取的内容，没有经过 defaultConfig 以及插件的任何处理。可以在注册阶段使用。
+
+### ApplyPluginsType
+`api.applyPlugins()` 的 type 参数的类型。包含
+- add
+- modify
+- event
+
+### ConfigChangeType
+为 `api.describe()` 提供 `config.onChange` 的类型，目前包含两种：
+- restart，重启 dev 进程，是默认值
+- regenerateTmpFiles，重新生成临时文件
+
+### EnableBy
+插件的启用方式，包含三种：
+- register
+- config
+
+### ServiceStage
+umi service 的运行阶段。有如下阶段：
+- uninitialized
+- init
+- initPresets
+- initPlugins
+- resolveConfig
+- collectAppData
+- onCheck
+- onStart
+- runCommand
