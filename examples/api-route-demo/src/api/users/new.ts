@@ -1,6 +1,5 @@
 import { UmiApiRequest, UmiApiResponse } from 'umi';
 
-export default function (req: UmiApiRequest, res: UmiApiResponse) {
-  console.log(req.pathName);
+export default function (_req: UmiApiRequest, res: UmiApiResponse) {
   res.status(201).json({ result: true });
 }
