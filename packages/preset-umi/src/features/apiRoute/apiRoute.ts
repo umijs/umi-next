@@ -136,7 +136,9 @@ export default (api: IApi) => {
         const matchedApiRoute = apiRoutes.find(
           (r) =>
             r.path === matches[0].pathname ||
-            '/' + r.path === matches[0].pathname,
+            r.path + '/' === matches[0].pathname ||
+            '/' + r.path === matches[0].pathname ||
+            '/' + r.path + '/' === matches[0].pathname,
         );
 
         if (!matchedApiRoute) {
