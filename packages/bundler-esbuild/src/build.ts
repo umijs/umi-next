@@ -27,12 +27,6 @@ interface IOpts {
   inlineStyle?: boolean;
 }
 
-export async function buildApiRoutes(opts: any) {
-  return await buildWithESBuild({
-    ...opts,
-  });
-}
-
 export async function build(opts: IOpts) {
   const outputPath = opts.config.outputPath || join(opts.cwd, 'dist');
   if (opts.clean) {
