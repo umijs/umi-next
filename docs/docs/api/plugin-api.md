@@ -43,8 +43,9 @@ api.describe({
 
 ### isPluginEnable
 ```ts
-api.isPluginEnable(hook: Hook | string)
+api.isPluginEnable( key：string)
 ```
+判断插件是否启用，传入的参数是插件的 key
 
 ### register <span id = 'register'/>
 ```ts
@@ -199,9 +200,9 @@ api.registerPlugins([
 
 ### skipPlugins
 ```ts
-api.skipPlugins( ids: string[])
+api.skipPlugins( keys: string[])
 ```
-声明哪些插件需要被禁用，参数为插件 id 的数组
+声明哪些插件需要被禁用，参数为插件 key 的数组
 
 ## 扩展方法
 通过`api.registerMethod()` 扩展的方法，它们的作用都是注册一些 hook 以供使用，因此都需要接收一个 fn。这些方法中的大部分都按照 `add-` `modify-` `on-` 的方式命名，它们分别对应了 `api.ApplyPluginsType`的三种方式，不同方式接收的 fn 不太相同，详见 [register](#register) 一节。
