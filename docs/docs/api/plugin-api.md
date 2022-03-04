@@ -2,7 +2,7 @@
 
 为方便查找，以下内容通过字母排序。
 
-在查用 umi 插件 API 之前，我们建议你先阅读[插件](../guides/plugin)一节，以了解 umi 插件的机制及原理，这将帮助你更好的使用插件 API。
+在查用 umi 插件 API 之前，我们建议你先阅读[插件](../guides/plugins)一节，以了解 umi 插件的机制及原理，这将帮助你更好的使用插件 API。
 
 ## 核心 API
 service 和 PluginAPI 里定义的方法。
