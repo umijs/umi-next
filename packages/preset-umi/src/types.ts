@@ -13,6 +13,7 @@ import { Env } from '@umijs/core';
 import type { CheerioAPI } from '@umijs/utils/compiled/cheerio';
 import type { InlineConfig as ViteInlineConfig } from 'vite';
 
+export * from './features/apiRoute/vercel';
 export type IScript =
   | Partial<{
       async: boolean;
@@ -52,6 +53,10 @@ export type IMeta = Partial<{
   name: string;
   scheme: string;
 }>;
+export type IApiMiddleware = {
+  name: string;
+  path: string;
+};
 export type IEntryImport = {
   source: string;
   specifier?: string;
@@ -68,7 +73,7 @@ export type IApi = PluginAPI &
       tplPath?: string;
       context?: Record<string, any>;
     }) => void;
-    addTmpGenerateWatcherPaths: IAdd<null, string[]>;
+    addTmpGenerateWatcherPaths: IAdd<null, string>;
     onGenerateFiles: IEvent<{
       isFirstTime?: boolean;
       files?: { event: string; path: string } | null;
@@ -114,25 +119,26 @@ export type IApi = PluginAPI &
     onPatchRoute: IEvent<{
       route: IRoute;
     }>;
-    addEntryImports: IAdd<null, IEntryImport[]>;
-    addEntryImportsAhead: IAdd<null, IEntryImport[]>;
-    addEntryCodeAhead: IAdd<null, string[]>;
-    addEntryCode: IAdd<null, string[]>;
-    addExtraBabelPresets: IAdd<null, any[]>;
-    addExtraBabelPlugins: IAdd<null, any[]>;
-    addBeforeBabelPresets: IAdd<null, any[]>;
-    addBeforeBabelPlugins: IAdd<null, any[]>;
-    addBeforeMiddlewares: IAdd<null, RequestHandler[]>;
-    addMiddlewares: IAdd<null, RequestHandler[]>;
-    addHTMLHeadScripts: IAdd<null, IScript[]>;
-    addHTMLScripts: IAdd<null, IScript[]>;
-    addHTMLStyles: IAdd<null, IStyle[]>;
-    addHTMLLinks: IAdd<null, ILink[]>;
-    addHTMLMetas: IAdd<null, IMeta[]>;
-    addLayouts: IAdd<null, { id: string; file: string }[]>;
-    addPolyfillImports: IAdd<null, { source: string; specifier?: string }[]>;
-    addRuntimePlugin: IAdd<null, string[]>;
-    addRuntimePluginKey: IAdd<null, string[]>;
+    addEntryImports: IAdd<null, IEntryImport>;
+    addEntryImportsAhead: IAdd<null, IEntryImport>;
+    addEntryCodeAhead: IAdd<null, string>;
+    addEntryCode: IAdd<null, string>;
+    addExtraBabelPresets: IAdd<null, any>;
+    addExtraBabelPlugins: IAdd<null, any>;
+    addBeforeBabelPresets: IAdd<null, any>;
+    addBeforeBabelPlugins: IAdd<null, any>;
+    addBeforeMiddlewares: IAdd<null, RequestHandler>;
+    addApiMiddlewares: IAdd<null, IApiMiddleware>;
+    addMiddlewares: IAdd<null, RequestHandler>;
+    addHTMLHeadScripts: IAdd<null, IScript>;
+    addHTMLScripts: IAdd<null, IScript>;
+    addHTMLStyles: IAdd<null, IStyle>;
+    addHTMLLinks: IAdd<null, ILink>;
+    addHTMLMetas: IAdd<null, IMeta>;
+    addLayouts: IAdd<null, { id: string; file: string }>;
+    addPolyfillImports: IAdd<null, { source: string; specifier?: string }>;
+    addRuntimePlugin: IAdd<null, string>;
+    addRuntimePluginKey: IAdd<null, string>;
     modifyHTMLFavicon: IModify<string, {}>;
     modifyHTML: IModify<CheerioAPI, { path: string }>;
     modifyRendererPath: IModify<string, {}>;
