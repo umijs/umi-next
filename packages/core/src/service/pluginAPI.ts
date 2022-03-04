@@ -170,6 +170,11 @@ export class PluginAPI {
 
   skipPlugins(keys: string[]) {
     keys.forEach((key) => {
+      assert(!(this.plugin.key === key), `plugin ${key} can't skip itself!`);
+      assert(
+        this.service.keyToPluginMap[key],
+        `key: ${key} is not be registered by any plugin. You can't skip it!`,
+      );
       this.service.skipPluginIds.add(this.service.keyToPluginMap[key].id);
     });
   }
