@@ -1,9 +1,9 @@
 import type { IConfigProcessor } from '.';
 
 /**
- * Modify the interface of vite configuration
+ * Merge from user config
  */
-export default (function target(userConfig) {
+export default (function merge(userConfig) {
   if (typeof userConfig.vite === 'object') {
     return userConfig.vite;
   }
