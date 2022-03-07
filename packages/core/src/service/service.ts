@@ -35,7 +35,18 @@ interface IOpts {
 
 export class Service {
   private opts: IOpts;
-  appData: { deps?: Record<string, string>; [key: string]: any } = {};
+  appData: {
+    deps?: Record<
+      string,
+      {
+        version: string;
+        matches: string[];
+        subpaths: string[];
+        external?: boolean;
+      }
+    >;
+    [key: string]: any;
+  } = {};
   args: yParser.Arguments = { _: [], $0: '' };
   commands: Record<string, Command> = {};
   generators: Record<string, Generator> = {};
@@ -51,6 +62,7 @@ export class Service {
     cwd?: string;
     absSrcPath?: string;
     absPagesPath?: string;
+    absApiRoutesPath?: string;
     absTmpPath?: string;
     absNodeModulesPath?: string;
     absOutputPath?: string;
@@ -63,7 +75,13 @@ export class Service {
   stage: ServiceStage = ServiceStage.uninitialized;
   userConfig: Record<string, any> = {};
   configManager: Config | null = null;
-  pkg: Record<string, string | Record<string, any>> = {};
+  pkg: {
+    name?: string;
+    version?: string;
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+    [key: string]: any;
+  } = {};
   pkgPath: string = '';
 
   constructor(opts: IOpts) {
@@ -106,7 +124,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tAdd.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage,
               before: hook.before,
             },
@@ -123,7 +141,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tModify.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage,
               before: hook.before,
             },
@@ -139,7 +157,7 @@ export class Service {
           if (!this.isPluginEnable(hook)) continue;
           tEvent.tapPromise(
             {
-              name: hook.plugin.id,
+              name: hook.plugin.key,
               stage: hook.stage || 0,
               before: hook.before,
             },
@@ -221,10 +239,6 @@ export class Service {
     while (plugins.length) {
       await this.initPlugin({ plugin: plugins.shift()!, plugins });
     }
-    // keyToPluginMap
-    for (const id of Object.keys(this.plugins)) {
-      this.keyToPluginMap[this.plugins[id].key] = this.plugins[id];
-    }
     // collect configSchemas and configDefaults
     for (const id of Object.keys(this.plugins)) {
       const { config, key } = this.plugins[id];
@@ -240,15 +254,17 @@ export class Service {
       env: this.env,
       prefix: this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME,
     });
-    if (this.config.outputPath) {
-      paths.absOutputPath = join(this.cwd, this.config.outputPath);
-    }
     this.stage = ServiceStage.resolveConfig;
     const config = await this.applyPlugins({
       key: 'modifyConfig',
-      initialValue: configManager.getConfig({
-        schemas: this.configSchemas,
-      }).config,
+      // why clone deep?
+      // user may change the config in modifyConfig
+      // e.g. memo.alias = xxx
+      initialValue: lodash.cloneDeep(
+        configManager.getConfig({
+          schemas: this.configSchemas,
+        }).config,
+      ),
       args: { paths },
     });
     const defaultConfig = await this.applyPlugins({
@@ -256,6 +272,9 @@ export class Service {
       initialValue: this.configDefaults,
     });
     this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
+    if (this.config.outputPath) {
+      paths.absOutputPath = join(this.cwd, this.config.outputPath);
+    }
     this.paths = await this.applyPlugins({
       key: 'modifyPaths',
       initialValue: paths,
@@ -360,6 +379,7 @@ export class Service {
         'config',
         'cwd',
         'pkg',
+        'pkgPath',
         'name',
         'paths',
         'userConfig',
@@ -381,6 +401,14 @@ export class Service {
     if (opts.plugin.type === 'plugin') {
       assert(!ret, `plugin should return nothing`);
     }
+    // key should be unique
+    assert(
+      !this.keyToPluginMap[opts.plugin.key],
+      `key ${opts.plugin.key} is already registered by ${
+        this.keyToPluginMap[opts.plugin.key]?.path
+      }, ${opts.plugin.type} from ${opts.plugin.path} register failed.`,
+    );
+    this.keyToPluginMap[opts.plugin.key] = opts.plugin;
     if (ret?.presets) {
       ret.presets = ret.presets.map(
         (preset: string) =>
@@ -417,7 +445,15 @@ export class Service {
     if (this.config[key] === false) return false;
     if (enableBy === EnableBy.config) {
       // TODO: 提供单独的命令用于启用插件
-      return key in this.userConfig;
+      // this.userConfig 中如果存在，启用
+      // this.config 好了之后如果存在，启用
+      // this.config 在 modifyConfig 和 modifyDefaultConfig 之后才会 ready
+      // 这意味着 modifyConfig 和 modifyDefaultConfig 只能判断 api.userConfig
+      // 举个具体场景:
+      //   - p1 enableBy config, p2 modifyDefaultConfig p1 = {}
+      //   - p1 里 modifyConfig 和 modifyDefaultConfig 仅 userConfig 里有 p1 有效，其他 p2 开启时即有效
+      //   - p2 里因为用了 modifyDefaultConfig，如果 p2 是 enableBy config，需要 userConfig 里配 p2，p2 和 p1 才有效
+      return key in this.userConfig || (this.config && key in this.config);
     }
     if (typeof enableBy === 'function')
       return enableBy({
@@ -430,7 +466,6 @@ export class Service {
   }
 }
 
-// TODO: more props
 export interface IServicePluginAPI {
   appData: typeof Service.prototype.appData;
   applyPlugins: typeof Service.prototype.applyPlugins;
@@ -461,5 +496,6 @@ export interface IServicePluginAPI {
   EnableBy: typeof EnableBy;
   ServiceStage: typeof ServiceStage;
 
+  registerPresets: (presets: any[]) => void;
   registerPlugins: (plugins: (Plugin | {})[]) => void;
 }

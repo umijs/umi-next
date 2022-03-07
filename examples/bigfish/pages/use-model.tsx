@@ -1,6 +1,7 @@
 // @ts-ignore
-import { useModel } from '@@/plugin-model';
 import React from 'react';
+// @ts-ignore
+import { useModel } from 'umi';
 
 export default function HomePage() {
   const { todos } = useModel('todo');

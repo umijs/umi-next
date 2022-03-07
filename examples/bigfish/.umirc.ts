@@ -1,4 +1,6 @@
-export default {
+import { defineConfig } from '@umijs/pro';
+
+export default defineConfig({
   routes: [
     {
       title: 'site.title',
@@ -31,7 +33,7 @@ export default {
     },
   ],
   antd: {
-    // import: true,
+    import: true,
     style: 'less',
     // dark: true,
   },
@@ -43,10 +45,15 @@ export default {
     baidu: 'test',
   },
   moment2dayjs: {},
+  mock: {
+    include: ['pages/**/_mock.ts'],
+  },
   layout: {
     name: 'Ant Design Pro',
   },
-  mfsu: {},
+  mfsu: {
+    esbuild: true,
+  },
   request: {},
   locale: {
     title: true,
@@ -61,5 +68,6 @@ export default {
       ],
     },
   },
-  lowImport: {},
-};
+  // esmi: { cdnOrigin: 'https://npmcore-pre.alipay.com' },
+  // lowImport: {},
+});

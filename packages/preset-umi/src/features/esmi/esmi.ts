@@ -2,35 +2,62 @@ import { parse as parseImports } from '@umijs/bundler-utils/compiled/es-module-l
 import MagicString from 'magic-string';
 import { join } from 'path';
 import type { Plugin, ResolvedConfig } from 'vite';
-import { createResolver, scan } from '../../libs/scan';
+import { createResolver } from '../../libs/scan';
 import type { IApi } from '../../types';
+import requireToImport from './esbuildPlugins/requireToImport';
+import topLevelExternal from './esbuildPlugins/topLevelExternal';
 import Service, { IImportmapData, IPkgData } from './Service';
 
 let importmap: IImportmapData['importMap'] = { imports: {}, scopes: {} };
+let importmatches: Record<string, string> = {};
 
 /**
  * esmi vite plugin
  */
-function esmi(opts: { handleHotUpdate?: Plugin['handleHotUpdate'] }): Plugin {
+function esmi(opts: {
+  handleHotUpdate?: Plugin['handleHotUpdate'];
+  resolver: ReturnType<typeof createResolver>;
+}): Plugin {
   return {
     name: 'preset-umi:esmi',
 
     configResolved(config: ResolvedConfig) {
       const { include, exclude } = config.optimizeDeps;
 
+      config.optimizeDeps.include ??= [];
+
       // do not pre-compile deps which will be loaded by importmap (for top-level deps)
       if (include?.length) {
         config.optimizeDeps.include = include!.filter(
-          (item) => !importmap.imports[item],
+          (item) => !importmatches[item] && !importmap.imports[item],
         );
       }
 
-      // exclude pre-compile deps which within importmap by default (for nested deps)
-      config.optimizeDeps.exclude = (exclude || []).concat(
-        Object.keys(importmap.imports).filter((item) =>
-          exclude?.includes(item),
-        ),
-      );
+      // exclude pre-compile deps
+      config.optimizeDeps.exclude = [
+        ...new Set([
+          // deps from user config
+          ...(exclude || []),
+          // deps from local scan
+          ...Object.keys(importmatches),
+          // deps from esmi analyze result
+          ...Object.keys(importmap.imports),
+        ]),
+      ];
+
+      // apply esbuild plugins
+      config.optimizeDeps.esbuildOptions ??= {};
+      // @ts-ignore
+      config.optimizeDeps.esbuildOptions!.plugins = [
+        // transform require call to import
+        requireToImport({ exclude: config.optimizeDeps.exclude }),
+        // make sure vite only external top-level npm imports, and resolve sub-path npm imports
+        topLevelExternal({
+          exclude: config.optimizeDeps.exclude,
+          resolver: opts.resolver,
+        }),
+        // @ts-ignore
+      ].concat(config.optimizeDeps.esbuildOptions!.plugins || []);
     },
 
     transform(source) {
@@ -44,9 +71,18 @@ function esmi(opts: { handleHotUpdate?: Plugin['handleHotUpdate'] }): Plugin {
           const { n: specifier, s: start, e: end } = item;
 
           // replace npm package to CDN url for matched imports
-          if (specifier && importmap.imports[specifier]) {
-            s ??= new MagicString(source);
-            s.overwrite(start, end, importmap.imports[specifier]);
+          if (specifier) {
+            const replacement =
+              // search from local scan matches first (for alias)
+              (importmatches[specifier] &&
+                importmap.imports[importmatches[specifier]]) ||
+              // search from esmi analyze result
+              importmap.imports[specifier];
+
+            if (replacement) {
+              s ??= new MagicString(source);
+              s.overwrite(start, end, replacement);
+            }
           }
         });
 
@@ -82,13 +118,17 @@ function generatePkgData(api: IApi): IPkgData {
           name: 'default',
           path: 'es/index.js',
           from: '',
-          deps: Object.entries(api.appData.deps!).map(([name, version]) => ({
-            name,
-            version,
-            usedMap: {
-              [name]: { usedNamespace: true, usedNames: [] },
-            },
-          })),
+          deps: Object.entries(api.appData.deps!)
+            // only compile entry imports
+            .filter(([_, { matches }]) => matches.length)
+            // convert to esmi config
+            .map(([name, { version }]) => ({
+              name,
+              version,
+              usedMap: {
+                [name]: { usedNamespace: true, usedNames: [] },
+              },
+            })),
         },
       ],
       assets: [],
@@ -106,18 +146,13 @@ export default (api: IApi) => {
   async function refreshImportMap() {
     // scan and module graph
     // TODO: module graph
-    api.appData.deps = await scan({
-      entry: join(api.paths.absTmpPath, 'umi.ts'),
-      externals: api.config.externals,
-      resolver,
+    await api.applyPlugins({
+      key: 'updateAppDataDeps',
+      type: api.ApplyPluginsType.event,
     });
 
     // skip umi by default
-    delete api.appData.deps['umi'];
-
-    // FIXME: force include react & react-dom
-    api.appData.deps['react'] = api.appData.react.version;
-    api.appData.deps['react-dom'] = api.appData.react.version;
+    delete api.appData.deps!['umi'];
 
     const data = generatePkgData(api);
     const deps = data.pkgInfo.exports.reduce(
@@ -128,8 +163,22 @@ export default (api: IApi) => {
 
     // update importmap from esm if there has new import
     if (hasNewDep) {
-      // TODO: add local cache and restore
       importmap = (await service.getImportmap(data))?.importMap!;
+
+      // update matches map to dep name
+      importmatches = Object.keys(api.appData.deps!).reduce<
+        Record<string, string>
+      >((r, dep) => {
+        // filter subpath imports
+        if (!api.appData.deps![dep].subpaths.length) {
+          // map all matches to dep name
+          api.appData.deps![dep].matches.forEach((m) => {
+            r[m] = dep;
+          });
+        }
+
+        return r;
+      }, {});
 
       // because we will replaced package name to CDN url in vite plugin
       // so we must append scope rules for the CDN url like the import specifier
@@ -162,14 +211,14 @@ export default (api: IApi) => {
 
   // check bundler type
   api.onStart(() => {
-    if (!api.args.vite) {
+    if (!api.config.vite) {
       throw new Error(`esmi can only be used in vite mode.`);
     }
   });
 
   // collect all imports after tmp files generated
   api.onBeforeCompiler(async () => {
-    if (api.args.vite) {
+    if (api.config.vite) {
       // init esmi service
       service = new Service({
         cdnOrigin: api.config.esmi.cdnOrigin,
@@ -208,7 +257,7 @@ export default (api: IApi) => {
     return $;
   });
 
-  if (api.args.vite) {
+  if (api.config.vite) {
     // apply esmi vite plugin
     api.modifyViteConfig((memo) => {
       memo.plugins = (memo.plugins || []).concat(
@@ -221,6 +270,7 @@ export default (api: IApi) => {
 
             // TODO: refresh page when importmap changed
           },
+          resolver,
         }),
       );
 

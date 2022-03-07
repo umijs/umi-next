@@ -11,7 +11,7 @@ const RE_NODE_MODULES = /node_modules/;
 const RE_UMI_LOCAL_DEV = /umi(-next)?\/packages\//;
 
 function isUmiLocalDev(path: string) {
-  return RE_UMI_LOCAL_DEV.test(path);
+  return RE_UMI_LOCAL_DEV.test(winPath(path));
 }
 
 export function checkMatch({
@@ -21,6 +21,7 @@ export function checkMatch({
   isExportAll,
   depth,
   cache,
+  filename,
 }: {
   value: string;
   path?: Babel.NodePath;
@@ -28,6 +29,7 @@ export function checkMatch({
   isExportAll?: boolean;
   depth?: number;
   cache?: Map<string, any>;
+  filename?: string;
 }): { isMatch: boolean; replaceValue: string } {
   let isMatch;
   let replaceValue = '';
@@ -40,6 +42,8 @@ export function checkMatch({
 
   opts = opts || {};
   const remoteName = opts.remoteName || 'mf';
+  // FIXME: hard code for vite mode
+  value = value.replace(/^@fs\//, '/');
   if (
     // unMatch specified libs
     opts.unMatchLibs?.includes(value) ||
@@ -72,6 +76,7 @@ export function checkMatch({
         isExportAll,
         depth: depth + 1,
         cache,
+        filename,
       });
     } else {
       isMatch = true;
@@ -83,11 +88,11 @@ export function checkMatch({
   }
 
   if (isMatch) {
-    replaceValue = `${remoteName}/${value}`;
+    replaceValue = `${remoteName}/${winPath(value)}`;
   }
 
   // @ts-ignore
-  const file = path?.hub.file.opts.filename;
+  const file = path?.hub.file.opts.filename || filename;
   opts.onTransformDeps?.({
     sourceValue: value,
     replaceValue,

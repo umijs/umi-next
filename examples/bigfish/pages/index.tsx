@@ -1,9 +1,5 @@
 // @ts-ignore
-import { useAccess } from '@@/plugin-access';
-// @ts-ignore
-import { useIntl } from '@@/plugin-locale';
-// @ts-ignore
-import { useModel } from '@@/plugin-model';
+import { history, useAccess, useIntl, useModel } from '@umijs/pro';
 // @ts-ignore
 import { Button, DatePicker, Input } from 'antd';
 
@@ -20,6 +16,14 @@ export default function HomePage() {
       <Input />
       <DatePicker />
       <div>{intl.formatMessage({ id: 'HELLO' })}</div>
+      <Button
+        type="primary"
+        onClick={() => {
+          history.push('/users');
+        }}
+      >
+        Go to /users
+      </Button>
     </div>
   );
 }

@@ -1,5 +1,4 @@
-// @ts-ignore
-import { BrowserHistory, createBrowserHistory } from 'history';
+import { History } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, useRoutes } from 'react-router-dom';
@@ -7,12 +6,15 @@ import { AppContext, useAppData } from './appContext';
 import { createClientRoutes } from './routes';
 import { IRouteComponents, IRoutesById } from './types';
 
-function BrowserRoutes(props: any) {
-  const historyRef = React.useRef<BrowserHistory>();
-  if (historyRef.current == null) {
-    historyRef.current = createBrowserHistory({ window });
-  }
-  const history = historyRef.current;
+function BrowserRoutes(props: {
+  routes: any;
+  clientRoutes: any;
+  pluginManager: any;
+  history: History;
+  basename: string;
+  children: any;
+}) {
+  const { history } = props;
   const [state, setState] = React.useState({
     action: history.action,
     location: history.location,
@@ -56,12 +58,15 @@ export function renderClient(opts: {
   routeComponents: IRouteComponents;
   pluginManager: any;
   basename?: string;
+  loadingComponent?: React.ReactNode;
+  history: History;
 }) {
   const basename = opts.basename || '/';
   const rootElement = opts.rootElement || document.getElementById('root');
   const clientRoutes = createClientRoutes({
     routesById: opts.routes,
     routeComponents: opts.routeComponents,
+    loadingComponent: opts.loadingComponent,
   });
   let rootContainer = (
     <BrowserRoutes
@@ -69,6 +74,7 @@ export function renderClient(opts: {
       pluginManager={opts.pluginManager}
       routes={opts.routes}
       clientRoutes={clientRoutes}
+      history={opts.history}
     >
       <Routes />
     </BrowserRoutes>

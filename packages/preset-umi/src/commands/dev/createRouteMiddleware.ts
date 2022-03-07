@@ -1,4 +1,4 @@
-import { RequestHandler } from '@umijs/bundler-webpack';
+import type { RequestHandler } from '@umijs/bundler-webpack';
 import { createRequestHandler, IOpts } from '@umijs/server';
 import { IApi } from '../../types';
 import { getMarkupArgs } from './getMarkupArgs';
@@ -15,17 +15,19 @@ window.__vite_plugin_react_preamble_installed__ = true
 
 export function createRouteMiddleware(opts: { api: IApi }): RequestHandler {
   return async (req, res, next) => {
-    const { vite } = opts.api.args;
+    const { vite } = opts.api.config;
     const viteScripts: IOpts['scripts'] = [
       // add noshim attr for skip importmap shim logic for this modules
       { content: viteRefreshScript, noshim: '' },
       { src: '/@vite/client', noshim: '' },
-      '/.umi/umi.ts',
+      opts.api.appData.hasSrcDir ? '/src/.umi/umi.ts' : '/.umi/umi.ts',
     ];
     const markupArgs = await getMarkupArgs(opts);
     // @ts-ignore
     const requestHandler = await createRequestHandler({
       ...markupArgs,
+      // css will be injected with style tag in vite mode
+      styles: (vite ? [] : ['/umi.css']).concat(markupArgs.styles),
       scripts: (vite ? viteScripts : ['/umi.js']).concat(markupArgs.scripts!),
       esmScript: vite,
     });

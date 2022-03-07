@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { IApi } from 'umi';
+import { winPath } from 'umi/plugin-utils';
 import { withTmpPath } from '../utils/withTmpPath';
 import {
   defaultHistoryType,
@@ -29,7 +30,6 @@ export default (api: IApi) => {
 
   api.modifyDefaultConfig((config) => ({
     ...config,
-    // TODO: support mountElementId
     mountElementId: defaultMasterRootId,
     qiankun: {
       ...config.qiankun,
@@ -69,7 +69,7 @@ export default (api: IApi) => {
   api.register({
     key: 'addExtraModels',
     fn() {
-      const [path, exports] = api.appData.appJS || [];
+      const { path, exports } = api.appData.appJS || {};
       return path && exports.includes(MODEL_EXPORT_NAME)
         ? [
             `${path}#{"namespace":"${qiankunStateForSlaveModelNamespace}","exportName":"${MODEL_EXPORT_NAME}"}`,
@@ -140,11 +140,11 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
             )
             .replace(
               /from 'qiankun'/g,
-              `from '${dirname(require.resolve('qiankun/package'))}'`,
+              `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
             )
             .replace(
               /from 'lodash\//g,
-              `from '${dirname(require.resolve('lodash/package'))}/`,
+              `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
             ),
         });
       }

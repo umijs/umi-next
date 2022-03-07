@@ -1,17 +1,18 @@
+import { init } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { fsExtra, lodash, Mustache } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
-import transformIEAR from './utils/transformIEAR';
 import { IApi } from './types';
 import { isTypeScriptFile } from './utils/isTypeScriptFile';
+import transformIEAR from './utils/transformIEAR';
 
 export default (api: IApi) => {
   [
     'onGenerateFiles',
     'onBeforeCompiler',
     'onBuildComplete',
-    // 'onPatchRoute',
+    'onPatchRoute',
     // 'onPatchRouteBefore',
     // 'onPatchRoutes',
     // 'onPatchRoutesBefore',
@@ -23,6 +24,7 @@ export default (api: IApi) => {
     'addBeforeMiddlewares',
     'addLayouts',
     'addMiddlewares',
+    'addApiMiddlewares',
     'addRuntimePlugin',
     'addRuntimePluginKey',
     // 'addUmiExports',
@@ -53,6 +55,10 @@ export default (api: IApi) => {
     'modifyRoutes',
   ].forEach((name) => {
     api.registerMethod({ name });
+  });
+
+  api.onStart(async () => {
+    await init;
   });
 
   api.registerMethod({

@@ -1,11 +1,11 @@
 import 'zx/globals';
 
-const msgPath = process.env.GIT_PARAMS as string;
+const msgPath = process.argv[2];
 if (!msgPath) process.exit();
 
 const msg = fs.readFileSync(msgPath, 'utf-8').trim();
 const commitRE =
-  /^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|build|ci|chore|types|wip|release|dep|Merge)(\(.+\))?: .{1,50}/;
+  /^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|build|ci|chore|types|wip|release|dep|example|Merge)(\(.+\))?: .{1,50}/;
 
 if (!commitRE.test(msg)) {
   console.log();

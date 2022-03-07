@@ -63,7 +63,7 @@ export default (api: IApi) => {
   // babel-plugin-import
   api.addExtraBabelPlugins(() => {
     const style = api.config.antd.style || 'less';
-    return api.config.antd.import
+    return api.config.antd.import && !api.appData.vite
       ? [
           [
             require.resolve('babel-plugin-import'),
@@ -79,7 +79,7 @@ export default (api: IApi) => {
 
   // antd config provider
   api.onGenerateFiles(() => {
-    if (!api.config.antd.config) return;
+    if (!api.config.antd.configProvider) return;
     api.writeTmpFile({
       path: `runtime.tsx`,
       content: Mustache.render(
@@ -103,13 +103,13 @@ export function rootContainer(container) {
 }
       `.trim(),
         {
-          config: JSON.stringify(api.config.antd.config),
+          config: JSON.stringify(api.config.antd.configProvider),
         },
       ),
     });
   });
   api.addRuntimePlugin(() => {
-    return api.config.antd.config
+    return api.config.antd.configProvider
       ? [withTmpPath({ api, path: 'runtime.tsx' })]
       : [];
   });
@@ -117,7 +117,7 @@ export function rootContainer(container) {
   // import antd style if antd.import is not configured
   api.addEntryImportsAhead(() => {
     const style = api.config.antd.style || 'less';
-    return api.config.antd.import
+    return api.config.antd.import && !api.appData.vite
       ? []
       : [
           {

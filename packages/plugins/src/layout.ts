@@ -2,7 +2,7 @@ import * as allIcons from '@ant-design/icons';
 import assert from 'assert';
 import { dirname } from 'path';
 import { IApi } from 'umi';
-import { lodash, Mustache } from 'umi/plugin-utils';
+import { lodash, Mustache, winPath } from 'umi/plugin-utils';
 import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
@@ -59,6 +59,15 @@ ${
     : 'const useModel = null;'
 }
 
+${
+  api.config.locale
+    ? `
+import { useIntl } from '@@/plugin-locale';
+    `.trim()
+    : ''
+}
+
+
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,16 +79,28 @@ export default () => {
   };
   const { initialState, loading, setInitialState } = initialInfo;
   const userConfig = ${JSON.stringify(api.config.layout, null, 2)};
+${
+  api.config.locale
+    ? `
+const { formatMessage } = useIntl();
+`.trim()
+    : 'const formatMessage = undefined;'
+}
   const runtimeConfig = pluginManager.applyPlugins({
     key: 'layout',
     type: 'modify',
-    initialValue: {},
+    initialValue: {
+      ...initialInfo
+    },
   });
+  const route = clientRoutes.filter(r => {
+    return r.id === 'ant-design-pro-layout';
+  })[0];
   return (
     <ProLayout
-      route={clientRoutes[0]}
+      route={route}
       location={location}
-      title={userConfig.name || 'plugin-layout'}
+      title={userConfig.title || 'plugin-layout'}
       navTheme="dark"
       siderWidth={256}
       onMenuHeaderClick={(e) => {
@@ -87,6 +108,7 @@ export default () => {
         e.preventDefault();
         navigate('/');
       }}
+      formatMessage={userConfig.formatMessage || formatMessage}
       menu={{ locale: userConfig.locale }}
       logo={Logo}
       menuItemRender={(menuItemProps, defaultDom) => {
@@ -159,7 +181,9 @@ export default () => {
       return memo;
     }, {});
     const icons = Object.keys(iconsMap);
-    const antIconsPath = dirname(require.resolve('@ant-design/icons/package'));
+    const antIconsPath = winPath(
+      dirname(require.resolve('@ant-design/icons/package')),
+    );
     api.writeTmpFile({
       path: 'icons.tsx',
       content: `
@@ -449,6 +473,9 @@ export default LogoIcon;
       {
         id: 'ant-design-pro-layout',
         file: withTmpPath({ api, path: 'Layout.tsx' }),
+        test: (route: any) => {
+          return route.layout !== false;
+        },
       },
     ];
   });

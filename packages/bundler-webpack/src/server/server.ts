@@ -30,8 +30,12 @@ export async function createServer(opts: IOpts) {
   // basename middleware
   app.use((req, _res, next) => {
     const { url, path } = req;
-    const { basename } = userConfig;
-    if (basename !== '/' && url.startsWith(basename)) {
+    const { basename, history } = userConfig;
+    if (
+      history?.type === 'browser' &&
+      basename !== '/' &&
+      url.startsWith(basename)
+    ) {
       req.url = url.slice(basename.length);
       req.path = path.slice(basename.length);
     }
@@ -193,9 +197,7 @@ export async function createServer(opts: IOpts) {
   const port = opts.port || 8000;
   server.listen(port, () => {
     const host = opts.host && opts.host !== '0.0.0.0' ? opts.host : '127.0.0.1';
-    logger.ready(
-      `App listening at ${chalk.green.bold(`http://${host}:${port}`)}`,
-    );
+    logger.ready(`App listening at ${chalk.green(`http://${host}:${port}`)}`);
   });
 
   return server;

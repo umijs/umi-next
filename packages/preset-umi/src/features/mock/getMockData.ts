@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { glob, lodash, register } from '@umijs/utils';
+import { chalk, glob, lodash, logger, register } from '@umijs/utils';
 import assert from 'assert';
 import { DEFAULT_METHOD, MOCK_FILE_GLOB, VALID_METHODS } from './constants';
 
@@ -10,17 +10,32 @@ export interface IMock {
   file?: string;
 }
 
-export function getMockData(opts: { cwd: string }): Record<string, IMock> {
+export function getMockData(opts: {
+  cwd: string;
+  mockConfig: { exclude?: string[]; include?: string[] };
+}): Record<string, IMock> {
   register.register({
     implementor: esbuild,
   });
   register.clearFiles();
-  const ret = glob
-    .sync(MOCK_FILE_GLOB, { cwd: opts.cwd })
+
+  function normalizeMockFile(file: string) {
+    const cwd = opts.cwd.endsWith('/') ? opts.cwd : `${opts.cwd}/`;
+    return chalk.yellow(file.replace(cwd, ''));
+  }
+
+  const ret = [MOCK_FILE_GLOB, ...(opts.mockConfig.include || [])]
+    .reduce<string[]>((memo, pattern) => {
+      memo.push(
+        ...glob.sync(pattern, { cwd: opts.cwd, ignore: ['**/*.d.ts'] }),
+      );
+      return memo;
+    }, [])
     .reduce<Record<string, any>>((memo, file) => {
       const mockFile = `${opts.cwd}/${file}`;
       const m = require(mockFile);
-      const obj = m.default;
+      // Cannot convert undefined or null to object
+      const obj = m?.default || {};
       for (const key of Object.keys(obj)) {
         const mock = getMock({ key, obj });
         mock.file = mockFile;
@@ -35,8 +50,10 @@ export function getMockData(opts: { cwd: string }): Record<string, IMock> {
           } in ${mock.file}`,
         );
         if (memo[id]) {
-          throw new Error(
-            `${id} is duplicated in ${mockFile} and ${memo[id].file}`,
+          logger.warn(
+            `${id} is duplicated in ${normalizeMockFile(
+              mockFile,
+            )} and ${normalizeMockFile(memo[id].file)}`,
           );
         }
         memo[id] = mock;
@@ -57,7 +74,7 @@ function getMock(opts: { key: string; obj: any }): IMock {
 }
 
 function parseKey(key: string) {
-  const spliced = key.split(' ');
+  const spliced = key.split(/\s+/);
   const len = spliced.length;
   if (len === 1) {
     return { method: DEFAULT_METHOD, path: key };
@@ -68,6 +85,8 @@ function parseKey(key: string) {
       VALID_METHODS.includes(upperCaseMethod),
       `method ${method} is not supported`,
     );
+    assert(path, `${key}, path is undefined`);
+
     return { method: upperCaseMethod, path };
   }
 }

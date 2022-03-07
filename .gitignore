@@ -1,7 +1,10 @@
 /node_modules
+/examples/*/.esmi
 /examples/*/.mfsu
 /examples/*/.umi
 /examples/*/.umi-production
+/examples/*/.output
+/examples/*/.umi-test
 /examples/*/src/.umi
 /examples/*/src/.umi-production
 /examples/libs/monorepo/foo/.mfsu
@@ -14,4 +17,11 @@
 /packages/*/src/**/fixtures/*/dist
 /packages/*/src/**/fixtures/*/.umi
 /packages/*/src/**/fixtures/*/.umi-production
+/packages/plugin-docs/client/theme-doc/tailwind.out.css
+/.umi
+/.mfsu
+/.umi-production
+/dist
 .DS_Store
+.turbo
+*.tsbuildinfo

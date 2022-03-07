@@ -1,7 +1,11 @@
 import { join } from 'path';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
-import { DEFAULT_DEVTOOL, DEFAULT_OUTPUT_PATH } from '../constants';
+import {
+  DEFAULT_BROWSER_TARGETS,
+  DEFAULT_DEVTOOL,
+  DEFAULT_OUTPUT_PATH,
+} from '../constants';
 import { RuntimePublicPathPlugin } from '../plugins/RuntimePublicPathPlugin';
 import { Env, IConfig } from '../types';
 import { getBrowsersList } from '../utils/browsersList';
@@ -11,10 +15,13 @@ import { addCompressPlugin } from './compressPlugin';
 import { addCopyPlugin } from './copyPlugin';
 import { addCSSRules } from './cssRules';
 import { addDefinePlugin } from './definePlugin';
+import { addDetectDeadCodePlugin } from './detectDeadCodePlugin';
 import { addFastRefreshPlugin } from './fastRefreshPlugin';
+import { addForkTSCheckerPlugin } from './forkTSCheckerPlugin';
 import { addHarmonyLinkingErrorPlugin } from './harmonyLinkingErrorPlugin';
 import { addIgnorePlugin } from './ignorePlugin';
 import { addJavaScriptRules } from './javaScriptRules';
+import { addManifestPlugin } from './manifestPlugin';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
 import { addProgressPlugin } from './progressPlugin';
@@ -27,6 +34,7 @@ export interface IOpts {
   entry: Record<string, string>;
   extraBabelPresets?: any[];
   extraBabelPlugins?: any[];
+  extraEsbuildLoaderHandler?: any[];
   babelPreset?: any;
   chainWebpack?: Function;
   modifyWebpackConfig?: Function;
@@ -47,9 +55,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   const { userConfig } = opts;
   const isDev = opts.env === Env.development;
   const config = new Config();
-  userConfig.targets = userConfig.targets || {
-    chrome: 80,
-  };
+  userConfig.targets ||= DEFAULT_BROWSER_TARGETS;
+  const useHash = !!(opts.hash || (userConfig.hash && !isDev));
   const applyOpts = {
     name: opts.name,
     config,
@@ -59,9 +66,11 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     babelPreset: opts.babelPreset,
     extraBabelPlugins: opts.extraBabelPlugins || [],
     extraBabelPresets: opts.extraBabelPresets || [],
+    extraEsbuildLoaderHandler: opts.extraEsbuildLoaderHandler || [],
     browsers: getBrowsersList({
       targets: userConfig.targets,
     }),
+    useHash,
     staticPathPrefix:
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
   };
@@ -93,7 +102,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     opts.cwd,
     userConfig.outputPath || DEFAULT_OUTPUT_PATH,
   );
-  const useHash = opts.hash || (userConfig.hash && !isDev);
   const disableCompress = process.env.COMPRESS === 'none';
   config.output
     .path(absOutputPath)
@@ -156,10 +164,14 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addFastRefreshPlugin(applyOpts);
   // progress
   await addProgressPlugin(applyOpts);
+  // detect-dead-code-plugin
+  await addDetectDeadCodePlugin(applyOpts);
+  // fork-ts-checker
+  await addForkTSCheckerPlugin(applyOpts);
   // copy
   await addCopyPlugin(applyOpts);
-  // TODO: friendly-error
-  // TODO: manifest
+  // manifest
+  await addManifestPlugin(applyOpts);
   // hmr
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
@@ -199,6 +211,15 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
         ],
       });
     }
+
+    config.infrastructureLogging({
+      level: 'error',
+      ...(process.env.WEBPACK_FS_CACHE_DEBUG
+        ? {
+            debug: /webpack\.cache/,
+          }
+        : {}),
+    });
   }
 
   // analyzer

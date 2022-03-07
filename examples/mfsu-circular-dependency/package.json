@@ -1,15 +1,15 @@
 {
+  "name": "@example/mfsu-circular-dependency",
+  "private": true,
   "scripts": {
     "dev": "bundler-webpack dev",
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "4.0.0-beta.15"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
-    "react": "^18.0.0-rc.0",
-    "react-dom": "^18.0.0-rc.0"
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.13",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "umi": "4.0.0-rc.5"
   }
 }

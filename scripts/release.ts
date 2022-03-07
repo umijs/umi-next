@@ -39,7 +39,7 @@ import { assert, eachPkg, getPkgs } from './utils';
   logger.event('check npm ownership');
   const whoami = (await $`npm whoami`).stdout.trim();
   await Promise.all(
-    ['umi', '@umijs/pro', '@umijs/core'].map(async (pkg) => {
+    ['umi', '@umijs/core'].map(async (pkg) => {
       const owners = (await $`npm owner ls ${pkg}`).stdout
         .trim()
         .split('\n')
@@ -52,14 +52,15 @@ import { assert, eachPkg, getPkgs } from './utils';
 
   // clean
   logger.event('clean');
-  eachPkg(pkgs, ({ pkgPath, pkg }) => {
-    logger.info(`clean dist of ${pkg}`);
-    rimraf.sync(join(pkgPath, 'dist'));
+  eachPkg(pkgs, ({ dir, name }) => {
+    logger.info(`clean dist of ${name}`);
+    rimraf.sync(join(dir, 'dist'));
   });
 
   // build packages
   logger.event('build packages');
   await $`npm run build:release`;
+  await $`npm run build:extra`;
 
   // generate changelog
   // TODO
@@ -89,6 +90,14 @@ import { assert, eachPkg, getPkgs } from './utils';
     if (pkg.dependencies['umi']) pkg.dependencies['umi'] = version;
     if (pkg.dependencies['@umijs/pro'])
       pkg.dependencies['@umijs/pro'] = version;
+    if (pkg.dependencies['@umijs/plugins'])
+      pkg.dependencies['@umijs/plugins'] = version;
+    if (pkg.dependencies['@umijs/bundler-vite'])
+      pkg.dependencies['@umijs/bundler-vite'] = version;
+    // for mfsu-independent example update dep version
+    if (pkg.devDependencies?.['@umijs/mfsu']) {
+      pkg.devDependencies['@umijs/mfsu'] = version;
+    }
     delete pkg.version;
     fs.writeFileSync(
       join(__dirname, '../examples', example, 'package.json'),

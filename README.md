@@ -36,6 +36,9 @@ Core Maintainres are community members who have contributed a significant amount
 Maintainers are community members who have 10 or more PRs merged in umi, or have spend lot's of time on umi community or issues.
 
 * [PeachScript](https://github.com/PeachScript)
+* [YdreamW](https://github.com/YdreamW)
+* [ken20001207](https://github.com/ken20001207)
+* [fz6m](https://github.com/fz6m)
 
 ### Contributors
 

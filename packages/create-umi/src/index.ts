@@ -39,13 +39,14 @@ export default async ({
           { title: 'cnpm', value: 'cnpm' },
           { title: 'tnpm', value: 'tnpm' },
           { title: 'yarn', value: 'yarn' },
-          { title: 'pnpm', value: 'pnpm', selected: true },
+          { title: 'pnpm', value: 'pnpm' },
         ],
+        initial: 4,
       },
       {
         type: 'select',
         name: 'registry',
-        message: 'Pick Bpm Registry',
+        message: 'Pick Npm Registry',
         choices: [
           {
             title: 'npm',

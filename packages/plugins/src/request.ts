@@ -1,6 +1,6 @@
-import { Mustache } from '@umijs/utils';
 import { dirname } from 'path';
 import { IApi } from 'umi';
+import { Mustache, winPath } from 'umi/plugin-utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -17,9 +17,9 @@ export default (api: IApi) => {
 
   const requestTpl = `
 import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
 } from '{{{axiosPath}}}';
 import useUmiRequest, { UseRequestProvider } from '{{{umiRequestPath}}}';
 import { message, notification } from '{{{antdPkg}}}';
@@ -41,7 +41,7 @@ import {
   PaginatedOptionsWithFormat,
   PaginatedParams,
   PaginatedResult,
-} from '{{{umiRequestPath}}}/lib/types';
+} from '{{{umiRequestPath}}}/es/types';
 
 type ResultWithData< T = any > = { data?: T; [key: string]: any };
 
@@ -266,23 +266,27 @@ const request: IRequest = (url, opts) => {
 export {
   useRequest,
   UseRequestProvider,
-  AxiosRequestConfig,
   request,
+};
+
+export type {
   AxiosInstance,
+  AxiosRequestConfig,
   AxiosResponse,
 };
 
 `;
 
   api.onGenerateFiles(() => {
-    const umiRequestPath = dirname(
-      require.resolve('@ahooksjs/use-request/package.json'),
+    const umiRequestPath = winPath(
+      dirname(require.resolve('@ahooksjs/use-request/package.json')),
     );
-    const axiosPath = dirname(require.resolve('axios/package.json'));
-    const antdPkg =
+    const axiosPath = winPath(dirname(require.resolve('axios/package.json')));
+    const antdPkg = winPath(
       // use path from antd plugin first
       api.appData.antd?.pkgPath ||
-      dirname(require.resolve('antd/package.json'));
+        dirname(require.resolve('antd/package.json')),
+    );
     api.writeTmpFile({
       path: 'request.ts',
       content: Mustache.render(requestTpl, {
@@ -294,7 +298,11 @@ export {
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-export * from './request';
+export {
+  useRequest,
+  UseRequestProvider,
+  request,
+} from './request';
 `,
     });
   });
