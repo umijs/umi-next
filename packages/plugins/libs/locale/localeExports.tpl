@@ -160,12 +160,17 @@ export const getLocale = () => {
   if (typeof runtimeLocale?.getLocale === 'function') {
    return runtimeLocale.getLocale();
   }
+  let lang = '';
   // please clear localStorage if you change the baseSeparator config
   // because changing will break the app
-  const lang =
-    typeof localStorage !== 'undefined' && useLocalStorage
-      ? window.localStorage.getItem('umi_locale')
-      : '';
+  try{
+    lang =
+      typeof localStorage !== 'undefined' && useLocalStorage
+        ? window.localStorage.getItem('umi_locale')
+        : '';
+  } catch (e){
+    console.log(e);
+  }
   // support baseNavigator, default true
   let browserLang;
   {{#BaseNavigator}}
@@ -207,9 +212,14 @@ export const setLocale = (lang: string, realReload: boolean = true) => {
 
   const updater = () => {
     if (getLocale() !== lang) {
-      if (typeof window.localStorage !== 'undefined' && useLocalStorage) {
-        window.localStorage.setItem('umi_locale', lang || '');
+      try{
+        if (typeof window.localStorage !== 'undefined' && useLocalStorage) {
+          window.localStorage.setItem('umi_locale', lang || '');
+        }
+      } catch (e){
+        console.log(e);
       }
+
       setIntl(lang);
       if (realReload) {
         window.location.reload();
