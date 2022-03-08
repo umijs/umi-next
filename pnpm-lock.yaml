@@ -319,6 +319,16 @@ importers:
     dependencies:
       umi: link:../../packages/umi
 
+  examples/with-mobx:
+    specifiers:
+      mobx: ^6.4.2
+      mobx-react: ^7.3.0
+      umi: 4.0.0-rc.5
+    dependencies:
+      mobx: 6.4.2
+      mobx-react: 7.3.0_4e589064ce40a783661f96d46f38f574
+      umi: link:../../packages/umi
+
   examples/with-tailwindcss:
     specifiers:
       '@umijs/plugins': 4.0.0-rc.5
@@ -688,7 +698,6 @@ importers:
       '@ant-design/icons': ^4.7.0
       '@ant-design/pro-layout': ^7.0.1-beta.2
       '@umijs/bundler-utils': 4.0.0-rc.5
-      antd: ^4.18.9
       antd-dayjs-webpack-plugin: ^1.0.6
       axios: ^0.26.0
       babel-plugin-import: ^1.13.3
@@ -707,9 +716,8 @@ importers:
     dependencies:
       '@ahooksjs/use-request': 2.8.15_react@17.0.2
       '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
-      '@ant-design/pro-layout': 7.0.1-beta.2_0e56d7e74ae00b10dc75086c39f303a6
+      '@ant-design/pro-layout': 7.0.1-beta.2_react-dom@17.0.2+react@17.0.2
       '@umijs/bundler-utils': link:../bundler-utils
-      antd: 4.18.9_react-dom@17.0.2+react@17.0.2
       antd-dayjs-webpack-plugin: 1.0.6_dayjs@1.10.8
       axios: 0.26.0
       babel-plugin-import: 1.13.3
@@ -1169,6 +1177,37 @@ packages:
       - react-dom
     dev: false
 
+  /@ant-design/pro-layout/7.0.1-beta.2_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-eFaCiYMK1RN9xm5V0NngNG7oiEKGV7AnOrWDO/NFQDzHQAYNW4kke6g/KHW5xDbOTZPmioZvpYkVOCJk8XmuWQ==}
+    peerDependencies:
+      antd: '>=4.18.0'
+      react: '>=16.9.0'
+    dependencies:
+      '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
+      '@ant-design/pro-provider': 1.6.0_react-dom@17.0.2+react@17.0.2
+      '@ant-design/pro-utils': 1.35.1_react-dom@17.0.2+react@17.0.2
+      '@babel/runtime': 7.17.2
+      '@emotion/css': 11.7.1
+      '@umijs/route-utils': 2.0.5
+      '@umijs/ssr-darkreader': 4.9.44
+      '@umijs/use-params': 1.0.9_react@17.0.2
+      classnames: 2.3.1
+      lodash.merge: 4.6.2
+      omit.js: 2.0.2
+      path-to-regexp: 2.4.0
+      rc-resize-observer: 1.2.0_react-dom@17.0.2+react@17.0.2
+      rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
+      react: 17.0.2
+      swr: 1.2.2_react@17.0.2
+      unstated-next: 1.1.0
+      use-json-comparison: 1.0.6_react@17.0.2
+      use-media-antd-query: 1.1.0_react@17.0.2
+      warning: 4.0.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - react-dom
+    dev: false
+
   /@ant-design/pro-provider/1.6.0_0e56d7e74ae00b10dc75086c39f303a6:
     resolution: {integrity: sha512-xq5GRfoYvwimSCWYZ6NyBaSfVz3ajEDIhMrTHpmzWmDGxRaPPFMS3Fio0cuAdU/KbDlZ1d0M8LuAvyEPvhYDFQ==}
     peerDependencies:
@@ -1177,6 +1216,20 @@ packages:
     dependencies:
       '@babel/runtime': 7.17.2
       antd: 4.18.9_react-dom@17.0.2+react@17.0.2
+      rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
+      react: 17.0.2
+      swr: 1.2.2_react@17.0.2
+    transitivePeerDependencies:
+      - react-dom
+    dev: false
+
+  /@ant-design/pro-provider/1.6.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-xq5GRfoYvwimSCWYZ6NyBaSfVz3ajEDIhMrTHpmzWmDGxRaPPFMS3Fio0cuAdU/KbDlZ1d0M8LuAvyEPvhYDFQ==}
+    peerDependencies:
+      antd: '>=4.18.0'
+      react: '>=16.9.0'
+    dependencies:
+      '@babel/runtime': 7.17.2
       rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
       react: 17.0.2
       swr: 1.2.2_react@17.0.2
@@ -1234,6 +1287,25 @@ packages:
       '@ant-design/pro-provider': 1.6.0_0e56d7e74ae00b10dc75086c39f303a6
       '@babel/runtime': 7.17.2
       antd: 4.18.9_react-dom@17.0.2+react@17.0.2
+      classnames: 2.3.1
+      moment: 2.29.1
+      rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-sortable-hoc: 2.0.0_react-dom@17.0.2+react@17.0.2
+      swr: 1.2.2_react@17.0.2
+    dev: false
+
+  /@ant-design/pro-utils/1.35.1_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-XvxSnekFkYnu0Bh/crc3YJrB+TLzJjI5p60WvpdIh5OrYYVsJICP+U46cPHKIOaVfFviEVOEGRARPxCiNaLvAw==}
+    peerDependencies:
+      antd: '>=4.18.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+    dependencies:
+      '@ant-design/icons': 4.7.0_react-dom@17.0.2+react@17.0.2
+      '@ant-design/pro-provider': 1.6.0_react-dom@17.0.2+react@17.0.2
+      '@babel/runtime': 7.17.2
       classnames: 2.3.1
       moment: 2.29.1
       rc-util: 5.18.1_react-dom@17.0.2+react@17.0.2
@@ -14680,6 +14752,47 @@ packages:
     resolution: {integrity: sha512-Qi0VCU46t2IwfGv5KF0+D/t9cizcDug7qnNoy9Ggk7aucp0tssV8IwTMkBlDbm+VqAf3cdQHTCARKSsuS2MYFg==}
     dev: false
 
+  /mobx-react-lite/3.3.0_4e589064ce40a783661f96d46f38f574:
+    resolution: {integrity: sha512-U/kMSFtV/bNVgY01FuiGWpRkaQVHozBq5CEBZltFvPt4FcV111hEWkgwqVg9GPPZSEuEdV438PEz8mk8mKpYlA==}
+    peerDependencies:
+      mobx: ^6.1.0
+      react: ^16.8.0 || ^17
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      mobx: 6.4.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
+
+  /mobx-react/7.3.0_4e589064ce40a783661f96d46f38f574:
+    resolution: {integrity: sha512-RGEcwZokopqyJE5JPwXKB9FWMSqFM9NJVO2QPI+z6laJTJeBHqvPicjnKgY5mvihxTeXB1+72TnooqUePeGV1g==}
+    peerDependencies:
+      mobx: ^6.1.0
+      react: ^16.8.0 || ^17
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      mobx: 6.4.2
+      mobx-react-lite: 3.3.0_4e589064ce40a783661f96d46f38f574
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
+
+  /mobx/6.4.2:
+    resolution: {integrity: sha512-b4xQJYiH8sb0sEbfq/Ws3N77DEJtSihUFD1moeiz2jNoJ5B+mqJutt54ouO9iEfkp7Wk4jQDsVUOh7DPEW3wEw==}
+    dev: false
+
   /mockjs/1.1.0:
     resolution: {integrity: sha512-eQsKcWzIaZzEZ07NuEyO4Nw65g0hdWAyurVol1IPl1gahRwY+svqzfgfey8U8dahLwG44d6/RwEzuK52rSa/JQ==}
     hasBin: true
@@ -19549,10 +19662,10 @@ packages:
       is-glob: 4.0.3
       normalize-path: 3.0.0
       object-hash: 2.2.0
-      postcss: 8.4.8
-      postcss-js: 4.0.0_postcss@8.4.8
+      postcss: 8.4.6
+      postcss-js: 4.0.0_postcss@8.4.6
       postcss-load-config: 3.1.3_ts-node@10.7.0
-      postcss-nested: 5.0.6_postcss@8.4.8
+      postcss-nested: 5.0.6_postcss@8.4.6
       postcss-selector-parser: 6.0.9
       postcss-value-parser: 4.2.0
       quick-lru: 5.1.1
