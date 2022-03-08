@@ -1,10 +1,13 @@
 {
+  "name": "@example/boilerplate",
+  "private": true,
   "scripts": {
     "build": "umi build",
     "dev": "umi dev",
+    "setup": "umi setup",
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "4.0.0-rc.3"
+    "umi": "4.0.0-rc.5"
   }
 }

@@ -3,6 +3,7 @@
 /examples/*/.mfsu
 /examples/*/.umi
 /examples/*/.umi-production
+/examples/*/.output
 /examples/*/.umi-test
 /examples/*/src/.umi
 /examples/*/src/.umi-production
@@ -22,3 +23,5 @@
 /.umi-production
 /dist
 .DS_Store
+.turbo
+*.tsbuildinfo

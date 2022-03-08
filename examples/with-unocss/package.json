@@ -1,13 +1,15 @@
 {
+  "name": "@example/with-unocss",
+  "private": true,
   "scripts": {
     "build": "umi build",
     "dev": "umi dev",
     "start": "npm run dev"
   },
   "dependencies": {
-    "@umijs/plugins": "4.0.0-rc.3",
-    "@unocss/cli": "^0.26.3",
-    "umi": "4.0.0-rc.3",
-    "unocss": "^0.26.3"
+    "@umijs/plugins": "4.0.0-rc.5",
+    "@unocss/cli": "^0.27.2",
+    "umi": "4.0.0-rc.5",
+    "unocss": "^0.27.2"
   }
 }
