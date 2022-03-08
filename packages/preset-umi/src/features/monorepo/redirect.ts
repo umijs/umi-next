@@ -13,12 +13,12 @@ export default (api: IApi) => {
   api.describe({
     key: 'monorepoRedirect',
     config: {
-      schema(joi) {
-        return joi.alternatives(
-          joi.any().valid(false),
-          joi.object({
-            source: joi.array().items(joi.string()),
-            exclude: joi.array().items(joi.object().instance(RegExp)),
+      schema(Joi) {
+        return Joi.alternatives(
+          Joi.any().valid(false),
+          Joi.object({
+            source: Joi.array().items(Joi.string()),
+            exclude: Joi.array().items(Joi.object().instance(RegExp)),
           }),
         );
       },
