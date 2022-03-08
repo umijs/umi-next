@@ -41,7 +41,7 @@ export default (api: IApi) => {
     const config: IConfigs = memo.monorepoRedirect || {};
     const { exclude = [], srcDir = ['src'] } = config;
     // Note: not match `umi` package in local dev
-    if (__filename.includes(`packages/umi`)) {
+    if (__filename.includes(`packages/preset-umi`)) {
       logger.info(
         `[monorepoRedirect]: Auto excluded 'umi' package in local dev scene`,
       );
