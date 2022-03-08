@@ -72,7 +72,13 @@ class UmiApiRequest {
   }
 
   get cookies() {
-    throw new Error('Not implemented');
+    return this._req.headers.cookie
+      ?.split(';')
+      .reduce((acc: { [key: string]: string }, cur) => {
+        const [key, value] = cur.split('=');
+        acc[key.trim()] = value;
+        return acc;
+      }, {});
   }
 
   get url() {
