@@ -5,7 +5,7 @@ import { dirname, join } from 'path';
 import type { IApi } from '../../types';
 
 interface IConfigs {
-  source?: string[];
+  srcDir?: string[];
   exclude?: RegExp[];
 }
 
@@ -17,7 +17,7 @@ export default (api: IApi) => {
         return Joi.alternatives(
           Joi.boolean(),
           Joi.object({
-            source: Joi.array().items(Joi.string()),
+            srcDir: Joi.array().items(Joi.string()),
             exclude: Joi.array().items(Joi.object().instance(RegExp)),
           }),
         );
@@ -34,7 +34,7 @@ export default (api: IApi) => {
     if (!memo.monorepoRedirect) return memo;
 
     const config: IConfigs = memo.monorepoRedirect || {};
-    const { exclude = [], source = ['src'] } = config;
+    const { exclude = [], srcDir = ['src'] } = config;
     // Note: not match `umi` package
     exclude.push(/^umi$/);
     // collect use workspace deps
@@ -49,7 +49,7 @@ export default (api: IApi) => {
       if (!root) {
         return obj;
       }
-      source.some((dirName) => {
+      srcDir.some((dirName) => {
         const dirPath = join(root, dirName);
         if (existsSync(dirPath) && statSync(dirPath).isDirectory()) {
           // redirect to source dir
