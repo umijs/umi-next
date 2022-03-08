@@ -28,8 +28,7 @@
     "@umijs/bundler-utils": "4.0.0-rc.5",
     "@umijs/utils": "4.0.0-rc.5",
     "@vitejs/plugin-react": "1.2.0",
-    "postcss-preset-env": "7.4.2",
-    "rollup-plugin-polyfill": "3.0.0"
+    "postcss-preset-env": "7.4.2"
   },
   "devDependencies": {
     "@types/caniuse-lite": "1.0.1",
