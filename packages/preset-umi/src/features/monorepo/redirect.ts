@@ -82,6 +82,11 @@ interface IOpts {
   root: string;
 }
 
+interface IProject {
+  packageJson: Record<string, any>;
+  dir: string;
+}
+
 const DEP_KEYS = ['devDependencies', 'dependencies'];
 function collectPkgDeps(pkg: Record<string, any>) {
   const deps: string[] = [];
@@ -93,13 +98,16 @@ function collectPkgDeps(pkg: Record<string, any>) {
 
 async function collectAllProjects(opts: IOpts) {
   const workspaces = await getPackages(opts.root);
-  return workspaces.packages.reduce<Record<string, string>>((obj, pkg) => {
-    const name = pkg.packageJson?.name;
-    if (name) {
-      obj[name] = pkg.dir;
-    }
-    return obj;
-  }, {});
+  return workspaces.packages.reduce<Record<string, string>>(
+    (obj: Record<string, string>, pkg: IProject) => {
+      const name = pkg.packageJson?.name;
+      if (name) {
+        obj[name] = pkg.dir;
+      }
+      return obj;
+    },
+    {},
+  );
 }
 
 const MONOREPO_FILE = ['pnpm-workspace.yaml', 'lerna.json'];
