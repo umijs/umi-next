@@ -15,7 +15,7 @@ export default (api: IApi) => {
     config: {
       schema(Joi) {
         return Joi.alternatives(
-          Joi.any().valid(false),
+          Joi.boolean(),
           Joi.object({
             source: Joi.array().items(Joi.string()),
             exclude: Joi.array().items(Joi.object().instance(RegExp)),
@@ -31,7 +31,7 @@ export default (api: IApi) => {
     if (!rootPkg) return memo;
     const root = dirname(rootPkg);
     if (!isMonorepo({ root })) return memo;
-    if (memo.monorepoRedirect === false) return memo;
+    if (!memo.monorepoRedirect) return memo;
 
     const config: IConfigs = memo.monorepoRedirect || {};
     const { exclude = [], source = ['src'] } = config;
