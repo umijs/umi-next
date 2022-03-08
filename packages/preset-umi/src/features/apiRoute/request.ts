@@ -2,6 +2,7 @@ import type { IncomingMessage } from 'http';
 
 class UmiApiRequest {
   private _req: IncomingMessage;
+  private _body: any = null;
 
   constructor(req: IncomingMessage) {
     this._req = req;
@@ -37,8 +38,37 @@ class UmiApiRequest {
     );
   }
 
+  public readBody() {
+    if (this._req.headers['content-length'] === '0') {
+      return Promise.resolve();
+    }
+    return new Promise<void>((resolve, reject) => {
+      let body = '';
+      this._req.on('data', (chunk) => {
+        body += chunk;
+      });
+      this._req.on('end', () => {
+        // TODO: handle other content types
+        switch (this._req.headers['content-type']) {
+          case 'application/json':
+            try {
+              this._body = JSON.parse(body);
+            } catch (e) {
+              this._body = body;
+            }
+            break;
+          default:
+            this._body = body;
+            break;
+        }
+        resolve();
+      });
+      this._req.on('error', reject);
+    });
+  }
+
   get body() {
-    throw new Error('Not implemented');
+    return this._body;
   }
 
   get cookies() {
