@@ -1,6 +1,7 @@
 import { getPackages } from '@manypkg/get-packages';
 import { logger } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
+import assert from 'assert';
 import { existsSync, statSync } from 'fs';
 import { dirname, join } from 'path';
 import type { IApi } from '../../types';
@@ -31,7 +32,10 @@ export default (api: IApi) => {
     const rootPkg = await pkgUp({ cwd: dirname(api.cwd) });
     if (!rootPkg) return memo;
     const root = dirname(rootPkg);
-    if (!isMonorepo({ root })) return memo;
+    assert(
+      isMonorepo({ root }),
+      `The 'monorepoRedirect' option can only be used in monorepo, you don't need configure.`,
+    );
 
     const config: IConfigs = memo.monorepoRedirect || {};
     const { exclude = [], srcDir = ['src'] } = config;
