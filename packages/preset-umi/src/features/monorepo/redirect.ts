@@ -1,4 +1,5 @@
 import { getPackages } from '@manypkg/get-packages';
+import { logger } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
 import { existsSync, statSync } from 'fs';
 import { dirname, join } from 'path';
@@ -31,12 +32,16 @@ export default (api: IApi) => {
     if (!rootPkg) return memo;
     const root = dirname(rootPkg);
     if (!isMonorepo({ root })) return memo;
-    if (!memo.monorepoRedirect) return memo;
 
     const config: IConfigs = memo.monorepoRedirect || {};
     const { exclude = [], srcDir = ['src'] } = config;
-    // Note: not match `umi` package
-    exclude.push(/^umi$/);
+    // Note: not match `umi` package in local dev
+    if (__filename.includes(`packages/umi`)) {
+      logger.info(
+        `[monorepoRedirect]: Auto excluded 'umi' package in local dev scene`,
+      );
+      exclude.push(/^umi$/);
+    }
     // collect use workspace deps
     const workspacesDeps = collectWorkspaceDeps(api.pkg).filter((name) => {
       return !exclude.some((reg) => reg.test(name));
