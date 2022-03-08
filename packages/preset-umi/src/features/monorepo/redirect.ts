@@ -47,13 +47,13 @@ export default (api: IApi) => {
       exclude.push(/^umi$/);
     }
     // collect use workspace deps
-    const workspacesDeps = collectWorkspaceDeps(api.pkg).filter((name) => {
+    const usingDeps = collectPkgDeps(api.pkg).filter((name) => {
       return !exclude.some((reg) => reg.test(name));
     });
-    if (!workspacesDeps.length) return memo;
+    if (!usingDeps.length) return memo;
     // collect all project
     const projects = await collectAllProjects({ root });
-    const alias = workspacesDeps.reduce<Record<string, string>>((obj, name) => {
+    const alias = usingDeps.reduce<Record<string, string>>((obj, name) => {
       const root = projects[name];
       if (!root) {
         return obj;
@@ -82,7 +82,7 @@ interface IOpts {
 }
 
 const DEP_KEYS = ['devDependencies', 'dependencies'];
-function collectWorkspaceDeps(pkg: Record<string, any>) {
+function collectPkgDeps(pkg: Record<string, any>) {
   const deps: string[] = [];
   DEP_KEYS.forEach((type) => {
     deps.push(...Object.keys(pkg?.[type] || {}));
