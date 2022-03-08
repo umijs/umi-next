@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { compiledConfig } from '../package.json';
 
 const COMPILED_DIR = path.join(__dirname, '..', 'compiled');
+const compiledConfig = require('../package.json');
 
 // generate externalized type from sibling packages (such as @umijs/bundler-utils)
-Object.entries(compiledConfig.externals)
+Object.entries<string>(compiledConfig.externals)
   .filter(
     ([name, target]) =>
       target.startsWith('@umijs/') &&
