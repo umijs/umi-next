@@ -1,4 +1,5 @@
-import { getPackages } from '@manypkg/get-packages';
+// @ts-ignore
+import { getPackages } from '../../../compiled/@manypkg/get-packages';
 import { logger } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
 import assert from 'assert';
