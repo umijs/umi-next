@@ -1,5 +1,5 @@
 {
-  "name": "@example/api-route-demo",
+  "name": "@example/with-rematch",
   "private": true,
   "scripts": {
     "build": "umi build",
@@ -7,6 +7,8 @@
     "start": "npm run dev"
   },
   "dependencies": {
+    "@rematch/core": "^2.2.0",
+    "react-redux": "^7.2.6",
     "umi": "4.0.0-rc.5"
   }
 }
