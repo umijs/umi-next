@@ -169,12 +169,12 @@ export default (api: IApi) => {
       },
     });
 
-    const apiRoutePaths = Object.keys(api.appData.apiRoutes).map((key) =>
-      join(api.paths.absTmpPath, 'api', api.appData.apiRoutes[key].file),
+    const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
+      (k) => api.appData.apiRoutes[k],
     );
 
     if (api.env === 'development') {
-      await DevServerAdapterBuild(api, apiRoutePaths);
+      await DevServerAdapterBuild(api, apiRoutes);
       return;
     }
 
@@ -186,7 +186,7 @@ export default (api: IApi) => {
 
     switch (platform) {
       case ServerlessPlatform.Vercel:
-        await VercelAdapterBuild(api, apiRoutePaths);
+        await VercelAdapterBuild(api, apiRoutes);
         return;
       case ServerlessPlatform.Netlify:
         logger.error('API routes bundle failed: Netlify is not supported yet!');
