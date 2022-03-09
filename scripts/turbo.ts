@@ -58,7 +58,9 @@ async function turbo(opts: {
     extraCmd,
     cacheCmd,
     parallelCmd,
-  ].join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return cmd(`turbo run ${options}`);
 }
