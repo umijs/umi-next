@@ -28,11 +28,11 @@ async function cmd(command: string) {
     shell: true,
     cwd: join(__dirname, '../'),
   });
-  // if (result.status !== 0) {
-  // sub package command don't stop when execute fail.
-  // display throw error
-  //   throw new Error('Execute command error')
-  // }
+  if (result.status !== 0) {
+    // sub package command don't stop when execute fail.
+    // display throw error
+    throw new Error('Execute command error');
+  }
   return result;
 }
 
