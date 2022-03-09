@@ -39,6 +39,7 @@ test('set array', () => {
 });
 
 test('set new config', () => {
+  throw new Error('ccc');
   const ast = getASTByFilePath(join(cwd, '.umirc.ts'));
   if (!ast) return;
   const generateCode = generate(setConfigByName(ast, 'aaa', true)!);

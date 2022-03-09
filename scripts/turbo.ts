@@ -1,3 +1,4 @@
+import * as logger from '@umijs/utils/src/logger';
 import spawn from '@umijs/utils/compiled/cross-spawn';
 import yArgs from '@umijs/utils/compiled/yargs-parser';
 import { join } from 'path';
@@ -30,8 +31,9 @@ async function cmd(command: string) {
   });
   if (result.status !== 0) {
     // sub package command don't stop when execute fail.
-    // display throw error
-    throw new Error('Execute command error');
+    // display exit
+    logger.error(`Execute command error (${command})`);
+    process.exit(1);
   }
   return result;
 }
