@@ -465,7 +465,7 @@ mountElementId: 'container'
 
 ## monorepoRedirect
 
-* 类型：`{ source?: string[], exclude?: RegExp[] }`
+* 类型：`{ srcDir?: string[], exclude?: RegExp[] }`
 * 默认值：`false`
 
 在 monorepo 中使用 umi 时，你可能需要引入其他子包的组件、工具等，通过开启此选项来重定向这些子包的导入到他们的源码位置（默认为 `src` 文件夹），这也可以解决 `MFSU` 场景改动子包不热更新的问题。
