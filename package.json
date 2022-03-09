@@ -20,7 +20,8 @@
     "setup:webstorm": "esno scripts/setupWebStorm.ts",
     "test": "esno scripts/turbo.ts --cmd test --parallel",
     "test:clean": "esno scripts/turbo.ts --cmd test --no-cache --parallel -- --clearCache",
-    "tsc:check": "tsc --noEmit"
+    "tsc:check": "tsc --noEmit",
+    "turbo:clean": "rimraf .turbo"
   },
   "lint-staged": {
     "*.{jsx,less,md,json}": [
