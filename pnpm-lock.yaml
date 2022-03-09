@@ -339,6 +339,16 @@ importers:
       react-redux: 7.2.6
       umi: link:../../packages/umi
 
+  examples/with-rematch:
+    specifiers:
+      '@rematch/core': ^2.2.0
+      react-redux: ^7.2.6
+      umi: 4.0.0-rc.5
+    dependencies:
+      '@rematch/core': 2.2.0
+      react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
+      umi: link:../../packages/umi
+
   examples/with-tailwindcss:
     specifiers:
       '@umijs/plugins': 4.0.0-rc.5
@@ -5805,6 +5815,12 @@ packages:
       redux: 4.1.2
       redux-thunk: 2.4.1_redux@4.1.2
       reselect: 4.1.5
+
+  /@rematch/core/2.2.0:
+    resolution: {integrity: sha512-Sj3nC/2X+bOBZeOf4jdJ00nhCcx9wLbVK9SOs6eFR4Y1qKXqRY0hGigbQgfTpCdjRFlwTHHfN3m41MlNvMhDgw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      redux: '>=4'
     dev: false
 
   /@rollup/pluginutils/4.1.2:
