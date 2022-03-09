@@ -30,6 +30,8 @@ test('set number', () => {
 });
 
 test('set array', () => {
+  throw new Error('c');
+
   const ast = getASTByFilePath(join(cwd, '.umirc.ts'));
   if (!ast) return;
   const generateCode = generate(
