@@ -31,7 +31,10 @@ export function matchApiRoute(
 
   const pathSegments = path.split('/').filter((p) => p !== '');
 
-  if (pathSegments.length === 0) {
+  if (
+    pathSegments.length === 0 ||
+    (pathSegments.length === 1 && pathSegments[0] === 'api')
+  ) {
     const route = apiRoutes.find((r) => r.path === '/');
     if (route) return { route, params: {} };
     else return undefined;
