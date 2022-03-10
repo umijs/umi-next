@@ -4,10 +4,10 @@ import { UmiApiRequest, UmiApiResponse } from "{{{ adapterPath }}}";
 
 export default async (req, res) => {
 
-  const umiReq = new UmiApiRequest(req);
-  await umiReq.readBody();
-  const umiRes = new UmiApiResponse(res);
-  await new Promise((resolve) => _middlewares(umiReq, umiRes, resolve));
-  await handler(umiReq, umiRes);
+const umiReq = new UmiApiRequest(req);
+await umiReq.readBody();
+const umiRes = new UmiApiResponse(res);
+await new Promise((resolve) => _middlewares(umiReq, umiRes, resolve));
+await handler(umiReq, umiRes);
 
 }

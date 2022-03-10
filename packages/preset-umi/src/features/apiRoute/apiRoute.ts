@@ -69,15 +69,11 @@ export default (api: IApi) => {
         return false;
       }
 
-      if (platform !== ServerlessPlatform.Vercel) {
-        logger.warn(
-          'Current version of Umi only supports deploying API routes to Vercel, so API route feature will not be enabled!',
-        );
-        return false;
-      }
-
       // 如果是 Vercel 平台，则需要检查是否有配置了 Vercel 配置
-      if (!fs.existsSync(join(api.paths.cwd, 'vercel.json'))) {
+      if (
+        platform === ServerlessPlatform.Vercel &&
+        !fs.existsSync(join(api.paths.cwd, 'vercel.json'))
+      ) {
         logger.warn(
           'You have enabled the API route feature, but there is no vercel.json file in your work directory! ' +
             'Automatically creating a vercel.json file ...',
@@ -92,23 +88,55 @@ export default (api: IApi) => {
         );
       }
 
+      // 如果是 Netlify 平台，则需要检查是否有配置了 Netlify 配置
+      if (
+        platform === ServerlessPlatform.Netlify &&
+        !fs.existsSync(join(api.paths.cwd, 'netlify.toml'))
+      ) {
+        logger.warn(
+          'You have enabled the API route feature, but there is no netlify.toml file in your work directory! ' +
+            'Automatically creating a netlify.toml file ...',
+        );
+        fs.writeFileSync(
+          join(api.paths.cwd, 'netlify.toml'),
+          `[build]
+  functions = "netlify/functions"
+  publish = "public"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+ `,
+        );
+      }
+
       return true;
     },
   });
 
   // 生成中间产物时，将 API 路由与插件注册的中间件封装到临时文件目录下
   api.onGenerateFiles(async () => {
-    // @TODO: 根据 platform 的值执行不同 Adapter 的流程
-
     const apiRoutes: IRoute[] = Object.keys(api.appData.apiRoutes).map(
       (k) => api.appData.apiRoutes[k],
     );
+
+    // 根据不同的部署平台选择不同的 API 路由构建产物模版
+    let tplPath = '';
+    switch (platform) {
+      case ServerlessPlatform.Vercel:
+        tplPath = join(TEMPLATES_DIR, 'apiRoute/vercel.tpl');
+        break;
+      case ServerlessPlatform.Netlify:
+        tplPath = join(TEMPLATES_DIR, 'apiRoute/netlify.tpl');
+        break;
+    }
 
     apiRoutes.map((apiRoute) => {
       api.writeTmpFile({
         noPluginDir: true,
         path: join('api', apiRoute.file),
-        tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
+        tplPath,
         context: {
           adapterPath: resolve(__dirname, '../apiRoute/index.js'),
           apiRootDirPath: join(api.paths.absTmpPath, 'api'),
