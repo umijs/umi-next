@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts && pnpm esno ./scripts/afterBundleDeps.ts",
+    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
