@@ -16,5 +16,9 @@
       "outputs": [".jest-cache/**"]
     }
   },
-  "globalDependencies": ["tsconfig.base.json", "tsconfig.json"]
+  "globalDependencies": [
+    "tsconfig.base.json",
+    "tsconfig.json",
+    "jest.config.ts"
+  ]
 }
