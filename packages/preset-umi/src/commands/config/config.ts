@@ -2,6 +2,7 @@ import { IApi } from '../../types';
 import { list } from './list';
 import { remove } from './remove';
 import { set } from './set';
+import { writeFileSync } from 'fs';
 
 export default (api: IApi) => {
   api.registerCommand({
@@ -36,6 +37,13 @@ $ umi config r history
           list(api.config, name);
           break;
         case 'set':
+          if (!api.appData.mainConfigFile) {
+            const absPath = api.cwd + '/.umirc.ts';
+            const content = `export default {};`;
+            writeFileSync(absPath, content, 'utf-8');
+
+            api.appData.mainConfigFile = absPath;
+          }
           set(api.appData.mainConfigFile, name, value);
           break;
         case 'remove':
