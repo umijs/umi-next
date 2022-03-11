@@ -35,12 +35,33 @@ class Generator {
 
   async writing() {}
 
+  private convertFilePrefix(rawPath: string) {
+    if (rawPath.indexOf('_') === -1) {
+      return rawPath;
+    }
+
+    return rawPath
+      .split('/')
+      .map((filename) => {
+        // dotfiles are ignored when published to npm, therefore in templates
+        // we need to use underscore instead (e.g. "_gitignore")
+        if (filename.charAt(0) === '_' && filename.charAt(1) !== '_') {
+          return `.${filename.slice(1)}`;
+        }
+        if (filename.charAt(0) === '_' && filename.charAt(1) === '_') {
+          return `${filename.slice(1)}`;
+        }
+        return filename;
+      })
+      .join('/');
+  }
+
   copyTpl(opts: { templatePath: string; target: string; context: object }) {
     const tpl = readFileSync(opts.templatePath, 'utf-8');
     const content = Mustache.render(tpl, opts.context);
     fsExtra.mkdirpSync(dirname(opts.target));
     console.log(`${chalk.green('Write:')} ${relative(this.cwd, opts.target)}`);
-    writeFileSync(opts.target, content, 'utf-8');
+    writeFileSync(this.convertFilePrefix(opts.target), content, 'utf-8');
   }
 
   copyDirectory(opts: { path: string; context: object; target: string }) {
@@ -60,7 +81,7 @@ class Generator {
         });
       } else {
         console.log(`${chalk.green('Copy: ')} ${file}`);
-        const absTarget = join(opts.target, file);
+        const absTarget = join(opts.target, this.convertFilePrefix(file));
         fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(absFile, absTarget);
       }

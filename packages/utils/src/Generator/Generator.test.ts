@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { rimraf } from '../index';
 import Generator from './Generator';
@@ -23,9 +23,11 @@ test('normal', async () => {
         target,
         templatePath: join(cwd, 'a.js.tpl'),
       });
+
       this.copyDirectory({
         context: {
           foo: 'bar',
+          name: 'eslint-config-umi',
         },
         path: join(cwd, './dir'),
         target: join(dist, './dir'),
@@ -44,4 +46,11 @@ test('normal', async () => {
   expect(readFileSync(join(dist, './dir', 'b.js'), 'utf-8').trim()).toEqual(
     `alert('abc');`,
   );
+
+  expect(existsSync(join(dist, './dir', '.env'))).toEqual(true);
+  expect(existsSync(join(dist, './dir', '_variables.scss'))).toEqual(true);
+
+  expect(
+    readFileSync(join(dist, './dir', '.eslintrc'), 'utf-8').trim(),
+  ).toContain(`"extends": "eslint-config-umi"`);
 });

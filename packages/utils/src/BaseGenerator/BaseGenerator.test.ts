@@ -53,3 +53,25 @@ test('generate tpl by data', async () => {
     'HomePage',
   );
 });
+
+test('generate filename edge cases', async () => {
+  await generateFile({
+    path: join(fixtures, 'filename-edge-cases'),
+    target: join(cwd, 'edge-cases'),
+    data: {
+      name: 'eslint-config-umi',
+    },
+  });
+
+  expect(existsSync(join(cwd, 'edge-cases', '.env'))).toEqual(true);
+  expect(existsSync(join(cwd, 'edge-cases', 'scss/_variables.scss'))).toEqual(
+    true,
+  );
+  expect(existsSync(join(cwd, 'edge-cases', '.eslintrc'))).toEqual(true);
+
+  expect(readFileSync(join(cwd, 'edge-cases', '.eslintrc'), 'utf-8')).toContain(
+    `"extends": "eslint-config-umi"`,
+  );
+
+  rimraf.sync(join(cwd, 'edge-cases'));
+});
