@@ -21,6 +21,7 @@ jobs:
       matrix:
         node-version: [14.x, 16.x]
         os: [ubuntu-latest, macos-latest, windows-latest]
+        shard: ['1/4', '2/4', '3/4', '4/4']
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -52,15 +53,15 @@ jobs:
         id: get-week
         run: echo ::set-output name=WEEK::$(date +%U)
 
-      - name: Turbo Cache
+      - name: Turbo Cache (${{ matrix.shard }})
         id: turbo-cache
         uses: actions/cache@v2
         with:
           path: .turbo
-          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
+            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-
 
       - name: Build output
         run: pnpm build
@@ -72,8 +73,8 @@ jobs:
         id: cpu-cores
         uses: SimenB/github-actions-cpu-cores@v1
 
-      - name: Run tests
-        run: pnpm test -- --max-workers ${{ steps.cpu-cores.outputs.count }}
+      - name: Run tests (${{ matrix.shard }})
+        run: pnpm test -- --max-workers ${{ steps.cpu-cores.outputs.count }} --shard ${{ matrix.shard }}
         env:
           CI: true
           NODE_ENV: test
