@@ -13,7 +13,7 @@
       "cache": false
     },
     "test": {
-      "outputs": [".jest-cache/**"]
+      "cache": false
     }
   },
   "globalDependencies": [

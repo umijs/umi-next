@@ -57,16 +57,25 @@ jobs:
         id: get-shard
         run: echo ::set-output name=SHARD::$(echo ${{ matrix.shard }} | sed 's/\//./')
 
-      - name: Turbo Cache (${{ matrix.shard }})
+      - name: Turbo Cache
         id: turbo-cache
         uses: actions/cache@v2
         with:
           path: .turbo
-          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-
-            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-
+            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
+
+      - name: Jest Cache (${{ matrix.shard }})
+        id: jest-cache
+        uses: actions/cache@v2
+        with:
+          path: .jest-cache
+          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-shard.outputs.SHARD }}-${{ github.sha }}
+          restore-keys: |
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-shard.outputs.SHARD }}-
 
       - name: Build output
         run: pnpm build

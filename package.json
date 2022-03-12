@@ -19,7 +19,7 @@
     "release": "esno scripts/release.ts",
     "setup:webstorm": "esno scripts/setupWebStorm.ts",
     "test": "esno scripts/turbo.ts --cmd test --parallel",
-    "test:clean": "esno scripts/turbo.ts --cmd test --no-cache --parallel -- --clearCache",
+    "test:clean": "rimraf .jest-cache",
     "tsc:check": "tsc --noEmit",
     "turbo:clean": "rimraf .turbo"
   },

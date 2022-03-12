@@ -1,4 +1,5 @@
 import { Config, createConfig } from 'umi/test';
+import { join } from 'path';
 
 const cwd = process.cwd();
 
@@ -11,5 +12,5 @@ export default {
     '<rootDir>/fixtures',
     '<rootDir>/bundles',
   ],
-  cacheDirectory: `${cwd}/.jest-cache`,
+  cacheDirectory: join(__dirname, '.jest-cache'),
 } as Config.InitialOptions;
