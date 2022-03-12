@@ -70,8 +70,8 @@ jobs:
           path: .jest-cache
           key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ github.sha }}
           restore-keys: |
-            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
             jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
 
       - name: Build output
         run: pnpm build
