@@ -11,7 +11,7 @@ test('normal', () => {
   }
 });
 
-test('no found', () => {
+test('no found2', () => {
   const props = getASTByFilePath(join(cwd, '.umirc1.ts'));
   expect(props).toBe(null);
 });
