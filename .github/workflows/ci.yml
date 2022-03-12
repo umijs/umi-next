@@ -65,6 +65,7 @@ jobs:
           key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
+            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-
 
       - name: Build output
