@@ -62,9 +62,18 @@ jobs:
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
 
-      - run: pnpm build
+      - name: Build output
+        run: pnpm build
+
+      - name: Type check
       - run: pnpm tsc --noEmit
-      - run: pnpm test
+
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+
+      - name: Run tests
+        run: pnpm test -- --max-workers ${{ steps.cpu-cores.outputs.count }}
         env:
           CI: true
           NODE_ENV: test
