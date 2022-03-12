@@ -53,15 +53,19 @@ jobs:
         id: get-week
         run: echo ::set-output name=WEEK::$(date +%U)
 
+      - name: Get shard mark
+        id: get-shard
+        run: echo ::set-output name=SHARD::$(echo ${{ matrix.shard }} | sed 's/\//./')
+
       - name: Turbo Cache (${{ matrix.shard }})
         id: turbo-cache
         uses: actions/cache@v2
         with:
           path: .turbo
-          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ toJSON(matrix.shard) }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ toJSON(matrix.shard) }}-${{ steps.get-week.outputs.WEEK }}-
+            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ steps.get-shard.outputs.SHARD }}-${{ steps.get-week.outputs.WEEK }}-
 
       - name: Build output
         run: pnpm build
