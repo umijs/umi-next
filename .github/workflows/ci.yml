@@ -58,10 +58,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .turbo
-          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ toJSON(matrix.shard) }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-
+            turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ toJSON(matrix.shard) }}-${{ steps.get-week.outputs.WEEK }}-
 
       - name: Build output
         run: pnpm build
