@@ -19,6 +19,7 @@
     "release": "esno scripts/release.ts",
     "setup:webstorm": "esno scripts/setupWebStorm.ts",
     "test": "esno scripts/turbo.ts --cmd test --parallel",
+    "test:ci": "jest -c jest.config.ci.ts",
     "test:clean": "rimraf .jest-cache",
     "tsc:check": "tsc --noEmit",
     "turbo:clean": "rimraf .turbo"
