@@ -53,10 +53,6 @@ jobs:
         id: get-week
         run: echo ::set-output name=WEEK::$(date +%U)
 
-      - name: Get shard mark
-        id: get-shard
-        run: echo ::set-output name=SHARD::$(echo ${{ matrix.shard }} | sed 's/\//./')
-
       - name: Turbo Cache
         id: turbo-cache
         uses: actions/cache@v2
@@ -72,10 +68,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .jest-cache
-          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-shard.outputs.SHARD }}-${{ github.sha }}
+          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ github.sha }}
           restore-keys: |
             jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-shard.outputs.SHARD }}-
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-
 
       - name: Build output
         run: pnpm build
@@ -92,4 +88,3 @@ jobs:
         env:
           CI: true
           NODE_ENV: test
-
