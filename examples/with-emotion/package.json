@@ -1,5 +1,5 @@
 {
-  "name": "@example/with-react-query",
+  "name": "@example/with-emotion",
   "private": true,
   "scripts": {
     "build": "umi build",
@@ -7,7 +7,9 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "react-query": "^3.34.16",
+    "@emotion/cache": "^11.7.1",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
     "umi": "4.0.0-rc.6"
   }
 }
