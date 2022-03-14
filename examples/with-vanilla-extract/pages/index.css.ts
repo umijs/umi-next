@@ -2,7 +2,7 @@ import { style, globalStyle, keyframes } from '@vanilla-extract/css';
 
 globalStyle('body', {
   margin: 0,
-  height: '100vh',
+  height: '100%',
   fontFamily: `'Lucida Sans', sans-serif`,
 });
 
