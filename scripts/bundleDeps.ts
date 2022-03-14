@@ -254,6 +254,22 @@ Object.keys(exported).forEach(function (key) {
           // TODO
           // fs.copySync()
         }
+
+        // for bundler-utils
+        if (opts.pkgName === 'less') {
+          const dtsPath = path.join(opts.base, 'compiled/less/index.d.ts');
+
+          fs.writeFileSync(
+            dtsPath,
+            fs
+              .readFileSync(dtsPath, 'utf-8')
+              .replace(
+                'declare module "less"',
+                'declare module "@umijs/bundler-utils/compiled/less"',
+              ),
+            'utf-8',
+          );
+        }
       }
     }
   }

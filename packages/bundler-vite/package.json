@@ -37,7 +37,6 @@
     "@types/svgo": "2.6.2",
     "@vitejs/plugin-legacy": "1.7.1",
     "caniuse-lite": "1.0.30001315",
-    "less": "4.1.2",
     "rollup": "2.70.0",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-visualizer": "5.6.0",
@@ -53,7 +52,6 @@
     "deps": [
       "@vitejs/plugin-legacy",
       "caniuse-lite",
-      "less",
       "rollup-plugin-copy",
       "rollup-plugin-visualizer",
       "vite"
@@ -63,7 +61,7 @@
       "express": "@umijs/bundler-utils/compiled/express",
       "fs-extra": "@umijs/utils/compiled/fs-extra",
       "glob": "@umijs/utils/compiled/glob",
-      "less": "$$LOCAL",
+      "less": "@umijs/bundler-utils/compiled/less",
       "resolve": "@umijs/utils/compiled/resolve",
       "vite": "$$LOCAL"
     },
