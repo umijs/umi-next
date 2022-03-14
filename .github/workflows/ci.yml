@@ -84,8 +84,12 @@ jobs:
       - name: Type check
         run: pnpm tsc --noEmit
 
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+
       - name: Run tests (${{ matrix.shard }})
-        run: pnpm test:ci -- --shard ${{ matrix.shard }}
+        run: pnpm test:ci -- --max-workers ${{ steps.cpu-cores.outputs.count }} --shard ${{ matrix.shard }}
         env:
           CI: true
           NODE_ENV: test
