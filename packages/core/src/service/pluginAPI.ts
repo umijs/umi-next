@@ -91,6 +91,10 @@ export class PluginAPI {
   }
 
   register(opts: Omit<IHookOpts, 'plugin'>) {
+    assert(
+      this.service.stage <= ServiceStage.initPlugins,
+      'api.register() should not be called after plugin register stage.',
+    );
     this.service.hooks[opts.key] ||= [];
     this.service.hooks[opts.key].push(
       new Hook({ ...opts, plugin: this.plugin }),
@@ -130,7 +134,7 @@ export class PluginAPI {
         return new Plugin({
           path: preset,
           cwd: this.service.cwd,
-          type: PluginType.plugin,
+          type: PluginType.preset,
         });
       }),
     );
@@ -152,6 +156,7 @@ export class PluginAPI {
         plugin.enableBy = plugin.enableBy || EnableBy.register;
         plugin.apply = plugin.apply || (() => () => {});
         plugin.config = plugin.config || {};
+        plugin.time = { hooks: {} };
         return plugin;
       } else {
         return new Plugin({

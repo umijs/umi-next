@@ -36,7 +36,7 @@ $ umi config r history
           list(api.config, name);
           break;
         case 'set':
-          set(api.appData.mainConfigFile, name, value);
+          set(api, name, value);
           break;
         case 'remove':
         case 'r':
