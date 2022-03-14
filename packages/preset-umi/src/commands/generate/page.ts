@@ -1,6 +1,6 @@
 import { GeneratorType } from '@umijs/core';
 import { prompts, randomColor } from '@umijs/utils';
-import { join, normalize, parse } from 'path';
+import { join, parse } from 'path';
 import { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -96,13 +96,13 @@ export class PageGenerator {
     };
 
     await generateFile({
-      path: normalize(INDEX_TPL_PATH),
+      path: INDEX_TPL_PATH,
       target: join(absPagesPath, this.dir, `${this.name}.tsx`),
       data,
     });
 
     await generateFile({
-      path: normalize(LEES_TPL_PATH),
+      path: LEES_TPL_PATH,
       target: join(absPagesPath, this.dir, `${this.name}.less`),
       data,
     });
