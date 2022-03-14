@@ -22,6 +22,7 @@
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
+    "postinstall": "node scripts/linkDeps.js",
     "test": "jest -c ../../jest.config.ts"
   },
   "dependencies": {
