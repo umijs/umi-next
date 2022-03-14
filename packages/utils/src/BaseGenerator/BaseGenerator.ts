@@ -51,6 +51,10 @@ export default class BaseGenerator extends Generator {
         const absTarget = this.target;
         fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(this.path, absTarget);
+        this.renameFile({
+          target: absTarget,
+          data: context,
+        });
       }
     }
   }
