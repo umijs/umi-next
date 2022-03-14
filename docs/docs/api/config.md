@@ -711,13 +711,13 @@ theme: { '@primary-color': '#1DA57A' }
 * 类型：`object`
 * 默认值：`{}`
 
-开发者的配置会 merge 到 vite 的 [默认配置](https://vitejs.dev/config/)。
+用于覆盖 Umi 内部生成的默认 Vite 配置，支持的配置项详见 [Vite 文档](https://vitejs.dev/config/)。
 
 示例，
 
 ```js
-// 更改临时文件路径到 node_modules/.bin/.vite 文件夹
+// 追加额外需要预编译的模块
 vite: {
-    cacheDir:'node_modules/.bin/.vite'
+    optimizeDeps: { include }
   }
 ```
