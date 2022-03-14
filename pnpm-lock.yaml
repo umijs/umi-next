@@ -523,10 +523,12 @@ importers:
       '@types/babel__parser': 7.1.1
       '@types/babel__template': 7.4.1
       '@types/babel__traverse': 7.14.2
+      '@types/express': 4.17.13
       '@umijs/utils': 4.0.0-rc.6
       cjs-module-lexer: 1.2.2
       es-module-lexer: 0.10.0
       esbuild: 0.14.25
+      express: 4.17.3
     dependencies:
       '@umijs/utils': link:../utils
       esbuild: 0.14.25
@@ -557,8 +559,10 @@ importers:
       '@types/babel__parser': 7.1.1
       '@types/babel__template': 7.4.1
       '@types/babel__traverse': 7.14.2
+      '@types/express': 4.17.13
       cjs-module-lexer: 1.2.2
       es-module-lexer: 0.10.0
+      express: 4.17.3
 
   packages/bundler-vite:
     specifiers:
@@ -571,7 +575,6 @@ importers:
       '@vitejs/plugin-legacy': 1.7.1
       '@vitejs/plugin-react': 1.2.0
       caniuse-lite: 1.0.30001315
-      express: 4.17.3
       less: 4.1.2
       postcss-preset-env: 7.4.2
       rollup: 2.70.0
@@ -590,7 +593,6 @@ importers:
       '@types/svgo': 2.6.2
       '@vitejs/plugin-legacy': 1.7.1_vite@2.8.6
       caniuse-lite: 1.0.30001315
-      express: 4.17.3
       less: 4.1.2
       rollup: 2.70.0
       rollup-plugin-copy: 3.4.0
@@ -605,7 +607,6 @@ importers:
       '@svgr/plugin-jsx': ^6.2.1
       '@svgr/plugin-svgo': ^6.2.0
       '@swc/core': 1.2.154
-      '@types/express': 4.17.13
       '@types/hapi__joi': 17.1.8
       '@types/webpack-sources': 3.2.0
       '@types/ws': 8.5.3
@@ -621,9 +622,8 @@ importers:
       css-minimizer-webpack-plugin: 3.4.1
       cssnano: 5.1.3
       es5-imcompatible-versions: ^0.1.73
-      express: 4.17.3
       fork-ts-checker-webpack-plugin: 7.2.1
-      http-proxy-middleware: 2.0.4
+      http-proxy-middleware: 2.0.3
       jest-worker: 27.5.1
       less: 4.1.2
       less-loader: 10.2.0
@@ -671,7 +671,6 @@ importers:
       react-error-overlay: 6.0.9
     devDependencies:
       '@swc/core': 1.2.154
-      '@types/express': 4.17.13
       '@types/webpack-sources': 3.2.0
       '@types/ws': 8.5.3
       autoprefixer: 10.4.2_postcss@8.4.8
@@ -681,9 +680,8 @@ importers:
       copy-webpack-plugin: 10.2.4_webpack@5.70.0
       css-minimizer-webpack-plugin: 3.4.1_@parcel+css@1.6.0+webpack@5.70.0
       cssnano: 5.1.3_postcss@8.4.8
-      express: 4.17.3
       fork-ts-checker-webpack-plugin: 7.2.1_typescript@4.6.2+webpack@5.70.0
-      http-proxy-middleware: 2.0.4_@types+express@4.17.13
+      http-proxy-middleware: 2.0.3
       less: 4.1.2
       less-loader: 10.2.0_less@4.1.2+webpack@5.70.0
       mini-css-extract-plugin: 2.6.0_webpack@5.70.0
@@ -753,7 +751,6 @@ importers:
 
   packages/mfsu:
     specifiers:
-      '@types/express': 4.17.13
       '@umijs/bundler-esbuild': 4.0.0-rc.6
       '@umijs/bundler-utils': 4.0.0-rc.6
       '@umijs/utils': 4.0.0-rc.6
@@ -767,7 +764,6 @@ importers:
       '@umijs/utils': link:../utils
       enhanced-resolve: 5.9.2
     devDependencies:
-      '@types/express': 4.17.13
       mrmime: 1.0.0
       webpack: 5.70.0_uglify-js@3.15.3
       webpack-virtual-modules: 0.4.3
@@ -918,7 +914,6 @@ importers:
 
   packages/server:
     specifiers:
-      '@types/express': 4.17.13
       history: 5.3.0
       react: 17.0.2
       react-dom: 17.0.2
@@ -928,8 +923,6 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-router-dom: 6.2.2_react-dom@17.0.2+react@17.0.2
-    devDependencies:
-      '@types/express': 4.17.13
 
   packages/testing:
     specifiers:
@@ -12309,6 +12302,24 @@ packages:
       debug: 4.3.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /http-proxy-middleware/2.0.3:
+    resolution: {integrity: sha512-1bloEwnrHMnCoO/Gcwbz7eSVvW50KPES01PecpagI+YLNLci4AcuKJrujW4Mc3sBLpFxMSlsLNHS5Nl/lvrTPA==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@types/express': ^4.17.13
+    peerDependenciesMeta:
+      '@types/express':
+        optional: true
+    dependencies:
+      '@types/http-proxy': 1.17.8
+      http-proxy: 1.18.1
+      is-glob: 4.0.3
+      is-plain-obj: 3.0.0
+      micromatch: 4.0.4
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /http-proxy-middleware/2.0.3_@types+express@4.17.13:

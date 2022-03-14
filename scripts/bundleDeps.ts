@@ -177,6 +177,15 @@ Object.keys(exported).forEach(function (key) {
           path.join(COMPILED_DIR, 'vite', 'env.mjs.map'),
         );
       }
+
+      // for bundler-webpack
+      if (opts.pkgName === 'webpack') {
+        fs.writeFileSync(
+          path.join(opts.base, 'compiled/express.d.ts'),
+          `import e = require('@umijs/bundler-utils/compiled/express');\nexport = e;`,
+          'utf-8',
+        );
+      }
     }
   }
 

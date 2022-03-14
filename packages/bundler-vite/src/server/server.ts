@@ -1,6 +1,6 @@
 import { logger } from '@umijs/utils';
 import http from 'http';
-import express from '../../compiled/express';
+import express from '@umijs/bundler-utils/compiled/express';
 import type {
   DepOptimizationMetadata,
   HmrContext,
