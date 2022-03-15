@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import type { IApi, IRoute } from '../../../types';
 import { esbuildIgnorePathPrefixPlugin } from '../utils';
 import fs from 'fs';
-import { OUTPUT_PATH } from '../../../constants';
+import { OUTPUT_PATH } from '../constants';
 
 interface VercelDynamicRouteConfig {
   page: string;

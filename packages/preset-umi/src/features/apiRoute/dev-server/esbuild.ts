@@ -2,7 +2,7 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { logger } from '@umijs/utils';
 import { join, resolve } from 'path';
 import type { IApi, IRoute } from '../../../types';
-import { OUTPUT_PATH } from '../../../constants';
+import { OUTPUT_PATH } from '../constants';
 import { esbuildIgnorePathPrefixPlugin } from '../utils';
 
 // 将 API 路由的临时文件打包为 Umi Dev Server 可以使用的格式
