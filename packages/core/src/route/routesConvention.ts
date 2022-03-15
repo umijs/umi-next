@@ -84,6 +84,13 @@ function createRoutePath(routeId: string): string {
     .replace(/\$/g, ':')
     // routes/not.nested -> routes/not/nested
     .replace(/\./g, '/');
+
+  // /index/index -> /
+  if (path === 'index/index') {
+    path = 'index';
+  }
+
+  // /xxxx/index -> /xxxx/
   path = /\b\/?index$/.test(path) ? path.replace(/\/?index$/, '') : path;
   path = /\b\/?README$/.test(path) ? path.replace(/\/?README$/, '') : path;
   return path;

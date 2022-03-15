@@ -57,3 +57,39 @@ test('exclude', () => {
     },
   });
 });
+
+test('index/index', () => {
+  expect(
+    getConventionRoutes({
+      base: join(fixtures, 'convention-b/pages'),
+    }),
+  ).toEqual({
+    'index/index': {
+      path: '/',
+      id: 'index/index',
+      parentId: undefined,
+      file: 'index/index.ts',
+    },
+  });
+});
+
+test('index and index/index ', () => {
+  expect(
+    getConventionRoutes({
+      base: join(fixtures, 'convention-c/pages'),
+    }),
+  ).toEqual({
+    'index/index': {
+      path: '/',
+      id: 'index/index',
+      parentId: 'index',
+      file: 'index/index.ts',
+    },
+    index: {
+      path: '/',
+      id: 'index',
+      parentId: undefined,
+      file: 'index.ts',
+    },
+  });
+});
