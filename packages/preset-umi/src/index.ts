@@ -34,6 +34,7 @@ export default () => {
       require.resolve('./commands/generate/prettier'),
       require.resolve('./commands/generate/tsconfig'),
       require.resolve('./commands/generate/jest'),
+      require.resolve('./commands/generate/tailwindcssGenerator'),
       require.resolve('./commands/plugin'),
     ],
   };
