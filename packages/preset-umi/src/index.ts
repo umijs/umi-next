@@ -33,6 +33,7 @@ export default () => {
       require.resolve('./commands/generate/page'),
       require.resolve('./commands/generate/prettier'),
       require.resolve('./commands/generate/tsconfig'),
+      require.resolve('./commands/generate/jest'),
       require.resolve('./commands/plugin'),
     ],
   };
