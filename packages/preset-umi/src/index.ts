@@ -32,6 +32,7 @@ export default () => {
       require.resolve('./commands/version'),
       require.resolve('./commands/generate/page'),
       require.resolve('./commands/generate/prettier'),
+      require.resolve('./commands/generate/tsconfig'),
       require.resolve('./commands/plugin'),
     ],
   };
