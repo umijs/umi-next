@@ -23,7 +23,7 @@
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
     "postinstall": "node scripts/linkDeps.js",
-    "test": "jest -c ../../jest.config.ts"
+    "test": "jest -c ../../jest.turbo.config.ts"
   },
   "dependencies": {
     "@svgr/core": "6.2.1",
