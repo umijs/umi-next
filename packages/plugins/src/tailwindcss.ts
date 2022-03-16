@@ -16,11 +16,7 @@ export default (api: IApi) => {
   let tailwind: any = null;
   const outputPath = 'plugin-tailwindcss/tailwind.css';
 
-  api.onStart(() => {
-    if (api.name !== 'dev' && api.name !== 'build') {
-      return;
-    }
-
+  api.onBeforeCompiler(() => {
     const inputPath = join(api.cwd, 'tailwind.css');
     const generatedPath = join(api.paths.absTmpPath, outputPath);
     const binPath = join(api.cwd, 'node_modules/.bin/tailwind');
