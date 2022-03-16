@@ -1,5 +1,5 @@
 import { GeneratorType } from '@umijs/core';
-import { prompts, randomColor } from '@umijs/utils';
+import { generateFile, prompts, randomColor } from '@umijs/utils';
 import { join, parse } from 'path';
 import { IApi } from '../../types';
 
@@ -36,14 +36,7 @@ export class PageGenerator {
   constructor(
     readonly options: {
       args: any;
-      generateFile: {
-        (opts: {
-          path: string;
-          target: string;
-          data?: any;
-          questions?: prompts.PromptObject[];
-        }): Promise<void>;
-      };
+      generateFile: typeof generateFile;
       absPagesPath: string;
     },
   ) {
