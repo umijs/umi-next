@@ -119,7 +119,7 @@ describe('page generator', function () {
   ) {
     const generateFile = jest.fn().mockResolvedValue(null);
     const g = new PageGenerator({
-      absPagesPath: '/pages/',
+      absPagesPath: normalize('/pages/'),
       args,
       generateFile,
     });
