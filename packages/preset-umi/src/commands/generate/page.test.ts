@@ -47,11 +47,13 @@ describe('page generator', function () {
             target: '/pages/foo.tsx',
             path: 'templates/generate/page/index.tsx.tpl',
             name: 'foo',
+            cwd: '/pages/',
           },
           {
             target: '/pages/foo.less',
             path: 'templates/generate/page/index.less.tpl',
             name: 'foo',
+            cwd: '/pages/',
           },
         ],
       );
@@ -65,11 +67,13 @@ describe('page generator', function () {
             target: '/pages/foo/bar.tsx',
             path: 'templates/generate/page/index.tsx.tpl',
             name: 'bar',
+            cwd: '/pages/',
           },
           {
             target: '/pages/foo/bar.less',
             path: 'templates/generate/page/index.less.tpl',
             name: 'bar',
+            cwd: '/pages/',
           },
         ],
       );
@@ -106,7 +110,12 @@ describe('page generator', function () {
 
   async function expectPageGeneratorArgsMatchesGeneratedFiles(
     args: { _: string[]; dir: boolean },
-    fileGenerations: { name: string; target: string; path: string }[],
+    fileGenerations: {
+      name: string;
+      target: string;
+      path: string;
+      cwd?: string;
+    }[],
   ) {
     const generateFile = jest.fn().mockResolvedValue(null);
     const g = new PageGenerator({
@@ -123,6 +132,7 @@ describe('page generator', function () {
         data: { name: f.name, color: expect.anything(), cssExt: '.less' },
         target: normalize(f.target),
         path: expect.stringContaining(normalize(f.path)),
+        cwd: f.cwd ? normalize(f.cwd) : undefined,
       });
     }
   }
