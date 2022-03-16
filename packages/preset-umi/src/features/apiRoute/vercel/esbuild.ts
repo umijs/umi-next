@@ -1,9 +1,9 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import fs from 'fs';
 import { join, resolve } from 'path';
 import type { IApi, IRoute } from '../../../types';
-import { esbuildIgnorePathPrefixPlugin } from '../utils';
-import fs from 'fs';
 import { OUTPUT_PATH } from '../constants';
+import { esbuildIgnorePathPrefixPlugin } from '../utils';
 
 interface VercelDynamicRouteConfig {
   page: string;
@@ -18,6 +18,8 @@ export default async function (api: IApi, apiRoutes: IRoute[]) {
     join(api.paths.absTmpPath, 'api', r.file),
   );
 
+  const pkg = require(join(api.cwd, './package.json'));
+
   await esbuild.build({
     format: 'cjs',
     platform: 'node',
@@ -28,6 +30,7 @@ export default async function (api: IApi, apiRoutes: IRoute[]) {
     ],
     outdir: resolve(api.paths.cwd, OUTPUT_PATH),
     plugins: [esbuildIgnorePathPrefixPlugin()],
+    external: [...Object.keys(pkg.dependencies || {})],
   });
 
   const dynamicRoutes: VercelDynamicRouteConfig[] = [];
