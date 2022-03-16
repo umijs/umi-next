@@ -1,6 +1,6 @@
 {
   "name": "create-umi",
-  "version": "4.0.0-rc.6",
+  "version": "4.0.0-canary.20220316.1",
   "description": "create-umi",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/create-umi#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -22,10 +22,10 @@
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
-    "test": "jest -c ../../jest.config.ts"
+    "test": "jest -c ../../jest.turbo.config.ts"
   },
   "dependencies": {
-    "@umijs/utils": "4.0.0-rc.6"
+    "@umijs/utils": "4.0.0-canary.20220316.1"
   },
   "publishConfig": {
     "access": "public"

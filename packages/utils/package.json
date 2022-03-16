@@ -1,6 +1,6 @@
 {
   "name": "@umijs/utils",
-  "version": "4.0.0-rc.6",
+  "version": "4.0.0-canary.20220316.1",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/utils#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
   "repository": {
@@ -18,7 +18,7 @@
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
-    "test": "jest -c ../../jest.config.ts"
+    "test": "jest -c ../../jest.turbo.config.ts"
   },
   "dependencies": {
     "chokidar": "3.5.3"
