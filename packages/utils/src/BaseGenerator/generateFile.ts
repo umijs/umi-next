@@ -4,20 +4,20 @@ import BaseGenerator from './BaseGenerator';
 const generateFile = async ({
   path,
   target,
-  cwd,
+  baseDir,
   data,
   questions,
 }: {
   path: string;
   target: string;
-  cwd?: string;
+  baseDir?: string;
   data?: any;
   questions?: prompts.PromptObject[];
 }) => {
   const generator = new BaseGenerator({
     path,
     target,
-    cwd,
+    baseDir,
     data,
     questions,
   });
