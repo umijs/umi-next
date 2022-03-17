@@ -2,6 +2,14 @@ import type { IConfigProcessor } from '.';
 
 // refer: https://github.com/umijs/umi-next/blob/867e0c196296efbbdb95203cca35db2fa639808b/packages/bundler-webpack/src/utils/browsersList.ts#L5
 export function getBrowserlist(targets: Record<string, string | boolean>) {
+  // const test=typeof targets.browsers === 'string'
+  // ? (targets.browser as string)
+  // : Object.keys(targets).map(
+  //     (key) => `${key} >= ${targets[key] === true ? '0' : targets[key]}`,
+  //   );
+  // console.log('getBrowserlist----test------------------');
+  // console.log(test);
+
   return typeof targets.browsers === 'string'
     ? (targets.browser as string)
     : Object.keys(targets).map(
@@ -20,6 +28,8 @@ export function getBrowserlist(targets: Record<string, string | boolean>) {
  *        - theme
  */
 export default (function css(userConfig) {
+  // console.log('userConfig------------css');
+  // console.log(userConfig);
   const config: ReturnType<IConfigProcessor> = {
     css: { postcss: {}, preprocessorOptions: {} },
   };
@@ -51,6 +61,12 @@ export default (function css(userConfig) {
     // handle theme
     modifyVars: userConfig.theme || {},
   };
+  // console.log('config-------css------default');
+  // console.log(config);
+  // console.log('config.css?.postcss.plugins');
+  // console.log(config.css?.postcss.plugins);
+  // console.log('config.css?.preprocessorOptions?.less');
+  // console.log(config.css?.preprocessorOptions?.less);
 
   return config;
 } as IConfigProcessor);

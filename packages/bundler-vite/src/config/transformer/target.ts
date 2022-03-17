@@ -8,6 +8,8 @@ import { getBrowserlist } from './css';
  * transform umi targets to vite build.target
  */
 export default (function target(userConfig) {
+  // console.log('userConfig----------------------');
+  // console.log(userConfig);
   const config: ReturnType<IConfigProcessor> = { build: {}, plugins: [] };
 
   // convert { ie: 11 } to ['ie11']
@@ -46,5 +48,10 @@ export default (function target(userConfig) {
 
     config.plugins!.push(legacyPlugin(legacyOpts));
   }
+  // console.log('config----------------');
+  // console.log(config);
+  // console.log('config.plugins--------------');
+  // console.log(config.plugins);
+  // console.log(config.plugins[0]);
   return config;
 } as IConfigProcessor);

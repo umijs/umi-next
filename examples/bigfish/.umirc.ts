@@ -32,6 +32,12 @@ export default defineConfig({
       ],
     },
   ],
+  vite: {},
+  targets: {
+    ie: 11,
+  },
+  // field:{},
+
   antd: {
     import: true,
     style: 'less',
