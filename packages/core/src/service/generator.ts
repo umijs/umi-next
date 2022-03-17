@@ -1,3 +1,4 @@
+import { generateFile } from '@umijs/utils';
 import { Plugin } from './plugin';
 
 export enum GeneratorType {
