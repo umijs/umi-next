@@ -10,7 +10,7 @@ import { Message } from 'umi';
 
 Webpack 配置示例：<a href="https://github.com/umijs/umi-next/tree/master/examples/mfsu-independent" target="_blank">examples/mfsu-independent</a>
 
-CRA v5 配置示例：<a href="https://github.com/fz6m/cra-with-mfsu" target="_blank">cra-with-mfsu</a>
+CRA v5 配置示例：<a href="https://github.com/umijs/cra-v5-with-mfsu-example" target="_blank">cra-v5-with-mfsu-example</a>
 
 ## 安装
 
