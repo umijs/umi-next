@@ -31,18 +31,19 @@ export default (api: IApi) => {
         initial: true,
       });
 
+      const basicDeps = {
+        jest: '^27',
+        '@types/jest': '^27',
+        // we use `jest.config.ts` so jest needs ts and ts-node
+        typescript: '^4',
+        'ts-node': '^10',
+      };
       const packageToInstall: Record<string, string> = res.willUseTLR
         ? {
-            jest: '^27',
-            '@types/jest': '^27',
-            'ts-node': '^10',
+            ...basicDeps,
             '@testing-library/react': '^12',
           }
-        : {
-            jest: '^27',
-            '@types/jest': '^27',
-            'ts-node': '^10',
-          };
+        : basicDeps;
 
       h.addDevDeps(packageToInstall);
 
