@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-vite",
-  "version": "4.0.0-rc.6",
+  "version": "4.0.0-rc.8",
   "description": "@umijs/bundler-vite",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-vite#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -16,18 +16,20 @@
   },
   "files": [
     "compiled",
-    "dist"
+    "dist",
+    "scripts"
   ],
   "scripts": {
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch",
+    "postinstall": "node scripts/linkDeps.js",
     "test": "jest -c ../../jest.turbo.config.ts"
   },
   "dependencies": {
     "@svgr/core": "6.2.1",
-    "@umijs/bundler-utils": "4.0.0-rc.6",
-    "@umijs/utils": "4.0.0-rc.6",
+    "@umijs/bundler-utils": "4.0.0-rc.8",
+    "@umijs/utils": "4.0.0-rc.8",
     "@vitejs/plugin-react": "1.2.0",
     "postcss-preset-env": "7.4.2"
   },
@@ -36,10 +38,8 @@
     "@types/rollup-plugin-visualizer": "4.2.1",
     "@types/svgo": "2.6.2",
     "@vitejs/plugin-legacy": "1.7.1",
-    "caniuse-lite": "1.0.30001315",
-    "express": "4.17.3",
-    "less": "4.1.2",
-    "rollup": "2.70.0",
+    "caniuse-lite": "1.0.30001317",
+    "rollup": "2.70.1",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-visualizer": "5.6.0",
     "vite": "2.8.6"
@@ -54,18 +54,16 @@
     "deps": [
       "@vitejs/plugin-legacy",
       "caniuse-lite",
-      "express",
-      "less",
       "rollup-plugin-copy",
       "rollup-plugin-visualizer",
       "vite"
     ],
     "externals": {
       "esbuild": "@umijs/bundler-utils/compiled/esbuild",
-      "express": "$$LOCAL",
+      "express": "@umijs/bundler-utils/compiled/express",
       "fs-extra": "@umijs/utils/compiled/fs-extra",
       "glob": "@umijs/utils/compiled/glob",
-      "less": "$$LOCAL",
+      "less": "@umijs/bundler-utils/compiled/less",
       "resolve": "@umijs/utils/compiled/resolve",
       "vite": "$$LOCAL"
     },

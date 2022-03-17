@@ -1,7 +1,4 @@
-import { generateFile } from '@umijs/utils';
 import { Plugin } from './plugin';
-import { PluginAPI } from './pluginAPI';
-import { IServicePluginAPI } from './service';
 
 export enum GeneratorType {
   generate = 'generate',
@@ -14,12 +11,11 @@ export interface IGeneratorOpts {
   description?: string;
   type?: GeneratorType;
   checkEnable?: {
-    (opts: { args: any; api: PluginAPI & IServicePluginAPI }): boolean;
+    (opts: { args: any }): boolean;
   };
   fn: {
     (opts: {
       args: any;
-      api: PluginAPI & IServicePluginAPI;
       generateFile: typeof generateFile;
       updatePackageJSON: {
         (opts: { opts: object; cwd?: string }): void;
