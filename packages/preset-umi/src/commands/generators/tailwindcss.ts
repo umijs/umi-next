@@ -3,7 +3,7 @@ import { logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
-import { GeneratorHelper } from './utils';
+import { GeneratorHelper, getUmiJsPlugin } from './utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -22,7 +22,7 @@ export default (api: IApi) => {
       const h = new GeneratorHelper(api);
 
       h.addDevDeps({
-        '@umijs/plugins': '^4',
+        '@umijs/plugins': getUmiJsPlugin(),
         tailwindcss: '^3',
       });
 
