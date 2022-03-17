@@ -1,5 +1,6 @@
-import { installWithNpmClient, lodash, logger } from '@umijs/utils';
+import { installWithNpmClient, lodash, logger, semver } from '@umijs/utils';
 import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { IApi } from '../../types';
 import { set as setUmirc } from '../config/set';
 
@@ -90,4 +91,14 @@ export class GeneratorHelper {
     });
     logger.info(`Install dependencies with ${npmClient}`);
   }
+}
+
+export function getUmiJsPlugin() {
+  const pkg = require(join(__dirname, '../../../', 'package.json'));
+  const pkgVer = semver.parse(pkg.version);
+
+  const umijsPluginVersion = pkgVer?.prerelease?.length
+    ? pkg.version
+    : `^${pkg.version}`;
+  return umijsPluginVersion;
 }
