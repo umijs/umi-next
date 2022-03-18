@@ -27,6 +27,7 @@ function setConfigByPath(config: any, path: string, value: any) {
     } else if (!(field in memo)) {
       memo[field] = {};
     }
+
     return memo[field];
   }, config);
 }

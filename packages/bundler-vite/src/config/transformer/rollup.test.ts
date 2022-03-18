@@ -13,14 +13,6 @@ test('none config', () => {
   });
 });
 
-test('config polyfill', () => {
-  const obj = rollup({ polyfill: { imports: [] } }, {}).build.rollupOptions
-    .plugins;
-  expect(obj).toEqual(
-    expect.arrayContaining([expect.objectContaining({ name: 'polyfill' })]),
-  );
-});
-
 test('config analyze', () => {
   const obj = rollup({ analyze: {} }, {}).build.rollupOptions.plugins;
   expect(obj).toEqual(
