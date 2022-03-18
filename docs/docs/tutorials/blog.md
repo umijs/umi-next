@@ -222,15 +222,12 @@ export default {
 接下来，当你使用 `pnpm dev`
 启动项目后，可能会看到错误讯息并且启动失败了。这是因为我们在配置中声明了一些页面，但并没有帮他建立对应的页面组件！
 
-所以我们要在 `pages`
-目录下新增这些文件：`login.tsx`, `posts/post.tsx`, `posts/create.tsx`。这些文件里面只要项默认导出一个空的 React 组件即可：
+我们可以使用 Umi 的微生成器来自动生成这些页面：`login.tsx`, `posts/post.tsx`, `posts/create.tsx`:
 
-```tsx
-import react from 'React';
-
-export default function () {
-  return <div></div>;
-}
+```shell
+umi g page login
+umi g page posts/post 
+umi g page posts/create
 ```
 
 新增后的目录结构是这样的：
