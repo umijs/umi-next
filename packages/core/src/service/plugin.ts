@@ -78,9 +78,6 @@ export class Plugin {
           `Register ${this.type} ${this.path} failed, since ${e.message}`,
         );
       }
-      for (const file of register.getFiles()) {
-        delete require.cache[file];
-      }
       register.restore();
       // use the default member for es modules
       return ret.__esModule ? ret.default : ret;
