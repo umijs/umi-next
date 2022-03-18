@@ -11,6 +11,9 @@ import { ApplyPluginsType, PluginManager } from 'umi';
 {{{ imports }}}
 
 async function render() {
+  const history = createHistory({
+    type: '{{{ historyType }}}',
+  });
   const pluginManager = createPluginManager();
   const { routes, routeComponents } = await getRoutes(pluginManager);
 
@@ -31,9 +34,7 @@ async function render() {
 {{#loadingComponent}}
     loadingComponent: Loading,
 {{/loadingComponent}}
-    history: createHistory({
-      type: '{{{ historyType }}}',
-    }),
+    history,
 {{#basename}}
     basename: '{{{ basename }}}',
 {{/basename}}
