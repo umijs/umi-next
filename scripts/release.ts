@@ -1,10 +1,10 @@
 import * as logger from '@umijs/utils/src/logger';
+import { existsSync } from 'fs';
 import getGitRepoInfo from 'git-repo-info';
 import { join } from 'path';
 import rimraf from 'rimraf';
 import 'zx/globals';
 import { assert, eachPkg, getPkgs } from './utils';
-import { existsSync } from 'fs';
 
 (async () => {
   const { branch } = getGitRepoInfo();
@@ -51,6 +51,10 @@ import { existsSync } from 'fs';
     }),
   );
 
+  // check package.json
+  logger.event('check package.json info');
+  await $`npm run check:packageFiles`;
+
   // clean
   logger.event('clean');
   eachPkg(pkgs, ({ dir, name }) => {
@@ -71,6 +75,15 @@ import { existsSync } from 'fs';
   logger.event('bump version');
   await $`lerna version --exact --no-commit-hooks --no-git-tag-version --no-push --loglevel error`;
   const version = require('../lerna.json').version;
+  let tag = 'latest';
+  if (
+    version.includes('-alpha.') ||
+    version.includes('-beta.') ||
+    version.includes('-rc.')
+  ) {
+    tag = 'next';
+  }
+  if (version.includes('-canary.')) tag = 'canary';
 
   // update example versions
   logger.event('update example versions');
@@ -88,22 +101,18 @@ import { existsSync } from 'fs';
       'package.json',
     ));
     pkg.scripts['start'] = 'npm run dev';
-    pkg.dependencies ||= {};
-    if (pkg.dependencies['umi']) pkg.dependencies['umi'] = version;
-    if (pkg.dependencies['@umijs/pro'])
-      pkg.dependencies['@umijs/pro'] = version;
-    if (pkg.dependencies['@umijs/plugins'])
-      pkg.dependencies['@umijs/plugins'] = version;
-    if (pkg.dependencies['@umijs/bundler-vite'])
-      pkg.dependencies['@umijs/bundler-vite'] = version;
-    // for mfsu-independent example update dep version
-    if (pkg.devDependencies?.['@umijs/mfsu']) {
-      pkg.devDependencies['@umijs/mfsu'] = version;
-    }
+    // change deps version
+    setDepsVersion({
+      pkg,
+      version,
+      deps: ['umi', '@umijs/max', '@umijs/plugins', '@umijs/bundler-vite'],
+      // for mfsu-independent example update dep version
+      devDeps: ['@umijs/mfsu'],
+    });
     delete pkg.version;
     fs.writeFileSync(
       join(__dirname, '../examples', example, 'package.json'),
-      JSON.stringify(pkg, null, 2),
+      `${JSON.stringify(pkg, null, 2)}\n`,
     );
   });
 
@@ -118,8 +127,10 @@ import { existsSync } from 'fs';
   await $`git commit --all --message "release: ${version}"`;
 
   // git tag
-  logger.event('git tag');
-  await $`git tag v${version}`;
+  if (tag !== 'canary') {
+    logger.event('git tag');
+    await $`git tag v${version}`;
+  }
 
   // git push
   logger.event('git push');
@@ -130,14 +141,8 @@ import { existsSync } from 'fs';
   $.verbose = false;
   const innerPkgs = pkgs.filter(
     // do not publish father
-    (pkg) => !['umi', 'pro', 'father'].includes(pkg),
+    (pkg) => !['umi', 'max', 'father'].includes(pkg),
   );
-  const tag =
-    version.includes('-alpha.') ||
-    version.includes('-beta.') ||
-    version.includes('-rc.')
-      ? 'next'
-      : 'latest';
   await Promise.all(
     innerPkgs.map(async (pkg) => {
       await $`cd packages/${pkg} && npm publish --tag ${tag}`;
@@ -146,8 +151,8 @@ import { existsSync } from 'fs';
   );
   await $`cd packages/umi && npm publish --tag ${tag}`;
   logger.info(`+ umi`);
-  await $`cd packages/pro && npm publish --tag ${tag}`;
-  logger.info(`+ @umijs/pro`);
+  await $`cd packages/max && npm publish --tag ${tag}`;
+  logger.info(`+ @umijs/max`);
   $.verbose = true;
 
   // sync tnpm
@@ -160,3 +165,24 @@ import { existsSync } from 'fs';
   );
   $.verbose = true;
 })();
+
+function setDepsVersion(opts: {
+  deps: string[];
+  devDeps: string[];
+  pkg: Record<string, any>;
+  version: string;
+}) {
+  const { deps, devDeps, pkg, version } = opts;
+  pkg.dependencies ||= {};
+  deps.forEach((dep) => {
+    if (pkg.dependencies[dep]) {
+      pkg.dependencies[dep] = version;
+    }
+  });
+  devDeps.forEach((dep) => {
+    if (pkg?.devDependencies?.[dep]) {
+      pkg.devDependencies[dep] = version;
+    }
+  });
+  return pkg;
+}
