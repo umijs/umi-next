@@ -12,28 +12,12 @@ import visualizer from '../../../compiled/rollup-plugin-visualizer';
  *        - copy
  */
 export default (function rollup(userConfig) {
-  console.log('userConfig------------rollup');
-  console.log(userConfig);
   const config: ReturnType<IConfigProcessor> = {
     build: { rollupOptions: { plugins: [], output: {} } },
   };
 
-  // TODO: handle externals
-  // refer: https://github.com/vitejs/vite/issues/3001#issuecomment-836352935
-
-  // handle polyfill
-  if (Array.isArray(userConfig.polyfill?.imports)) {
-    console.log('polyfill import -----------------');
-
-    config.build!.rollupOptions!.plugins!.push(
-      polyfill(userConfig.polyfill.imports),
-    );
-  }
-
   // handle analyze
   if (typeof userConfig.analyze === 'object' || process.env.ANALYZE) {
-    console.log('analyze--------------');
-
     config.build!.rollupOptions!.plugins!.push(
       visualizer({
         open: true,
@@ -78,10 +62,6 @@ export default (function rollup(userConfig) {
       assetFileNames: '[name].[ext]',
     });
   }
-  console.log('config-------------------');
-  console.log(config);
-  console.log('config.build?.rollupOptions?.output');
-  console.log(config.build?.rollupOptions?.output);
 
   return config;
 } as IConfigProcessor);
