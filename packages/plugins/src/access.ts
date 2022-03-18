@@ -3,7 +3,6 @@ import { IApi } from 'umi';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
-  // TODO: route access
   api.describe({
     config: {
       schema(joi) {
@@ -21,6 +20,7 @@ export default (api: IApi) => {
 import React from 'react';
 import accessFactory from '@/access';
 import { useModel } from '@@/plugin-model';
+import { getInitialState } from '@@/plugin-initialState/@@initialState.ts'
 import { AccessContext } from './context';
 
 function Provider(props) {
@@ -35,6 +35,49 @@ function Provider(props) {
 
 export function accessProvider(container) {
   return <Provider>{ container }</Provider>;
+}
+
+export async function patchRoutes({ routes }) {
+  const findAccessCode = (route) => (
+    route.access ||
+    (route.parentId && findAccessCode(routes[route.parentId]))
+  );
+  const access = accessFactory(await getInitialState());
+  const parentsNoAccessibleChild: Record<string, boolean> = {};
+
+  Object.keys(routes).forEach(key => {
+    const route = routes[key];
+    const accessCode = findAccessCode(route);
+
+    // set default status
+    route.unaccessible = ${api.config.access.strictMode ? 'true' : 'false'};
+
+    // check access code
+    if (typeof accessCode === 'string') {
+      const detector = access[route.access];
+
+      if (typeof detector === 'function') {
+        route.unaccessible = !detector(route);
+      } else if (typeof detector === 'boolean') {
+        route.unaccessible = !detector;
+      } else if (typeof detector === 'undefined') {
+        route.unaccessible = true;
+      }
+    }
+
+    // set parent status
+    if (route.parentId && !route.redirect && parentsNoAccessibleChild[route.parentId] !== 'false') {
+      // 'false' means there has at least 1 child route can be accessed, so skip directly
+      parentsNoAccessibleChild[route.parentId] = route.unaccessible;
+    }
+  });
+
+  // re-check parent route accessibility, make sure parent route is unaccessible if all children are unaccessible
+  Object.keys(parentsNoAccessibleChild).forEach(key => {
+    if (parentsNoAccessibleChild[key] === true) {
+      routes[key].unaccessible = true;
+    }
+  });
 }
       `,
     });
