@@ -113,44 +113,21 @@ DATABASE_URL='mysql://************:************@************.ap-southeast-2.psdb
 接下来，帮我们的 Umi 项目安装这次教程会用到的依赖：
 
 ```shell
-pnpm i -d tailwindcss prisma @types/bcryptjs @types/jsonwebtoken 
-pnpm i @prisma/client @umijs/plugins bcryptjs jsonwebtoken
+pnpm i -d prisma @types/bcryptjs @types/jsonwebtoken 
+pnpm i @prisma/client bcryptjs jsonwebtoken
 ```
 
 这两行命令帮我们安装了这些包：
 
-1. [tailwindcss](https://github.com/tailwindlabs/tailwindcss)
-   和 [@umijs/plugins](https://github.com/umijs/plugins):
-   这两个包让我们可以在 Umi.js 项目中使用  [Tailwindcss](https://tailwindcss.com/) 进行样式的撰写。
-2. [prisma](https://github.com/prisma/prisma)
+1. [prisma](https://github.com/prisma/prisma)
    和 [@prisma/client](https://www.npmjs.com/package/@prisma/client):
    这两个包让我们可以用 [Prisma](https://www.prisma.io/)
    来方便地串接数据库，不需要担心任何复杂的 SQL 命令。
-3. [bcryptjs](https://github.com/dcodeIO/bcrypt.js):
+2. [bcryptjs](https://github.com/dcodeIO/bcrypt.js):
    这个包让我们将用户注册后的密码使用 [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt)
    哈希加密算法来安全的存储在数据库中。
-4. [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken):
+3. [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken):
    这个包让我们可以方便地使用用 [JWT(Json Web Token)](https://jwt.io/) 实现用户鉴权。
-
-安装好包以后，在根目录下添加 `tailwind.config.js` 和 `tailwind.css` 两个文件：
-
-```js
-// tailwind.config.js
-
-module.exports = {
-  content: ['./src/**/*.tsx'],
-}
-```
-
-```css
-/* tailwind.css */
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
----
 
 然后将 `package.json` 中 `scripts` 里面的 `build` 脚本从
 
@@ -175,6 +152,16 @@ module.exports = {
 ```
 
 这可以确保每次开始构建以前都已经生成好 Prisma 客户端。
+
+### 安装 Tailwindcss
+
+使用 Umi 提供的微生成器来在项目中启用 Tailwindcss :
+
+```shell
+npx umi g tailwindcss
+```
+
+他会帮我们安装 Tailwindcss 所需要的依赖，然后生成需要的文件。
 
 ### 配置 umi 项目
 
