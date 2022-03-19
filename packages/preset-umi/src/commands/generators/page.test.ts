@@ -208,3 +208,44 @@ describe('page generate in interactive way', function () {
     });
   });
 });
+
+describe('page generate multi pages in a run', function () {
+  it('can generate multi pages in dir mode', async () => {
+    const generateFile = jest.fn().mockResolvedValue(null);
+    const g = new PageGenerator({
+      absPagesPath: normalize('/pages/'),
+      args: { dir: true, _: ['page', 'login', 'post'] },
+      generateFile,
+    });
+
+    await g.run();
+
+    expect(generateFile).toBeCalledTimes(2);
+    expect(generateFile).toHaveBeenNthCalledWith(1, targetTo('login'));
+    expect(generateFile).toHaveBeenNthCalledWith(2, targetTo('post'));
+  });
+
+  it('can generate multi pages in non-dir mode', async () => {
+    const generateFile = jest.fn().mockResolvedValue(null);
+    const g = new PageGenerator({
+      absPagesPath: normalize('/pages/'),
+      args: { dir: false, _: ['page', 'login', 'post'] },
+      generateFile,
+    });
+
+    await g.run();
+
+    expect(generateFile).toBeCalledTimes(4);
+
+    expect(generateFile).toHaveBeenNthCalledWith(1, targetTo('login.tsx'));
+    expect(generateFile).toHaveBeenNthCalledWith(2, targetTo('login.less'));
+    expect(generateFile).toHaveBeenNthCalledWith(3, targetTo('post.tsx'));
+    expect(generateFile).toHaveBeenNthCalledWith(4, targetTo('post.less'));
+  });
+
+  function targetTo(f: string) {
+    return expect.objectContaining({
+      target: expect.stringContaining(f),
+    });
+  }
+});

@@ -38,6 +38,7 @@ export class PageGenerator {
   private name = '';
   private needEnsureDirMode = false;
   private prompts = prompts;
+  private paths: string[] = [];
 
   constructor(
     readonly options: {
@@ -47,15 +48,31 @@ export class PageGenerator {
     },
   ) {
     this.isDirMode = options.args.dir;
-    const [_, nameOrPath = ''] = options.args._;
-    if (nameOrPath) {
-      this.setPath(nameOrPath);
+    const [_, ...inputPaths] = options.args._ as string[];
+
+    if (inputPaths.length > 0) {
+      this.paths = inputPaths;
     } else {
       this.needEnsureDirMode = true;
     }
   }
 
   async run() {
+    if (this.paths.length === 0) {
+      await this.runInteractiveMode();
+    } else {
+      for (const p of this.paths) {
+        this.setPath(p);
+        if (this.isDirMode) {
+          await this.dirModeRun();
+        } else {
+          await this.fileModeRun();
+        }
+      }
+    }
+  }
+
+  async runInteractiveMode() {
     await this.ensureName();
     await this.ensureDirMode();
 
