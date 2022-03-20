@@ -2,6 +2,8 @@ import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
 import { winPath } from '@umijs/utils';
 import assert from 'assert';
 import { isAbsolute } from 'path';
+// @ts-ignore
+import micromatch from '../../../compiled/micromatch';
 import type { IOpts } from './awaitImport';
 import { getAliasedPath } from './getAliasedPath';
 import { isExternals } from './isExternals';
@@ -46,7 +48,7 @@ export function checkMatch({
   value = value.replace(/^@fs\//, '/');
   if (
     // unMatch specified libs
-    opts.unMatchLibs?.includes(value) ||
+    micromatch.isMatch(value, opts.unMatchLibs || []) ||
     // do not match bundler-webpack/client/client/client.js
     value.includes('client/client/client.js') ||
     // already handled

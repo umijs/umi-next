@@ -28,6 +28,7 @@
     "enhanced-resolve": "5.9.2"
   },
   "devDependencies": {
+    "micromatch": "4.0.4",
     "mrmime": "1.0.0",
     "webpack": "5.70.0",
     "webpack-virtual-modules": "0.4.3"
@@ -41,13 +42,15 @@
   "compiledConfig": {
     "deps": [
       "mrmime",
-      "webpack-virtual-modules"
+      "webpack-virtual-modules",
+      "micromatch"
     ],
     "externals": {
       "mrmime": "$$LOCAL"
     },
     "excludeDtsDeps": [
-      "webpack-virtual-modules"
+      "webpack-virtual-modules",
+      "micromatch"
     ]
   }
 }

@@ -155,3 +155,14 @@ test('alias with endless loop', () => {
     });
   }).toThrow(/endless loop detected/);
 });
+
+test('unMatch glob matching', () => {
+  expect(
+    checkMatch({
+      value: 'antd/es/button',
+      opts: {
+        unMatchLibs: ['antd/*'],
+      },
+    }),
+  ).toEqual({ isMatch: true, replaceValue: 'mf/antd/es/button' });
+});
