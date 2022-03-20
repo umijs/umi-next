@@ -102,6 +102,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           cacheDirectory: Joi.string(),
           esbuild: Joi.boolean(),
           mfName: Joi.string(),
+          unMatchLibs: Joi.array().items(Joi.string()),
         }),
         Joi.boolean(),
       ),

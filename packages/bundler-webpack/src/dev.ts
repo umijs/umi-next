@@ -45,6 +45,7 @@ export async function dev(opts: IOpts) {
       tmpBase:
         opts.config.mfsu?.cacheDirectory ||
         join(opts.cwd, 'node_modules/.cache/mfsu'),
+      unMatchLibs: opts.config.mfsu?.unMatchLibs,
       getCacheDependency() {
         return {
           version: require('../package.json').version,
