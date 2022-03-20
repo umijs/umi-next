@@ -1,4 +1,4 @@
-import express from '@umijs/bundler-webpack/compiled/express';
+import express from '@umijs/bundler-utils/compiled/express';
 import { createProxyMiddleware } from '@umijs/bundler-webpack/compiled/http-proxy-middleware';
 import webpack, {
   Configuration,
@@ -155,7 +155,21 @@ export async function createServer(opts: IOpts) {
   // proxy
   if (proxy) {
     Object.keys(proxy).forEach((key) => {
-      app.use(key, createProxyMiddleware(proxy[key]));
+      const proxyConfig = proxy[key];
+      const target = proxyConfig.target;
+      if (target) {
+        app.use(
+          key,
+          createProxyMiddleware(key, {
+            ...proxy[key],
+            // Add x-real-url in response header
+            onProxyRes(proxyRes, req: any) {
+              proxyRes.headers['x-real-url'] =
+                new URL(req.url || '', target as string)?.href || '';
+            },
+          }),
+        );
+      }
     });
   }
   // after middlewares

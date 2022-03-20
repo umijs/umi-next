@@ -51,6 +51,10 @@ import { assert, eachPkg, getPkgs } from './utils';
     }),
   );
 
+  // check package.json
+  logger.event('check package.json info');
+  await $`npm run check:packageFiles`;
+
   // clean
   logger.event('clean');
   eachPkg(pkgs, ({ dir, name }) => {
@@ -71,6 +75,15 @@ import { assert, eachPkg, getPkgs } from './utils';
   logger.event('bump version');
   await $`lerna version --exact --no-commit-hooks --no-git-tag-version --no-push --loglevel error`;
   const version = require('../lerna.json').version;
+  let tag = 'latest';
+  if (
+    version.includes('-alpha.') ||
+    version.includes('-beta.') ||
+    version.includes('-rc.')
+  ) {
+    tag = 'next';
+  }
+  if (version.includes('-canary.')) tag = 'canary';
 
   // update example versions
   logger.event('update example versions');
@@ -88,22 +101,18 @@ import { assert, eachPkg, getPkgs } from './utils';
       'package.json',
     ));
     pkg.scripts['start'] = 'npm run dev';
-    pkg.dependencies ||= {};
-    if (pkg.dependencies['umi']) pkg.dependencies['umi'] = version;
-    if (pkg.dependencies['@umijs/max'])
-      pkg.dependencies['@umijs/max'] = version;
-    if (pkg.dependencies['@umijs/plugins'])
-      pkg.dependencies['@umijs/plugins'] = version;
-    if (pkg.dependencies['@umijs/bundler-vite'])
-      pkg.dependencies['@umijs/bundler-vite'] = version;
-    // for mfsu-independent example update dep version
-    if (pkg.devDependencies?.['@umijs/mfsu']) {
-      pkg.devDependencies['@umijs/mfsu'] = version;
-    }
+    // change deps version
+    setDepsVersion({
+      pkg,
+      version,
+      deps: ['umi', '@umijs/max', '@umijs/plugins', '@umijs/bundler-vite'],
+      // for mfsu-independent example update dep version
+      devDeps: ['@umijs/mfsu'],
+    });
     delete pkg.version;
     fs.writeFileSync(
       join(__dirname, '../examples', example, 'package.json'),
-      JSON.stringify(pkg, null, 2),
+      `${JSON.stringify(pkg, null, 2)}\n`,
     );
   });
 
@@ -118,8 +127,10 @@ import { assert, eachPkg, getPkgs } from './utils';
   await $`git commit --all --message "release: ${version}"`;
 
   // git tag
-  logger.event('git tag');
-  await $`git tag v${version}`;
+  if (tag !== 'canary') {
+    logger.event('git tag');
+    await $`git tag v${version}`;
+  }
 
   // git push
   logger.event('git push');
@@ -132,15 +143,6 @@ import { assert, eachPkg, getPkgs } from './utils';
     // do not publish father
     (pkg) => !['umi', 'max', 'father'].includes(pkg),
   );
-  let tag = 'latest';
-  if (
-    version.includes('-alpha.') ||
-    version.includes('-beta.') ||
-    version.includes('-rc.')
-  ) {
-    tag = 'next';
-  }
-  if (version.includes('-canary.')) tag = 'canary';
   await Promise.all(
     innerPkgs.map(async (pkg) => {
       await $`cd packages/${pkg} && npm publish --tag ${tag}`;
@@ -163,3 +165,24 @@ import { assert, eachPkg, getPkgs } from './utils';
   );
   $.verbose = true;
 })();
+
+function setDepsVersion(opts: {
+  deps: string[];
+  devDeps: string[];
+  pkg: Record<string, any>;
+  version: string;
+}) {
+  const { deps, devDeps, pkg, version } = opts;
+  pkg.dependencies ||= {};
+  deps.forEach((dep) => {
+    if (pkg.dependencies[dep]) {
+      pkg.dependencies[dep] = version;
+    }
+  });
+  devDeps.forEach((dep) => {
+    if (pkg?.devDependencies?.[dep]) {
+      pkg.devDependencies[dep] = version;
+    }
+  });
+  return pkg;
+}

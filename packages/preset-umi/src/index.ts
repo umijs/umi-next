@@ -1,4 +1,4 @@
-export type { IApi } from './types';
+export type { IApi, IConfig, webpack } from './types';
 export default () => {
   return {
     plugins: [
@@ -17,6 +17,7 @@ export default () => {
       require.resolve('./features/polyfill/polyfill'),
       require.resolve('./features/polyfill/publicPathPolyfill'),
       require.resolve('./features/tmpFiles/tmpFiles'),
+      require.resolve('./features/tmpFiles/configTypes'),
       require.resolve('./features/transform/transform'),
       require.resolve('./features/lowImport/lowImport'),
       require.resolve('./features/vite/vite'),
@@ -30,8 +31,12 @@ export default () => {
       require.resolve('./commands/help'),
       require.resolve('./commands/setup'),
       require.resolve('./commands/version'),
-      require.resolve('./commands/generate/page'),
-      require.resolve('./commands/generate/prettier'),
+      require.resolve('./commands/generators/page'),
+      require.resolve('./commands/generators/prettier'),
+      require.resolve('./commands/generators/tsconfig'),
+      require.resolve('./commands/generators/jest'),
+      require.resolve('./commands/generators/tailwindcss'),
+      require.resolve('./commands/generators/dva'),
       require.resolve('./commands/plugin'),
     ],
   };
