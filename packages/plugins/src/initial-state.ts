@@ -59,7 +59,7 @@ export default function InitialStateProvider(props: any) {
       content: api.appData.appJS?.exports.includes('getInitialState')
         ? `
 import { useState, useEffect, useCallback } from 'react';
-import { getInitialState as getUserInitialState } from '@/app';
+import { getInitialState } from '@/app';
 
 const initState = {
   initialState: undefined,
@@ -67,28 +67,16 @@ const initState = {
   error: undefined,
 };
 
-export const getInitialState = (() => {
-  let cachedState: any;
-
-  return async () => {
-    if (!cachedState) {
-      try {
-        cachedState = { loading: false, initialState: await getUserInitialState() };
-      } catch (error) {
-        cachedState = { loading: false, error };
-      }
-    }
-
-    return cachedState;
-  }
-})();
-
 export default () => {
   const [state, setState] = useState(initState);
   const refresh = useCallback(async () => {
     setState((s) => ({ ...s, loading: true, error: undefined }));
-    const ret = await getInitialState();
-    setState((s) => ({ ...s, ...ret }));
+    try {
+      const ret = await getInitialState();
+      setState((s) => ({ ...s, initialState: ret, loading: false }));
+    } catch (e) {
+      setState((s) => ({ ...s, error: e, loading: false }));
+    }
     // [?]
     // await sleep(10);
   }, []);
