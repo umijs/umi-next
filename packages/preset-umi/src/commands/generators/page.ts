@@ -2,6 +2,7 @@ import { GeneratorType } from '@umijs/core';
 import { generateFile, prompts, randomColor } from '@umijs/utils';
 import { join, parse } from 'path';
 import { IApi } from '../../types';
+import { promptsExitWhenCancel } from './utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -37,7 +38,7 @@ export class PageGenerator {
   private dir = '';
   private name = '';
   private needEnsureDirMode = false;
-  private prompts = prompts;
+  private prompts = promptsExitWhenCancel;
   private paths: string[] = [];
 
   constructor(
