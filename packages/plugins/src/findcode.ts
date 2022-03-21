@@ -8,11 +8,8 @@ import type {
   JSXOpeningElement,
   Node,
 } from '@babel/types';
-import {
-  jsxAttribute,
-  jsxIdentifier,
-  stringLiteral,
-} from '@babel/types/lib/builders/generated';
+// @ts-ignore
+import * as generated from '@babel/types/lib/builders/generated';
 import { winPath } from '@umijs/utils';
 import type { RequestHandler } from 'express';
 import { join, relative } from 'path';
@@ -147,9 +144,9 @@ const doJSXOpeningElement: NodeHandler<
   const findCodeString: JSXAttribute | null =
     isNil(line) && isNil(column)
       ? null
-      : jsxAttribute(
-          jsxIdentifier('data-find-code'),
-          stringLiteral(
+      : generated.jsxAttribute(
+          generated.jsxIdentifier('data-find-code'),
+          generated.stringLiteral(
             JSON.stringify([
               line?.toString(),
               column?.toString(),
