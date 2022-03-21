@@ -139,7 +139,7 @@ describe('page generator', function () {
 });
 
 describe('page generate in interactive way', function () {
-  it('generate index page when no answer', async () => {
+  it('generate page with default name when no answer', async () => {
     const generateFile = jest.fn().mockResolvedValue(null);
     const prompts = jest.fn();
 
@@ -161,14 +161,15 @@ describe('page generate in interactive way', function () {
       type: 'text',
       name: 'name',
       message: 'What is the name of page?',
+      initial: 'unTitledPage',
     });
     expect(prompts).toHaveBeenNthCalledWith(2, {
       type: 'select',
       name: 'mode',
       message: 'How dou you want page files to be created?',
       choices: [
-        { title: normalize('index/index.{tsx,less}'), value: 'dir' },
-        { title: normalize('index.{tsx,less}'), value: 'file' },
+        { title: normalize('unTitledPage/index.{tsx,less}'), value: 'dir' },
+        { title: normalize('unTitledPage.{tsx,less}'), value: 'file' },
       ],
       initial: 0,
     });
@@ -195,6 +196,7 @@ describe('page generate in interactive way', function () {
       type: 'text',
       name: 'name',
       message: 'What is the name of page?',
+      initial: 'unTitledPage',
     });
     expect(prompts).toHaveBeenNthCalledWith(2, {
       type: 'select',
@@ -206,6 +208,42 @@ describe('page generate in interactive way', function () {
       ],
       initial: 0,
     });
+  });
+
+  it('generate page with trimmed file name', async () => {
+    const generateFile = jest.fn().mockResolvedValue(null);
+    const prompts = jest.fn();
+    const g = new PageGenerator({
+      absPagesPath: '/pages/',
+      args: { _: [] },
+      generateFile,
+    });
+
+    g.setPrompter(prompts as any);
+    prompts.mockResolvedValueOnce({ name: ' aPageName ' });
+    prompts.mockResolvedValueOnce({ mode: 'dir' });
+
+    await g.run();
+
+    expect(generateFile).toHaveBeenNthCalledWith(1, targetTo('aPageName'));
+  });
+
+  it('generate default page with blank input', async () => {
+    const generateFile = jest.fn().mockResolvedValue(null);
+    const prompts = jest.fn();
+    const g = new PageGenerator({
+      absPagesPath: '/pages/',
+      args: { _: [] },
+      generateFile,
+    });
+
+    g.setPrompter(prompts as any);
+    prompts.mockResolvedValueOnce({ name: ' ' });
+    prompts.mockResolvedValueOnce({ mode: 'dir' });
+
+    await g.run();
+
+    expect(generateFile).toHaveBeenNthCalledWith(1, targetTo('unTitledPage'));
   });
 });
 
@@ -242,10 +280,10 @@ describe('page generate multi pages in a run', function () {
     expect(generateFile).toHaveBeenNthCalledWith(3, targetTo('post.tsx'));
     expect(generateFile).toHaveBeenNthCalledWith(4, targetTo('post.less'));
   });
-
-  function targetTo(f: string) {
-    return expect.objectContaining({
-      target: expect.stringContaining(f),
-    });
-  }
 });
+
+function targetTo(f: string) {
+  return expect.objectContaining({
+    target: expect.stringContaining(f),
+  });
+}

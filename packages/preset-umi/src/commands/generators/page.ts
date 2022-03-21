@@ -32,6 +32,7 @@ const LEES_TPL_PATH = join(
   __dirname,
   '../../../templates/generate/page/index.less.tpl',
 );
+const DEFAULT_PAGE_NAME = 'unTitledPage';
 
 export class PageGenerator {
   private isDirMode = false;
@@ -107,11 +108,17 @@ export class PageGenerator {
       type: 'text',
       name: 'name',
       message: 'What is the name of page?',
+      initial: DEFAULT_PAGE_NAME,
     });
-    if (response.name) {
-      this.setPath(response.name);
+
+    const { name: rawInput = '' } = response;
+
+    const pageName = rawInput.trim();
+
+    if (pageName) {
+      this.setPath(pageName);
     } else {
-      this.setPath('index');
+      this.setPath(DEFAULT_PAGE_NAME);
     }
     this.isDirMode = false;
   }
