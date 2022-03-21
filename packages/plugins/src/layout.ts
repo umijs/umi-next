@@ -60,7 +60,13 @@ ${
     ? `import { useModel } from '@@/plugin-model';`
     : 'const useModel = null;'
 }
-
+${
+  api.config.access
+    ? `
+import { useAccessMarkedRoutes } from '@@/plugin-access';
+   `.trim()
+    : 'const useAccessMarkedRoutes = (r) => r;'
+}
 ${
   api.config.locale
     ? `
@@ -96,9 +102,7 @@ const { formatMessage } = useIntl();
     },
   });
   const matchedRoute = useMemo(() => matchRoutes(clientRoutes, location.pathname).pop()?.route, [location.pathname]);
-  const route = clientRoutes.filter(r => {
-    return r.id === 'ant-design-pro-layout';
-  })[0];
+  const [route] = useAccessMarkedRoutes(clientRoutes.filter(({ id }) => id === 'ant-design-pro-layout'));
   return (
     <ProLayout
       route={route}
