@@ -1,6 +1,6 @@
 import rollup from './rollup';
 
-test('none config', () => {
+test('empty config', () => {
   expect(rollup({}, {}).build).toEqual({
     rollupOptions: {
       plugins: [],
@@ -14,29 +14,25 @@ test('none config', () => {
 });
 
 test('config analyze', () => {
-  const obj = rollup({ analyze: {} }, {}).build.rollupOptions.plugins;
-  expect(obj).toEqual(
+  const plugins = rollup({ analyze: {} }, {}).build.rollupOptions.plugins;
+  expect(plugins).toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'visualizer' })]),
   );
 });
 
 test('config copy', () => {
-  const obj = rollup({ copy: [] }, {}).build.rollupOptions.plugins;
-  expect(obj).toEqual(
+  const plugins = rollup({ copy: [] }, {}).build.rollupOptions.plugins;
+  expect(plugins).toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'copy' })]),
   );
 });
 
 test('config hash', () => {
-  const obj = rollup({ hash: false }, {}).build;
-  expect(obj).toEqual({
+  const build = rollup({ hash: true }, {}).build;
+  expect(build).toEqual({
     rollupOptions: {
       plugins: [],
-      output: {
-        entryFileNames: '[name].js',
-        chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]',
-      },
+      output: {},
     },
   });
 });

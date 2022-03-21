@@ -12,7 +12,7 @@ test('filter ie browsers', () => {
   });
 });
 
-test('noneTarget - config', () => {
+test('empty target - config', () => {
   expect(target({ targets: {} }, {})).toEqual({
     build: { target: [] },
     plugins: [],
@@ -20,8 +20,8 @@ test('noneTarget - config', () => {
 });
 
 test('old browser - config', () => {
-  const obj = target({ targets: { ie: 11 } }, {}).plugins;
-  expect(obj).toEqual(
+  const plugins = target({ targets: { ie: 11 } }, {}).plugins;
+  expect(plugins).toEqual(
     expect.arrayContaining([
       expect.arrayContaining([
         expect.objectContaining({ name: 'vite:legacy-config' }),

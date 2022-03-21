@@ -2,15 +2,19 @@ import IConfigProcessor from './devServer';
 
 test('test transform devServer umi config', () => {
   expect(
-    IConfigProcessor({ devServer: { port: 11, host: 12, https: 13 } }, {}),
+    IConfigProcessor(
+      { devServer: { port: 11, host: 'www.taobao.com/', https: true } },
+      {},
+    ),
   ).toEqual({
     server: {
       port: 11,
-      host: 12,
-      https: 13,
+      host: 'www.taobao.com/',
+      https: true,
     },
   });
 });
+
 test('test proxy umi config', () => {
   expect(IConfigProcessor({ proxy: 'proxy' }, {})).toEqual({
     server: {
@@ -18,14 +22,3 @@ test('test proxy umi config', () => {
     },
   });
 });
-
-// test('old browser - config', () => {
-//   const obj = target({ targets: { ie: 11 } }, {}).plugins;
-//   expect(obj).toEqual(
-//     expect.arrayContaining([
-//       expect.arrayContaining([
-//         expect.objectContaining({ name: 'vite:legacy-config' }),
-//       ]),
-//     ]),
-//   );
-// });

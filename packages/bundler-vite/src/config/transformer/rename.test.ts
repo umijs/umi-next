@@ -1,12 +1,12 @@
 import rename from './rename';
 
-test('single layer rename ', () => {
+test('top-level fields rename ', () => {
   expect(rename({ publicPath: '/rename/publicPath' }, {})).toEqual({
     base: '/rename/publicPath',
   });
 });
 
-test('multilayer rename', () => {
+test('nested fields rename', () => {
   expect(
     rename(
       {

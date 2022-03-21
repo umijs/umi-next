@@ -1,8 +1,8 @@
 import react from './react';
 
 test('test react plugin & transform umi babel to vite babel', () => {
-  const obj = react({}, {}).plugins;
-  expect(obj).toEqual(
+  const plugins = react({}, {}).plugins;
+  expect(plugins).toEqual(
     expect.arrayContaining([
       expect.arrayContaining([
         expect.objectContaining({
