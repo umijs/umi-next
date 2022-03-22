@@ -1,6 +1,7 @@
 import extraConfig from './extraConfig';
 
 export default {
+  plugins: [require.resolve('../../packages/plugins/dist/findcode.js')],
   externals: {
     marked: [
       'script https://gw.alipayobjects.com/os/lib/marked/2.0.0/marked.min.js',
