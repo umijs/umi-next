@@ -16,7 +16,6 @@ export class PluginManager {
   hooks: {
     [key: string]: any;
   } = {};
-
   constructor(opts: { validKeys: string[] }) {
     this.opts = opts;
   }
@@ -95,16 +94,26 @@ export class PluginManager {
                   isPromiseLike(hook),
                 `applyPlugins failed, all hooks for key ${key} must be function, plain object or Promise.`,
               );
-              memo = await memo;
+              if (isPromiseLike(memo)) {
+                memo = await memo;
+              }
               if (typeof hook === 'function') {
                 const ret = hook(memo, args);
-                return await ret;
+                if (isPromiseLike(ret)) {
+                  return await ret;
+                } else {
+                  return ret;
+                }
               } else {
-                hook = await hook;
+                if (isPromiseLike(hook)) {
+                  hook = await hook;
+                }
                 return { ...memo, ...hook };
               }
             },
-            Promise.resolve(initialValue),
+            isPromiseLike(initialValue)
+              ? initialValue
+              : Promise.resolve(initialValue),
           );
         } else {
           return hooks.reduce((memo: any, hook: Function | object) => {
