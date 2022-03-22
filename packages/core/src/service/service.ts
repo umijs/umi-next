@@ -345,10 +345,7 @@ export class Service {
     this.stage = ServiceStage.runCommand;
     const command = this.commands[name];
     assert(command, `Invalid command ${name}, it's not registered.`);
-    let ret = command.fn({ args });
-    if (isPromise(ret)) {
-      ret = await ret;
-    }
+    let ret = await command.fn({ args });
     this._baconPlugins();
     return ret;
   }
