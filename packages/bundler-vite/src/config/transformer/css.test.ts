@@ -3,9 +3,11 @@ import css from './css';
 test('css getBrowserlist', () => {
   const plugins = css({ targets: { chrome: 80, edge: 11 } }, {}).css!.postcss
     .plugins[0].plugins;
-  expect.arrayContaining([
-    expect.objectContaining({ browsers: ['chrome >= 80', 'ie >= 11'] }),
-  ]);
+  expect(plugins).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ browsers: ['chrome >= 80', 'edge >= 11'] }),
+    ]),
+  );
 });
 
 test('postcssOptions', () => {
@@ -17,9 +19,11 @@ test('postcssOptions', () => {
     },
     {},
   ).css!.postcss;
-  expect.objectContaining({
-    postcss: 'option',
-  });
+  expect(postcss).toEqual(
+    expect.objectContaining({
+      postcss: 'option',
+    }),
+  );
   const plugins = css(
     {
       postcssLoader: {
@@ -28,22 +32,32 @@ test('postcssOptions', () => {
     },
     {},
   ).css!.postcss.plugins;
-  expect.arrayContaining([]);
+  expect(plugins).toEqual(expect.arrayContaining([]));
 });
 
 test('autoprefixer', () => {
   const plugins = css({ autoprefixer: { prefixer: 'auto' } }, {}).css?.postcss
-    .plugins[0].plugins;
-  expect.arrayContaining([
-    expect.objectContaining({ flexbox: 'no-2009' }),
-    expect.objectContaining({ prefixer: 'auto' }),
-  ]);
+    .plugins;
+  expect(plugins).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        plugins: expect.arrayContaining([
+          expect.objectContaining({
+            options: expect.objectContaining({
+              flexbox: 'no-2009',
+              prefixer: 'auto',
+            }),
+          }),
+        ]),
+      }),
+    ]),
+  );
 });
 
 test('extraPostCSSPlugins plugins', () => {
   const plugins = css({ extraPostCSSPlugins: ['Plugins_1', 'Plugins_2'] }, {})
     .css!.postcss.plugins;
-  expect.arrayContaining(['Plugins_1', 'Plugins_2']);
+  expect(plugins).toEqual(expect.arrayContaining(['Plugins_1', 'Plugins_2']));
 });
 
 test('lessOptions', () => {
@@ -60,11 +74,15 @@ test('lessOptions', () => {
     },
     {},
   ).css!.preprocessorOptions!.less;
-  expect.objectContaining({
-    javascriptEnabled: true,
-    Options: less,
-    custom: 'usertheme',
-  });
+  expect(less).toEqual(
+    expect.objectContaining({
+      javascriptEnabled: true,
+      Options: 'less',
+      modifyVars: expect.objectContaining({
+        custom: 'usertheme',
+      }),
+    }),
+  );
 });
 
 test('theme', () => {
