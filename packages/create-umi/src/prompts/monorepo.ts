@@ -1,4 +1,9 @@
-import { BaseGenerator, lodash, prompts } from '@umijs/utils';
+import {
+  BaseGenerator,
+  installWithNpmClient,
+  lodash,
+  prompts,
+} from '@umijs/utils';
 import { join } from 'path';
 import { EMonorepoType, ENpmClient, ENpmRegistry, IPromptsOpts } from '../type';
 import { COMMON_PROMPT } from './common';
@@ -8,7 +13,12 @@ interface IMonorepoOpts {
   registry: ENpmRegistry;
 }
 
-export const monorepoPrompts = async (opts: IPromptsOpts) => {
+export const monorepoPrompts = async ({
+  baseTplData,
+  dest,
+  tplDir,
+  args,
+}: IPromptsOpts) => {
   const response = (await prompts([
     {
       type: 'select',
@@ -35,18 +45,24 @@ export const monorepoPrompts = async (opts: IPromptsOpts) => {
   if (lodash.isEmpty(response)) return;
 
   const { type, registry } = response;
+  const npmClient = ENpmClient.pnpm;
   if (type === EMonorepoType.initMonorepo) {
     const generator = new BaseGenerator({
-      path: join(opts.tplDir, 'monorepo'),
-      target: opts.dest,
+      path: join(tplDir, 'monorepo'),
+      target: dest,
       data: {
-        ...opts.baseTplData,
+        ...baseTplData,
         registry,
-        npmClient: ENpmClient.pnpm,
+        npmClient,
       },
       questions: [],
     });
     await generator.run();
+  }
+
+  if (args.install !== false) {
+    // install
+    installWithNpmClient({ npmClient });
   }
 
   return;
