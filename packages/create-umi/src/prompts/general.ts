@@ -19,7 +19,6 @@ export const generalPrompts = async ({
   baseTplData,
   tplDir,
   dest,
-  name,
 }: IPromptsOpts) => {
   let npmClient = ENpmClient.pnpm;
   let registry = ENpmRegistry.npm;
