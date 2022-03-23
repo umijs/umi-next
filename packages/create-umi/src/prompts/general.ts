@@ -7,6 +7,7 @@ import {
 import { join } from 'path';
 import { testData } from '../data/default';
 import { ENpmClient, ENpmRegistry, IPromptsOpts } from '../type';
+import { COMMON_PROMPT } from './common';
 
 interface IGeneralOpts {
   npmClient: ENpmClient;
@@ -26,7 +27,7 @@ export const generalPrompts = async ({
   // use default data, skip prompts init
   const isDefaultInit = args.default;
   if (!isDefaultInit) {
-    const response: IGeneralOpts = await prompts([
+    const response = (await prompts([
       {
         type: 'select',
         name: 'npmClient',
@@ -40,20 +41,8 @@ export const generalPrompts = async ({
         ],
         initial: 4,
       },
-      {
-        type: 'select',
-        name: 'registry',
-        message: 'Pick Npm Registry',
-        choices: [
-          {
-            title: 'npm',
-            value: ENpmRegistry.npm,
-            selected: true,
-          },
-          { title: 'taobao', value: ENpmRegistry.taobao },
-        ],
-      },
-    ]);
+      COMMON_PROMPT.registry,
+    ])) as IGeneralOpts;
     if (lodash.isEmpty(response)) return;
     npmClient = response.npmClient;
     registry = response.registry;

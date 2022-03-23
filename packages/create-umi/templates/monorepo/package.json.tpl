@@ -1,5 +1,5 @@
 {
-  "name": "umi-monorepo",
+  "name": "{{{ pkgName }}}-monorepo",
   "version": "1.0.0",
   "private": true,
   "scripts": {

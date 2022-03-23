@@ -41,9 +41,14 @@ export interface ICliOpts {
   args: IArgs;
 }
 
+export interface IBaseTplData extends Record<string, any> {
+  version: string;
+  pkgName: string;
+}
+
 export interface IPromptsOpts extends ICliOpts {
   dest: string;
   tplDir: string;
   name: string;
-  baseTplData: Record<string, any>;
+  baseTplData: IBaseTplData;
 }
