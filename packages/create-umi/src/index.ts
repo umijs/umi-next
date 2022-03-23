@@ -17,13 +17,19 @@ const testData = {
   registry: 'https://registry.npmjs.org/',
 };
 
-export default async ({
-  cwd,
-  args,
-}: {
-  cwd: string;
-  args: yParser.Arguments;
-}) => {
+interface IArgs extends yParser.Arguments {
+  /**
+   * skip install deps phase
+   * @example --no-install
+   */
+  install?: boolean;
+  /**
+   * use default data quick execute
+   */
+  default?: boolean;
+}
+
+export default async ({ cwd, args }: { cwd: string; args: IArgs }) => {
   const [name] = args._;
   let npmClient = 'pnpm' as any;
   let registry = 'https://registry.npmjs.org/';
@@ -104,7 +110,7 @@ export default async ({
   });
   await generator.run();
 
-  if (!args.default) {
+  if (!args.default && args.install !== false) {
     // install
     installWithNpmClient({ npmClient });
   }
