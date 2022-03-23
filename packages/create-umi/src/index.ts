@@ -1,70 +1,34 @@
 import {
   BaseGenerator,
   installWithNpmClient,
+  lodash,
   prompts,
-  yParser,
 } from '@umijs/utils';
 import { join } from 'path';
+import { testData } from './data/default';
+import { generalPrompts } from './prompts/general';
+import { monorepoPrompts } from './prompts/monorepo';
+import { ENpmClient, ENpmRegistry, ICliOpts } from './type';
 
-const testData = {
-  name: 'umi-plugin-demo',
-  description: 'nothing',
-  mail: 'xiaohuoni@gmail.com',
-  author: 'xiaohuoni',
-  org: 'umijs',
-  version: require('../package').version,
-  npmClient: 'pnpm',
-  registry: 'https://registry.npmjs.org/',
-};
-
-interface IArgs extends yParser.Arguments {
-  /**
-   * skip install deps phase
-   * @example --no-install
-   */
-  install?: boolean;
-  /**
-   * use default data quick execute
-   */
-  default?: boolean;
-}
-
-export default async ({ cwd, args }: { cwd: string; args: IArgs }) => {
+export default async (opts: ICliOpts) => {
+  const { cwd, args } = opts;
   const [name] = args._;
-  let npmClient = 'pnpm' as any;
-  let registry = 'https://registry.npmjs.org/';
-  // test ignore prompts
-  if (!args.default) {
-    const response = await prompts([
-      {
-        type: 'select',
-        name: 'npmClient',
-        message: 'Pick Npm Client',
-        choices: [
-          { title: 'npm', value: 'npm' },
-          { title: 'cnpm', value: 'cnpm' },
-          { title: 'tnpm', value: 'tnpm' },
-          { title: 'yarn', value: 'yarn' },
-          { title: 'pnpm', value: 'pnpm' },
-        ],
-        initial: 4,
-      },
-      {
-        type: 'select',
-        name: 'registry',
-        message: 'Pick Npm Registry',
-        choices: [
-          {
-            title: 'npm',
-            value: 'https://registry.npmjs.org/',
-            selected: true,
-          },
-          { title: 'taobao', value: 'https://registry.npmmirror.com' },
-        ],
-      },
-    ]);
-    npmClient = response.npmClient;
-    registry = response.registry;
+  let npmClient = ENpmClient.pnpm;
+  let registry = ENpmRegistry.npm;
+
+  // for monorepo
+  if (args.monorepo) {
+    await monorepoPrompts(opts);
+    return;
+  }
+
+  // for general project
+  const isDefaultInit = args.default;
+  if (!isDefaultInit) {
+    const res = await generalPrompts();
+    if (lodash.isEmpty(res)) return;
+    npmClient = res.npmClient;
+    registry = res.registry;
   }
 
   const pluginPrompts = [
@@ -99,18 +63,18 @@ export default async ({ cwd, args }: { cwd: string; args: IArgs }) => {
   const generator = new BaseGenerator({
     path: join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
     target: name ? join(cwd, name) : cwd,
-    data: args.default
+    data: isDefaultInit
       ? testData
       : {
           version: require('../package').version,
           npmClient,
           registry,
         },
-    questions: args.default ? [] : args.plugin ? pluginPrompts : [],
+    questions: isDefaultInit ? [] : args.plugin ? pluginPrompts : [],
   });
   await generator.run();
 
-  if (!args.default && args.install !== false) {
+  if (!isDefaultInit && args.install !== false) {
     // install
     installWithNpmClient({ npmClient });
   }
