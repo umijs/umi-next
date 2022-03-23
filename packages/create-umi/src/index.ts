@@ -4,7 +4,7 @@ import {
   lodash,
   prompts,
 } from '@umijs/utils';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { testData } from './data/default';
 import { generalPrompts } from './prompts/general';
 import { monorepoPrompts } from './prompts/monorepo';
@@ -60,15 +60,19 @@ export default async (opts: ICliOpts) => {
     },
   ] as prompts.PromptObject[];
 
+  const dest = name ? join(cwd, name) : cwd;
+  const dirName = basename(dest);
+  const pkgName = lodash.kebabCase(lodash.lowerCase(dirName));
   const generator = new BaseGenerator({
     path: join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
-    target: name ? join(cwd, name) : cwd,
+    target: dest,
     data: isDefaultInit
       ? testData
       : {
-          version: require('../package').version,
+          version: require(join(__dirname, '../package.json')).version,
           npmClient,
           registry,
+          pkgName,
         },
     questions: isDefaultInit ? [] : args.plugin ? pluginPrompts : [],
   });
