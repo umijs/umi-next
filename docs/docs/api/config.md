@@ -434,7 +434,7 @@ mfsu: {
   chainWebpack(memo, args) {
     // 添加额外插件
   	memo.plugin('hello').use(Plugin, [...args]);
-    return memo
+    return memo;
   }
 }
 ```
