@@ -1,11 +1,12 @@
-import { lodash, prompts } from '@umijs/utils';
-import { EMonorepoType, ICliOpts } from '../type';
+import { BaseGenerator, lodash, prompts } from '@umijs/utils';
+import { join } from 'path';
+import { EMonorepoType, IPromptsOpts } from '../type';
 
 interface IMonorepoOpts {
   type: EMonorepoType;
 }
 
-export const monorepoPrompts = async (opts: ICliOpts) => {
+export const monorepoPrompts = async (opts: IPromptsOpts) => {
   const response: IMonorepoOpts = await prompts([
     {
       type: 'select',
@@ -29,6 +30,17 @@ export const monorepoPrompts = async (opts: ICliOpts) => {
     },
   ]);
   if (lodash.isEmpty(response)) return;
-  // todo
+
+  const { type } = response;
+  if (type === EMonorepoType.initMonorepo) {
+    const generator = new BaseGenerator({
+      path: join(opts.tplDir, 'monorepo'),
+      target: opts.dest,
+      data: opts.baseTplData,
+      questions: [],
+    });
+    await generator.run();
+  }
+
   return;
 };

@@ -8,21 +8,35 @@ import { basename, join } from 'path';
 import { testData } from './data/default';
 import { generalPrompts } from './prompts/general';
 import { monorepoPrompts } from './prompts/monorepo';
-import { ENpmClient, ENpmRegistry, ICliOpts } from './type';
+import { ENpmClient, ENpmRegistry, ICliOpts, IPromptsOpts } from './type';
 
 export default async (opts: ICliOpts) => {
   const { cwd, args } = opts;
+
   const [name] = args._;
-  let npmClient = ENpmClient.pnpm;
-  let registry = ENpmRegistry.npm;
+  const dest = name ? join(cwd, name) : cwd;
+  const dirName = basename(dest);
+  const pkgName = lodash.kebabCase(lodash.lowerCase(dirName));
+  const tplDir = join(__dirname, '../templates');
+  const promptsOpts: IPromptsOpts = {
+    dest,
+    tplDir,
+    baseTplData: {
+      version: require(join(__dirname, '../package.json')).version,
+      pkgName,
+    },
+    ...opts,
+  };
 
   // for monorepo
   if (args.monorepo) {
-    await monorepoPrompts(opts);
+    await monorepoPrompts(promptsOpts);
     return;
   }
 
   // for general project
+  let npmClient = ENpmClient.pnpm;
+  let registry = ENpmRegistry.npm;
   const isDefaultInit = args.default;
   if (!isDefaultInit) {
     const res = await generalPrompts();
@@ -60,19 +74,15 @@ export default async (opts: ICliOpts) => {
     },
   ] as prompts.PromptObject[];
 
-  const dest = name ? join(cwd, name) : cwd;
-  const dirName = basename(dest);
-  const pkgName = lodash.kebabCase(lodash.lowerCase(dirName));
   const generator = new BaseGenerator({
-    path: join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
+    path: join(tplDir, args.plugin ? 'plugin' : 'app'),
     target: dest,
     data: isDefaultInit
       ? testData
       : {
-          version: require(join(__dirname, '../package.json')).version,
+          ...promptsOpts.baseTplData,
           npmClient,
           registry,
-          pkgName,
         },
     questions: isDefaultInit ? [] : args.plugin ? pluginPrompts : [],
   });

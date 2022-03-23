@@ -40,3 +40,9 @@ export interface ICliOpts {
   cwd: string;
   args: IArgs;
 }
+
+export interface IPromptsOpts extends ICliOpts {
+  dest: string;
+  tplDir: string;
+  baseTplData: Record<string, any>;
+}
