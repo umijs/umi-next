@@ -2,8 +2,9 @@ import { History } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, useRoutes } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
 import { AppContext, useAppData } from './appContext';
-import { createClientRoutes } from './routes';
+import { createClientRoutes, createClientRoutesWithoutLoading } from './routes';
 import { IRouteComponents, IRoutesById } from './types';
 
 function BrowserRoutes(props: {
@@ -117,4 +118,57 @@ export function renderClient(opts: {
   } else {
     ReactDOM.render(browser, rootElement);
   }
+}
+
+export async function getClientRootComponent(opts: {
+  routes: IRoutesById;
+  routeComponents: IRouteComponents;
+  pluginManager: any;
+  location: string;
+}) {
+  const basename = '/';
+  const components = { ...opts.routeComponents };
+  await Promise.all(
+    Object.keys(components).map(async (c) => {
+      components[c] = (await components[c]()).default;
+    }),
+  );
+  const clientRoutes = createClientRoutesWithoutLoading({
+    routesById: opts.routes,
+    routeComponents: components,
+  });
+  let rootContainer = (
+    <StaticRouter basename={basename} location={opts.location}>
+      <Routes />
+    </StaticRouter>
+  );
+  for (const key of [
+    // Lowest to the highest priority
+    'innerProvider',
+    'i18nProvider',
+    'accessProvider',
+    'dataflowProvider',
+    'outerProvider',
+    'rootContainer',
+  ]) {
+    rootContainer = opts.pluginManager.applyPlugins({
+      type: 'modify',
+      key: key,
+      initialValue: rootContainer,
+      args: {},
+    });
+  }
+  return (
+    <AppContext.Provider
+      value={{
+        routes: opts.routes,
+        routeComponents: opts.routeComponents,
+        clientRoutes,
+        pluginManager: opts.pluginManager,
+        basename,
+      }}
+    >
+      {rootContainer}
+    </AppContext.Provider>
+  );
 }

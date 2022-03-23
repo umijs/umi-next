@@ -7,6 +7,7 @@ export default () => {
       require.resolve('./registerMethods'),
 
       // features
+      require.resolve('./features/ssr/ssr'),
       require.resolve('./features/appData/appData'),
       require.resolve('./features/check/check'),
       require.resolve('./features/configPlugins/configPlugins'),

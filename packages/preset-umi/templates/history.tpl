@@ -1,4 +1,4 @@
-import { createHashHistory, createMemoryHistory, createBrowserHistory, History } from '{{{ rendererPath }}}';
+import { createHashHistory, createMemoryHistory, createBrowserHistory, History } from '{{{ rendererPath }}}/dist/index.js';
 
 let history: History;
 export function createHistory(opts: any) {

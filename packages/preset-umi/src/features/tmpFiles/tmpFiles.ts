@@ -233,7 +233,7 @@ export default function EmptyRoute() {
             path: join(rendererReactPath, 'dist/index.js'),
             exportMembers,
           })
-        ).join(', ')} } from '${rendererReactPath}';`,
+        ).join(', ')} } from '${rendererReactPath}/dist/index.js';`,
       );
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
