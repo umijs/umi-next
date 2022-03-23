@@ -283,6 +283,14 @@ importers:
     dependencies:
       umi: link:../../packages/umi
 
+  examples/ssr-demo:
+    specifiers:
+      express: 4.17.3
+      umi: 4.0.0-canary.20220318.1
+    dependencies:
+      express: 4.17.3
+      umi: link:../../packages/umi
+
   examples/test-test:
     specifiers:
       umi: 4.0.0-canary.20220323.1
