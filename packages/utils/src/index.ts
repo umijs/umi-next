@@ -27,6 +27,7 @@ import * as logger from './logger';
 import updatePackageJSON from './updatePackageJSON';
 export * from './getCorejsVersion';
 export * from './importLazy';
+export * from './isMonorepo';
 export * from './isStyleFile';
 export * from './npmClient';
 export * from './randomColor/randomColor';

@@ -1,10 +1,10 @@
 // @ts-ignore
-import { getPackages } from '../../../compiled/@manypkg/get-packages';
-import { logger } from '@umijs/utils';
+import { isMonorepo, logger } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
 import assert from 'assert';
 import { existsSync, statSync } from 'fs';
 import { dirname, join } from 'path';
+import { getPackages } from '../../../compiled/@manypkg/get-packages';
 import type { IApi } from '../../types';
 
 interface IConfigs {
@@ -78,10 +78,6 @@ export default (api: IApi) => {
   });
 };
 
-interface IOpts {
-  root: string;
-}
-
 interface IProject {
   packageJson: Record<string, any>;
   dir: string;
@@ -96,7 +92,7 @@ function collectPkgDeps(pkg: Record<string, any>) {
   return deps;
 }
 
-async function collectAllProjects(opts: IOpts) {
+async function collectAllProjects(opts: { root: string }) {
   const workspaces = await getPackages(opts.root);
   return workspaces.packages.reduce<Record<string, string>>(
     (obj: Record<string, string>, pkg: IProject) => {
@@ -107,16 +103,5 @@ async function collectAllProjects(opts: IOpts) {
       return obj;
     },
     {},
-  );
-}
-
-const MONOREPO_FILE = ['pnpm-workspace.yaml', 'lerna.json'];
-function isMonorepo(opts: IOpts) {
-  const pkgExist = existsSync(join(opts.root, 'package.json'));
-  return (
-    pkgExist &&
-    MONOREPO_FILE.some((file) => {
-      return existsSync(join(opts.root, file));
-    })
   );
 }
