@@ -9,16 +9,13 @@ export default async (opts: ICliOpts) => {
 
   const [name] = args._;
   const dest = name ? join(cwd, name) : cwd;
-  const dirName = basename(dest);
-  const pkgName = lodash.kebabCase(lodash.lowerCase(dirName));
   const tplDir = join(__dirname, '../templates');
   const promptsOpts: IPromptsOpts = {
     dest,
     tplDir,
-    name,
     baseTplData: {
       version: require(join(__dirname, '../package.json')).version,
-      pkgName,
+      name: name || lodash.kebabCase(lodash.lowerCase(basename(dest))),
     },
     ...opts,
   };

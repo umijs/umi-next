@@ -1,5 +1,5 @@
 {
-  "name": "shared",
+  "name": "{{{ sharedPkgName }}}",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

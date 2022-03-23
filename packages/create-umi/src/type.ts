@@ -43,12 +43,11 @@ export interface ICliOpts {
 
 export interface IBaseTplData extends Record<string, any> {
   version: string;
-  pkgName: string;
+  name: string;
 }
 
 export interface IPromptsOpts extends ICliOpts {
   dest: string;
   tplDir: string;
-  name: string;
   baseTplData: IBaseTplData;
 }

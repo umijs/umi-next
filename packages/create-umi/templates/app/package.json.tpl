@@ -1,5 +1,5 @@
 {
-  "name": "{{{ pkgName }}}",
+  "name": "{{{ name }}}",
   "private": true,
   "scripts": {
     "dev": "umi dev",

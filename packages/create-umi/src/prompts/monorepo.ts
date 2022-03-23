@@ -10,7 +10,7 @@ import { COMMON_PROMPT } from './common';
 
 interface IMonorepoOpts {
   type: EMonorepoType;
-  registry: ENpmRegistry;
+  registry?: ENpmRegistry;
 }
 
 export const monorepoPrompts = async ({
@@ -40,7 +40,14 @@ export const monorepoPrompts = async ({
       ],
       initial: 0,
     },
-    COMMON_PROMPT.registry,
+    {
+      ...COMMON_PROMPT.registry,
+      // @ts-ignore
+      type: (prev: any, values: any) =>
+        [EMonorepoType.initMonorepo].includes(values.type)
+          ? COMMON_PROMPT.registry.type
+          : false,
+    },
   ])) as IMonorepoOpts;
   if (lodash.isEmpty(response)) return;
 
@@ -54,6 +61,18 @@ export const monorepoPrompts = async ({
         ...baseTplData,
         registry,
         npmClient,
+        sharedPkgName: 'shared',
+      },
+      questions: [],
+    });
+    await generator.run();
+  }
+  if (type === EMonorepoType.initLib) {
+    const generator = new BaseGenerator({
+      path: join(tplDir, 'monorepo', 'packages/shared'),
+      target: dest,
+      data: {
+        sharedPkgName: baseTplData.name,
       },
       questions: [],
     });
@@ -64,6 +83,4 @@ export const monorepoPrompts = async ({
     // install
     installWithNpmClient({ npmClient });
   }
-
-  return;
 };

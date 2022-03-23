@@ -1,5 +1,5 @@
 {
-  "name": "{{{ pkgName }}}-monorepo",
+  "name": "{{{ name }}}-monorepo",
   "version": "1.0.0",
   "private": true,
   "scripts": {
