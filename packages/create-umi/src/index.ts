@@ -24,7 +24,7 @@ export default async ({
   cwd: string;
   args: yParser.Arguments;
 }) => {
-  const [_, name] = args._;
+  const [name] = args._;
   let npmClient = 'pnpm' as any;
   let registry = 'https://registry.npmjs.org/';
   // test ignore prompts
