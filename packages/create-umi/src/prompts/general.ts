@@ -93,6 +93,6 @@ export const generalPrompts = async ({
 
   if (!isDefaultInit && args.install !== false) {
     // install
-    installWithNpmClient({ npmClient });
+    installWithNpmClient({ npmClient, cwd: dest });
   }
 };

@@ -125,7 +125,7 @@ export const monorepoPrompts = async ({
 
   if (args.install !== false) {
     // install
-    installWithNpmClient({ npmClient });
+    installWithNpmClient({ npmClient, cwd: dest });
   }
 };
 
