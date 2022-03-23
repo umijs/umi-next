@@ -3,6 +3,7 @@ import {
   chalk,
   fsExtra,
   installWithNpmClient,
+  isMonorepo,
   lodash,
   prompts,
 } from '@umijs/utils';
@@ -92,6 +93,10 @@ export const monorepoPrompts = async ({
     assert(
       fsExtra.existsSync(pkgPath),
       chalk.red(`Not found package.json, current cwd must be a project.`),
+    );
+    assert(
+      !isMonorepo({ root: cwd }),
+      chalk.red(`Current project has been monorepo, cannot migration.`),
     );
     const pkg = require(pkgPath);
     const targetDir = `apps/${basename(cwd)}`;
