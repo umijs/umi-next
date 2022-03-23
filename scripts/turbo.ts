@@ -1,7 +1,5 @@
-import * as logger from '@umijs/utils/src/logger';
-import spawn from '@umijs/utils/compiled/cross-spawn';
 import yArgs from '@umijs/utils/compiled/yargs-parser';
-import { join } from 'path';
+import { cmd } from '@umijs/utils/src/cmd';
 
 (async () => {
   const args = yArgs(process.argv.slice(2));
@@ -16,27 +14,6 @@ import { join } from 'path';
     parallel: args.parallel,
   });
 })();
-
-/**
- * Why not use zx ?
- *  - `zx` not support color stdin on subprocess
- *  - see https://github.com/google/zx/blob/main/docs/known-issues.md#colors-in-subprocess
- *        https://github.com/google/zx/issues/212
- */
-async function cmd(command: string) {
-  const result = spawn.sync(command, {
-    stdio: 'inherit',
-    shell: true,
-    cwd: join(__dirname, '../'),
-  });
-  if (result.status !== 0) {
-    // sub package command don't stop when execute fail.
-    // display exit
-    logger.error(`Execute command error (${command})`);
-    process.exit(1);
-  }
-  return result;
-}
 
 async function turbo(opts: {
   scope: string;
