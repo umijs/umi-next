@@ -44,5 +44,6 @@ export interface ICliOpts {
 export interface IPromptsOpts extends ICliOpts {
   dest: string;
   tplDir: string;
+  name: string;
   baseTplData: Record<string, any>;
 }
