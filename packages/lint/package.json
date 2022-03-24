@@ -19,6 +19,21 @@
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
+  "dependencies": {
+    "@babel/core": "7.17.7",
+    "@babel/eslint-parser": "7.17.0",
+    "@babel/plugin-proposal-decorators": "7.17.2",
+    "@babel/preset-env": "7.16.11",
+    "@babel/preset-react": "7.16.7",
+    "@babel/preset-typescript": "7.16.7",
+    "@rushstack/eslint-patch": "1.1.1",
+    "@typescript-eslint/eslint-plugin": "5.16.0",
+    "@typescript-eslint/parser": "5.16.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-jest": "26.1.2",
+    "eslint-plugin-react": "7.29.4",
+    "eslint-plugin-react-hooks": "4.3.0"
+  },
   "publishConfig": {
     "access": "public"
   },
