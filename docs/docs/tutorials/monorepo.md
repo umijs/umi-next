@@ -76,11 +76,13 @@ umi 支持通过 `Init monorepo shared` 功能来快速创建一个分享代码�
 
 umi 创建的 monorepo 项目默认自带了 `turbo` 构建工具来支持各个子包的最佳构建行为。
 
-通过内置的 `umi monorepo <command>` 命令，可以快速构建一个指定的子包：
+通过内置的 `umi turbo <command>` 命令，可以快速构建一个指定的子包：
 
 ```bash
   # 构建 apps/web 项目，这里 scope 的值需要与对应的 package.json#name 一致
-  umi monorepo build --scope=web
+  umi turbo build --scope=web
+  # 无缓存构建
+  umi turbo build --scope=web --force --no-cache
 ```
 
 <Message emoji="🚀" type='success'>
