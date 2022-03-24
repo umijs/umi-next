@@ -1,4 +1,4 @@
-import { isMonorepo, logger, resolve } from '@umijs/utils';
+import { isMonorepo, lodash, logger, resolve } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
 import assert from 'assert';
 import { existsSync, statSync } from 'fs';
@@ -85,7 +85,7 @@ export default (api: IApi) => {
     }, {});
     // redirect peer deps
     if (peerDeps) {
-      needRedirectPeerDeps.forEach((depName) => {
+      lodash.uniq(needRedirectPeerDeps).forEach((depName) => {
         const depDir = resolveDep({ cwd: api.cwd, name: depName });
         if (depDir) {
           alias[depName] = depDir;
