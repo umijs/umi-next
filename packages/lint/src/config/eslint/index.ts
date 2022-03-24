@@ -2,9 +2,13 @@ import rules, { typescript as tsRules } from './rules/recommended';
 import { TYPE_AWARE_ENABLE } from './setup';
 
 module.exports = {
-  extends: ['prettier', 'plugin:react/recommended','plugin:react-hooks/recommended'],
+  extends: [
+    'prettier',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
   parser: '@babel/eslint-parser',
-  plugins: ['react', 'react-hooks','jest'],
+  plugins: ['react', 'react-hooks', 'jest'],
   env: {
     browser: true,
     node: true,
@@ -28,7 +32,12 @@ module.exports = {
             }
           : {}),
       },
-      extends: ['prettier', 'plugin:@typescript-eslint/recommended'],
+      extends: [
+        'prettier',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended',
+        'plugin:react-hooks/recommended',
+      ],
     },
   ],
   parserOptions: {
