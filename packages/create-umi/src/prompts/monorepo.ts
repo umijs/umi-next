@@ -49,7 +49,9 @@ export const monorepoPrompts = async ({
       ...COMMON_PROMPT.registry,
       // @ts-ignore
       type: (prev: any, values: any) =>
-        [EMonorepoType.initMonorepo].includes(values.type)
+        [EMonorepoType.initMonorepo, EMonorepoType.migration].includes(
+          values.type,
+        )
           ? COMMON_PROMPT.registry.type
           : false,
     },
