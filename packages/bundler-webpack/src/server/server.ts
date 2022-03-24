@@ -47,7 +47,7 @@ export async function createServer(opts: IOpts) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
       'Access-Control-Allow-Headers',
-      'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
+      'Content-Type, Content-Length, Authorization, Accept, X-Requested-With',
     );
     res.header(
       'Access-Control-Allow-Methods',
