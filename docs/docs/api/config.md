@@ -476,12 +476,12 @@ mountElementId: 'container'
 
 ## monorepoRedirect
 
-* 类型：`{ srcDir?: string[], exclude?: RegExp[] }`
+* 类型：`{ srcDir?: string[], exclude?: RegExp[], peerDeps?: boolean }`
 * 默认值：`false`
 
 在 monorepo 中使用 umi 时，你可能需要引入其他子包的组件、工具等，通过开启此选项来重定向这些子包的导入到他们的源码位置（默认为 `src` 文件夹），这也可以解决 `MFSU` 场景改动子包不热更新的问题。
 
-通过配置 `srcDir` 来调整识别源码文件夹的优先位置，通过 `exclude` 来设定不需要重定向的依赖范围。
+通过配置 `srcDir` 来调整识别源码文件夹的优先位置，通过 `exclude` 来设定不需要重定向的依赖范围，通过 `peerDeps` 来自动重定向引用包 `peerDependencies` 中的依赖到本项目。
 
 示例：
 
@@ -492,7 +492,11 @@ monorepoRedirect: {}
 monorepoRedirect: { srcDir: ['libs', 'src'] }
 // 不重定向 @scope/* 的子包
 monorepoRedirect: { exclude: [/^@scope\/.+/] }
+// 引用包 peerDependencies 中的依赖会自动重定向到当前项目，解决多依赖实例等问题
+monorepoRedirect: { peerDeps: true }
 ```
+
+注：使用此选项需要保证你的 monorepo 是结构规范的。
 
 ## outputPath
 
