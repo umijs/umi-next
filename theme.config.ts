@@ -22,7 +22,11 @@ export default {
       children: [
         {
           title: 'Tutorials',
-          children: ['tutorials/getting-started', 'tutorials/blog'],
+          children: [
+            'tutorials/getting-started',
+            'tutorials/blog',
+            'tutorials/monorepo',
+          ],
         },
         {
           title: 'API',

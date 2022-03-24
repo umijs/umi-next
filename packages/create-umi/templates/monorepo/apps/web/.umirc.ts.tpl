@@ -1,4 +1,4 @@
 export default {
   npmClient: '{{{ npmClient }}}',
-  monorepoRedirect: {}
+  monorepoRedirect: { peerDeps: true }
 };
