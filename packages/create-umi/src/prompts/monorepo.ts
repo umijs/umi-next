@@ -35,7 +35,7 @@ export const monorepoPrompts = async ({
           value: EMonorepoType.initMonorepo,
         },
         {
-          title: `Init shared ( simple lib boilerplate )`,
+          title: `Init monorepo shared ( simple lib boilerplate )`,
           value: EMonorepoType.initLib,
         },
         {
