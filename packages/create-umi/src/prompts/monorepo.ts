@@ -31,7 +31,7 @@ export const monorepoPrompts = async ({
       message: 'Pick monorepo command',
       choices: [
         {
-          title: `Init monorepo ( monorepo basic with umi build flow )`,
+          title: `Init monorepo ( pnpm monorepo basic )`,
           value: EMonorepoType.initMonorepo,
         },
         {

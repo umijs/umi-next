@@ -15,7 +15,9 @@ export default async (opts: ICliOpts) => {
     tplDir,
     baseTplData: {
       version: require(join(__dirname, '../package.json')).version,
-      name: name || lodash.kebabCase(lodash.lowerCase(basename(dest))),
+      name: name
+        ? basename(name)
+        : lodash.kebabCase(lodash.lowerCase(basename(dest))),
     },
     ...opts,
   };

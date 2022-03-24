@@ -52,7 +52,7 @@ export const generalPrompts = async ({
       name: 'name',
       type: 'text',
       message: `What's the plugin name?`,
-      default: name,
+      default: baseTplData.name,
     },
     {
       name: 'description',
