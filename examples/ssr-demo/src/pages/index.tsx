@@ -1,14 +1,16 @@
 import React from 'react';
-import { Link, useLoaderData } from 'umi';
+import { Link, useClientLoaderData, useLoaderData } from 'umi';
 
 export default function HomePage() {
-  const d = useLoaderData();
+  const loaderData = useLoaderData();
+  const clientLoaderData = useClientLoaderData();
   return (
     <div>
       <h1>Hello~</h1>
       <p>This is index.tsx</p>
       <Link to="/users/user">/users/user</Link>
-      <p>loader data: {JSON.stringify(d)}</p>
+      <p>loader data: {JSON.stringify(loaderData)}</p>
+      <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
     </div>
   );
 }

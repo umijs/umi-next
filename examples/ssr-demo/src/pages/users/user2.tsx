@@ -1,12 +1,14 @@
 import React from 'react';
-import { useLoaderData } from 'umi';
+import { useClientLoaderData, useLoaderData } from 'umi';
 
 export default () => {
-  const d = useLoaderData();
+  const loaderData = useLoaderData();
+  const clientLoaderData = useClientLoaderData();
   return (
     <div style={{ borderWidth: 2, padding: 10 }}>
       <h1>User2 data</h1>
-      <p>loader data: {JSON.stringify(d)}</p>
+      <p>loader data: {JSON.stringify(loaderData)}</p>
+      <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
     </div>
   );
 };

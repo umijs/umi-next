@@ -12,3 +12,9 @@ export function useLoaderData() {
   const appData = useAppData();
   return appData.loaderData[route.route.id];
 }
+
+export function useClientLoaderData() {
+  const route = useRouteData();
+  const appData = useAppData();
+  return appData.clientLoaderData[route.route.id];
+}

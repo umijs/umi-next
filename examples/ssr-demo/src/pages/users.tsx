@@ -1,12 +1,15 @@
 import React from 'react';
-import { Link, Outlet, useLoaderData } from 'umi';
+import { Link, Outlet, useClientLoaderData, useLoaderData } from 'umi';
 
 export default () => {
-  const d = useLoaderData();
+  const loaderData = useLoaderData();
+  const clientLoaderData = useClientLoaderData();
   return (
     <div style={{ borderWidth: 2, padding: 10 }}>
+      <Link to="/">Go back</Link>
       <h1>Users layout</h1>
-      <p>loader data: {JSON.stringify(d)}</p>
+      <p>loader data: {JSON.stringify(loaderData)}</p>
+      <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
       <Link to="/users/user" style={{ marginRight: 8 }}>
         /users/user
       </Link>

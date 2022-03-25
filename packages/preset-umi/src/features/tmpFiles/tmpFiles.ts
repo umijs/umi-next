@@ -110,6 +110,8 @@ export default function EmptyRoute() {
     const prefix = hasSrc ? `../../../src/${pages}/` : `../../${pages}/`;
     const clonedRoutes = lodash.cloneDeep(routes);
     for (const id of Object.keys(clonedRoutes)) {
+      // TODO: use getExports() to check if the route is a dynamic route
+      clonedRoutes[id].hasLoader = true;
       for (const key of Object.keys(clonedRoutes[id])) {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];

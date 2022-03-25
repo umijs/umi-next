@@ -100,8 +100,9 @@ export function renderClient(opts: {
   }
 
   function Browser() {
+    const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
+    // @ts-ignore
     const [loaderData, setLoaderData] = useState<ILoaderData>(
-      // @ts-ignore
       window.__UMI_LOADER_DATA__,
     );
     useEffect(() => {
@@ -112,12 +113,30 @@ export function renderClient(opts: {
             (route) => route.route.id,
           ) || [];
         matches.map((match) => {
+          if (opts.routes[match].hasLoader) {
+            fetch('/__umi?route=' + match)
+              .then((d) => d.json())
+              .then((data) => {
+                setLoaderData((d) => ({ ...d, [match]: data }));
+              })
+              .catch(console.error);
+          }
           opts.clientLoaders?.executeClientLoader(match).then((data) => {
-            setLoaderData((d) => ({ ...d, [match]: data }));
+            setClientLoaderData((d) => ({ ...d, [match]: data }));
           });
         });
       });
     }, []);
+
+    useEffect(() => {
+      // @ts-ignore
+      window.__UMI_SERVER_RENDERED_ROUTES__?.map((match) => {
+        opts.clientLoaders?.executeClientLoader(match).then((data) => {
+          setClientLoaderData((d) => ({ ...d, [match]: data }));
+        });
+      });
+    }, []);
+
     return (
       <AppContext.Provider
         value={{
@@ -128,6 +147,7 @@ export function renderClient(opts: {
           rootElement: opts.rootElement,
           basename,
           loaderData,
+          clientLoaderData,
         }}
       >
         {rootContainer}
@@ -191,6 +211,7 @@ export async function getClientRootComponent(opts: {
         clientRoutes,
         pluginManager: opts.pluginManager,
         basename,
+        clientLoaderData: {},
         loaderData: opts.loaderData,
       }}
     >

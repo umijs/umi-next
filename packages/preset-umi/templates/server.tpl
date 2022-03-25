@@ -26,6 +26,12 @@ async function executeLoader(routeKey: string) {
 
 export default async function (req, res, next) {
 
+  if(req.url.startsWith('/__umi')) {
+    const data = await executeLoader(req.query.route);
+    res.status(200).json(data);
+    return;
+  }
+
   // TODO: only the paths need rendered in the server can continue
   if(req.url.endsWith('.js') || req.url.endsWith('.css')) {
     next();
@@ -65,6 +71,7 @@ export default async function (req, res, next) {
 ${ReactDOMServer.renderToStaticMarkup(await getClientRootComponent(context))}
 </div>
 <script>window.__UMI_LOADER_DATA__ = ${JSON.stringify(context.loaderData)}</script>
+<script>window.__UMI_SERVER_RENDERED_ROUTES__ = ${JSON.stringify(matches)}</script>
 <script src="/umi.js"></script>
 </body></html>`);
 };

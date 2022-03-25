@@ -4,6 +4,7 @@ export interface IRoute {
   index?: boolean;
   parentId?: string;
   redirect?: string;
+  hasLoader?: boolean;
 }
 
 export interface IRoutesById {
