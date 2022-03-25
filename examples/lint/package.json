@@ -1,0 +1,14 @@
+{
+  "name": "@example/lint",
+  "scripts": {
+    "lint": "umi lint",
+    "lint:es": "umi lint --eslint-only",
+    "lint:fix": "umi lint --fix",
+    "lint:style": "umi lint --stylelint-only"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "stylelint": "^14.6.0",
+    "umi": "4.0.0-canary.20220318.1"
+  }
+}
