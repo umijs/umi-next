@@ -20,5 +20,6 @@ module.exports = {
     'selector-type-no-unknown': null,
     'value-keyword-case': ['lower', { ignoreProperties: ['composes'] }],
   },
+  customSyntax: require.resolve('postcss-less'),
   ignoreFiles: ['node_modules', '**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
 };

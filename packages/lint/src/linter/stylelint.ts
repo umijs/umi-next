@@ -17,8 +17,6 @@ export default class StyleLinter extends BaseLinter {
 
   getRunArgs(args: Record<string, string>) {
     return [
-      '--custom-syntax',
-      args['stylelint.customSyntax'] || 'postcss-less',
       '--config',
       this.paths.lintConfig,
       '--quiet', // no warnings
