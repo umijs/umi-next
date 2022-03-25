@@ -32,7 +32,11 @@
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-jest": "26.1.2",
     "eslint-plugin-react": "7.29.4",
-    "eslint-plugin-react-hooks": "4.3.0"
+    "eslint-plugin-react-hooks": "4.3.0",
+    "stylelint-config-css-modules": "4.1.0",
+    "stylelint-config-prettier": "9.0.3",
+    "stylelint-config-standard": "25.0.0",
+    "stylelint-declaration-block-no-ignored-properties": "2.5.0"
   },
   "publishConfig": {
     "access": "public"
