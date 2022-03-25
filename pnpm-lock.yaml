@@ -901,6 +901,7 @@ importers:
       '@umijs/bundler-vite': 4.0.0-canary.20220318.1
       '@umijs/bundler-webpack': 4.0.0-canary.20220318.1
       '@umijs/core': 4.0.0-canary.20220318.1
+      '@umijs/lint': 4.0.0-canary.20220318.1
       '@umijs/renderer-react': 4.0.0-canary.20220318.1
       '@umijs/server': 4.0.0-canary.20220318.1
       '@umijs/utils': 4.0.0-canary.20220318.1
@@ -928,6 +929,7 @@ importers:
       '@umijs/bundler-vite': link:../bundler-vite
       '@umijs/bundler-webpack': link:../bundler-webpack
       '@umijs/core': link:../core
+      '@umijs/lint': link:../lint
       '@umijs/renderer-react': link:../renderer-react
       '@umijs/server': link:../server
       '@umijs/utils': link:../utils

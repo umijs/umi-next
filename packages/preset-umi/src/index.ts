@@ -39,6 +39,7 @@ export default () => {
       require.resolve('./commands/generators/dva'),
       require.resolve('./commands/plugin'),
       require.resolve('./commands/verify-commit'),
+      require.resolve('./commands/lint'),
     ],
   };
 };

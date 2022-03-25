@@ -1,5 +1,5 @@
 import { StyleLinter } from './linter';
-import type { ILintArgs } from './types';
+import type { ILintArgs, ILinterOpts } from './types';
 
 // FIXME: test only
 const stylelint = new StyleLinter({
@@ -9,9 +9,10 @@ const stylelint = new StyleLinter({
 
 stylelint.run({ _: ['*.less'] });
 
-export type { ILintArgs };
+export type { ILintArgs, ILinterOpts };
 
-export default (args: ILintArgs) => {
+export default (opts: ILinterOpts, args: ILintArgs) => {
+  opts;
   args;
   return '@umijs/lint';
 };
