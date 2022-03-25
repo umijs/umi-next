@@ -46,11 +46,16 @@ module.exports = {
     },
     babelOptions: {
       presets: [
-        '@babel/preset-env',
-        '@babel/preset-react',
-        '@babel/preset-typescript',
+        require.resolve('@babel/preset-env'),
+        require.resolve('@babel/preset-react'),
+        require.resolve('@babel/preset-typescript'),
       ],
-      plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
+      plugins: [
+        [
+          require.resolve('@babel/plugin-proposal-decorators'),
+          { legacy: true },
+        ],
+      ],
     },
     requireConfigFile: false,
     project: TYPE_AWARE_ENABLE ? './tsconfig.json' : undefined,

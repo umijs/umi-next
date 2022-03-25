@@ -1,18 +1,22 @@
-import { StyleLinter } from './linter';
+import { EsLinter, StyleLinter } from './linter';
 import type { ILintArgs, ILinterOpts } from './types';
-
-// FIXME: test only
-const stylelint = new StyleLinter({
-  cwd: process.cwd(),
-  linterResolveDir: process.cwd(),
-});
-
-stylelint.run({ _: ['*.less'] });
 
 export type { ILintArgs, ILinterOpts };
 
 export default (opts: ILinterOpts, args: ILintArgs) => {
-  opts;
-  args;
+  console.log('opts-----------------');
+  console.log(opts);
+  console.log('args----------------');
+  console.log(args);
+  if (!args.eslintOnly) {
+    const stylelint = new StyleLinter(opts);
+    stylelint.run(args);
+  }
+
+  if (!args.stylelintOnly) {
+    const eslint = new EsLinter(opts);
+    eslint.run(args);
+  }
+
   return '@umijs/lint';
 };
