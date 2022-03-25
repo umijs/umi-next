@@ -7,16 +7,10 @@ import BaseLinter from './base';
 export default class StyleLinter extends BaseLinter {
   linter = 'stylelint';
 
-  userFiles = { lintConfig: '.stylelintrc' };
-
-  paths = {
-    lintConfig: require.resolve('../config/stylelint'),
-  };
-
   getRunArgs(args: ILintArgs) {
     return [
-      '--config',
-      this.paths.lintConfig,
+      '--config-basedir',
+      this.paths.cwd!,
       '--quiet', // no warnings
       ...(args.fix ? ['--fix'] : []),
       ...args._,

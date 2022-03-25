@@ -1,12 +1,6 @@
 import { fork } from 'child_process';
-import fs from 'fs';
 import path from 'path';
 import type { ILintArgs, ILinterOpts } from '../types';
-
-interface ILinterConfigFiles {
-  lintConfig: string;
-  ignoreConfig?: string;
-}
 
 /**
  * base linter
@@ -18,29 +12,13 @@ export default class BaseLinter {
   linter = '';
 
   /**
-   * user config file names (without extension)
-   */
-  userFiles: ILinterConfigFiles = { lintConfig: '' };
-
-  /**
    * paths for linter
    */
-  paths: Partial<ILinterOpts & ILinterConfigFiles> = {};
+  paths: Partial<ILinterOpts> = {};
 
   constructor({ cwd, linterResolveDir }: ILinterOpts) {
     this.paths.cwd = cwd;
     this.paths.linterResolveDir = linterResolveDir;
-
-    // try to read user config
-    (Object.keys(this.userFiles) as (keyof ILinterConfigFiles)[]).forEach(
-      (file) => {
-        const userFilePath = this.getUserConfig(file);
-
-        if (userFilePath) {
-          this.paths[file] = userFilePath;
-        }
-      },
-    );
   }
 
   /**
@@ -57,18 +35,6 @@ export default class BaseLinter {
     } catch (e) {
       throw new Error(`${this.linter} not found, please install it first.`);
     }
-  }
-
-  /**
-   * try to get user config by filename
-   * @param file  filename without extension
-   */
-  getUserConfig(file: string) {
-    const rcFile = fs
-      .readdirSync(this.paths.cwd!, { withFileTypes: true })
-      .find((item) => item.isFile() && path.parse(item.name).name === file);
-
-    return rcFile && path.join(this.paths.cwd!, rcFile.name);
   }
 
   /**
