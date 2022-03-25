@@ -27,9 +27,10 @@
     "test.js"
   ],
   "scripts": {
-    "build": "pnpm tsc",
+    "build": "pnpm build:server && pnpm build:client",
     "build:client": "pnpm tsc --project ./tsconfig.client.json",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
+    "build:server": "pnpm tsc",
     "dev": "pnpm build -- --watch",
     "test": "jest -c ../../jest.turbo.config.ts"
   },
