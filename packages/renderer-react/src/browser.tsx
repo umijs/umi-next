@@ -101,8 +101,8 @@ export function renderClient(opts: {
 
   function Browser() {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
-    // @ts-ignore
     const [loaderData, setLoaderData] = useState<ILoaderData>(
+      // @ts-ignore
       window.__UMI_LOADER_DATA__,
     );
     useEffect(() => {
