@@ -13,3 +13,7 @@ export interface IRoutesById {
 export interface IRouteComponents {
   [id: string]: any;
 }
+
+export interface ILoaderData {
+  [routeKey: string]: any;
+}

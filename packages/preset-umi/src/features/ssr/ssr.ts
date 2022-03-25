@@ -4,6 +4,12 @@ import { lodash, winPath } from '@umijs/utils';
 import { dirname, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import type { IApi } from '../../types';
+import {
+  esbuildIgnorePathPrefixPlugin,
+  esbuildUmiPlugin,
+  getRouteClientLoaders,
+  getRouteLoaders,
+} from './utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -53,6 +59,14 @@ export default (api: IApi) => {
     });
     api.writeTmpFile({
       noPluginDir: true,
+      path: join('core/loaders.ts'),
+      tplPath: join(TEMPLATES_DIR, 'loaders.tpl'),
+      context: {
+        loaders: await getRouteClientLoaders(api),
+      },
+    });
+    api.writeTmpFile({
+      noPluginDir: true,
       path: join('server.ts'),
       tplPath: join(TEMPLATES_DIR, 'server.tpl'),
       context: {
@@ -61,6 +75,7 @@ export default (api: IApi) => {
           /"component": "await import\((.*)\)"/g,
           '"component": await import("$1")',
         ),
+        routeLoaders: await getRouteLoaders(api),
         pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
         rendererPath,
         validKeys,
@@ -69,6 +84,16 @@ export default (api: IApi) => {
   });
 
   api.onBeforeCompiler(async () => {
+    await esbuild.build({
+      format: 'cjs',
+      platform: 'browser',
+      target: 'esnext',
+      bundle: true,
+      external: ['react'],
+      entryPoints: [resolve(api.paths.absTmpPath, 'core/loaders.ts')],
+      plugins: [esbuildIgnorePathPrefixPlugin(), esbuildUmiPlugin(api)],
+      outfile: resolve(api.paths.absTmpPath, 'core/loaders.js'),
+    });
     await esbuild.build({
       format: 'cjs',
       platform: 'node',
@@ -81,25 +106,3 @@ export default (api: IApi) => {
     });
   });
 };
-
-function esbuildIgnorePathPrefixPlugin() {
-  return {
-    name: 'ignore-path-prefix',
-    setup(build: any) {
-      build.onResolve({ filter: /^@fs/ }, (args: any) => ({
-        path: args.path.replace(/^@fs/, ''),
-      }));
-    },
-  };
-}
-
-function esbuildUmiPlugin(api: IApi) {
-  return {
-    name: 'umi',
-    setup(build: any) {
-      build.onResolve({ filter: /^umi$/ }, () => ({
-        path: join(api.paths.absTmpPath, 'exports.ts'),
-      }));
-    },
-  };
-}

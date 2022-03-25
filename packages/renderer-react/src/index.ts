@@ -20,6 +20,6 @@ export {
   useRoutes,
   useSearchParams,
 } from 'react-router-dom';
-export { useAppData } from './appContext';
+export { useAppData, useLoaderData } from './appContext';
 export { getClientRootComponent, renderClient } from './browser';
 export { useRouteData } from './routeContext';

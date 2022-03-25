@@ -1,11 +1,11 @@
 import { History } from 'history';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, useRoutes } from 'react-router-dom';
+import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { AppContext, useAppData } from './appContext';
 import { createClientRoutes, createClientRoutesWithoutLoading } from './routes';
-import { IRouteComponents, IRoutesById } from './types';
+import { ILoaderData, IRouteComponents, IRoutesById } from './types';
 
 function BrowserRoutes(props: {
   routes: any;
@@ -34,6 +34,7 @@ function BrowserRoutes(props: {
         },
       });
     }
+
     history.listen(onRouteChange);
     onRouteChange({ location: state.location, action: state.action });
   }, [history, props.routes, props.clientRoutes]);
@@ -58,6 +59,7 @@ export function renderClient(opts: {
   routes: IRoutesById;
   routeComponents: IRouteComponents;
   pluginManager: any;
+  clientLoaders?: { executeClientLoader: (routeKey: string) => Promise<any> };
   basename?: string;
   loadingComponent?: React.ReactNode;
   history: History;
@@ -96,27 +98,49 @@ export function renderClient(opts: {
       args: {},
     });
   }
-  const browser = (
-    <AppContext.Provider
-      value={{
-        routes: opts.routes,
-        routeComponents: opts.routeComponents,
-        clientRoutes,
-        pluginManager: opts.pluginManager,
-        rootElement: opts.rootElement,
-        basename,
-      }}
-    >
-      {rootContainer}
-    </AppContext.Provider>
-  );
+
+  function Browser() {
+    // @ts-ignore
+    const [loaderData, setLoaderData] = useState<ILoaderData>(
+      window.__UMI_LOADER_DATA__,
+    );
+    useEffect(() => {
+      return opts.history.listen((e) => {
+        // @ts-ignore
+        const matches =
+          matchRoutes(clientRoutes, e.location.pathname)?.map(
+            (route) => route.route.id,
+          ) || [];
+        matches.map((match) => {
+          opts.clientLoaders?.executeClientLoader(match).then((data) => {
+            setLoaderData((d) => ({ ...d, [match]: data }));
+          });
+        });
+      });
+    }, []);
+    return (
+      <AppContext.Provider
+        value={{
+          routes: opts.routes,
+          routeComponents: opts.routeComponents,
+          clientRoutes,
+          pluginManager: opts.pluginManager,
+          rootElement: opts.rootElement,
+          basename,
+          loaderData,
+        }}
+      >
+        {rootContainer}
+      </AppContext.Provider>
+    );
+  }
 
   // @ts-ignore
   if (ReactDOM.createRoot) {
     // @ts-ignore
-    ReactDOM.createRoot(rootElement).render(browser);
+    ReactDOM.createRoot(rootElement).render(<Browser />);
   } else {
-    ReactDOM.render(browser, rootElement);
+    ReactDOM.render(<Browser />, rootElement);
   }
 }
 
@@ -125,6 +149,7 @@ export async function getClientRootComponent(opts: {
   routeComponents: IRouteComponents;
   pluginManager: any;
   location: string;
+  loaderData: { [routeKey: string]: any };
 }) {
   const basename = '/';
   const components = { ...opts.routeComponents };
@@ -166,6 +191,7 @@ export async function getClientRootComponent(opts: {
         clientRoutes,
         pluginManager: opts.pluginManager,
         basename,
+        loaderData: opts.loaderData,
       }}
     >
       {rootContainer}

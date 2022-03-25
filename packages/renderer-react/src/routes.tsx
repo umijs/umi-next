@@ -107,7 +107,11 @@ export function createClientRouteWithoutLoading(opts: {
     id: id,
     path: path,
     index: index,
-    element: <opts.routeComponent />,
+    element: (
+      <RouteContext.Provider value={{ route: opts.route }}>
+        <opts.routeComponent />
+      </RouteContext.Provider>
+    ),
     ...props,
   };
 }

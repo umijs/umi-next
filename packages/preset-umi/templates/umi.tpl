@@ -4,6 +4,7 @@ import { renderClient } from '{{{ rendererPath }}}';
 import { getRoutes } from './core/route';
 import { createPluginManager } from './core/plugin';
 import { createHistory } from './core/history';
+import * as clientLoaders from './core/loaders.js';
 {{#loadingComponent}}
 import Loading from '@/loading';
 {{/loadingComponent}}
@@ -27,6 +28,7 @@ async function render() {
     routes,
     routeComponents,
     pluginManager,
+    clientLoaders,
     rootElement: document.getElementById('{{{ mountElementId }}}'),
 {{#loadingComponent}}
     loadingComponent: Loading,
