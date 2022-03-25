@@ -2,9 +2,12 @@ import { StyleLinter } from './linter';
 import type { ILintArgs } from './types';
 
 // FIXME: test only
-const stylelint = new StyleLinter(process.cwd());
+const stylelint = new StyleLinter({
+  cwd: process.cwd(),
+  linterResolveDir: process.cwd(),
+});
 
-stylelint.run({});
+stylelint.run({ _: [] });
 
 export type { ILintArgs };
 

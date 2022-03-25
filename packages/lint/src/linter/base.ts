@@ -1,6 +1,7 @@
 import { fork } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import type { ILintArgs, ILinterOpts } from '../types';
 
 interface ILinterConfigFiles {
   lintConfig: string;
@@ -12,20 +13,23 @@ interface ILinterConfigFiles {
  */
 export default class BaseLinter {
   /**
+   * linter package name
+   */
+  linter = '';
+
+  /**
    * user config file names (without extension)
    */
   userFiles: ILinterConfigFiles = { lintConfig: '' };
 
   /**
-   * paths include the default config file
+   * paths for linter
    */
-  paths: { cwd?: string; bin: string } & ILinterConfigFiles = {
-    bin: '',
-    lintConfig: '',
-  };
+  paths: Partial<ILinterOpts & ILinterConfigFiles> = {};
 
-  constructor(cwd: string) {
+  constructor({ cwd, linterResolveDir }: ILinterOpts) {
     this.paths.cwd = cwd;
+    this.paths.linterResolveDir = linterResolveDir;
 
     // try to read user config
     (Object.keys(this.userFiles) as (keyof ILinterConfigFiles)[]).forEach(
@@ -37,6 +41,22 @@ export default class BaseLinter {
         }
       },
     );
+  }
+
+  /**
+   * get bin file path for current linter
+   */
+  getBinPath() {
+    try {
+      const pkgPath = path.dirname(require.resolve(`${this.linter}/package.json`, {
+        paths: [this.paths.linterResolveDir!],
+      }));
+      const pkgContent = require(pkgPath);
+
+      return path.resolve(pkgPath, pkgContent.bin[this.linter]);
+    } catch (e) {
+      throw new Error(`${this.linter} not found, please install it first.`);
+    }
   }
 
   /**
@@ -54,7 +74,7 @@ export default class BaseLinter {
   /**
    * get linter fork args
    */
-  getRunArgs(args: Record<string, string>): string[] {
+  getRunArgs(args: ILintArgs): string[] {
     // not implemented
     args;
     return [];
@@ -63,7 +83,7 @@ export default class BaseLinter {
   /**
    * execute linter
    */
-  run(args: Parameters<typeof BaseLinter.prototype.getRunArgs>[0]) {
-    fork(this.paths.bin, this.getRunArgs(args));
+  run(args: ILintArgs) {
+    fork(this.getBinPath(), this.getRunArgs(args));
   }
 }
