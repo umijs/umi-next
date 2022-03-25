@@ -7,7 +7,7 @@ const stylelint = new StyleLinter({
   linterResolveDir: process.cwd(),
 });
 
-stylelint.run({ _: [] });
+stylelint.run({ _: ['*.less'] });
 
 export type { ILintArgs };
 

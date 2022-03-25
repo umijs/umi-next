@@ -26,12 +26,12 @@ export default class BaseLinter {
    */
   getBinPath() {
     try {
-      const pkgPath = path.dirname(require.resolve(`${this.linter}/package.json`, {
+      const pkgPath = require.resolve(`${this.linter}/package.json`, {
         paths: [this.paths.linterResolveDir!],
-      }));
+      });
       const pkgContent = require(pkgPath);
 
-      return path.resolve(pkgPath, pkgContent.bin[this.linter]);
+      return path.resolve(path.dirname(pkgPath), pkgContent.bin[this.linter]);
     } catch (e) {
       throw new Error(`${this.linter} not found, please install it first.`);
     }
