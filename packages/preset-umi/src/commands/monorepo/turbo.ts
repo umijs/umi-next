@@ -15,7 +15,7 @@ umi turbo build --scope='web'
       assert(
         cmd,
         `Command not found, you should specified command ( e.g. ${chalk.green(
-          'umi monorepo build --scope=web',
+          'umi turbo build --scope=web',
         )} )`,
       );
       if (!opts?.scope) {
