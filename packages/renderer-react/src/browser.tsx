@@ -100,15 +100,15 @@ export function renderClient(opts: {
   }
 
   function Browser() {
-    // @ts-ignore
     const [loaderData, setLoaderData] = useState<ILoaderData>(
+      // @ts-ignore
       window.__UMI_LOADER_DATA__,
     );
     useEffect(() => {
       return opts.history.listen((e) => {
-        // @ts-ignore
         const matches =
           matchRoutes(clientRoutes, e.location.pathname)?.map(
+            // @ts-ignore
             (route) => route.route.id,
           ) || [];
         matches.map((match) => {
