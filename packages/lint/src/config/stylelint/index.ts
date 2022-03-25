@@ -4,11 +4,13 @@
  */
 module.exports = {
   extends: [
-    'stylelint-config-css-modules',
-    'stylelint-config-standard',
-    'stylelint-config-prettier',
+    require.resolve('stylelint-config-css-modules'),
+    require.resolve('stylelint-config-standard'),
+    require.resolve('stylelint-config-prettier'),
   ],
-  plugins: ['stylelint-declaration-block-no-ignored-properties'],
+  plugins: [
+    require.resolve('stylelint-declaration-block-no-ignored-properties'),
+  ],
   rules: {
     'no-descending-specificity': null,
     'function-url-quotes': 'always',
