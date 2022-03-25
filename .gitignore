@@ -19,6 +19,8 @@
 /packages/*/src/**/fixtures/*/.umi
 /packages/*/src/**/fixtures/*/.umi-production
 /packages/plugin-docs/client/theme-doc/tailwind.out.css
+/packages/bundler-webpack/client
+/packages/umi/client
 /.umi
 /.mfsu
 /.umi-production
