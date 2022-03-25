@@ -1,5 +1,8 @@
 {
   "scripts": {
     "test": "node ../../dist/index.js"
+  },
+  "devDependencies": {
+    "stylelint": "^14.6.0"
   }
 }
