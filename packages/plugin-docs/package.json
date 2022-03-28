@@ -1,0 +1,57 @@
+{
+  "name": "@umijs/plugin-docs",
+  "version": "4.0.0-canary.20220325.1",
+  "description": "@umijs/plugin-docs",
+  "homepage": "https://github.com/umijs/umi-next/tree/master/packages/plugin-docs#readme",
+  "bugs": "https://github.com/umijs/umi-next/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umijs/umi-next"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "client",
+    "compiled"
+  ],
+  "scripts": {
+    "build": "pnpm tsc",
+    "build:css": "tailwindcss -i ./client/theme-doc/tailwind.css -o ./client/theme-doc/tailwind.out.css",
+    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
+    "build:extra": "pnpm build:css",
+    "dev": "pnpm build -- --watch",
+    "test": "jest -c ../../jest.turbo.config.ts"
+  },
+  "dependencies": {
+    "keymaster": "1.6.2",
+    "react-helmet": "^6.1.0"
+  },
+  "devDependencies": {
+    "@mdx-js/mdx": "2.1.0",
+    "@types/keymaster": "^1.6.30",
+    "@types/react-helmet": "^6.1.5",
+    "classnames": "^2.3.1",
+    "rehype-slug": "5.0.1",
+    "tailwindcss": "^3.0.23",
+    "umi": "4.0.0-canary.20220325.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
+  ],
+  "compiledConfig": {
+    "deps": [
+      "@mdx-js/mdx",
+      "rehype-slug"
+    ],
+    "externals": {},
+    "excludeDtsDeps": [
+      "@mdx-js/mdx",
+      "rehype-slug"
+    ]
+  }
+}

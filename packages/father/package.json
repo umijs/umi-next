@@ -1,6 +1,6 @@
 {
   "name": "father",
-  "version": "4.0.0-beta.12",
+  "version": "4.0.0-canary.20220325.1",
   "description": "father",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/father#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -24,10 +24,13 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@umijs/core": "4.0.0-beta.12",
-    "@umijs/utils": "4.0.0-beta.12",
+    "@umijs/core": "4.0.0-canary.20220325.1",
+    "@umijs/utils": "4.0.0-canary.20220325.1",
     "loader-runner": "4.2.0",
     "v8-compile-cache": "2.3.0"
+  },
+  "devDependencies": {
+    "@types/loader-runner": "2.2.4"
   },
   "publishConfig": {
     "access": "public"
@@ -35,8 +38,5 @@
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)",
     "PeachScript <scdzwyxst@gmail.com> (https://github.com/PeachScript)"
-  ],
-  "devDependencies": {
-    "@types/loader-runner": "2.2.4"
-  }
+  ]
 }

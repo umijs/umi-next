@@ -1,4 +1,6 @@
-import { getSchemas } from '@umijs/bundler-webpack/dist/schema';
+import { getSchemas as getViteSchemas } from '@umijs/bundler-vite/dist/schema';
+import { DEFAULT_BROWSER_TARGETS } from '@umijs/bundler-webpack/dist/constants';
+import { getSchemas as getWebpackSchemas } from '@umijs/bundler-webpack/dist/schema';
 import { resolve } from '@umijs/utils';
 import { dirname } from 'path';
 import { IApi } from '../../types';
@@ -20,10 +22,7 @@ function resolveProjectDep(opts: { pkg: any; cwd: string; dep: string }) {
 export default (api: IApi) => {
   const configDefaults: Record<string, any> = {
     alias: {
-      umi: process.env.UMI_DIR!,
-      '@umijs/renderer-react': dirname(
-        require.resolve('@umijs/renderer-react/package.json'),
-      ),
+      umi: '@@/exports',
       react:
         resolveProjectDep({
           pkg: api.pkg,
@@ -44,9 +43,15 @@ export default (api: IApi) => {
     externals: {},
     autoCSSModules: true,
     publicPath: '/',
+    mountElementId: 'root',
+    base: '/',
+    history: { type: 'browser' },
+    targets: DEFAULT_BROWSER_TARGETS,
   };
 
-  const bundleSchemas = getSchemas();
+  const bundleSchemas = api.config.vite
+    ? getViteSchemas()
+    : getWebpackSchemas();
   const extraSchemas = getExtraSchemas();
   const schemas = {
     ...bundleSchemas,
@@ -54,7 +59,7 @@ export default (api: IApi) => {
   };
   for (const key of Object.keys(schemas)) {
     const config: Record<string, any> = {
-      schema: schemas[key] || ((joi: any) => joi.any()),
+      schema: schemas[key] || ((Joi: any) => Joi.any()),
     };
     if (key in configDefaults) {
       config.default = configDefaults[key];
@@ -74,6 +79,8 @@ export default (api: IApi) => {
       ...memo.alias,
       '@': args.paths.absSrcPath,
       '@@': args.paths.absTmpPath,
+      // like vite, use to pre-bundling dependencies in vite mode
+      '@fs': '/',
     };
     return memo;
   });

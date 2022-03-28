@@ -1,7 +1,7 @@
 import Container from './container'
 import Node from './node'
 
-interface DeclarationRaws {
+interface DeclarationRaws extends Record<string, unknown> {
   /**
    * The space symbols before the node. It also stores `*`
    * and `_` symbols before the declaration (IE hack).
@@ -21,7 +21,7 @@ interface DeclarationRaws {
   /**
    * Declaration value with comments.
    */
-  value: {
+  value?: {
     value: string
     raw: string
   }

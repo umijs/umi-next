@@ -10,6 +10,10 @@ import { isExternals } from './isExternals';
 const RE_NODE_MODULES = /node_modules/;
 const RE_UMI_LOCAL_DEV = /umi(-next)?\/packages\//;
 
+function isUmiLocalDev(path: string) {
+  return RE_UMI_LOCAL_DEV.test(winPath(path));
+}
+
 export function checkMatch({
   value,
   path,
@@ -17,6 +21,7 @@ export function checkMatch({
   isExportAll,
   depth,
   cache,
+  filename,
 }: {
   value: string;
   path?: Babel.NodePath;
@@ -24,6 +29,7 @@ export function checkMatch({
   isExportAll?: boolean;
   depth?: number;
   cache?: Map<string, any>;
+  filename?: string;
 }): { isMatch: boolean; replaceValue: string } {
   let isMatch;
   let replaceValue = '';
@@ -36,9 +42,13 @@ export function checkMatch({
 
   opts = opts || {};
   const remoteName = opts.remoteName || 'mf';
+  // FIXME: hard code for vite mode
+  value = value.replace(/^@fs\//, '/');
   if (
     // unMatch specified libs
     opts.unMatchLibs?.includes(value) ||
+    // do not match bundler-webpack/client/client/client.js
+    value.includes('client/client/client.js') ||
     // already handled
     value.startsWith(`${remoteName}/`) ||
     // don't match dynamic path
@@ -54,7 +64,7 @@ export function checkMatch({
   ) {
     isMatch = false;
   } else if (isAbsolute(value)) {
-    isMatch = RE_NODE_MODULES.test(value) || RE_UMI_LOCAL_DEV.test(value);
+    isMatch = RE_NODE_MODULES.test(value) || isUmiLocalDev(value);
   } else {
     const aliasedPath = getAliasedPath({
       value,
@@ -68,6 +78,7 @@ export function checkMatch({
         isExportAll,
         depth: depth + 1,
         cache,
+        filename,
       });
     } else {
       isMatch = true;
@@ -79,11 +90,11 @@ export function checkMatch({
   }
 
   if (isMatch) {
-    replaceValue = `${remoteName}/${value}`;
+    replaceValue = `${remoteName}/${winPath(value)}`;
   }
 
   // @ts-ignore
-  const file = path?.hub.file.opts.filename;
+  const file = path?.hub.file.opts.filename || filename;
   opts.onTransformDeps?.({
     sourceValue: value,
     replaceValue,

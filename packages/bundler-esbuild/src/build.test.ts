@@ -16,20 +16,34 @@ const expects: Record<string, Function> = {
     expect(files['index.js']).toContain(`console.log("dir");`);
     // import('dir/bar') > import ('/path/dir/bar.js')
     expect(files['index.js']).toContain(`console.log("bar");`);
-    // import('less') > import ('/path/less.ts')
-    expect(files['index.js']).toContain(`console.log("less");`);
-    // import('less/bower') > import ('less/bower.json') 没匹配上走默认
-    expect(files['index.js']).toContain(`"dist/less.js"`);
+    // import('postcss') > import ('/path/postcss.ts')
+    expect(files['index.js']).toContain(`console.log("postcss");`);
+    // import('postcss/lib/symbols') > import ('postcss/lib/symbols.js') 没匹配上走默认
+    expect(files['index.js']).toContain(`"isClean"`);
   },
   externals({ files }: IOpts) {
     expect(files['index.js']).toContain(`module.export = React;`);
   },
+  extraPostCSSPlugins({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("foooooo");`);
+    expect(files['index.css']).toContain(`font-size: 0.14rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.16rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.26rem;`);
+    expect(files['index.css']).toContain(`font-size: 0.3rem;`);
+  },
   less({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("foooooo");`);
     expect(files['index.css']).toContain(`color: red;`);
+    expect(files['index.css']).toContain(`color: blue;`);
+    expect(files['index.css']).toContain(`color: black;`);
   },
   node_globals_polyfill({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("__dirname", "foooooo");`);
+  },
+  svg({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("foo");`);
+    expect(files['index.js']).toContain(`var smile_default =`);
+    expect(files['index.css']).toContain(`data:image/svg+xml;`);
   },
 };
 
@@ -45,6 +59,7 @@ for (const fixture of readdirSync(fixtures)) {
     try {
       config = require(join(base, 'config.ts')).default;
     } catch (e) {}
+
     await build({
       clean: true,
       config: {

@@ -1,16 +1,18 @@
+import { init } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { fsExtra, lodash, Mustache } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { IApi } from './types';
 import { isTypeScriptFile } from './utils/isTypeScriptFile';
+import transformIEAR from './utils/transformIEAR';
 
 export default (api: IApi) => {
   [
     'onGenerateFiles',
     'onBeforeCompiler',
     'onBuildComplete',
-    // 'onPatchRoute',
+    'onPatchRoute',
     // 'onPatchRouteBefore',
     // 'onPatchRoutes',
     // 'onPatchRoutesBefore',
@@ -22,6 +24,7 @@ export default (api: IApi) => {
     'addBeforeMiddlewares',
     'addLayouts',
     'addMiddlewares',
+    'addApiMiddlewares',
     'addRuntimePlugin',
     'addRuntimePluginKey',
     // 'addUmiExports',
@@ -49,9 +52,13 @@ export default (api: IApi) => {
     // 'modifyExportRouteMap',
     // 'modifyPublicPathStr',
     'modifyRendererPath',
-    // 'modifyRoutes',
+    'modifyRoutes',
   ].forEach((name) => {
     api.registerMethod({ name });
+  });
+
+  api.onStart(async () => {
+    await init;
   });
 
   api.registerMethod({
@@ -101,6 +108,12 @@ export default (api: IApi) => {
       ]
         .filter((text) => text !== false)
         .join('\n');
+
+      // transform imports for all javascript-like files
+      if (/\.(t|j)sx?$/.test(absPath)) {
+        content = transformIEAR({ content, path: absPath }, api);
+      }
+
       if (!existsSync(absPath) || readFileSync(absPath, 'utf-8') !== content) {
         writeFileSync(absPath, content, 'utf-8');
       }

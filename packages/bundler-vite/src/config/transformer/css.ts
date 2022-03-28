@@ -1,13 +1,12 @@
 import type { IConfigProcessor } from '.';
 
 // refer: https://github.com/umijs/umi-next/blob/867e0c196296efbbdb95203cca35db2fa639808b/packages/bundler-webpack/src/utils/browsersList.ts#L5
-function getBrowserlist(targets: Record<string, string | boolean>) {
-  return (
-    targets.browsers ||
-    Object.keys(targets).map((key) => {
-      return `${key} >= ${targets[key] === true ? '0' : targets[key]}`;
-    })
-  );
+export function getBrowserlist(targets: Record<string, string | boolean>) {
+  return typeof targets.browsers === 'string'
+    ? (targets.browser as string)
+    : Object.keys(targets).map(
+        (key) => `${key} >= ${targets[key] === true ? '0' : targets[key]}`,
+      );
 }
 
 /**
@@ -23,12 +22,6 @@ function getBrowserlist(targets: Record<string, string | boolean>) {
 export default (function css(userConfig) {
   const config: ReturnType<IConfigProcessor> = {
     css: { postcss: {}, preprocessorOptions: {} },
-    resolve: {
-      alias: [
-        // to fix less import issue https://github.com/vitejs/vite/issues/2185
-        { find: /^~/, replacement: '' },
-      ],
-    },
   };
 
   config.css!.postcss = {

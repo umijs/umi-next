@@ -1,5 +1,5 @@
 import { copyFileSync, statSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { dirname } from 'path';
 import fsExtra from '../../compiled/fs-extra';
 import prompts from '../../compiled/prompts';
 import Generator from '../Generator/Generator';
@@ -7,6 +7,7 @@ import Generator from '../Generator/Generator';
 interface IOpts {
   path: string;
   target: string;
+  baseDir?: string;
   data?: any;
   questions?: prompts.PromptObject[];
 }
@@ -17,8 +18,8 @@ export default class BaseGenerator extends Generator {
   data: any;
   questions: prompts.PromptObject[];
 
-  constructor({ path, target, data, questions }: IOpts) {
-    super({ cwd: target, args: data });
+  constructor({ path, target, data, questions, baseDir }: IOpts) {
+    super({ baseDir: baseDir || target, args: data });
     this.path = path;
     this.target = target;
     this.data = data;
@@ -41,15 +42,14 @@ export default class BaseGenerator extends Generator {
         target: this.target,
       });
     } else {
-      const file = basename(this.path.replace(/\.tpl$/, ''));
       if (this.path.endsWith('.tpl')) {
         this.copyTpl({
           templatePath: this.path,
-          target: join(this.target, file),
+          target: this.target,
           context,
         });
       } else {
-        const absTarget = join(this.target, file);
+        const absTarget = this.target;
         fsExtra.mkdirpSync(dirname(absTarget));
         copyFileSync(this.path, absTarget);
       }

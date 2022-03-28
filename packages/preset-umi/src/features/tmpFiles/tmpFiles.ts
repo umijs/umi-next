@@ -1,6 +1,7 @@
-import { winPath } from '@umijs/utils';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import { parseModule } from '@umijs/bundler-utils';
+import { lodash, winPath } from '@umijs/utils';
+import { existsSync, readdirSync, readFileSync } from 'fs';
+import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
 import { importsToStr } from './importsToStr';
@@ -17,16 +18,23 @@ export default (api: IApi) => {
   });
 
   api.onGenerateFiles(async (opts) => {
+    const rendererPath = winPath(
+      await api.applyPlugins({
+        key: 'modifyRendererPath',
+        initialValue: dirname(
+          require.resolve('@umijs/renderer-react/package.json'),
+        ),
+      }),
+    );
+
     // umi.ts
     api.writeTmpFile({
       noPluginDir: true,
       path: 'umi.ts',
       tplPath: join(TEMPLATES_DIR, 'umi.tpl'),
       context: {
-        rendererPath: await api.applyPlugins({
-          key: 'modifyRendererPath',
-          initialValue: '@umijs/renderer-react',
-        }),
+        mountElementId: api.config.mountElementId,
+        rendererPath,
         entryCode: (
           await api.applyPlugins({
             key: 'addEntryCode',
@@ -48,7 +56,14 @@ export default (api: IApi) => {
         importsAhead: importsToStr(
           await api.applyPlugins({
             key: 'addEntryImportsAhead',
-            initialValue: [],
+            initialValue: [
+              api.appData.globalCSS.length && {
+                source: api.appData.globalCSS[0],
+              },
+              api.appData.globalJS.length && {
+                source: api.appData.globalJS[0],
+              },
+            ].filter(Boolean),
           }),
         ).join('\n'),
         imports: importsToStr(
@@ -57,7 +72,25 @@ export default (api: IApi) => {
             initialValue: [],
           }),
         ).join('\n'),
+        basename: api.config.base,
+        historyType: api.config.history.type,
+        loadingComponent:
+          existsSync(join(api.paths.absSrcPath, 'loading.tsx')) ||
+          existsSync(join(api.paths.absSrcPath, 'loading.jsx')) ||
+          existsSync(join(api.paths.absSrcPath, 'loading.js')),
       },
+    });
+
+    // EmptyRoutes.tsx
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: 'core/EmptyRoute.tsx',
+      content: `
+import { Outlet } from 'umi';
+export default function EmptyRoute() {
+  return <Outlet />;
+}
+      `,
     });
 
     // route.ts
@@ -71,13 +104,24 @@ export default (api: IApi) => {
     }
     const hasSrc = api.appData.hasSrcDir;
     // @/pages/
-    const prefix = hasSrc ? '../../../src/pages/' : '../../pages/';
+    const pages = basename(
+      api.config.conventionRoutes?.base || api.paths.absPagesPath,
+    );
+    const prefix = hasSrc ? `../../../src/${pages}/` : `../../${pages}/`;
+    const clonedRoutes = lodash.cloneDeep(routes);
+    for (const id of Object.keys(clonedRoutes)) {
+      for (const key of Object.keys(clonedRoutes[id])) {
+        if (key.startsWith('__') || key.startsWith('absPath')) {
+          delete clonedRoutes[id][key];
+        }
+      }
+    }
     api.writeTmpFile({
       noPluginDir: true,
-      path: 'core/route.ts',
+      path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
-        routes: JSON.stringify(routes),
+        routes: JSON.stringify(clonedRoutes),
         routeComponents: await getRouteComponents({ routes, prefix }),
       },
     });
@@ -104,14 +148,15 @@ export default (api: IApi) => {
       initialValue: [
         // TODO: support these methods
         // 'modifyClientRenderOpts',
-        // 'patchRoutes',
+        'patchRoutes',
         'rootContainer',
         'innerProvider',
         'i18nProvider',
+        'accessProvider',
         'dataflowProvider',
         'outerProvider',
-        // 'render',
-        // 'onRouteChange',
+        'render',
+        'onRouteChange',
       ],
     });
     api.writeTmpFile({
@@ -126,5 +171,136 @@ export default (api: IApi) => {
         validKeys: validKeys,
       },
     });
+
+    // history.ts
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: 'core/history.ts',
+      tplPath: join(TEMPLATES_DIR, 'history.tpl'),
+      context: {
+        rendererPath,
+      },
+    });
+  });
+
+  async function getExports(opts: { path: string }) {
+    const content = readFileSync(opts.path, 'utf-8');
+    const [_, exports] = await parseModule({ content, path: opts.path });
+    return exports || [];
+  }
+
+  function checkMembers(opts: {
+    path: string;
+    members: string[];
+    exportMembers: string[];
+  }) {
+    const conflicts = lodash.intersection(opts.exportMembers, opts.members);
+    if (conflicts.length) {
+      throw new Error(
+        `Conflict members: ${conflicts.join(', ')} in ${opts.path}`,
+      );
+    }
+  }
+
+  async function getExportsAndCheck(opts: {
+    path: string;
+    exportMembers: string[];
+  }) {
+    const members = (await getExports(opts)) as string[];
+    checkMembers({
+      members,
+      exportMembers: opts.exportMembers,
+      path: opts.path,
+    });
+    opts.exportMembers.push(...members);
+    return members;
+  }
+
+  // Generate @@/exports.ts
+  api.register({
+    key: 'onGenerateFiles',
+    fn: async () => {
+      const exports = [];
+      const exportMembers = ['default'];
+      // @umijs/renderer-react
+      exports.push('// @umijs/renderer-react');
+      const rendererReactPath = winPath(
+        dirname(require.resolve('@umijs/renderer-react/package.json')),
+      );
+      exports.push(
+        `export { ${(
+          await getExportsAndCheck({
+            path: join(rendererReactPath, 'dist/index.js'),
+            exportMembers,
+          })
+        ).join(', ')} } from '${rendererReactPath}';`,
+      );
+      // umi/client/client/plugin
+      exports.push('// umi/client/client/plugin');
+      const umiDir = process.env.UMI_DIR!;
+      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
+      exports.push(
+        `export { ${(
+          await getExportsAndCheck({
+            path: umiPluginPath,
+            exportMembers,
+          })
+        ).join(', ')} } from '${umiPluginPath}';`,
+      );
+      // @@/core/history.ts
+      exports.push(`export { history, createHistory } from './core/history';`);
+      checkMembers({
+        members: ['history', 'createHistory'],
+        exportMembers,
+        path: '@@/core/history.ts',
+      });
+      // plugins
+      exports.push('// plugins');
+      const plugins = readdirSync(api.paths.absTmpPath).filter((file) => {
+        if (
+          file.startsWith('plugin-') &&
+          (existsSync(join(api.paths.absTmpPath, file, 'index.ts')) ||
+            existsSync(join(api.paths.absTmpPath, file, 'index.tsx')))
+        ) {
+          return true;
+        }
+      });
+      for (const plugin of plugins) {
+        let file: string;
+        if (existsSync(join(api.paths.absTmpPath, plugin, 'index.ts'))) {
+          file = join(api.paths.absTmpPath, plugin, 'index.ts');
+        }
+        if (existsSync(join(api.paths.absTmpPath, plugin, 'index.tsx'))) {
+          file = join(api.paths.absTmpPath, plugin, 'index.tsx');
+        }
+        const pluginExports = await getExportsAndCheck({
+          path: file!,
+          exportMembers,
+        });
+        if (pluginExports.length) {
+          exports.push(
+            `export { ${pluginExports.join(', ')} } from '${winPath(
+              join(api.paths.absTmpPath, plugin),
+            )}';`,
+          );
+        }
+      }
+      // plugins types.ts
+      exports.push('// plugins types.d.ts');
+      for (const plugin of plugins) {
+        const file = winPath(join(api.paths.absTmpPath, plugin, 'types.d.ts'));
+        if (existsSync(file)) {
+          // 带 .ts 后缀的声明文件 会导致声明失效
+          const noSuffixFile = file.replace(/\.ts$/, '');
+          exports.push(`export * from '${noSuffixFile}';`);
+        }
+      }
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: 'exports.ts',
+        content: exports.join('\n'),
+      });
+    },
+    stage: Infinity,
   });
 };

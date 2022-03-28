@@ -1,4 +1,5 @@
-import { dirname } from 'path';
+import { getCorejsVersion } from '@umijs/utils';
+import { dirname, join } from 'path';
 import autoCSSModules from './plugins/autoCSSModules';
 import dynamicImportNode from './plugins/dynamicImportNode';
 import lockCoreJS from './plugins/lockCoreJS';
@@ -28,7 +29,7 @@ export default (_context: any, opts: IOpts) => {
           modules: false,
           debug: false,
           useBuiltIns: 'entry',
-          corejs: '3',
+          corejs: getCorejsVersion(join(__dirname, '../package.json')),
           // 没必要，遇到了应该改 targets 配置
           forceAllTransforms: false,
           ignoreBrowserslistConfig: true,
@@ -130,9 +131,9 @@ export default (_context: any, opts: IOpts) => {
           useESModules: false,
           // lock the version of @babel/runtime
           // make sure we are using the correct version
-          absoluteRuntime: dirname(
-            require.resolve('@babel/runtime/package.json'),
-          ),
+          // ref: https://github.com/babel/babel/blob/v7.16.12/packages/babel-plugin-transform-runtime/src/get-runtime-path/index.ts#L19
+          // ref: https://github.com/umijs/umi/pull/7816
+          absoluteRuntime: dirname(require.resolve('../package.json')),
           version: `^${require('@babel/runtime/package.json').version}`,
           ...opts.pluginTransformRuntime,
         },

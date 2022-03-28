@@ -1,4 +1,10 @@
 export {
+  createBrowserHistory,
+  createHashHistory,
+  createMemoryHistory,
+  History,
+} from 'history';
+export {
   createSearchParams,
   Link,
   matchPath,
@@ -14,6 +20,6 @@ export {
   useRoutes,
   useSearchParams,
 } from 'react-router-dom';
-export { useAppContext } from './appContext';
+export { useAppData } from './appContext';
 export { renderClient } from './browser';
-export { useRouteContext } from './routeContext';
+export { useRouteData } from './routeContext';

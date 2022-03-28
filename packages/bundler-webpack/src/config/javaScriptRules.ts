@@ -1,8 +1,9 @@
 import type { Program } from '@swc/core';
+import { autoCssModulesHandler, esbuildLoader } from '@umijs/mfsu';
 import { chalk } from '@umijs/utils';
+import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
-import AutoCSSModule from '../swcPlugins/autoCSSModules';
 import { Env, IConfig, Transpiler } from '../types';
 import { es5ImcompatibleVersionsToPkg, isMatch } from '../utils/depMatch';
 
@@ -13,12 +14,13 @@ interface IOpts {
   env: Env;
   extraBabelPlugins: any[];
   extraBabelPresets: any[];
+  extraEsbuildLoaderHandler: any[];
   babelPreset: any;
   name?: string;
 }
 
 export async function addJavaScriptRules(opts: IOpts) {
-  const { config, userConfig, cwd, env, name } = opts;
+  const { config, userConfig, cwd, name } = opts;
   const isDev = opts.env === Env.development;
   const useFastRefresh =
     isDev && userConfig.fastRefresh !== false && name !== MFSU_NAME;
@@ -43,7 +45,8 @@ export async function addJavaScriptRules(opts: IOpts) {
       .test(/\.(js|mjs)$/)
       .include.add((path: string) => {
         try {
-          if (path.includes('client/client')) return true;
+          // do src transform for bundler-webpack/client/client/client.js
+          if (path.includes('client/client/client')) return true;
           return isMatch({ path, pkgs: depPkgs });
         } catch (e) {
           console.error(chalk.red(e));
@@ -52,6 +55,9 @@ export async function addJavaScriptRules(opts: IOpts) {
       })
       .end(),
   ] as Config.Rule<Config.Module>[];
+  if (userConfig.mdx) {
+    srcRules.push(config.module.rule('markdown').test(/\.mdx?$/));
+  }
   const depRules = [
     config.module
       .rule('dep')
@@ -109,35 +115,40 @@ export async function addJavaScriptRules(opts: IOpts) {
           ].filter(Boolean),
         });
     } else if (srcTranspiler === Transpiler.swc) {
-      // TODO: support javascript
+      const AutoCSSModule = require('../swcPlugins/autoCSSModules').default;
       rule
         .use('swc-loader')
-        .loader(require.resolve('../../compiled/swc-loader'))
+        .loader(require.resolve('../loader/swc'))
         .options({
-          jsc: {
-            parser: {
-              syntax: 'typescript',
-              dynamicImport: true,
-              tsx: true,
-            },
-
-            transform: {
-              react: {
-                runtime: 'automatic',
-                pragma: 'React.createElement',
-                pragmaFrag: 'React.Fragment',
-                throwIfNamespace: true,
-                development: env === Env.development,
-                useBuiltins: true,
-              },
-            },
-          },
           plugin: (m: Program) => new AutoCSSModule().visitProgram(m),
         });
+    } else if (srcTranspiler === Transpiler.esbuild) {
+      rule
+        .use('esbuild-loader')
+        .loader(esbuildLoader)
+        .options({
+          target: isDev ? 'esnext' : 'es2015',
+          handler: [autoCssModulesHandler, ...opts.extraEsbuildLoaderHandler],
+        });
+      // esbuild loader can not auto import `React`
+      config.plugin('react-provide-plugin').use(ProvidePlugin, [
+        {
+          React: 'react',
+        },
+      ]);
     } else {
       throw new Error(`Unsupported srcTranspiler ${srcTranspiler}.`);
     }
   });
+
+  if (userConfig.mdx) {
+    config.module
+      .rule('mdx')
+      .test(/\.mdx?$/)
+      .use('mdx-loader')
+      .loader(userConfig.mdx?.loader)
+      .options(userConfig.mdx?.loaderOptions);
+  }
 
   const depTranspiler = userConfig.depTranspiler || Transpiler.none;
   depRules.forEach((_rule) => {

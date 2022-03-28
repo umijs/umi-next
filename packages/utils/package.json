@@ -1,6 +1,6 @@
 {
   "name": "@umijs/utils",
-  "version": "4.0.0-beta.12",
+  "version": "4.0.0-canary.20220325.1",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/utils#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
   "repository": {
@@ -17,45 +17,45 @@
   "scripts": {
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "dev": "pnpm build -- --watch",
+    "test": "jest -c ../../jest.turbo.config.ts"
   },
   "dependencies": {
-    "chokidar": "3.5.2",
-    "clipboardy": "2.3.0"
+    "chokidar": "3.5.3"
   },
   "devDependencies": {
-    "@types/color": "3.0.2",
+    "@types/color": "3.0.3",
     "@types/cross-spawn": "6.0.2",
     "@types/debug": "4.1.7",
-    "@types/lodash": "4.14.177",
+    "@types/lodash": "4.14.180",
     "@types/mustache": "4.1.2",
     "@types/prompts": "^2.0.14",
     "@types/rimraf": "3.0.2",
     "@types/semver": "7.3.9",
     "address": "1.1.2",
-    "axios": "0.24.0",
-    "chalk": "4.1.2",
+    "axios": "0.26.1",
+    "chalk": "5.0.1",
     "cheerio": "1.0.0-rc.10",
-    "color": "4.0.2",
+    "color": "4.2.1",
     "cross-spawn": "7.0.3",
-    "debug": "4.3.3",
+    "debug": "4.3.4",
     "deepmerge": "4.2.2",
-    "execa": "5.1.1",
-    "fs-extra": "10.0.0",
+    "execa": "6.1.0",
+    "fs-extra": "10.0.1",
     "glob": "7.2.0",
-    "globby": "11.0.4",
     "import-lazy": "4.0.0",
     "lodash": "4.17.21",
     "mustache": "4.2.0",
-    "pkg-up": "3.1.0",
+    "pirates": "4.0.5",
+    "pkg-up": "4.0.0",
     "portfinder": "1.0.28",
-    "prettier": "2.5.0",
+    "prettier": "2.6.0",
     "prompts": "2.4.2",
-    "resolve": "1.20.0",
+    "resolve": "1.22.0",
     "rimraf": "3.0.2",
     "semver": "7.3.5",
-    "strip-ansi": "6.0.1",
-    "yargs-parser": "21.0.0"
+    "strip-ansi": "7.0.1",
+    "yargs-parser": "21.0.1"
   },
   "publishConfig": {
     "access": "public"
@@ -87,7 +87,8 @@
       "resolve",
       "semver",
       "strip-ansi",
-      "yargs-parser"
+      "yargs-parser",
+      "pirates"
     ],
     "externals": {
       "address": "$$LOCAL",
@@ -107,7 +108,8 @@
       "resolve": "$$LOCAL",
       "semver": "$$LOCAL",
       "strip-ansi": "$$LOCAL",
-      "yargs-parser": "$$LOCAL"
+      "yargs-parser": "$$LOCAL",
+      "pirates": "$$LOCAL"
     }
   }
 }

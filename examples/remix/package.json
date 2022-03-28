@@ -1,9 +1,11 @@
 {
+  "name": "@example/remix",
+  "private": true,
   "scripts": {
     "dev": "umi dev",
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "4.0.0-beta.12"
+    "umi": "4.0.0-canary.20220325.1"
   }
 }

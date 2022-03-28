@@ -1,4 +1,4 @@
-import type { RequestHandler } from 'express';
+import type { RequestHandler } from '@umijs/bundler-utils/compiled/express';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { matchRoutes } from 'react-router-dom';
@@ -6,7 +6,8 @@ import { createServerRoutes } from './routes';
 import { normalizeScripts } from './scripts';
 import { normalizeStyles } from './styles';
 
-interface IOpts {
+export interface IOpts {
+  base: string;
   routes: Record<
     string,
     {
@@ -22,6 +23,7 @@ interface IOpts {
   favicon?: string;
   headScripts?: (Record<string, string> | string)[];
   scripts?: (Record<string, string> | string)[];
+  mountElementId?: string;
   esmScript?: boolean;
   modifyHTML?: (html: string, args: { path?: string }) => Promise<string>;
 }
@@ -33,7 +35,7 @@ export async function getMarkup(
 ) {
   // TODO: use real component
   let markup = ReactDOMServer.renderToString(
-    React.createElement('div', { id: 'root' }),
+    React.createElement('div', { id: opts.mountElementId || 'root' }),
   );
 
   function propsToString(opts: {
@@ -66,7 +68,7 @@ export async function getMarkup(
       filters: ['src', 'content'],
     });
     return style.src
-      ? `<link rel="stylesheet" ${attrs} src="${style.src}" />`
+      ? `<link rel="stylesheet" ${attrs} href="${style.src}" />`
       : `<style ${attrs}>${style.content}</style>`;
   }
 
@@ -131,7 +133,7 @@ export function createRequestHandler(opts: IOpts): RequestHandler {
     const routes = createServerRoutes({
       routesById: opts.routes,
     });
-    const matches = matchRoutes(routes, req.path);
+    const matches = matchRoutes(routes, req.path, opts.base);
     if (matches) {
       res.set('Content-Type', 'text/html');
       const markup = await getMarkup({ ...opts, path: req.path });

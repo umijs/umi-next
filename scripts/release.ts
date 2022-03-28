@@ -1,4 +1,5 @@
 import * as logger from '@umijs/utils/src/logger';
+import { existsSync } from 'fs';
 import getGitRepoInfo from 'git-repo-info';
 import { join } from 'path';
 import rimraf from 'rimraf';
@@ -39,7 +40,7 @@ import { assert, eachPkg, getPkgs } from './utils';
   logger.event('check npm ownership');
   const whoami = (await $`npm whoami`).stdout.trim();
   await Promise.all(
-    ['umi', 'bigfish', '@umijs/core'].map(async (pkg) => {
+    ['umi', '@umijs/core'].map(async (pkg) => {
       const owners = (await $`npm owner ls ${pkg}`).stdout
         .trim()
         .split('\n')
@@ -50,16 +51,21 @@ import { assert, eachPkg, getPkgs } from './utils';
     }),
   );
 
+  // check package.json
+  logger.event('check package.json info');
+  await $`npm run check:packageFiles`;
+
   // clean
   logger.event('clean');
-  eachPkg(pkgs, ({ pkgPath, pkg }) => {
-    logger.info(`clean dist of ${pkg}`);
-    rimraf.sync(join(pkgPath, 'dist'));
+  eachPkg(pkgs, ({ dir, name }) => {
+    logger.info(`clean dist of ${name}`);
+    rimraf.sync(join(dir, 'dist'));
   });
 
   // build packages
   logger.event('build packages');
   await $`npm run build:release`;
+  await $`npm run build:extra`;
 
   // generate changelog
   // TODO
@@ -69,14 +75,24 @@ import { assert, eachPkg, getPkgs } from './utils';
   logger.event('bump version');
   await $`lerna version --exact --no-commit-hooks --no-git-tag-version --no-push --loglevel error`;
   const version = require('../lerna.json').version;
+  let tag = 'latest';
+  if (
+    version.includes('-alpha.') ||
+    version.includes('-beta.') ||
+    version.includes('-rc.')
+  ) {
+    tag = 'next';
+  }
+  if (version.includes('-canary.')) tag = 'canary';
 
   // update example versions
   logger.event('update example versions');
-  const examples = fs
-    .readdirSync(join(__dirname, '../examples'))
-    .filter((dir) => {
-      return !dir.startsWith('.');
-    });
+  const examplesDir = join(__dirname, '../examples');
+  const examples = fs.readdirSync(examplesDir).filter((dir) => {
+    return (
+      !dir.startsWith('.') && existsSync(join(examplesDir, dir, 'package.json'))
+    );
+  });
   examples.forEach((example) => {
     const pkg = require(join(
       __dirname,
@@ -85,13 +101,18 @@ import { assert, eachPkg, getPkgs } from './utils';
       'package.json',
     ));
     pkg.scripts['start'] = 'npm run dev';
-    pkg.dependencies ||= {};
-    if (pkg.dependencies['umi']) pkg.dependencies['umi'] = version;
-    if (pkg.dependencies['bigfish']) pkg.dependencies['bigfish'] = version;
+    // change deps version
+    setDepsVersion({
+      pkg,
+      version,
+      deps: ['umi', '@umijs/max', '@umijs/plugins', '@umijs/bundler-vite'],
+      // for mfsu-independent example update dep version
+      devDeps: ['@umijs/mfsu'],
+    });
     delete pkg.version;
     fs.writeFileSync(
       join(__dirname, '../examples', example, 'package.json'),
-      JSON.stringify(pkg, null, 2),
+      `${JSON.stringify(pkg, null, 2)}\n`,
     );
   });
 
@@ -106,8 +127,10 @@ import { assert, eachPkg, getPkgs } from './utils';
   await $`git commit --all --message "release: ${version}"`;
 
   // git tag
-  logger.event('git tag');
-  await $`git tag v${version}`;
+  if (tag !== 'canary') {
+    logger.event('git tag');
+    await $`git tag v${version}`;
+  }
 
   // git push
   logger.event('git push');
@@ -118,14 +141,8 @@ import { assert, eachPkg, getPkgs } from './utils';
   $.verbose = false;
   const innerPkgs = pkgs.filter(
     // do not publish father
-    (pkg) => !['umi', 'bigfish', 'father'].includes(pkg),
+    (pkg) => !['umi', 'max', 'father'].includes(pkg),
   );
-  const tag =
-    version.includes('-alpha.') ||
-    version.includes('-beta.') ||
-    version.includes('-rc.')
-      ? 'next'
-      : 'latest';
   await Promise.all(
     innerPkgs.map(async (pkg) => {
       await $`cd packages/${pkg} && npm publish --tag ${tag}`;
@@ -134,8 +151,8 @@ import { assert, eachPkg, getPkgs } from './utils';
   );
   await $`cd packages/umi && npm publish --tag ${tag}`;
   logger.info(`+ umi`);
-  await $`cd packages/bigfish && npm publish --tag ${tag}`;
-  logger.info(`+ bigfish`);
+  await $`cd packages/max && npm publish --tag ${tag}`;
+  logger.info(`+ @umijs/max`);
   $.verbose = true;
 
   // sync tnpm
@@ -148,3 +165,24 @@ import { assert, eachPkg, getPkgs } from './utils';
   );
   $.verbose = true;
 })();
+
+function setDepsVersion(opts: {
+  deps: string[];
+  devDeps: string[];
+  pkg: Record<string, any>;
+  version: string;
+}) {
+  const { deps, devDeps, pkg, version } = opts;
+  pkg.dependencies ||= {};
+  deps.forEach((dep) => {
+    if (pkg.dependencies[dep]) {
+      pkg.dependencies[dep] = version;
+    }
+  });
+  devDeps.forEach((dep) => {
+    if (pkg?.devDependencies?.[dep]) {
+      pkg.devDependencies[dep] = version;
+    }
+  });
+  return pkg;
+}

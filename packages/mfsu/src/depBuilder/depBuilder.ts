@@ -1,5 +1,5 @@
 import { build } from '@umijs/bundler-esbuild';
-import { lodash, logger } from '@umijs/utils';
+import { fsExtra, lodash, logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { MF_DEP_PREFIX, MF_VA_PREFIX, REMOTE_FILE_FULL } from '../constants';
@@ -58,6 +58,7 @@ export class DepBuilder {
         [`${MF_VA_PREFIX}remoteEntry`]: entryPath,
       },
       config: {
+        ...this.opts.mfsu.opts.depBuildConfig,
         outputPath: tmpDir,
         alias: this.opts.mfsu.alias,
         externals: this.opts.mfsu.externals,
@@ -72,19 +73,27 @@ export class DepBuilder {
 
   async build(opts: { deps: Dep[] }) {
     this.isBuilding = true;
-    await this.writeMFFiles({ deps: opts.deps });
-    const newOpts = {
-      ...opts,
-      onBuildComplete: () => {
-        this.isBuilding = false;
-        this.completeFns.forEach((fn) => fn());
-        this.completeFns = [];
-      },
+
+    const onBuildComplete = () => {
+      this.isBuilding = false;
+      this.completeFns.forEach((fn) => fn());
+      this.completeFns = [];
     };
-    if (this.opts.mfsu.opts.buildDepWithESBuild) {
-      await this.buildWithESBuild(newOpts);
-    } else {
-      await this.buildWithWebpack(newOpts);
+
+    try {
+      await this.writeMFFiles({ deps: opts.deps });
+      const newOpts = {
+        ...opts,
+        onBuildComplete,
+      };
+      if (this.opts.mfsu.opts.buildDepWithESBuild) {
+        await this.buildWithESBuild(newOpts);
+      } else {
+        await this.buildWithWebpack(newOpts);
+      }
+    } catch (e) {
+      onBuildComplete();
+      throw e;
     }
   }
 
@@ -98,6 +107,7 @@ export class DepBuilder {
 
   async writeMFFiles(opts: { deps: Dep[] }) {
     const tmpBase = this.opts.mfsu.opts.tmpBase!;
+    fsExtra.mkdirpSync(tmpBase);
 
     // expose files
     for (const dep of opts.deps) {

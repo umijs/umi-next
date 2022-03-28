@@ -5,12 +5,15 @@ import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
-  const pkgPath =
-    resolveProjectDep({
-      pkg: api.pkg,
-      cwd: api.cwd,
-      dep: 'antd',
-    }) || dirname(require.resolve('antd/package.json'));
+  let pkgPath: string;
+  try {
+    pkgPath =
+      resolveProjectDep({
+        pkg: api.pkg,
+        cwd: api.cwd,
+        dep: 'antd',
+      }) || dirname(require.resolve('antd/package.json'));
+  } catch (e) {}
 
   api.describe({
     config: {
@@ -30,7 +33,14 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
+  function checkPkgPath() {
+    if (!pkgPath) {
+      throw new Error(`Can't find antd package. Please install antd first.`);
+    }
+  }
+
   api.modifyAppData((memo) => {
+    checkPkgPath();
     const version = require(`${pkgPath}/package.json`).version;
     memo.antd = {
       pkgPath,
@@ -40,6 +50,8 @@ export default (api: IApi) => {
   });
 
   api.modifyConfig((memo) => {
+    checkPkgPath();
+
     // antd import
     memo.alias.antd = pkgPath;
 
@@ -60,10 +72,18 @@ export default (api: IApi) => {
     return memo;
   });
 
+  api.modifyConfig((memo) => {
+    memo.theme = {
+      'root-entry-name': 'default',
+      ...memo.theme,
+    };
+    return memo;
+  });
+
   // babel-plugin-import
   api.addExtraBabelPlugins(() => {
     const style = api.config.antd.style || 'less';
-    return api.config.antd.import
+    return api.config.antd.import && !api.appData.vite
       ? [
           [
             require.resolve('babel-plugin-import'),
@@ -77,35 +97,9 @@ export default (api: IApi) => {
       : [];
   });
 
-  // if (dayjs !== false) {
-  //   api.onGenerateFiles({
-  //     fn: () => {
-  //       const { plugins } = getConfig(api);
-  //
-  //       const runtimeTpl = readFileSync(
-  //         join(__dirname, '../templates/antd/dayjs.tpl'),
-  //         'utf-8',
-  //       );
-  //       api.writeTmpFile({
-  //         path: 'plugin-antd/dayjs.tsx',
-  //         content: Mustache.render(runtimeTpl, {
-  //           plugins,
-  //           dayjsPath: dirname(require.resolve('dayjs/package.json')),
-  //           dayjsPluginPath: dirname(
-  //             require.resolve('antd-dayjs-webpack-plugin/package.json'),
-  //           ),
-  //         }),
-  //       });
-  //     },
-  //   });
-  //   api.addEntryCodeAhead(() => {
-  //     return [`import './${DIR_NAME}/dayjs.tsx'`];
-  //   });
-  // }
-
   // antd config provider
   api.onGenerateFiles(() => {
-    if (!api.config.antd.config) return;
+    if (!api.config.antd.configProvider) return;
     api.writeTmpFile({
       path: `runtime.tsx`,
       content: Mustache.render(
@@ -129,13 +123,13 @@ export function rootContainer(container) {
 }
       `.trim(),
         {
-          config: JSON.stringify(api.config.antd.config),
+          config: JSON.stringify(api.config.antd.configProvider),
         },
       ),
     });
   });
   api.addRuntimePlugin(() => {
-    return api.config.antd.config
+    return api.config.antd.configProvider
       ? [withTmpPath({ api, path: 'runtime.tsx' })]
       : [];
   });
@@ -143,7 +137,7 @@ export function rootContainer(container) {
   // import antd style if antd.import is not configured
   api.addEntryImportsAhead(() => {
     const style = api.config.antd.style || 'less';
-    return api.config.antd.import
+    return api.config.antd.import && !api.appData.vite
       ? []
       : [
           {

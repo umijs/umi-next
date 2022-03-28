@@ -1,17 +1,18 @@
+import express from '@umijs/bundler-utils/compiled/express';
 import { logger } from '@umijs/utils';
 import http from 'http';
 import type {
   DepOptimizationMetadata,
   HmrContext,
   InlineConfig as ViteInlineConfig,
-} from 'vite';
-import { createServer as createViteServer } from 'vite';
-import express from '../../compiled/express';
+} from '../../compiled/vite';
+import { createServer as createViteServer } from '../../compiled/vite';
 import type { IConfig } from '../types';
 import pluginOnHotUpdate from './plugins/onHotUpdate';
 
 interface IOpts {
   cwd: string;
+  port?: number;
   viteConfig: ViteInlineConfig;
   userConfig: IConfig;
   beforeMiddlewares?: any[];
@@ -65,9 +66,11 @@ export async function createServer(opts: IOpts) {
     vite.middlewares.stack.some((s, i) => {
       if ((s.handle as Function).name === 'viteSpaFallbackMiddleware') {
         const afterStacks: typeof vite.middlewares.stack =
-          opts.afterMiddlewares!.map((handle) => ({
+          opts.afterMiddlewares!.map((m) => ({
             route: '',
-            handle,
+            // TODO: FIXME
+            // see: https://github.com/umijs/umi-next/commit/34d4e4e26a20ff5c7393eab5d3db363cca541379#diff-3a996a9e7a2f94fc8f23c6efed1447eed9567e36ed622bd8547a58e5415087f7R164
+            handle: app.use(m.toString().includes(`{ compiler }`) ? m({}) : m),
           }));
 
         vite.middlewares.stack.splice(i, 0, ...afterStacks);
@@ -88,7 +91,7 @@ export async function createServer(opts: IOpts) {
   // bundless
 
   const server = http.createServer(app);
-  const port = process.env.PORT || 8000;
+  const port = opts.port || 8000;
 
   server.listen(port, async () => {
     if (typeof onDevCompileDone === 'function') {

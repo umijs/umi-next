@@ -1,15 +1,16 @@
 {
+  "name": "@example/bundler-vite-demo",
+  "private": true,
   "scripts": {
     "dev": "bundler-vite dev",
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "4.0.0-beta.12"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
-    "react": "^18.0.0-alpha-fd5e01c2e-20210913",
-    "react-dom": "^18.0.0-alpha-fd5e01c2e-20210913"
+    "@types/react": "^17.0.41",
+    "@types/react-dom": "^17.0.14",
+    "@umijs/bundler-vite": "4.0.0-canary.20220325.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "umi": "4.0.0-canary.20220325.1"
   }
 }

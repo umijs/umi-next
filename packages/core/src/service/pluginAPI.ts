@@ -48,8 +48,14 @@ export class PluginAPI {
     config?: IPluginConfig;
     enableBy?:
       | EnableBy
-      | ((enableByOpts: { config: any; env: Env }) => boolean);
+      | ((enableByOpts: { userConfig: any; env: Env }) => boolean);
   }) {
+    // default 值 + 配置开启冲突，会导致就算用户没有配 key，插件也会生效
+    if (opts.enableBy === EnableBy.config && opts.config?.default) {
+      throw new Error(
+        `[plugin: ${this.plugin.id}] The config.default is not allowed when enableBy is EnableBy.config.`,
+      );
+    }
     this.plugin.merge(opts);
   }
 
@@ -91,6 +97,10 @@ export class PluginAPI {
   }
 
   register(opts: Omit<IHookOpts, 'plugin'>) {
+    assert(
+      this.service.stage <= ServiceStage.initPlugins,
+      'api.register() should not be called after plugin register stage.',
+    );
     this.service.hooks[opts.key] ||= [];
     this.service.hooks[opts.key].push(
       new Hook({ ...opts, plugin: this.plugin }),
@@ -130,7 +140,7 @@ export class PluginAPI {
         return new Plugin({
           path: preset,
           cwd: this.service.cwd,
-          type: PluginType.plugin,
+          type: PluginType.preset,
         });
       }),
     );
@@ -152,6 +162,7 @@ export class PluginAPI {
         plugin.enableBy = plugin.enableBy || EnableBy.register;
         plugin.apply = plugin.apply || (() => () => {});
         plugin.config = plugin.config || {};
+        plugin.time = { hooks: {} };
         return plugin;
       } else {
         return new Plugin({
@@ -168,9 +179,14 @@ export class PluginAPI {
     }
   }
 
-  skipPlugins(ids: string[]) {
-    ids.forEach((id) => {
-      this.service.skipPluginIds.add(id);
+  skipPlugins(keys: string[]) {
+    keys.forEach((key) => {
+      assert(!(this.plugin.key === key), `plugin ${key} can't skip itself!`);
+      assert(
+        this.service.keyToPluginMap[key],
+        `key: ${key} is not be registered by any plugin. You can't skip it!`,
+      );
+      this.service.skipPluginIds.add(this.service.keyToPluginMap[key].id);
     });
   }
 

@@ -2,13 +2,13 @@ import type { RequestHandler } from '@umijs/bundler-webpack';
 import { importLazy, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
-import * as process from 'process';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
 import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
 import { getBabelOpts } from './getBabelOpts';
+import { printMemoryUsage } from './printMemoryUsage';
 import {
   addUnWatch,
   createDebouncedHandler,
@@ -41,7 +41,7 @@ umi dev
 PORT=8888 umi dev
 `,
     async fn() {
-      const enableVite = api.args.vite;
+      const enableVite = !!api.config.vite;
 
       // clear tmp except cache
       clearTmp(api.paths.absTmpPath);
@@ -87,9 +87,11 @@ PORT=8888 umi dev
         key: 'addTmpGenerateWatcherPaths',
         initialValue: [
           absPagesPath,
+          !api.config.routes && api.config.conventionRoutes?.base,
           join(absSrcPath, 'layouts'),
+          ...expandJSPaths(join(absSrcPath, 'loading')),
           ...expandJSPaths(join(absSrcPath, 'app')),
-        ],
+        ].filter(Boolean),
       });
       lodash.uniq<string>(watcherPaths.map(winPath)).forEach((p: string) => {
         watch({
@@ -154,9 +156,9 @@ PORT=8888 umi dev
             }
             if (data.changes[api.ConfigChangeType.regenerateTmpFiles]) {
               logger.event(
-                `config ${data.changes[api.ConfigChangeType.reload].join(
-                  ', ',
-                )} changed, regenerate tmp files...`,
+                `config ${data.changes[
+                  api.ConfigChangeType.regenerateTmpFiles
+                ].join(', ')} changed, regenerate tmp files...`,
               );
               await generate({ isFirstTime: false });
             }
@@ -225,6 +227,7 @@ PORT=8888 umi dev
           args,
         });
       };
+      const debouncedPrintMemoryUsage = lodash.debounce(printMemoryUsage, 5000);
       const opts = {
         config: api.config,
         cwd: api.cwd,
@@ -244,14 +247,21 @@ PORT=8888 umi dev
           ...beforeMiddlewares,
           faviconMiddleware,
         ]),
-        afterMiddlewares: [createRouteMiddleware({ api })].concat(middlewares),
+        afterMiddlewares: middlewares.concat(createRouteMiddleware({ api })),
         onDevCompileDone(opts: any) {
+          debouncedPrintMemoryUsage();
           api.applyPlugins({
             key: 'onDevCompileDone',
             args: opts,
           });
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
+        cache: {
+          buildDependencies: [
+            api.pkgPath,
+            api.service.configManager!.mainConfigFile || '',
+          ].filter(Boolean),
+        },
       };
       if (enableVite) {
         await bundlerVite.dev(opts);

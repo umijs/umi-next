@@ -3,10 +3,42 @@ import {
   getConfigRoutes,
   getConventionRoutes,
 } from '@umijs/core';
-import { winPath } from '@umijs/utils';
-import { existsSync } from 'fs';
+import { resolve, winPath } from '@umijs/utils';
+import { existsSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { IApi } from '../../types';
+
+// get api routs
+export async function getApiRoutes(opts: { api: IApi }) {
+  const routes = getConventionRoutes({
+    base: opts.api.paths.absApiRoutesPath,
+    prefix: '',
+  });
+
+  function localPath(path: string) {
+    if (path.charAt(0) !== '.') {
+      return `./${path}`;
+    }
+    {
+      return path;
+    }
+  }
+
+  for (const id of Object.keys(routes)) {
+    if (routes[id].file) {
+      // TODO: cache for performance
+      const file = isAbsolute(routes[id].file)
+        ? routes[id].file
+        : resolve.sync(localPath(routes[id].file), {
+            basedir: opts.api.paths.absApiRoutesPath,
+            extensions: ['.js', '.jsx', '.tsx', '.ts'],
+          });
+      routes[id].__content = readFileSync(file, 'utf-8');
+    }
+  }
+
+  return routes;
+}
 
 // get route config
 export async function getRoutes(opts: { api: IApi }) {
@@ -17,11 +49,38 @@ export async function getRoutes(opts: { api: IApi }) {
     });
   } else {
     routes = getConventionRoutes({
-      base: opts.api.paths.absPagesPath,
+      base:
+        opts.api.config.conventionRoutes?.base || opts.api.paths.absPagesPath,
+      exclude: opts.api.config.conventionRoutes?.exclude,
       prefix: '',
     });
   }
 
+  function localPath(path: string) {
+    if (path.charAt(0) !== '.') {
+      return `./${path}`;
+    }
+    {
+      return path;
+    }
+  }
+
+  for (const id of Object.keys(routes)) {
+    if (routes[id].file) {
+      // TODO: cache for performance
+      const file = isAbsolute(routes[id].file)
+        ? routes[id].file
+        : resolve.sync(localPath(routes[id].file), {
+            basedir:
+              opts.api.config.conventionRoutes?.base ||
+              opts.api.paths.absPagesPath,
+            extensions: ['.js', '.jsx', '.tsx', '.ts'],
+          });
+      routes[id].__content = readFileSync(file, 'utf-8');
+    }
+  }
+
+  // layout routes
   const absLayoutPath = join(opts.api.paths.absSrcPath, 'layouts/index.tsx');
   const layouts = await opts.api.applyPlugins({
     key: 'addLayouts',
@@ -40,10 +99,28 @@ export async function getRoutes(opts: { api: IApi }) {
         path: '/',
         file: layout.file,
         parentId: undefined,
+        absPath: '/',
       },
       routes,
+      test: layout.test,
     });
   }
+
+  // patch routes
+  for (const id of Object.keys(routes)) {
+    await opts.api.applyPlugins({
+      key: 'onPatchRoute',
+      args: {
+        route: routes[id],
+      },
+    });
+  }
+
+  routes = await opts.api.applyPlugins({
+    key: 'modifyRoutes',
+    initialValue: routes,
+  });
+
   return routes;
 }
 
@@ -54,7 +131,15 @@ export async function getRouteComponents(opts: {
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
-      if (!route.file) return `// ${key}: no file to import`;
+      if (!route.file) {
+        return `'${key}': () => import('./EmptyRoute'),`;
+      }
+      // e.g.
+      // component: () => <h1>foo</h1>
+      // component: (() => () => <h1>foo</h1>)()
+      if (route.file.startsWith('(')) {
+        return `'${key}': () => Promise.resolve(${route.file}),`;
+      }
       const path =
         isAbsolute(route.file) || route.file.startsWith('@/')
           ? route.file

@@ -1,16 +1,19 @@
 import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
+import { logger } from '@umijs/utils';
+import { join } from 'path';
 import webpack from '../compiled/webpack';
-import { getConfig } from './config/config';
+import { getConfig, IOpts as IConfigOpts } from './config/config';
 import { MFSU_NAME } from './constants';
 import { createServer } from './server/server';
-import { Env, IConfig } from './types';
+import { Env, IConfig, Transpiler } from './types';
 
-interface IOpts {
+type IOpts = {
   afterMiddlewares?: any[];
   beforeMiddlewares?: any[];
   onDevCompileDone?: Function;
   port?: number;
   host?: string;
+  babelPreset?: any;
   chainWebpack?: Function;
   modifyWebpackConfig?: Function;
   beforeBabelPlugins?: any[];
@@ -20,15 +23,34 @@ interface IOpts {
   cwd: string;
   config: IConfig;
   entry: Record<string, string>;
-}
+} & Pick<IConfigOpts, 'cache'>;
 
 export async function dev(opts: IOpts) {
   const enableMFSU = opts.config.mfsu !== false;
   let mfsu: MFSU | null = null;
   if (enableMFSU) {
+    if (opts.config.srcTranspiler === Transpiler.swc) {
+      logger.warn(
+        `Swc currently not supported for use with mfsu, recommended you use srcTranspiler: 'esbuild' in dev.`,
+      );
+    }
     mfsu = new MFSU({
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,
+      depBuildConfig: {
+        extraPostCSSPlugins: opts.config?.extraPostCSSPlugins || [],
+      },
+      mfName: opts.config.mfsu?.mfName,
+      runtimePublicPath: opts.config.runtimePublicPath,
+      tmpBase:
+        opts.config.mfsu?.cacheDirectory ||
+        join(opts.cwd, 'node_modules/.cache/mfsu'),
+      getCacheDependency() {
+        return {
+          version: require('../package.json').version,
+          esbuildMode: !!opts.config.mfsu?.esbuild,
+        };
+      },
     });
   }
   const webpackConfig = await getConfig({
@@ -36,6 +58,7 @@ export async function dev(opts: IOpts) {
     env: Env.development,
     entry: opts.entry,
     userConfig: opts.config,
+    babelPreset: opts.babelPreset,
     extraBabelPlugins: [
       ...(opts.beforeBabelPlugins || []),
       ...(mfsu?.getBabelPlugins() || []),
@@ -45,11 +68,14 @@ export async function dev(opts: IOpts) {
       ...(opts.beforeBabelPresets || []),
       ...(opts.extraBabelPresets || []),
     ],
+    extraEsbuildLoaderHandler: mfsu?.getEsbuildLoaderHandler() || [],
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     hmr: true,
     analyze: process.env.ANALYZE,
+    cache: opts.cache,
   });
+
   const depConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.development,
@@ -58,14 +84,20 @@ export async function dev(opts: IOpts) {
     hash: true,
     staticPathPrefix: MF_DEP_PREFIX,
     name: MFSU_NAME,
+    chainWebpack: opts.config.mfsu?.chainWebpack,
+    cache: {
+      buildDependencies: opts.cache?.buildDependencies,
+      cacheDirectory: join(opts.cwd, 'node_modules', '.cache', 'mfsu-deps'),
+    },
   });
+
   webpackConfig.resolve!.alias ||= {};
   // TODO: REMOVE ME
   ['@umijs/utils/compiled/strip-ansi', 'react-error-overlay'].forEach((dep) => {
     // @ts-ignore
     webpackConfig.resolve!.alias[dep] = require.resolve(dep);
   });
-  mfsu?.setWebpackConfig({
+  await mfsu?.setWebpackConfig({
     config: webpackConfig as any,
     depConfig: depConfig as any,
   });

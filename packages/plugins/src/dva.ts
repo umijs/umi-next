@@ -1,34 +1,30 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { dirname, join, relative } from 'path';
+import { winPath } from '@umijs/utils';
+import { join, relative } from 'path';
 import { IApi } from 'umi';
 import { chalk } from 'umi/plugin-utils';
 import { Model, ModelUtils } from './utils/modelUtils';
-import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
-  const pkgPath =
-    resolveProjectDep({
-      pkg: api.pkg,
-      cwd: api.cwd,
-      dep: 'dva',
-    }) || dirname(require.resolve('dva/package.json'));
+  const pkgPath = join(__dirname, '../libs/dva.ts');
 
   api.describe({
     config: {
       schema(Joi) {
-        return Joi.object();
+        return Joi.object({
+          extraModels: Joi.array().items(Joi.string()),
+          immer: Joi.object(),
+        });
       },
     },
     enableBy: api.EnableBy.config,
   });
 
   api.modifyAppData((memo) => {
-    const version = require(`${pkgPath}/package.json`).version;
     const models = getAllModels(api);
     memo.pluginDva = {
       pkgPath,
-      version,
       models,
     };
     return memo;
@@ -36,7 +32,7 @@ export default (api: IApi) => {
 
   api.modifyConfig((memo) => {
     // import from dva
-    memo.alias.dva = pkgPath;
+    memo.alias['dva$'] = pkgPath;
     return memo;
   });
 
@@ -55,25 +51,50 @@ export default (api: IApi) => {
     api.writeTmpFile({
       path: 'dva.tsx',
       tpl: `
-import dva from 'dva';
-import { useRef } from 'react';
-import { useAppContext } from 'umi';
+// It's faked dva
+// aliased to @umijs/plugins/templates/dva
+import { create, Provider } from 'dva';
+import createLoading from '${winPath(require.resolve('dva-loading'))}';
+${
+  api.config.dva?.immer
+    ? `
+import dvaImmer, { enableES5, enableAllPlugins } from '${winPath(
+        require.resolve('dva-immer'),
+      )}';
+`
+    : ''
+}
+import React, { useRef } from 'react';
+import { history } from 'umi';
 import { models } from './models';
 
 export function RootContainer(props: any) {
-  const { navigator } = useAppContext();
-  const app = useRef();
+  const app = useRef<any>();
   if (!app.current) {
-    app.current = dva({
-      history: navigator,
-      initialState: props.initialState,
-    });
+    app.current = create(
+      {
+        history,
+      },
+      {
+        initialReducer: {},
+        setupMiddlewares(middlewares: Function[]) {
+          return [...middlewares];
+        },
+        setupApp(app: IDvaApp) {
+          app._history = history;
+        },
+      },
+    );
+    app.current.use(createLoading());
+    ${api.config.dva?.immer ? `app.current.use(dvaImmer());` : ''}
+    ${api.config.dva?.immer?.enableES5 ? `enableES5();` : ''}
+    ${api.config.dva?.immer?.enableAllPlugins ? `enableAllPlugins();` : ''}
     for (const id of Object.keys(models)) {
       app.current.model(models[id].model);
     }
-    app.current.router(() => props.children);
+    app.current.start();
   }
-  return app.current.start()();
+  return <Provider store={app.current!._store}>{props.children}</Provider>;
 }
       `,
       context: {},
@@ -142,7 +163,9 @@ export function getModelUtil(api: IApi | null) {
 }
 
 export function getAllModels(api: IApi) {
-  return getModelUtil(api).getAllModels();
+  return getModelUtil(api).getAllModels({
+    extraModels: [...(api.config.dva.extraModels || [])],
+  });
 }
 
 function isModelObject(node: t.Node) {

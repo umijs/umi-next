@@ -3,10 +3,10 @@ import * as parser from '@umijs/bundler-utils/compiled/babel/parser';
 import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
-import { glob, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, extname, join } from 'path';
 import { IApi } from 'umi';
+import { glob, winPath } from 'umi/plugin-utils';
 import { getIdentifierDeclaration } from './astUtils';
 
 interface IOpts {
@@ -18,10 +18,20 @@ export class Model {
   file: string;
   namespace: string;
   id: string;
+  exportName: string;
   constructor(file: string, id: number) {
-    this.file = file;
-    this.namespace = basename(file, extname(file));
+    let namespace;
+    let exportName;
+    const [_file, meta] = file.split('#');
+    if (meta) {
+      const metaObj: Record<string, string> = JSON.parse(meta);
+      namespace = metaObj.namespace;
+      exportName = metaObj.exportName;
+    }
+    this.file = _file;
     this.id = `model_${id}`;
+    this.namespace = namespace || basename(file, extname(file));
+    this.exportName = exportName || 'default';
   }
 }
 
@@ -34,7 +44,7 @@ export class ModelUtils {
     this.opts = opts;
   }
 
-  getAllModels() {
+  getAllModels(opts: { extraModels: string[] }) {
     // reset count
     this.count = 1;
     return [
@@ -50,7 +60,10 @@ export class ModelUtils {
         base: join(this.api.paths.absPagesPath),
         pattern: '**/model.{ts,tsx,js,jsx}',
       }),
-    ];
+      ...opts.extraModels,
+    ].map((file: string) => {
+      return new Model(file, this.count++);
+    });
   }
 
   getModels(opts: { base: string; pattern?: string }) {
@@ -65,9 +78,6 @@ export class ModelUtils {
         if (/\.(test|e2e|spec).([jt])sx?$/.test(file)) return false;
         const content = readFileSync(file, 'utf-8');
         return this.isModelValid({ content, file });
-      })
-      .map((file: string) => {
-        return new Model(file, this.count++);
       });
   }
 
@@ -113,7 +123,13 @@ export class ModelUtils {
     const imports: string[] = [];
     const modelProps: string[] = [];
     models.forEach((model) => {
-      imports.push(`import ${model.id} from '${model.file}';`);
+      if (model.exportName !== 'default') {
+        imports.push(
+          `import { ${model.exportName} as ${model.id} } from '${model.file}';`,
+        );
+      } else {
+        imports.push(`import ${model.id} from '${model.file}';`);
+      }
       modelProps.push(
         `${model.id}: { namespace: '${model.namespace}', model: ${model.id} },`,
       );

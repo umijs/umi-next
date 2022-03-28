@@ -1,7 +1,5 @@
-import { prompts } from '@umijs/utils';
+import { generateFile } from '@umijs/utils';
 import { Plugin } from './plugin';
-import { PluginAPI } from './pluginAPI';
-import { IServicePluginAPI } from './service';
 
 export enum GeneratorType {
   generate = 'generate',
@@ -14,20 +12,12 @@ export interface IGeneratorOpts {
   description?: string;
   type?: GeneratorType;
   checkEnable?: {
-    (opts: { args: any; api: PluginAPI & IServicePluginAPI }): boolean;
+    (opts: { args: any }): boolean;
   };
   fn: {
     (opts: {
       args: any;
-      api: PluginAPI & IServicePluginAPI;
-      generateFile: {
-        (opts: {
-          path: string;
-          target: string;
-          data?: any;
-          questions?: prompts.PromptObject[];
-        }): void;
-      };
+      generateFile: typeof generateFile;
       updatePackageJSON: {
         (opts: { opts: object; cwd?: string }): void;
       };
@@ -53,6 +43,7 @@ export class Generator {
   checkEnable?: IGeneratorOpts['checkEnable'];
   fn: IGeneratorOpts['fn'];
   plugin: IGeneratorOpts['plugin'];
+
   constructor(opts: IGeneratorOpts) {
     this.key = opts.key;
     this.name = opts.name;

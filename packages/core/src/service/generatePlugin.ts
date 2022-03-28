@@ -20,7 +20,6 @@ umi generate
       const [type] = args._;
       const runGenerator = async (generator: IGeneratorOpts) => {
         await generator?.fn({
-          api,
           args,
           generateFile,
           installDeps,
@@ -35,7 +34,6 @@ umi generate
         }
         if (generator.type === GeneratorType.enable) {
           const enable = await generator.checkEnable?.({
-            api,
             args,
           });
           if (!enable) {
@@ -50,7 +48,7 @@ umi generate
           generators: typeof api.service.generators,
         ) => {
           const questions = [] as { title: string; value: string }[];
-          Object.keys(generators).forEach(async (key) => {
+          for (const key of Object.keys(generators)) {
             if (generators[key].type === GeneratorType.generate) {
               questions.push({
                 title:
@@ -60,7 +58,6 @@ umi generate
               });
             } else {
               const enable = await generators[key]?.checkEnable?.({
-                api,
                 args,
               });
               if (enable) {
@@ -72,7 +69,7 @@ umi generate
                 });
               }
             }
-          });
+          }
           return questions;
         };
         const questions = await getEnableGenerators(api.service.generators);

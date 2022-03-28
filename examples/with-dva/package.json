@@ -1,0 +1,14 @@
+{
+  "name": "@example/with-dva",
+  "private": true,
+  "scripts": {
+    "build": "umi build",
+    "dev": "umi dev",
+    "setup": "umi setup",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@umijs/plugins": "4.0.0-canary.20220325.1",
+    "umi": "4.0.0-canary.20220325.1"
+  }
+}

@@ -1,6 +1,6 @@
-import { Options as LegacyOptions } from '@vitejs/plugin-legacy';
-import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer';
-import type { Plugin, ProxyOptions } from 'vite';
+import { Options as LegacyOptions } from '../compiled/@vitejs/plugin-legacy';
+import type { PluginVisualizerOptions } from '../compiled/rollup-plugin-visualizer';
+import type { Plugin, ProxyOptions } from '../compiled/vite';
 
 export enum Env {
   development = 'development',
@@ -27,6 +27,7 @@ export interface IConfig {
   autoprefixer?: any;
   copy?: ICopy[] | string[];
   define?: { [key: string]: any };
+  externals?: Record<string, string>;
   extraBabelPlugins?: IBabelPlugin[];
   extraBabelPresets?: IBabelPlugin[];
   extraPostCSSPlugins?: any[];
