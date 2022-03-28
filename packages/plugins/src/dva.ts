@@ -1,10 +1,10 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { winPath } from '@umijs/utils';
 import { join, relative } from 'path';
 import { IApi } from 'umi';
 import { chalk } from 'umi/plugin-utils';
 import { Model, ModelUtils } from './utils/modelUtils';
 import { withTmpPath } from './utils/withTmpPath';
+import { winPath } from '@umijs/utils';
 
 export default (api: IApi) => {
   const pkgPath = join(__dirname, '../libs/dva.ts');

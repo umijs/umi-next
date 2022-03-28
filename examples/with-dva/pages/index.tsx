@@ -1,8 +1,8 @@
 import React from 'react';
 // @ts-ignore
-import { connect } from 'umi';
-// @ts-ignore
 import styles from './index.less';
+// @ts-ignore
+import { connect } from 'umi';
 
 function mapStateToProps(state: any) {
   return {

@@ -1,6 +1,6 @@
+import * as logger from '@umijs/utils/src/logger';
 import spawn from '@umijs/utils/compiled/cross-spawn';
 import yArgs from '@umijs/utils/compiled/yargs-parser';
-import * as logger from '@umijs/utils/src/logger';
 import { join } from 'path';
 
 (async () => {

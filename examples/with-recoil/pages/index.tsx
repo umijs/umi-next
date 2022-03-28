@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCounterAction, useCounterState } from '../recoil/counter';
+import { useCounterState, useCounterAction } from '../recoil/counter';
 import '../style.less';
 
 export default function HomePage(props) {

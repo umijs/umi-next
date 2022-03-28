@@ -1,8 +1,8 @@
-import type { Compiler, RequestHandler, Stats } from '@umijs/bundler-webpack';
+import type { RequestHandler, Compiler, Stats } from '@umijs/bundler-webpack';
 import { createRequestHandler, IOpts } from '@umijs/server';
 import { IApi } from '../../types';
-import { getAssetsMap } from './getAssetsMap';
 import { getMarkupArgs } from './getMarkupArgs';
+import { getAssetsMap } from './getAssetsMap';
 
 // TODO: extract to bundler-vite
 // refer: https://vitejs.dev/guide/backend-integration.html#backend-integration

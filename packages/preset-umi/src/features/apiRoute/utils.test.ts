@@ -1,5 +1,5 @@
-import { IRoute } from '../../types';
 import { matchApiRoute } from './utils';
+import { IRoute } from '../../types';
 
 const apiRoutes: IRoute[] = [
   {

@@ -2,13 +2,13 @@ import { IRoute } from '@umijs/core';
 import { logger, winPath } from '@umijs/utils';
 import fs from 'fs';
 import { basename, join, resolve } from 'path';
-import { watch } from '../../commands/dev/watch';
-import { TEMPLATES_DIR } from '../../constants';
-import type { IApi, IApiMiddleware } from '../../types';
-import { OUTPUT_PATH } from './constants';
-import DevServerAdapterBuild from './dev-server/esbuild';
 import { matchApiRoute } from './utils';
+import { TEMPLATES_DIR } from '../../constants';
+import { OUTPUT_PATH } from './constants';
+import type { IApi, IApiMiddleware } from '../../types';
+import DevServerAdapterBuild from './dev-server/esbuild';
 import VercelAdapterBuild from './vercel/esbuild';
+import { watch } from '../../commands/dev/watch';
 
 enum ServerlessPlatform {
   Vercel = 'vercel',
