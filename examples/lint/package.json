@@ -3,10 +3,9 @@
   "scripts": {
     "lint": "umi lint",
     "lint:es": "umi lint '*.js' --eslint-only",
-    "lint:es --fix": "umi lint '*.js' --eslint-only --fix",
-    "lint:fix": "umi lint '*.js' --fix",
+    "lint:es-fix": "umi lint '*.js' --eslint-only --fix",
     "lint:style": "umi lint '*.less' --stylelint-only",
-    "lint:style --fix": "umi lint '*.js' --stylelint-only --fix"
+    "lint:style-fix": "umi lint '*.less' --stylelint-only --fix"
   },
   "devDependencies": {
     "eslint": "^8.11.0",

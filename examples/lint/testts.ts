@@ -1,1 +1,2 @@
-var a = 1;
+// use lower-case primitives for consistency
+const str: String = 'foo';
