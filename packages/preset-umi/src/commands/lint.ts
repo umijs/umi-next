@@ -23,6 +23,9 @@ umi lint --fix
         type: api.ApplyPluginsType.modify,
         initialValue: { cwd: api.cwd, linterResolveDir: api.cwd },
       });
+      if (api.args._.length == 0) {
+        api.args._.unshift('**/*.{js,jsx,ts,tsx,less,css}');
+      }
 
       // lazy require for CLI performance
       require('@umijs/lint').default(opts, api.args);
