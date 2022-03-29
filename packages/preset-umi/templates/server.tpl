@@ -32,12 +32,6 @@ export default async function (req, res, next) {
     return;
   }
 
-  // TODO: only the paths need rendered in the server can continue
-  if(req.url.endsWith('.js') || req.url.endsWith('.css')) {
-    next();
-    return;
-  }
-
   const pluginManager = PluginManager.create({
     plugins: getPlugins(),
     validKeys: getValidKeys(),
@@ -45,6 +39,11 @@ export default async function (req, res, next) {
   const { routes, routeComponents } = await getRoutes(pluginManager);
 
   const matches = matchRoutesForSSR(req.url, routes);
+  if(matches.length === 0) {
+    next();
+    return;
+  }
+
   const loaderData = { };
   await Promise.all(matches.map(match => new Promise(async (resolve, reject) => {
     const data = await executeLoader(match);
