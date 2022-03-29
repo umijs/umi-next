@@ -26,7 +26,7 @@ async function executeLoader(routeKey: string) {
 
 export default async function (req, res, next) {
 
-  if(req.url.startsWith('/__umi')) {
+  if(req.url.startsWith('/__umi') && req.query.route) {
     const data = await executeLoader(req.query.route);
     res.status(200).json(data);
     return;
