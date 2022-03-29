@@ -20,9 +20,11 @@ export default () => {
 };
 
 export async function loader() {
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
   return { message: 'data from server loader of users.tsx' };
 }
 
 export async function clientLoader() {
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
   return { message: 'data from client loader of users.tsx' };
 }
