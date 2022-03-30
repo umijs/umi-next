@@ -1,9 +1,10 @@
 import { parseModule } from '@umijs/bundler-utils';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, join } from 'path';
+import { basename, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
+import { getRouteLoaders } from '../ssr/utils';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -189,6 +190,36 @@ export default function EmptyRoute() {
         rendererPath,
       },
     });
+
+    // loaders.ts
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: join('core/loaders.ts'),
+      tplPath: join(TEMPLATES_DIR, 'loaders.tpl'),
+      context: {
+        loaders: await getRouteLoaders(api, 'clientLoader'),
+      },
+    });
+
+    // server.ts
+    if (api.userConfig.ssr) {
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: join('server.ts'),
+        tplPath: join(TEMPLATES_DIR, 'server.tpl'),
+        context: {
+          umiPath: resolve(require.resolve('umi'), '..'),
+          routes: JSON.stringify(clonedRoutes, null, 2).replace(
+            /"component": "await import\((.*)\)"/g,
+            '"component": await import("$1")',
+          ),
+          routeLoaders: await getRouteLoaders(api, 'loader'),
+          pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
+          rendererPath,
+          validKeys,
+        },
+      });
+    }
   });
 
   async function getExports(opts: { path: string }) {

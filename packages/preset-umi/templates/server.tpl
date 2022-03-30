@@ -1,5 +1,5 @@
 import ReactDOMServer from 'react-dom/server';
-import { getClientRootComponent } from '{{{ rendererPath }}}/dist/index.js';
+import { getClientRootComponent } from '{{{ rendererPath }}}';
 import { getRoutes } from './core/route';
 import { createPluginManager } from './core/plugin';
 import { PluginManager } from '{{{ umiPath }}}/client/plugin.js';
