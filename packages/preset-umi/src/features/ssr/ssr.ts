@@ -27,25 +27,6 @@ export default (api: IApi) => {
   api.onBeforeCompiler(async () => {
     await esbuild.build({
       format: 'cjs',
-      platform: 'browser',
-      target: 'esnext',
-      watch: api.env === 'development' && {
-        onRebuild(error) {
-          if (error) logger.error(error);
-          delete require.cache[
-            resolve(api.paths.absTmpPath, 'core/loaders.js')
-          ];
-        },
-      },
-      bundle: true,
-      logLevel: 'error',
-      external: ['react'],
-      entryPoints: [resolve(api.paths.absTmpPath, 'core/loaders.ts')],
-      plugins: [esbuildIgnorePathPrefixPlugin(), esbuildUmiPlugin(api)],
-      outfile: resolve(api.paths.absTmpPath, 'core/loaders.js'),
-    });
-    await esbuild.build({
-      format: 'cjs',
       platform: 'node',
       target: 'esnext',
       bundle: true,

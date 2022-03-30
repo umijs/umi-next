@@ -8,6 +8,7 @@ export default () => {
 
       // features
       require.resolve('./features/ssr/ssr'),
+      require.resolve('./features/clientLoader/clientLoader'),
       require.resolve('./features/appData/appData'),
       require.resolve('./features/check/check'),
       require.resolve('./features/configPlugins/configPlugins'),
