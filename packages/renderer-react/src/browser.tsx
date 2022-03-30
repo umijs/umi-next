@@ -59,7 +59,6 @@ export function renderClient(opts: {
   routes: IRoutesById;
   routeComponents: IRouteComponents;
   pluginManager: any;
-  clientLoaders?: { executeClientLoader: (routeKey: string) => Promise<any> };
   basename?: string;
   loadingComponent?: React.ReactNode;
   history: History;
@@ -121,9 +120,11 @@ export function renderClient(opts: {
               })
               .catch(console.error);
           }
-          opts.clientLoaders?.executeClientLoader(match).then((data) => {
-            setClientLoaderData((d) => ({ ...d, [match]: data }));
-          });
+          const clientLoader = opts.routes[match].loader;
+          if (clientLoader)
+            clientLoader().then((data) => {
+              setClientLoaderData((d) => ({ ...d, [match]: data }));
+            });
         });
       });
     }, []);
@@ -131,9 +132,11 @@ export function renderClient(opts: {
     useEffect(() => {
       // @ts-ignore
       window.__UMI_SERVER_RENDERED_ROUTES__?.map((match) => {
-        opts.clientLoaders?.executeClientLoader(match).then((data) => {
-          setClientLoaderData((d) => ({ ...d, [match]: data }));
-        });
+        const clientLoader = opts.routes[match].loader;
+        if (clientLoader)
+          clientLoader().then((data) => {
+            setClientLoaderData((d) => ({ ...d, [match]: data }));
+          });
       });
     }, []);
 

@@ -112,6 +112,9 @@ export default function EmptyRoute() {
         path: join(api.paths.absPagesPath, clonedRoutes[id].file),
       });
       clonedRoutes[id].hasLoader = exports.includes('loader');
+      clonedRoutes[id].loader = `clientLoaders.${
+        id.replace('/', '_') + '_client_loader'
+      }`;
       for (const key of Object.keys(clonedRoutes[id])) {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];
@@ -123,7 +126,10 @@ export default function EmptyRoute() {
       path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
-        routes: JSON.stringify(clonedRoutes),
+        routes: JSON.stringify(clonedRoutes).replace(
+          /"(clientLoaders\..*?)"/g,
+          '$1',
+        ),
         routeComponents: await getRouteComponents({ routes, prefix }),
       },
     });

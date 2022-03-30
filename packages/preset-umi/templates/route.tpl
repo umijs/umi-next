@@ -1,3 +1,4 @@
+import clientLoaders from './loaders.js';
 
 export async function getRoutes() {
   return {
