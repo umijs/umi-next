@@ -21,5 +21,5 @@ export {
   useSearchParams,
 } from 'react-router-dom';
 export { useAppData, useClientLoaderData, useLoaderData } from './appContext';
-export { getClientRootComponent, renderClient } from './browser';
+export { renderClient } from './browser';
 export { useRouteData } from './routeContext';

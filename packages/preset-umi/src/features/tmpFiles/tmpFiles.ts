@@ -1,7 +1,7 @@
 import { parseModule } from '@umijs/bundler-utils';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, join, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
 import { getRouteLoaders } from '../ssr/utils';
@@ -215,7 +215,7 @@ export default function EmptyRoute() {
           ),
           routeLoaders: await getRouteLoaders(api, 'loader'),
           pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
-          rendererPath,
+          rendererPath: join(dirname(rendererPath), 'server.js'),
           validKeys,
         },
       });
