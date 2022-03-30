@@ -125,6 +125,7 @@ export async function getRoutes(opts: { api: IApi }) {
 }
 
 export async function getRouteComponents(opts: {
+  api: IApi;
   routes: Record<string, any>;
   prefix: string;
 }) {
@@ -134,17 +135,18 @@ export async function getRouteComponents(opts: {
       if (!route.file) {
         return `'${key}': () => import('./EmptyRoute'),`;
       }
+      const preCompiledPath = join(
+        opts.api.paths.absTmpPath,
+        'pages',
+        key.replace('/', '_') + '.js',
+      );
       // e.g.
       // component: () => <h1>foo</h1>
       // component: (() => () => <h1>foo</h1>)()
       if (route.file.startsWith('(')) {
-        return `'${key}': () => Promise.resolve(${route.file}),`;
+        return `'${key}': () => Promise.resolve(${preCompiledPath}),`;
       }
-      const path =
-        isAbsolute(route.file) || route.file.startsWith('@/')
-          ? route.file
-          : `${opts.prefix}${route.file}`;
-      return `'${key}': () => import('${winPath(path)}'),`;
+      return `'${key}': () => import('${winPath(preCompiledPath)}'),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;

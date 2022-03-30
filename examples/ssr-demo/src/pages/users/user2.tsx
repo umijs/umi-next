@@ -1,5 +1,6 @@
 import React from 'react';
 import { useClientLoaderData, useLoaderData } from 'umi';
+import Button from '../../components/Button';
 
 export default () => {
   const loaderData = useLoaderData();
@@ -7,6 +8,7 @@ export default () => {
   return (
     <div style={{ borderWidth: 2, padding: 10 }}>
       <h1>User2 data</h1>
+      <Button />
       <p>loader data: {JSON.stringify(loaderData)}</p>
       <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
     </div>
