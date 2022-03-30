@@ -38,6 +38,7 @@ importers:
       regenerator-runtime: ^0.13.9
       resolve: ^1.22.0
       rimraf: ^3.0.2
+      sirv: ^2.0.2
       ts-node: ^10.7.0
       turbo: ^1.1.9
       typescript: ^4.6.2
@@ -79,6 +80,7 @@ importers:
       regenerator-runtime: 0.13.9
       resolve: 1.22.0
       rimraf: 3.0.2
+      sirv: 2.0.2
       ts-node: 10.7.0_5338de7ff0b33ef224ee85855d74b9f4
       turbo: 1.1.9
       typescript: 4.6.2
@@ -2228,7 +2230,7 @@ packages:
       convert-source-map: 1.8.0
       debug: 4.3.3
       gensync: 1.0.0-beta.2
-      json5: 2.2.0
+      json5: 2.2.1
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -13911,7 +13913,6 @@ packages:
     resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==}
     engines: {node: '>=6'}
     hasBin: true
-    dev: true
 
   /jsonfile/4.0.0:
     resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
@@ -19724,7 +19725,6 @@ packages:
       '@polka/url': 1.0.0-next.21
       mrmime: 1.0.0
       totalist: 3.0.0
-    dev: false
 
   /sisteransi/1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -20897,7 +20897,6 @@ packages:
   /totalist/3.0.0:
     resolution: {integrity: sha512-eM+pCBxXO/njtF7vdFsHuqb+ElbxqtI4r5EAvk6grfAFyJ6IvWlSkfZ5T9ozC6xWw3Fj1fGoSmrl0gUs46JVIw==}
     engines: {node: '>=6'}
-    dev: false
 
   /tough-cookie/2.5.0:
     resolution: {integrity: sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==}
