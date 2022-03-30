@@ -49,11 +49,15 @@ export default async function (req, res, next) {
   }
 
   const loaderData = { };
-  await Promise.all(matches.map(match => new Promise(async (resolve, reject) => {
-    const data = await executeLoader(match);
-    loaderData[match] = data;
-    resolve();
-  })));
+  await Promise.all(
+    matches.filter(m => routes[m].hasLoader).map(
+      match => new Promise(async (resolve, reject) => {
+        const data = await executeLoader(match);
+        loaderData[match] = data;
+        resolve();
+      }
+    )
+  ));
 
   const context = {
     routes,
