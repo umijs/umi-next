@@ -113,9 +113,10 @@ export default function EmptyRoute() {
         path: join(api.paths.absPagesPath, clonedRoutes[id].file),
       });
       clonedRoutes[id].hasLoader = exports.includes('loader');
-      clonedRoutes[id].loader = `clientLoaders.${
-        id.replace('/', '_') + '_client_loader'
-      }`;
+      if (exports.includes('clientLoader'))
+        clonedRoutes[id].loader = `clientLoaders.${
+          id.replace('/', '_') + '_client_loader'
+        }`;
       for (const key of Object.keys(clonedRoutes[id])) {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];
@@ -223,9 +224,13 @@ export default function EmptyRoute() {
   });
 
   async function getExports(opts: { path: string }) {
-    const content = readFileSync(opts.path, 'utf-8');
-    const [_, exports] = await parseModule({ content, path: opts.path });
-    return exports || [];
+    try {
+      const content = readFileSync(opts.path, 'utf-8');
+      const [_, exports] = await parseModule({ content, path: opts.path });
+      return exports || [];
+    } catch (err) {
+      return [];
+    }
   }
 
   function checkMembers(opts: {

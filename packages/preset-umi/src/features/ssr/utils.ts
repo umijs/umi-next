@@ -20,20 +20,24 @@ export async function getRouteModuleExports(
   api: IApi,
   route: IRoute,
 ): Promise<string[]> {
-  let result = await esbuild.build({
-    entryPoints: [join(api.paths.absPagesPath, route.file)],
-    platform: 'neutral',
-    format: 'esm',
-    metafile: true,
-    write: false,
-    logLevel: 'silent',
-  });
-  let metafile = result.metafile!;
-  for (let key in metafile.outputs) {
-    let output = metafile.outputs[key];
-    if (output.entryPoint) return output.exports;
+  try {
+    let result = await esbuild.build({
+      entryPoints: [join(api.paths.absPagesPath, route.file)],
+      platform: 'neutral',
+      format: 'esm',
+      metafile: true,
+      write: false,
+      logLevel: 'silent',
+    });
+    let metafile = result.metafile!;
+    for (let key in metafile.outputs) {
+      let output = metafile.outputs[key];
+      if (output.entryPoint) return output.exports;
+    }
+    return [];
+  } catch (error) {
+    return [];
   }
-  throw new Error(`${route.file} has no entry point`);
 }
 
 /**
