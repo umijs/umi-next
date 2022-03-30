@@ -1,7 +1,7 @@
 import { parseModule } from '@umijs/bundler-utils';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
 import { importsToStr } from './importsToStr';
@@ -21,9 +21,7 @@ export default (api: IApi) => {
     const rendererPath = winPath(
       await api.applyPlugins({
         key: 'modifyRendererPath',
-        initialValue: dirname(
-          require.resolve('@umijs/renderer-react/package.json'),
-        ),
+        initialValue: require.resolve('@umijs/renderer-react'),
       }),
     );
 
@@ -229,15 +227,15 @@ export default function EmptyRoute() {
       // @umijs/renderer-react
       exports.push('// @umijs/renderer-react');
       const rendererReactPath = winPath(
-        dirname(require.resolve('@umijs/renderer-react/package.json')),
+        require.resolve('@umijs/renderer-react'),
       );
       exports.push(
         `export { ${(
           await getExportsAndCheck({
-            path: join(rendererReactPath, 'dist/index.js'),
+            path: join(rendererReactPath),
             exportMembers,
           })
-        ).join(', ')} } from '${rendererReactPath}/dist/index.js';`,
+        ).join(', ')} } from '${rendererReactPath}';`,
       );
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
