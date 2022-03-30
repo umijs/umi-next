@@ -222,10 +222,27 @@ export default {
 接下来，当你使用 `pnpm dev`
 启动项目后，可能会看到错误讯息并且启动失败了。这是因为我们在配置中声明了一些页面，但并没有帮他建立对应的页面组件！
 
+因此，先注释配置中的routes相关配置：
+
+```ts
+// .umirc.ts
+
+export default {
+  ...
+  routes: [
+    // { exact: true, path: '/', component: 'index' },
+    // { exact: true, path: '/posts/create', component: 'posts/create' },
+    // { exact: true, path: '/login', component: 'login' },
+    // { exact: true, path: '/posts/:postId', component: 'posts/post' },
+  ],
+  ...
+};
+```
+
 我们可以使用 Umi 的微生成器来自动生成这些页面：`login.tsx`, `posts/post.tsx`, `posts/create.tsx`:
 
 ```shell
-umi g page login posts/post posts/create
+npx umi g page login posts/post posts/create
 ```
 
 新增后的目录结构是这样的：
@@ -249,7 +266,7 @@ src
         └── post.tsx
 ```
 
-现在再输入一次 `pnpm dev` 就可以看到我们的网站正常启动了。
+现在取消umirc.ts中的注释，再输入一次 `pnpm dev` 就可以看到我们的网站正常启动了。
 
 ## API 路由设计
 
