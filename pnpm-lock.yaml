@@ -218,16 +218,12 @@ importers:
     specifiers:
       '@stylelint/postcss-css-in-js': ^0.37.2
       eslint: ^8.11.0
-      postcss-js: ^4.0.0
       postcss-syntax: ^0.36.2
       stylelint: ^14.6.0
-      stylelint-config-standard: 25.0.0
       umi: 4.0.0-canary.20220318.1
     dependencies:
       '@stylelint/postcss-css-in-js': 0.37.2_postcss-syntax@0.36.2
-      postcss-js: 4.0.0
       postcss-syntax: 0.36.2
-      stylelint-config-standard: 25.0.0_stylelint@14.6.0
     devDependencies:
       eslint: 8.11.0
       stylelint: 14.6.0
@@ -16972,15 +16968,6 @@ packages:
       postcss: 8.4.12
     dev: false
 
-  /postcss-js/4.0.0:
-    resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
-    engines: {node: ^12 || ^14 || >= 16}
-    peerDependencies:
-      postcss: ^8.3.3
-    dependencies:
-      camelcase-css: 2.0.1
-    dev: false
-
   /postcss-js/4.0.0_postcss@8.4.12:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
     engines: {node: ^12 || ^14 || >= 16}
@@ -20359,29 +20346,12 @@ packages:
       stylelint: ^14.4.0
     dev: false
 
-  /stylelint-config-recommended/7.0.0_stylelint@14.6.0:
-    resolution: {integrity: sha512-yGn84Bf/q41J4luis1AZ95gj0EQwRX8lWmGmBwkwBNSkpGSpl66XcPTulxGa/Z91aPoNGuIGBmFkcM1MejMo9Q==}
-    peerDependencies:
-      stylelint: ^14.4.0
-    dependencies:
-      stylelint: 14.6.0
-    dev: false
-
   /stylelint-config-standard/25.0.0:
     resolution: {integrity: sha512-21HnP3VSpaT1wFjFvv9VjvOGDtAviv47uTp3uFmzcN+3Lt+RYRv6oAplLaV51Kf792JSxJ6svCJh/G18E9VnCA==}
     peerDependencies:
       stylelint: ^14.4.0
     dependencies:
       stylelint-config-recommended: 7.0.0
-    dev: false
-
-  /stylelint-config-standard/25.0.0_stylelint@14.6.0:
-    resolution: {integrity: sha512-21HnP3VSpaT1wFjFvv9VjvOGDtAviv47uTp3uFmzcN+3Lt+RYRv6oAplLaV51Kf792JSxJ6svCJh/G18E9VnCA==}
-    peerDependencies:
-      stylelint: ^14.4.0
-    dependencies:
-      stylelint: 14.6.0
-      stylelint-config-recommended: 7.0.0_stylelint@14.6.0
     dev: false
 
   /stylelint-declaration-block-no-ignored-properties/2.5.0:

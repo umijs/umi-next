@@ -7,7 +7,6 @@ module.exports = {
     require.resolve('stylelint-config-css-modules'),
     require.resolve('stylelint-config-standard'),
     require.resolve('stylelint-config-prettier'),
-    require.resolve('@stylelint/postcss-css-in-js'),
     require.resolve('postcss-syntax'),
     require.resolve('stylelint-config-standard'),
   ],
@@ -29,17 +28,8 @@ module.exports = {
   ignoreFiles: ['node_modules', '**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
   overrides: [
     {
-      files: [
-        '*.js',
-        '**/*.js',
-        '*.jsx',
-        '**/*.jsx',
-        '*.ts',
-        '**/*.ts',
-        '*.tsx',
-        '**/*.tsx',
-      ],
-      customSyntax: '@stylelint/postcss-css-in-js',
+      files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
+      customSyntax: require.resolve('@stylelint/postcss-css-in-js'),
     },
   ],
 };

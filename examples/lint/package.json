@@ -9,6 +9,7 @@
     "lint:style-fix": "umi lint --stylelint-only --fix"
   },
   "devDependencies": {
+    "@stylelint/postcss-css-in-js": "^0.37.2",
     "eslint": "^8.11.0",
     "stylelint": "^14.6.0",
     "umi": "4.0.0-canary.20220318.1"
