@@ -2,7 +2,20 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { join, resolve } from 'path';
 import { IApi, IRoute } from '../../types';
 
-/** Get exports of specific route module */
+/**
+ * Get exports of specific route module
+ *
+ * Example:
+ * ```
+ * // pages/index.tsx
+ * export default function () { / * ... * / }
+ * export function loader() { / * ... *  / }
+ * export function clientLoader() { / * ... * / }
+ * ```
+ *
+ * getRouteModuleExports(api, routes[index])
+ * -> [ 'default', 'loader', 'clientLoader' ];
+ * */
 export async function getRouteModuleExports(
   api: IApi,
   route: IRoute,
@@ -23,40 +36,47 @@ export async function getRouteModuleExports(
   throw new Error(`${route.file} has no entry point`);
 }
 
-/** Get the import strings of route server loaders (for render server.tpl) */
-export async function getRouteLoaders(api: IApi) {
-  const imports = Object.keys(api.appData.routes)
-    .map((key) => {
-      const route = api.appData.routes[key];
-      if (route.file.startsWith('(')) {
-        return `'${key}': () => Promise.resolve(${join(
-          api.paths.absPagesPath,
-          route.file,
-        )}),`;
-      }
-      return `'${key}': () => import('${join(
-        api.paths.absPagesPath,
-        route.file,
-      )}'),`;
-    })
-    .join('\n');
-  return `{\n${imports}\n}`;
-}
-
-/** Get the client loaders of routes (if exists) */
-export async function getRouteClientLoaders(api: IApi) {
+/**
+ * Get the client/server loaders of routes (if exists)
+ *
+ * If type is 'loader', example result is:
+ * ```
+ * [
+ *   { name: 'index', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/index.tsx' },
+ *   { name: 'users', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users.tsx' },
+ *   { name: 'users/user', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users/user.tsx' },
+ * ];
+ * ```
+ *
+ * If type is 'clientLoader', example result is:
+ * ```
+ * [
+ *   { name: 'index_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/index.tsx' },
+ *   { name: 'users_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users.tsx' },
+ *   { name: 'users_user_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users/user.tsx' },
+ * ];
+ * ```
+ * */
+export async function getRouteLoaders(
+  api: IApi,
+  type: 'loader' | 'clientLoader',
+) {
   const routesWithClientLoader: string[] = [];
   await Promise.all(
     Object.keys(api.appData.routes).map(async (key) => {
       const route = api.appData.routes[key];
       const exports = await getRouteModuleExports(api, route);
-      if (exports.includes('clientLoader')) routesWithClientLoader.push(key);
+      if (exports.includes(type)) routesWithClientLoader.push(key);
     }),
   );
   return routesWithClientLoader.map((key) => {
     const route = api.appData.routes[key];
+    const name =
+      type === 'clientLoader'
+        ? key.replace(/\//g, '_') + '_client_loader'
+        : key;
     return {
-      name: key.replace(/\//g, '_') + '_client_loader',
+      name,
       path: join(api.paths.absPagesPath, route.file),
     };
   });

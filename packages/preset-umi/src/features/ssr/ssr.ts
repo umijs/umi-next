@@ -7,7 +7,6 @@ import type { IApi } from '../../types';
 import {
   esbuildIgnorePathPrefixPlugin,
   esbuildUmiPlugin,
-  getRouteClientLoaders,
   getRouteLoaders,
 } from './utils';
 
@@ -70,7 +69,7 @@ export default (api: IApi) => {
       path: join('core/loaders.ts'),
       tplPath: join(TEMPLATES_DIR, 'loaders.tpl'),
       context: {
-        loaders: await getRouteClientLoaders(api),
+        loaders: await getRouteLoaders(api, 'clientLoader'),
       },
     });
     api.writeTmpFile({
@@ -83,7 +82,7 @@ export default (api: IApi) => {
           /"component": "await import\((.*)\)"/g,
           '"component": await import("$1")',
         ),
-        routeLoaders: await getRouteLoaders(api),
+        routeLoaders: await getRouteLoaders(api, 'loader'),
         pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
         rendererPath,
         validKeys,

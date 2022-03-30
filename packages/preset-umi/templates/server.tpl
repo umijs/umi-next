@@ -5,7 +5,11 @@ import { createPluginManager } from './core/plugin';
 import { PluginManager } from '{{{ umiPath }}}/client/plugin.js';
 import { matchRoutes } from "react-router";
 
-const routeLoaders = {{{ routeLoaders }}};
+const routeLoaders = {
+{{#routeLoaders}}
+  '{{{ name }}}': () => import('{{{ path }}}'),
+{{/routeLoaders}}
+};
 
 export function getPlugins() {
   return [];
