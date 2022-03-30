@@ -8,4 +8,5 @@ export interface ILintArgs {
   fix?: boolean;
   eslintOnly?: boolean;
   stylelintOnly?: boolean;
+  cssinjs?: boolean;
 }

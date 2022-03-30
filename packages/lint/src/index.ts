@@ -5,8 +5,10 @@ export type { ILintArgs, ILinterOpts };
 
 export default (opts: ILinterOpts, args: ILintArgs) => {
   if (!args.eslintOnly) {
-    args._.unshift('--ignore-pattern', '*.js');
-    args._.unshift('--ignore-pattern', '*.ts');
+    if (!args.cssinjs) {
+      args._.unshift('--ignore-pattern', '*.js');
+      args._.unshift('--ignore-pattern', '*.ts');
+    }
     const stylelint = new StyleLinter(opts);
     stylelint.run(args);
   }
