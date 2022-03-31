@@ -1,5 +1,10 @@
 import { parseModule } from '@umijs/bundler-utils';
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
+import {
+  BrowserRouteModulePlugin,
+  IgnorePathPrefixPlugin,
+  loaders,
+} from '@umijs/bundler-utils/dist/esbuild';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { basename, dirname, isAbsolute, join, resolve } from 'path';
@@ -261,78 +266,41 @@ export default function EmptyRoute() {
     return members;
   }
 
-  // Pack the route component **without loaders** into tmpDir/pages
-  // These generated route components will be imported by core/route.tsx
-  api.onBeforeCompiler(async () => {
-    const routes = api.appData.routes;
-    const entryPoints: { [key: string]: string } = {};
-    Object.keys(routes).map((key) => {
-      if (isAbsolute(routes[key].file)) {
-        entryPoints[routes[key].id.replace(/\//g, '_')] = join(
-          routes[key].file + '?browser',
-        );
-      } else {
+  const isPluginDocsEnable =
+    api.userConfig.plugins?.includes('@umijs/plugin-docs');
+  if (!isPluginDocsEnable) {
+    // Pack the route component **without loaders** into tmpDir/pages
+    // These generated route components will be imported by core/route.tsx
+    api.onBeforeCompiler(async () => {
+      const routes = api.appData.routes;
+      const entryPoints: { [key: string]: string } = {};
+      Object.keys(routes).map((key) => {
+        if (isAbsolute(routes[key].file)) {
+          entryPoints[routes[key].id.replace(/\//g, '_')] = join(
+            routes[key].file + '?browser',
+          );
+          return;
+        }
         entryPoints[routes[key].id.replace(/\//g, '_')] = join(
           api.paths.absPagesPath,
           routes[key].file + '?browser',
         );
-      }
+      });
+      await esbuild.build({
+        entryPoints,
+        format: 'esm',
+        splitting: true,
+        bundle: true,
+        external: ['umi', 'react', 'react-dom'],
+        outdir: join(api.paths.absTmpPath, 'pages'),
+        entryNames: '[name]',
+        chunkNames: '_shared/[name]-[hash]',
+        assetNames: '_assets/[name]-[hash]',
+        loader: loaders,
+        plugins: [IgnorePathPrefixPlugin(), BrowserRouteModulePlugin()],
+      });
     });
-    await esbuild.build({
-      entryPoints,
-      format: 'esm',
-      splitting: true,
-      bundle: true,
-      external: [
-        'umi',
-        'react',
-        'react-dom',
-        '*.md',
-        '*.mdx',
-        '*.png',
-        '*.jpg',
-        '*.svg',
-      ],
-      outdir: join(api.paths.absTmpPath, 'pages'),
-      entryNames: '[name]',
-      chunkNames: '_shared/[name]-[hash]',
-      plugins: [
-        {
-          name: 'ignore-path-prefix',
-          setup(build: any) {
-            build.onResolve({ filter: /^@fs/ }, (args: any) => ({
-              path: args.path.replace(/^@fs/, ''),
-            }));
-          },
-        },
-        {
-          name: 'browser-route-modules',
-          async setup(build) {
-            build.onResolve({ filter: /\?browser$/ }, (args) => {
-              return {
-                path: args.path,
-                namespace: 'browser-route-module',
-              };
-            });
-            build.onLoad(
-              { filter: /\?browser$/, namespace: 'browser-route-module' },
-              async (args) => {
-                let file = args.path.replace(/\?browser$/, '');
-                let contents = `export { default } from ${JSON.stringify(
-                  file,
-                )};`;
-                return {
-                  contents,
-                  resolveDir: dirname(file),
-                  loader: 'js',
-                };
-              },
-            );
-          },
-        },
-      ],
-    });
-  });
+  }
 
   // Generate @@/exports.ts
   api.register({

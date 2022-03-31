@@ -129,20 +129,33 @@ export async function getRouteComponents(opts: {
   routes: Record<string, any>;
   prefix: string;
 }) {
+  const isPluginDocsEnable =
+    opts.api.userConfig.plugins?.includes('@umijs/plugin-docs');
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
         return `'${key}': () => import('./EmptyRoute'),`;
       }
+      if (isPluginDocsEnable) {
+        // e.g.
+        // component: () => <h1>foo</h1>
+        // component: (() => () => <h1>foo</h1>)()
+        if (route.file.startsWith('(')) {
+          return `'${key}': () => Promise.resolve(${route.file}),`;
+        }
+        const path =
+          isAbsolute(route.file) || route.file.startsWith('@/')
+            ? route.file
+            : `${opts.prefix}${route.file}`;
+        return `'${key}': () => import('${winPath(path)}'),`;
+      }
+
       const preCompiledPath = join(
         opts.api.paths.absTmpPath,
         'pages',
-        key.replace('/', '_') + '.js',
+        route.id.replace(/\//g, '_') + '.js',
       );
-      // e.g.
-      // component: () => <h1>foo</h1>
-      // component: (() => () => <h1>foo</h1>)()
       if (route.file.startsWith('(')) {
         return `'${key}': () => Promise.resolve(${preCompiledPath}),`;
       }
