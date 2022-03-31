@@ -4,13 +4,14 @@
  */
 module.exports = {
   extends: [
-    require.resolve('stylelint-config-css-modules'),
     require.resolve('stylelint-config-standard'),
-    require.resolve('stylelint-config-prettier'),
-    require.resolve('stylelint-config-standard'),
+    require.resolve('../../../compiled/stylelint-config-prettier'),
+    require.resolve('../../../compiled/stylelint-config-css-modules'),
   ],
   plugins: [
-    require.resolve('stylelint-declaration-block-no-ignored-properties'),
+    require.resolve(
+      '../../../compiled/stylelint-declaration-block-no-ignored-properties',
+    ),
   ],
   rules: {
     'no-descending-specificity': null,
@@ -23,7 +24,7 @@ module.exports = {
     'selector-type-no-unknown': null,
     'value-keyword-case': ['lower', { ignoreProperties: ['composes'] }],
   },
-  customSyntax: require.resolve('postcss-less'),
+  customSyntax: require.resolve('../../../compiled/postcss-less'),
   ignoreFiles: ['node_modules'],
   overrides: [
     {

@@ -32,11 +32,13 @@
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.3.0",
     "postcss": "^8.4.12",
-    "postcss-less": "6.0.0",
     "postcss-syntax": "0.36.2",
+    "stylelint-config-standard": "25.0.0"
+  },
+  "devDependencies": {
+    "postcss-less": "6.0.0",
     "stylelint-config-css-modules": "4.1.0",
     "stylelint-config-prettier": "9.0.3",
-    "stylelint-config-standard": "25.0.0",
     "stylelint-declaration-block-no-ignored-properties": "2.5.0"
   },
   "publishConfig": {
@@ -44,5 +46,19 @@
   },
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ]
+  ],
+  "compiledConfig": {
+    "deps": [
+      "postcss-less",
+      "stylelint-config-css-modules",
+      "stylelint-config-prettier",
+      "stylelint-declaration-block-no-ignored-properties"
+    ],
+    "excludeDtsDeps": [
+      "postcss-less",
+      "stylelint-config-css-modules",
+      "stylelint-config-prettier",
+      "stylelint-declaration-block-no-ignored-properties"
+    ]
+  }
 }
