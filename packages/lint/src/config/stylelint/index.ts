@@ -24,7 +24,7 @@ module.exports = {
     'value-keyword-case': ['lower', { ignoreProperties: ['composes'] }],
   },
   customSyntax: require.resolve('postcss-less'),
-  ignoreFiles: ['node_modules', '**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
+  ignoreFiles: ['node_modules'],
   overrides: [
     {
       files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
