@@ -22,7 +22,6 @@ import { Hook } from './hook';
 import { getPaths } from './path';
 import { Plugin } from './plugin';
 import { PluginAPI } from './pluginAPI';
-import { isPromise } from './utils';
 
 interface IOpts {
   cwd: string;
@@ -218,12 +217,16 @@ export class Service {
     }
     this.pkg = pkg;
     this.pkgPath = pkgPath || join(this.cwd, 'package.json');
+
+    const prefix = this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME;
     // get user config
     const configManager = new Config({
       cwd: this.cwd,
       env: this.env,
       defaultConfigFiles: this.opts.defaultConfigFiles,
+      specifiedEnv: process.env[`${prefix}_ENV`.toUpperCase()],
     });
+
     this.configManager = configManager;
     this.userConfig = configManager.getUserConfig().config;
     // get paths (move after?)
@@ -238,7 +241,7 @@ export class Service {
         this.opts.presets || [],
       ),
       userConfig: this.userConfig,
-      prefix: this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME,
+      prefix,
     });
     // register presets and plugins
     this.stage = ServiceStage.initPresets;
@@ -341,10 +344,7 @@ export class Service {
     this.stage = ServiceStage.runCommand;
     const command = this.commands[name];
     assert(command, `Invalid command ${name}, it's not registered.`);
-    let ret = command.fn({ args });
-    if (isPromise(ret)) {
-      ret = await ret;
-    }
+    let ret = await command.fn({ args });
     this._baconPlugins();
     return ret;
   }
@@ -427,10 +427,7 @@ export class Service {
       },
     });
     let dateStart = new Date();
-    let ret = opts.plugin.apply()(proxyPluginAPI);
-    if (isPromise(ret)) {
-      ret = await ret;
-    }
+    let ret = await opts.plugin.apply()(proxyPluginAPI);
     opts.plugin.time.register = new Date().getTime() - dateStart.getTime();
     if (opts.plugin.type === 'plugin') {
       assert(!ret, `plugin should return nothing`);

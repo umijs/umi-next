@@ -49,6 +49,11 @@ export async function dev(opts: IOpts) {
         return {
           version: require('../package.json').version,
           esbuildMode: !!opts.config.mfsu?.esbuild,
+          alias: opts.config.alias,
+          externals: opts.config.externals,
+          theme: opts.config.theme,
+          runtimePublicPath: opts.config.runtimePublicPath,
+          publicPath: opts.config.publicPath,
         };
       },
     });
@@ -75,6 +80,7 @@ export async function dev(opts: IOpts) {
     analyze: process.env.ANALYZE,
     cache: opts.cache,
   });
+
   const depConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.development,
@@ -83,11 +89,13 @@ export async function dev(opts: IOpts) {
     hash: true,
     staticPathPrefix: MF_DEP_PREFIX,
     name: MFSU_NAME,
+    chainWebpack: opts.config.mfsu?.chainWebpack,
     cache: {
       buildDependencies: opts.cache?.buildDependencies,
       cacheDirectory: join(opts.cwd, 'node_modules', '.cache', 'mfsu-deps'),
     },
   });
+
   webpackConfig.resolve!.alias ||= {};
   // TODO: REMOVE ME
   ['@umijs/utils/compiled/strip-ansi', 'react-error-overlay'].forEach((dep) => {

@@ -12,7 +12,6 @@ import webpack, { Configuration } from 'webpack';
 import { lookup } from '../compiled/mrmime';
 // @ts-ignore
 import WebpackVirtualModules from '../compiled/webpack-virtual-modules';
-import autoExport from './babelPlugins/autoExport';
 import awaitImport from './babelPlugins/awaitImport/awaitImport';
 import { getRealPath } from './babelPlugins/awaitImport/getRealPath';
 import {
@@ -27,12 +26,10 @@ import {
 import { Dep } from './dep/dep';
 import { DepBuilder } from './depBuilder/depBuilder';
 import { DepInfo } from './depInfo';
-import autoExportHandler from './esbuildHandlers/autoExport';
 import getAwaitImportHandler from './esbuildHandlers/awaitImport';
 import { Mode } from './types';
 import { makeArray } from './utils/makeArray';
 import { BuildDepPlugin } from './webpackPlugins/buildDepPlugin';
-import { WriteCachePlugin } from './webpackPlugins/writeCachePlugin';
 
 interface IOpts {
   cwd?: string;
@@ -56,6 +53,7 @@ export class MFSU {
   public depInfo: DepInfo;
   public depBuilder: DepBuilder;
   public depConfig: Configuration | null = null;
+  public buildDepsAgain: boolean = false;
   constructor(opts: IOpts) {
     this.opts = opts;
     this.opts.mfName = this.opts.mfName || DEFAULT_MF_NAME;
@@ -193,16 +191,20 @@ promise new Promise(resolve => {
         }),
         new BuildDepPlugin({
           onCompileDone: () => {
-            this.buildDeps().catch((e) => {
-              logger.error(e);
-            });
+            if (this.depBuilder.isBuilding) {
+              this.buildDepsAgain = true;
+            } else {
+              this.buildDeps().catch((e: Error) => {
+                logger.error(e);
+              });
+            }
           },
         }),
-        new WriteCachePlugin({
-          onWriteCache: lodash.debounce(() => {
-            this.depInfo.writeCache();
-          }, 300),
-        }),
+        // new WriteCachePlugin({
+        //   onWriteCache: lodash.debounce(() => {
+        //     this.depInfo.writeCache();
+        //   }, 300),
+        // }),
       ],
     );
 
@@ -216,7 +218,8 @@ promise new Promise(resolve => {
   }
 
   async buildDeps() {
-    if (!this.depInfo.shouldBuild()) {
+    const shouldBuild = this.depInfo.shouldBuild();
+    if (!shouldBuild) {
       logger.info('MFSU skip buildDeps');
       return;
     }
@@ -226,11 +229,22 @@ promise new Promise(resolve => {
       cwd: this.opts.cwd!,
       mfsu: this,
     });
-    logger.info('MFSU buildDeps');
+    logger.info(`MFSU buildDeps since ${shouldBuild}`);
     logger.debug(deps.map((dep) => dep.file).join(', '));
     await this.depBuilder.build({
       deps,
     });
+
+    // Write cache
+    this.depInfo.writeCache();
+
+    if (this.buildDepsAgain) {
+      logger.info('MFSU buildDepsAgain');
+      this.buildDepsAgain = false;
+      this.buildDeps().catch((e) => {
+        logger.error(e);
+      });
+    }
   }
 
   getMiddlewares() {
@@ -310,7 +324,7 @@ promise new Promise(resolve => {
   }
 
   getBabelPlugins() {
-    return [autoExport, [awaitImport, this.getAwaitImportCollectOpts()]];
+    return [[awaitImport, this.getAwaitImportCollectOpts()]];
   }
 
   getEsbuildLoaderHandler() {
@@ -318,7 +332,6 @@ promise new Promise(resolve => {
     const checkOpts = this.getAwaitImportCollectOpts();
 
     return [
-      autoExportHandler,
       getAwaitImportHandler({
         cache,
         opts: checkOpts,
