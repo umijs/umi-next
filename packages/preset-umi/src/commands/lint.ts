@@ -24,7 +24,7 @@ umi lint --fix
         initialValue: { cwd: api.cwd, linterResolveDir: api.cwd },
       });
       if (api.args._.length == 0) {
-        api.args._.unshift('**/*.{js,jsx,ts,tsx,less,css}');
+        api.args._.unshift('{src,test}/**/*.{js,jsx,ts,tsx,less,css}');
       }
 
       // lazy require for CLI performance
