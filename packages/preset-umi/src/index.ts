@@ -31,6 +31,7 @@ export default () => {
       require.resolve('./commands/config/config'),
       require.resolve('./commands/dev/dev'),
       require.resolve('./commands/help'),
+      require.resolve('./commands/lint'),
       require.resolve('./commands/setup'),
       require.resolve('./commands/version'),
       require.resolve('./commands/generators/page'),
@@ -41,7 +42,6 @@ export default () => {
       require.resolve('./commands/generators/dva'),
       require.resolve('./commands/plugin'),
       require.resolve('./commands/verify-commit'),
-      require.resolve('./commands/lint'),
     ],
   };
 };

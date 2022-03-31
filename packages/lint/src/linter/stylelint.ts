@@ -12,6 +12,7 @@ export default class StyleLinter extends BaseLinter {
       '--config-basedir',
       this.paths.cwd!,
       '--quiet', // no warnings
+      '--allow-empty-input',
       ...(args.fix ? ['--fix'] : []),
       ...args._,
     ];

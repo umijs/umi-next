@@ -16,9 +16,8 @@ export default class BaseLinter {
    */
   paths: Partial<ILinterOpts> = {};
 
-  constructor({ cwd, linterResolveDir }: ILinterOpts) {
+  constructor({ cwd }: ILinterOpts) {
     this.paths.cwd = cwd;
-    this.paths.linterResolveDir = linterResolveDir;
   }
 
   /**
@@ -26,9 +25,7 @@ export default class BaseLinter {
    */
   getBinPath() {
     try {
-      const pkgPath = require.resolve(`${this.linter}/package.json`, {
-        paths: [this.paths.linterResolveDir!],
-      });
+      const pkgPath = require.resolve(`${this.linter}/package.json`);
       const pkgContent = require(pkgPath);
 
       return path.resolve(path.dirname(pkgPath), pkgContent.bin[this.linter]);
