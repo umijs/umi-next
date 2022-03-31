@@ -68,9 +68,8 @@ export async function createServer(opts: IOpts) {
         const afterStacks: typeof vite.middlewares.stack =
           opts.afterMiddlewares!.map((m) => ({
             route: '',
-            // TODO: FIXME
-            // see: https://github.com/umijs/umi-next/commit/34d4e4e26a20ff5c7393eab5d3db363cca541379#diff-3a996a9e7a2f94fc8f23c6efed1447eed9567e36ed622bd8547a58e5415087f7R164
-            handle: app.use(m.toString().includes(`{ compiler }`) ? m({}) : m),
+            // TODO  it's still wired, the app is used as middleware at least twice.
+            handle: mountMiddleware(app, m),
           }));
 
         vite.middlewares.stack.splice(i, 0, ...afterStacks);
