@@ -23,7 +23,9 @@
     "plugin-utils.js",
     "prettier.js",
     "test.d.ts",
-    "test.js"
+    "test.js",
+    "eslint.js",
+    "stylelint.js"
   ],
   "scripts": {
     "build": "pnpm tsc",

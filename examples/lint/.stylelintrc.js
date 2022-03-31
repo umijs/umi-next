@@ -1,3 +1,3 @@
 module.exports = {
-  extends: require.resolve('umi/config-stylelint')
+  extends: require.resolve('umi/stylelint')
 }
