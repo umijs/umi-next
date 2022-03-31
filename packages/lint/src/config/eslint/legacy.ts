@@ -36,12 +36,7 @@ module.exports = {
       jsx: true,
     },
     babelOptions: {
-      presets: [
-        '@babel/preset-env',
-        '@babel/preset-react',
-        '@babel/preset-typescript',
-      ],
-      plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
+      presets: [require.resolve('@umijs/babel-preset-umi')],
     },
     requireConfigFile: false,
     project: TYPE_AWARE_ENABLE ? './tsconfig.json' : undefined,
