@@ -7,7 +7,6 @@ module.exports = {
     require.resolve('stylelint-config-css-modules'),
     require.resolve('stylelint-config-standard'),
     require.resolve('stylelint-config-prettier'),
-    require.resolve('postcss-syntax'),
     require.resolve('stylelint-config-standard'),
   ],
   plugins: [
