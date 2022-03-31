@@ -51,6 +51,7 @@ function createRouteMiddleware(opts: { api: IApi }): RequestHandler {
           markupArgs.scripts!,
         ),
         esmScript: vite,
+        historyType: opts.api.config.history?.type || 'browser',
       });
       requestHandler(req, res, next);
     });
