@@ -43,8 +43,7 @@ export type MiddleWare = RequestHandler | MiddlewareDesc;
 
 export function mountMiddleware(app: Application, mw: MiddleWare) {
   if (typeof mw === 'function') {
-    app.use(mw);
-    return;
+    return app.use(mw);
   }
   if (isMiddlewareDesc(mw)) {
     const path = mw.path || '/';
@@ -66,4 +65,5 @@ export function mountMiddleware(app: Application, mw: MiddleWare) {
       app.use(path, ...handler);
     }
   }
+  return app;
 }
