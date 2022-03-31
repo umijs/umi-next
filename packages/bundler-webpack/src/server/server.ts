@@ -3,7 +3,7 @@ import { createProxyMiddleware } from '@umijs/bundler-webpack/compiled/http-prox
 import webpack, {
   Configuration,
 } from '@umijs/bundler-webpack/compiled/webpack';
-import { chalk, logger } from '@umijs/utils';
+import { chalk, logger, mountMiddleware } from '@umijs/utils';
 import { createReadStream, existsSync } from 'fs';
 import http from 'http';
 import { join } from 'path';
@@ -62,7 +62,7 @@ export async function createServer(opts: IOpts) {
   // TODO: headers
 
   // before middlewares
-  (opts.beforeMiddlewares || []).forEach((m) => app.use(m));
+  opts.beforeMiddlewares?.forEach((m) => mountMiddleware(app, m));
 
   // TODO: add to before middleware
   app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 import express from '@umijs/bundler-utils/compiled/express';
-import { logger } from '@umijs/utils';
+import { logger, mountMiddleware } from '@umijs/utils';
 import http from 'http';
 import type {
   DepOptimizationMetadata,
@@ -58,7 +58,7 @@ export async function createServer(opts: IOpts) {
   });
 
   // before middlewares
-  opts.beforeMiddlewares?.forEach((m) => app.use(m));
+  opts.beforeMiddlewares?.forEach((m) => mountMiddleware(app, m));
 
   // after middlewares, insert before vite spaFallbackMiddleware
   // refer: https://github.com/vitejs/vite/blob/2c586165d7bc4b60f8bcf1f3b462b97a72cce58c/packages/vite/src/node/server/index.ts#L508
