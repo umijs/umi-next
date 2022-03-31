@@ -1,8 +1,8 @@
-import type { RequestHandler, Compiler, Stats } from '@umijs/bundler-webpack';
+import type { RequestHandler, Stats } from '@umijs/bundler-webpack';
 import { createRequestHandler, IOpts } from '@umijs/server';
 import { IApi } from '../../types';
-import { getMarkupArgs } from './getMarkupArgs';
 import { getAssetsMap } from './getAssetsMap';
+import { getMarkupArgs } from './getMarkupArgs';
 
 // TODO: extract to bundler-vite
 // refer: https://vitejs.dev/guide/backend-integration.html#backend-integration
@@ -14,44 +14,33 @@ window.$RefreshSig$ = () => (type) => type
 window.__vite_plugin_react_preamble_installed__ = true
 `;
 
-function createRouteMiddleware(opts: { api: IApi }) {
-  return ({ compiler }: { compiler: Compiler }): RequestHandler => {
-    const { vite } = opts.api.config;
-    let webpackStats: Stats | null = null;
-    let onStats: Function | null = null;
+function createRouteMiddleware(opts: { api: IApi }): RequestHandler {
+  const { vite } = opts.api.config;
 
-    if (!vite) {
-      compiler.hooks.done.tap('umiRouteMiddleware', (stats: any) => {
-        webpackStats = stats;
-        onStats?.(stats);
-      });
-    }
+  return async (req, res, next) => {
+    const viteScripts: IOpts['scripts'] = [
+      // add noshim attr for skip import-maps shim logic for this modules
+      { content: viteRefreshScript, noshim: '' },
+      { src: '/@vite/client', noshim: '' },
+      opts.api.appData.hasSrcDir ? '/src/.umi/umi.ts' : '/.umi/umi.ts',
+    ];
+    const markupArgs = await getMarkupArgs(opts);
+    let assetsMap: Record<string, string[]> = {};
 
-    async function getStats() {
-      if (webpackStats) return Promise.resolve(webpackStats);
-      return new Promise((resolve) => {
-        onStats = (stats: any) => {
-          resolve(stats);
+    const updateAssetMap = vite
+      ? (cb: Function) => cb()
+      : (cb: Function) => {
+          const webpackMiddleware = req.app.get('compiler');
+          webpackMiddleware.waitUntilValid((stats: Stats) => {
+            assetsMap = getAssetsMap({
+              stats,
+              publicPath: opts.api.config.publicPath,
+            });
+
+            cb();
+          });
         };
-      });
-    }
-
-    return async (req, res, next) => {
-      const viteScripts: IOpts['scripts'] = [
-        // add noshim attr for skip import-maps shim logic for this modules
-        { content: viteRefreshScript, noshim: '' },
-        { src: '/@vite/client', noshim: '' },
-        opts.api.appData.hasSrcDir ? '/src/.umi/umi.ts' : '/.umi/umi.ts',
-      ];
-      const markupArgs = await getMarkupArgs(opts);
-      let assetsMap: Record<string, string[]> = {};
-      if (!vite) {
-        const stats: any = await getStats();
-        assetsMap = getAssetsMap({
-          stats,
-          publicPath: opts.api.config.publicPath,
-        });
-      }
+    updateAssetMap(async () => {
       const requestHandler = await createRequestHandler({
         ...markupArgs,
         // css will be injected with style tag in vite mode
@@ -64,7 +53,7 @@ function createRouteMiddleware(opts: { api: IApi }) {
         esmScript: vite,
       });
       requestHandler(req, res, next);
-    };
+    });
   };
 }
 

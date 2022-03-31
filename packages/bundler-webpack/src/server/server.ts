@@ -86,6 +86,7 @@ export async function createServer(opts: IOpts) {
     // watchOptions: { ignored }
   });
   app.use(compilerMiddleware);
+  app.set('compiler', compilerMiddleware);
 
   // hmr hooks
   let stats: any;
@@ -177,10 +178,10 @@ export async function createServer(opts: IOpts) {
     });
   }
   // after middlewares
-  (opts.afterMiddlewares || []).forEach((m) => {
-    // TODO: FIXME
-    app.use(m.toString().includes(`{ compiler }`) ? m({ compiler }) : m);
+  opts.afterMiddlewares?.forEach((m) => {
+    mountMiddleware(app, m);
   });
+
   // history fallback
   app.use(
     require('@umijs/bundler-webpack/compiled/connect-history-api-fallback')({
