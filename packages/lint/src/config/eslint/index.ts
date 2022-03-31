@@ -1,5 +1,5 @@
 import rules, { typescript as tsRules } from './rules/recommended';
-import { TYPE_AWARE_ENABLE } from './setup';
+import './setup';
 
 module.exports = {
   extends: [
@@ -22,16 +22,7 @@ module.exports = {
     {
       files: ['**/*.{ts,tsx}'],
       parser: '@typescript-eslint/parser',
-      rules: {
-        ...tsRules,
-        ...(TYPE_AWARE_ENABLE
-          ? {
-              '@typescript-eslint/dot-notation': 0,
-              '@typescript-eslint/no-throw-literal': 0,
-              '@typescript-eslint/switch-exhaustiveness-check': 0,
-            }
-          : {}),
-      },
+      rules: tsRules,
       extends: [
         'prettier',
         'plugin:@typescript-eslint/recommended',
@@ -48,6 +39,5 @@ module.exports = {
       presets: [require.resolve('@umijs/babel-preset-umi')],
     },
     requireConfigFile: false,
-    project: TYPE_AWARE_ENABLE ? './tsconfig.json' : undefined,
   },
 };
