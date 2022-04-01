@@ -4,13 +4,16 @@ import './setup';
 module.exports = {
   parser: '@babel/eslint-parser',
   plugins: ['react', 'react-hooks', 'jest'],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   env: {
     browser: true,
     node: true,
-    es6: true,
-    mocha: true,
+    es2022: true,
     jest: true,
-    jasmine: true,
   },
   rules,
   overrides: [
