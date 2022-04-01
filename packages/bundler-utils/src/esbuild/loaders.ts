@@ -3,7 +3,10 @@ import esbuild from '../../compiled/esbuild';
 // 告诉 esbuild 如何加载各种类型的文件
 const loaders: { [ext: string]: esbuild.Loader } = {
   '.aac': 'file',
-  '.css': 'file',
+  '.css': 'text',
+  '.less': 'text',
+  '.sass': 'text',
+  '.scss': 'text',
   '.eot': 'file',
   '.flac': 'file',
   '.gif': 'file',

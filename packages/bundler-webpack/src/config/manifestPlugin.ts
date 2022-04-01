@@ -13,12 +13,10 @@ interface IOpts {
 
 export async function addManifestPlugin(opts: IOpts) {
   const { config, userConfig } = opts;
-  if (userConfig.manifest) {
-    config.plugin('manifest-plugin').use(WebpackManifestPlugin, [
-      {
-        fileName: 'asset-manifest.json',
-        ...userConfig.manifest,
-      },
-    ]);
-  }
+  config.plugin('manifest-plugin').use(WebpackManifestPlugin, [
+    {
+      fileName: 'asset-manifest.json',
+      ...userConfig.manifest,
+    },
+  ]);
 }

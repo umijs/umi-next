@@ -295,9 +295,27 @@ export default function EmptyRoute() {
         outdir: join(api.paths.absTmpPath, 'pages'),
         entryNames: '[name]',
         chunkNames: '_shared/[name]-[hash]',
-        assetNames: '_assets/[name]-[hash]',
         loader: loaders,
-        plugins: [IgnorePathPrefixPlugin(), BrowserRouteModulePlugin()],
+        plugins: [
+          IgnorePathPrefixPlugin(),
+          BrowserRouteModulePlugin(),
+          // 在预编译阶段，静态文件直接替换成绝对路径并表示为 external，因为在构建客户端产物的
+          // 流程中，实际的文件加载是由下一步的 webpack 负责的
+          {
+            name: 'assets',
+            setup(build) {
+              build.onResolve(
+                { filter: /\.(css|less|svg|png|jpg)$/ },
+                (args) => {
+                  return {
+                    path: resolve(args.resolveDir, args.path),
+                    external: true,
+                  };
+                },
+              );
+            },
+          },
+        ],
       });
     });
   }

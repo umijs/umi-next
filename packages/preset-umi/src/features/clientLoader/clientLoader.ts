@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { logger } from '@umijs/utils';
+import { loaders } from '@umijs/bundler-utils/dist/esbuild';
 import { resolve } from 'path';
 import type { IApi } from '../../types';
 import { esbuildIgnorePathPrefixPlugin, esbuildUmiPlugin } from './utils';
@@ -13,8 +13,7 @@ export default (api: IApi) => {
       platform: 'browser',
       target: 'esnext',
       watch: api.env === 'development' && {
-        onRebuild(error) {
-          if (error) logger.error(error);
+        onRebuild() {
           delete require.cache[
             resolve(api.paths.absTmpPath, 'core/loaders.js')
           ];
@@ -23,8 +22,23 @@ export default (api: IApi) => {
       bundle: true,
       logLevel: 'error',
       external: ['react'],
+      loader: loaders,
       entryPoints: [resolve(api.paths.absTmpPath, 'core/loaders.ts')],
-      plugins: [esbuildIgnorePathPrefixPlugin(), esbuildUmiPlugin(api)],
+      plugins: [
+        esbuildIgnorePathPrefixPlugin(),
+        esbuildUmiPlugin(api),
+        {
+          name: 'assets',
+          setup(build) {
+            build.onResolve({ filter: /.svg$/ }, (args) => {
+              return {
+                path: resolve(args.resolveDir, args.path),
+                external: true,
+              };
+            });
+          },
+        },
+      ],
       outfile: resolve(api.paths.absTmpPath, 'core/loaders.js'),
     });
   });
