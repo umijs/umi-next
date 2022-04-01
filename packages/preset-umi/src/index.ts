@@ -40,6 +40,7 @@ export default () => {
       require.resolve('./commands/generators/tailwindcss'),
       require.resolve('./commands/generators/dva'),
       require.resolve('./commands/generators/component'),
+      require.resolve('./commands/generators/mock'),
       require.resolve('./commands/plugin'),
       require.resolve('./commands/verify-commit'),
     ],
