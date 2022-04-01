@@ -1,5 +1,7 @@
 import React from 'react';
 import { useClientLoaderData, useLoaderData } from 'umi';
+// @ts-ignore
+import bigImage from './big_image.jpg';
 
 export default () => {
   const loaderData = useLoaderData();
@@ -7,6 +9,7 @@ export default () => {
   return (
     <div style={{ borderWidth: 2, padding: 10 }}>
       <h1>User data</h1>
+      <img src={bigImage} alt="big image" />
       <p>loader data: {JSON.stringify(loaderData)}</p>
       <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
     </div>

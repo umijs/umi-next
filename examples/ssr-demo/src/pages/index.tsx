@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useClientLoaderData, useLoaderData } from 'umi';
 import Button from '../components/Button';
 import connect from '../database/connect';
+// @ts-ignore
+import bigImage from './big_image.jpg';
 import './index.less';
 // @ts-ignore
 import styles from './index.less';
@@ -20,6 +22,7 @@ export default function HomePage() {
       <img src={SmileUrl} alt="smile" />
       <SVGSmile />
       <Button />
+      <img src={bigImage} alt="" />
       <img src={umiLogo} alt="umi" />
       <Link to="/users/user">/users/user</Link>
       <p>loader data: {JSON.stringify(loaderData)}</p>
