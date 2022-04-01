@@ -777,7 +777,6 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.16.0
       '@typescript-eslint/parser': 5.16.0
       '@umijs/babel-preset-umi': 4.0.0-rc.10
-      eslint-config-prettier: 8.5.0
       eslint-plugin-jest: 26.1.2
       eslint-plugin-react: 7.29.4
       eslint-plugin-react-hooks: 4.3.0
@@ -796,7 +795,6 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.16.0_cfe64e83591b811d47b34970eecdcb5a
       '@typescript-eslint/parser': 5.16.0_typescript@4.6.2
       '@umijs/babel-preset-umi': link:../babel-preset-umi
-      eslint-config-prettier: 8.5.0
       eslint-plugin-jest: 26.1.2_af58e6f223e6622dc90399101387cfcf
       eslint-plugin-react: 7.29.4
       eslint-plugin-react-hooks: 4.3.0
@@ -11185,13 +11183,6 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
     dev: true
-
-  /eslint-config-prettier/8.5.0:
-    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
-    dev: false
 
   /eslint-plugin-jest/26.1.2_af58e6f223e6622dc90399101387cfcf:
     resolution: {integrity: sha512-1bXCoRODPkGN06n9KAMls4Jm0eyS+0Q/LWcIxhqWR2ycV0Z7lnx2c10idk4dtFIJY5xStgiIr5snC6/rxcXpbw==}

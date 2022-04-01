@@ -2,11 +2,6 @@ import rules, { typescript as tsRules } from './rules/recommended';
 import './setup';
 
 module.exports = {
-  extends: [
-    'prettier',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-  ],
   parser: '@babel/eslint-parser',
   plugins: ['react', 'react-hooks', 'jest'],
   env: {
@@ -20,15 +15,10 @@ module.exports = {
   rules,
   overrides: [
     {
-      files: ['**/*.{ts,tsx}'],
       parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint/eslint-plugin'],
+      files: ['**/*.{ts,tsx}'],
       rules: tsRules,
-      extends: [
-        'prettier',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:react/recommended',
-        'plugin:react-hooks/recommended',
-      ],
     },
   ],
   parserOptions: {
