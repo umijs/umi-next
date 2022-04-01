@@ -97,6 +97,22 @@ export class GeneratorHelper {
     });
     logger.info(`Install dependencies with ${npmClient}`);
   }
+
+  async ensureVariableWithQuestion<V>(
+    v: V,
+    question: Omit<prompts.PromptObject<'variable'>, 'name'>,
+  ) {
+    if (!v) {
+      const res = await promptsExitWhenCancel({
+        ...question,
+        name: 'variable',
+      });
+
+      return res.variable ? res.variable : question.hint;
+    }
+
+    return v;
+  }
 }
 
 export function getUmiJsPlugin() {
