@@ -108,7 +108,7 @@ export class GeneratorHelper {
         name: 'variable',
       });
 
-      return res.variable ? res.variable : question.hint;
+      return res.variable ? res.variable : question.initial;
     }
 
     return v;
