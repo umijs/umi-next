@@ -44,6 +44,7 @@ interface IOpts {
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
+  onBuildComplete?: Function;
 }
 
 export class MFSU {
@@ -245,6 +246,12 @@ promise new Promise(resolve => {
         logger.error(e);
       });
     }
+
+    this.depBuilder.onBuildComplete(() => {
+      if (typeof this.opts?.onBuildComplete === 'function') {
+        this.opts?.onBuildComplete();
+      }
+    });
   }
 
   getMiddlewares() {
@@ -268,6 +275,7 @@ promise new Promise(resolve => {
               new RegExp(`^${publicPath}`),
               '/',
             );
+
             const content = readFileSync(
               join(this.opts.tmpBase!, relativePath),
             );

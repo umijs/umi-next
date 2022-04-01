@@ -11,6 +11,7 @@ type IOpts = {
   afterMiddlewares?: any[];
   beforeMiddlewares?: any[];
   onDevCompileDone?: Function;
+  onMFSUCompileDone?: Function;
   port?: number;
   host?: string;
   babelPreset?: any;
@@ -56,6 +57,7 @@ export async function dev(opts: IOpts) {
           publicPath: opts.config.publicPath,
         };
       },
+      onBuildComplete: opts.onMFSUCompileDone,
     });
   }
   const webpackConfig = await getConfig({

@@ -3,7 +3,7 @@ import { lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
-import { IApi } from '../../types';
+import { BuildStatus, IApi } from '../../types';
 import { clearTmp } from '../../utils/clearTmp';
 import { lazyImportFromCurrentPkg } from '../../utils/lazyImportFromCurrentPkg';
 import { createRouteMiddleware } from './createRouteMiddleware';
@@ -253,6 +253,15 @@ PORT=8888 umi dev
             key: 'onDevCompileDone',
             args: opts,
           });
+
+          if (opts.isFirstCompile) {
+            api.applyPlugins({
+              key: 'onDevBuildStatus',
+              args: {
+                status: BuildStatus.compilerDone,
+              },
+            });
+          }
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
         cache: {
@@ -265,7 +274,17 @@ PORT=8888 umi dev
       if (enableVite) {
         await bundlerVite.dev(opts);
       } else {
-        await bundlerWebpack.dev(opts);
+        await bundlerWebpack.dev({
+          ...opts,
+          onMFSUCompileDone() {
+            api.applyPlugins({
+              key: 'onDevBuildStatus',
+              args: {
+                status: BuildStatus.mfsuCompilerDone,
+              },
+            });
+          },
+        });
       }
     },
   });

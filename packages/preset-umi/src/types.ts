@@ -65,6 +65,13 @@ export type IEntryImport = {
   specifier?: string;
 };
 export type IRoute = ICoreRoute;
+
+export enum BuildStatus {
+  init,
+  mfsuCompilerDone,
+  compilerDone,
+}
+
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     addApiMiddlewares: IAdd<null, IApiMiddleware>;
@@ -144,6 +151,9 @@ export type IApi = PluginAPI &
     onCheckPkgJSON: IEvent<{
       current: Record<string, any>;
       origin?: Record<string, any>;
+    }>;
+    onDevBuildStatus: IEvent<{
+      status: BuildStatus;
     }>;
     onDevCompileDone: IEvent<{
       isFirstCompile: boolean;
