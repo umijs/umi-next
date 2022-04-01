@@ -48,7 +48,7 @@ async function runGeneratorWith(name: string) {
 
   const cg = new ComponentGenerator({
     componentName: name,
-    srcPath: '/my/src/path',
+    srcPath: normalize('/my/src/path'),
     generateFile,
   });
 
