@@ -7,16 +7,20 @@ export default {
     },
     {
       path: '/index',
-      component: '@/pages/index',
+      component: './index',
       exact: true,
     },
     {
       path: '/docs',
-      component: '@/pages/docs',
+      component: './docs',
       exact: true,
     },
     {
-      component: '@/pages/404',
+      component: './404',
     },
   ],
+  targets: {
+    ios: 10,
+  },
+  vite: {},
 };
