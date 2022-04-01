@@ -18,6 +18,14 @@ umi lint --stylelint-only
 umi lint --fix
 `,
     fn: async function () {
+      try {
+        require.resolve('@umijs/lint/package.json');
+      } catch (err) {
+        throw new Error(
+          '@umijs/lint is not built-in, please install it manually before run umi lint.',
+        );
+      }
+
       if (api.args._.length === 0) {
         api.args._.unshift('{src,test}/**/*.{js,jsx,ts,tsx,less,css}');
       }

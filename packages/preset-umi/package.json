@@ -32,7 +32,6 @@
     "@umijs/bundler-vite": "4.0.0-rc.10",
     "@umijs/bundler-webpack": "4.0.0-rc.10",
     "@umijs/core": "4.0.0-rc.10",
-    "@umijs/lint": "4.0.0-rc.10",
     "@umijs/renderer-react": "4.0.0-rc.10",
     "@umijs/server": "4.0.0-rc.10",
     "@umijs/utils": "4.0.0-rc.10",
