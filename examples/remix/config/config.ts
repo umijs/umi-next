@@ -19,8 +19,4 @@ export default {
       component: './404',
     },
   ],
-  targets: {
-    ios: 10,
-  },
-  vite: {},
 };
