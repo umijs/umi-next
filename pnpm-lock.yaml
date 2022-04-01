@@ -809,10 +809,12 @@ importers:
 
   packages/max:
     specifiers:
+      '@umijs/lint': 4.0.0-rc.10
       '@umijs/plugins': 4.0.0-rc.10
       antd: ^4.19.3
       umi: 4.0.0-rc.10
     dependencies:
+      '@umijs/lint': link:../lint
       '@umijs/plugins': link:../plugins
       antd: 4.19.3_react-dom@17.0.2+react@17.0.2
       umi: link:../umi
@@ -918,7 +920,6 @@ importers:
       '@umijs/bundler-vite': 4.0.0-rc.10
       '@umijs/bundler-webpack': 4.0.0-rc.10
       '@umijs/core': 4.0.0-rc.10
-      '@umijs/lint': 4.0.0-rc.10
       '@umijs/renderer-react': 4.0.0-rc.10
       '@umijs/server': 4.0.0-rc.10
       '@umijs/utils': 4.0.0-rc.10
@@ -946,7 +947,6 @@ importers:
       '@umijs/bundler-vite': link:../bundler-vite
       '@umijs/bundler-webpack': link:../bundler-webpack
       '@umijs/core': link:../core
-      '@umijs/lint': link:../lint
       '@umijs/renderer-react': link:../renderer-react
       '@umijs/server': link:../server
       '@umijs/utils': link:../utils
