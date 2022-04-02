@@ -35,28 +35,34 @@ export default (api: IApi) => {
           return next();
         }
 
+        const done = () => {
+          isFirstLoading = true;
+          next();
+        };
+
         // static
         const enableVite = !!api.config.vite;
+
+        // vite 模式编译完成
         if (enableVite && buildStatusQueue.has(BuildStatus.compilerDone)) {
-          return next();
+          return done();
         }
 
         const enableMFSU = api.config.mfsu !== false;
 
-        // 如果未开启mfsu 则判断 compilerDone 即可
+        // webpack 模式非mfsu 编译完成
         if (!enableMFSU && buildStatusQueue.has(BuildStatus.compilerDone)) {
-          return next();
+          return done();
         }
 
-        // 开启mfsu 需要返回
+        // webpack 模式mfsu 编译完成.
         if (
           buildStatusQueue.has(BuildStatus.compilerDone) &&
           buildStatusQueue.has(BuildStatus.mfsuCompilerDone)
         ) {
-          return next();
+          return done();
         }
 
-        // 如果开启mfsu 要判断mfsu 是否完成 否则判断编译是否完成
         res.setHeader('Content-Type', 'text/html; charset=UTF-8');
         res.statusCode = 503; /* Service Unavailable */
         return res.end(
