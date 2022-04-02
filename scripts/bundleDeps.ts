@@ -1,5 +1,5 @@
-// @ts-ignore
 import { readWantedLockfile } from '@pnpm/lockfile-file';
+// @ts-ignore
 import ncc from '@vercel/ncc';
 import { Package } from 'dts-packer';
 import resolve from 'resolve';
