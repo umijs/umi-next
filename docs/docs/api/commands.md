@@ -125,8 +125,6 @@ Usage: umi lint
 
 ```
 
-
-
 ## plugin
 
 插件相关操作，目前只支持 `list` 子命令。
