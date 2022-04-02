@@ -17,6 +17,8 @@ export default (api: IApi) => {
     memo.apiRoutes = await getApiRoutes({
       api,
     });
+    delete memo.apiRoutes['_middlewares'];
+
     memo.hasSrcDir = api.paths.absSrcPath.endsWith('/src');
     memo.npmClient = api.userConfig.npmClient || getNpmClient();
     memo.umi = {
