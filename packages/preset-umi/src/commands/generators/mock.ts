@@ -2,7 +2,7 @@ import { GeneratorType } from '@umijs/core';
 import { join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
-import { GeneratorHelper } from './utils';
+import { GeneratorHelper, trim } from './utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -23,12 +23,12 @@ export default (api: IApi) => {
         type: 'text',
         message: 'please input your mock file name',
         initial: 'mockName',
-        format: (s) => s?.trim() || '',
+        format: trim,
       });
 
       opts.generateFile({
-        target: join(api.paths.absSrcPath, 'mock', `${mockName}.ts`),
-        baseDir: api.paths.absSrcPath,
+        target: join(api.paths.cwd, 'mock', `${mockName}.ts`),
+        baseDir: api.paths.cwd,
         path: join(TEMPLATES_DIR, 'generate/mock.ts.tpl'),
         data: { mockName },
       });
