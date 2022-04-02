@@ -1,3 +1,4 @@
+import { Env } from '@umijs/core';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -37,6 +38,14 @@ export default (api: IApi) => {
       ),
     };
 
+    return memo;
+  });
+
+  api.modifyDefaultConfig((memo) => {
+    // 开发模式默认不开启 polyfill默认会产生过多的js 导致首次打开慢
+    if (api.env === Env.development) {
+      memo.polyfill = false;
+    }
     return memo;
   });
 
