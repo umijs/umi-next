@@ -557,9 +557,11 @@ importers:
       esbuild: 0.14.27
       express: 4.17.3
       less: 4.1.2
+      regenerate-unicode-properties: 10.0.1
     dependencies:
       '@umijs/utils': link:../utils
       esbuild: 0.14.27
+      regenerate-unicode-properties: 10.0.1
     devDependencies:
       '@babel/code-frame': 7.16.7
       '@babel/core': 7.17.8
@@ -19624,11 +19626,9 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       regenerate: 1.4.2
-    dev: true
 
   /regenerate/1.4.2:
     resolution: {integrity: sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==}
-    dev: true
 
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
