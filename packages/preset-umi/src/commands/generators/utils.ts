@@ -137,3 +137,7 @@ export function promptsExitWhenCancel<T extends string = string>(
     },
   });
 }
+
+export function trim(s?: string) {
+  return s?.trim() || '';
+}
