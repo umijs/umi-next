@@ -1,4 +1,6 @@
-import { glob, lodash, logger } from '@umijs/utils';
+import glob from '@umijs/utils/compiled/glob';
+import lodash from '@umijs/utils/compiled/lodash';
+import * as logger from '@umijs/utils/src/logger';
 import { isMatch } from 'matcher';
 import 'zx/globals';
 import { eachPkg, getPkgs } from './utils';

@@ -52,7 +52,7 @@ import { setExcludeFolder } from './utils';
             scripts: {
               build: 'pnpm tsc',
               'build:deps': 'pnpm esno ../../scripts/bundleDeps.ts',
-              dev: 'pnpm build -- --watch',
+              dev: 'pnpm build --watch',
             },
             repository: {
               type: 'git',
