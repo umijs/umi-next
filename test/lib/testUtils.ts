@@ -1,5 +1,11 @@
 import { execa } from '@umijs/utils/compiled/execa';
-import { ensureDir, existsSync, readFile, remove, writeFile } from 'fs-extra';
+import {
+  ensureDir,
+  existsSync,
+  readFile,
+  remove,
+  writeFile,
+} from '@umijs/utils/compiled/fs-extra';
 import { dirname, join, resolve } from 'path';
 
 export function createUmi(opts: { name: string; cwd: string }) {
