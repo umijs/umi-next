@@ -44,6 +44,7 @@
     "warning": "^4.0.3"
   },
   "devDependencies": {
+    "@types/react-redux": "^7.1.23",
     "umi": "4.0.0-rc.10"
   },
   "publishConfig": {
