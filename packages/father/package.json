@@ -21,7 +21,7 @@
   "scripts": {
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "dev": "pnpm build --watch"
   },
   "dependencies": {
     "@umijs/core": "4.0.0-rc.10",

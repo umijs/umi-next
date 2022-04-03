@@ -18,7 +18,7 @@
   "scripts": {
     "build": "pnpm tsc",
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "dev": "pnpm build --watch"
   },
   "dependencies": {
     "@loadable/component": "5.15.2",
