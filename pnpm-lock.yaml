@@ -862,7 +862,6 @@ importers:
       '@ahooksjs/use-request': ^2.0.0
       '@ant-design/icons': ^4.7.0
       '@ant-design/pro-layout': ^6.34.6
-      '@types/react-redux': ^7.1.23
       '@umijs/bundler-utils': 4.0.0-rc.10
       antd-dayjs-webpack-plugin: ^1.0.6
       axios: ^0.26.1
@@ -903,7 +902,6 @@ importers:
       redux: 4.1.2
       warning: 4.0.3
     devDependencies:
-      '@types/react-redux': 7.1.23
       umi: link:../umi
 
   packages/preset-umi:
@@ -7015,6 +7013,7 @@ packages:
       '@types/react': 17.0.41
       hoist-non-react-statics: 3.3.2
       redux: 4.1.2
+    dev: false
 
   /@types/react/17.0.40:
     resolution: {integrity: sha512-UrXhD/JyLH+W70nNSufXqMZNuUD2cXHu6UjCllC6pmOQgBX4SGXOH8fjRka0O0Ee0HrFxapDD8Bwn81Kmiz6jQ==}
@@ -20191,6 +20190,7 @@ packages:
     resolution: {integrity: sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==}
     dependencies:
       '@babel/runtime': 7.17.7
+    dev: false
 
   /reflect-metadata/0.1.13:
     resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
