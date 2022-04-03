@@ -1,6 +1,6 @@
-import * as logger from '@umijs/utils/src/logger';
 import spawn from '@umijs/utils/compiled/cross-spawn';
 import yArgs from '@umijs/utils/compiled/yargs-parser';
+import * as logger from '@umijs/utils/src/logger';
 import { join } from 'path';
 
 (async () => {
@@ -45,7 +45,7 @@ async function turbo(opts: {
   cache?: boolean;
   parallel?: boolean;
 }) {
-  const extraCmd = opts.extra ? `-- -- ${opts.extra}` : '';
+  const extraCmd = opts.extra ? `-- ${opts.extra}` : '';
   const cacheCmd = opts.cache === false ? '--no-cache --force' : '';
   const parallelCmd = opts.parallel ? '--parallel' : '';
 
