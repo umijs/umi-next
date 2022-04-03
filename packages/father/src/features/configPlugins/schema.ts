@@ -1,4 +1,4 @@
-import type { Root } from '@umijs/core/compiled/@hapi/joi';
+import type { Root } from '@umijs/utils/compiled/@hapi/joi';
 
 export function getSchemas(): Record<string, (Joi: Root) => any> {
   return {
