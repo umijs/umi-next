@@ -76,7 +76,7 @@ export default (api: IApi) => {
       schema(Joi) {
         return Joi.object({
           libs: Joi.array(),
-          css: Joi.string(),
+          css: [Joi.string(), Joi.boolean()],
         });
       },
     },
@@ -128,6 +128,8 @@ export default (api: IApi) => {
       .map((item) => `const ${item}: typeof import('react')['${item}']`)
       .join('\n');
 
+    const css = api.config.lowImport?.css;
+
     // TODO: styles 的类型提示
     const content =
       `
@@ -135,7 +137,7 @@ export default (api: IApi) => {
 declare global {
 const React: typeof import('react');
 ${dts.join('\n')}
-const styles: any;
+${css === false ? '' : `const styles: any;`}
 ${umiDts}
 ${reactDts}
 }
@@ -146,7 +148,8 @@ export {}
 
   api.addBeforeBabelPresets(() => {
     const opts = normalizeLibs(api.appData.lowImport);
-    const css = api.config.lowImport?.css || 'less';
+    const cssCfg = api.config.lowImport?.css;
+    const css = cssCfg === false ? cssCfg : cssCfg || 'less';
     return [
       {
         plugins: [
