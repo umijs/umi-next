@@ -42,7 +42,20 @@ export function matchApiRoute(
 
   const params: { [key: string]: string } = {};
 
-  const route = apiRoutes.find((route) => {
+  // Sort routes by path length, so we can match the longest route first
+  // If two routes have the same length, we'll match the one who has dynamic segments first
+  const sorted = apiRoutes.sort((a, b) => {
+    const aSegments = a.path.split('/').filter((p) => p !== '');
+    const bSegments = b.path.split('/').filter((p) => p !== '');
+    if (aSegments.length !== bSegments.length) {
+      return aSegments.length - bSegments.length;
+    }
+    const aDynamicIndex = aSegments.findIndex((p) => p.match(/^\[.*]$/));
+    const bDynamicIndex = bSegments.findIndex((p) => p.match(/^\[.*]$/));
+    return aDynamicIndex - bDynamicIndex;
+  });
+
+  const route = sorted.find((route) => {
     const routePathSegments = route.path.split('/').filter((p) => p !== '');
 
     if (routePathSegments.length !== pathSegments.length) return false;
