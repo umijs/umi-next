@@ -112,3 +112,10 @@ export function esbuildUmiPlugin(api: IApi) {
     },
   };
 }
+
+export function absServerBuildPath(api: IApi) {
+  return resolve(
+    api.paths.cwd,
+    api.userConfig.ssr.serverBuildPath || 'server/umi.server.js',
+  );
+}
