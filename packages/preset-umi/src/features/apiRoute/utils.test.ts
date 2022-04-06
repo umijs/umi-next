@@ -15,9 +15,21 @@ const apiRoutes: IRoute[] = [
     absPath: '',
   },
   {
+    path: 'users/apple',
+    id: 'users/apple',
+    file: 'users/apple',
+    absPath: '',
+  },
+  {
     path: 'users/[userId]',
     id: 'users/[userId]/index',
     file: 'users/[userId]/index.ts',
+    absPath: '',
+  },
+  {
+    path: 'users/banana',
+    id: 'users/banana',
+    file: 'users/banana',
     absPath: '',
   },
   {
@@ -103,6 +115,16 @@ test('matchApiRoute `/api/users/1`', () => {
   const matched = matchApiRoute(apiRoutes, '/api/users/1');
   expect(matched?.route.path).toBe('users/[userId]');
   expect(matched?.params['userId']).toBe('1');
+});
+
+test('matchApiRoute `/api/users/apple`', () => {
+  const matched = matchApiRoute(apiRoutes, '/api/users/apple');
+  expect(matched?.route.path).toBe('users/apple');
+});
+
+test('matchApiRoute `/api/users/banana`', () => {
+  const matched = matchApiRoute(apiRoutes, '/api/users/banana');
+  expect(matched?.route.path).toBe('users/banana');
 });
 
 test('matchApiRoute `api/users/1/repos`', () => {
