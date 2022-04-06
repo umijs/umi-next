@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useClientLoaderData, useLoaderData } from 'umi';
 import Button from '../components/Button';
-import connect from '../database/connect';
 // @ts-ignore
 import bigImage from './big_image.jpg';
 import './index.less';
@@ -32,8 +31,7 @@ export default function HomePage() {
 }
 
 export async function loader() {
-  connect();
-  return { message: 'data from server loader of index.tsx' };
+  return { message: 'data from server loader of index~' };
 }
 
 export async function clientLoader() {

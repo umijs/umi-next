@@ -114,6 +114,9 @@ export function esbuildUmiPlugin(api: IApi) {
 }
 
 export function absServerBuildPath(api: IApi) {
+  if (api.env === 'development')
+    return join(api.paths.absTmpPath, 'server/umi.server.js');
+
   return resolve(
     api.paths.cwd,
     api.userConfig.ssr.serverBuildPath || 'server/umi.server.js',

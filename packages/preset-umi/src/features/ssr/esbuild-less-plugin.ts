@@ -5,7 +5,10 @@ import less from '@umijs/bundler-utils/compiled/less';
 import { readFileSync } from 'fs';
 import { basename, dirname, extname, relative, resolve } from 'path';
 
-export const lessLoader = (options: Less.Options = {}): esbuild.Plugin => {
+export const lessLoader = (
+  options: Less.Options = {},
+  onLoaded?: (css: string) => void,
+): esbuild.Plugin => {
   return {
     name: 'less-loader',
     setup: (build) => {
@@ -36,7 +39,7 @@ export const lessLoader = (options: Less.Options = {}): esbuild.Plugin => {
             ...options,
             paths: [...(options.paths || []), dir],
           });
-
+          onLoaded && onLoaded(result.css);
           return {
             contents: result.css,
             loader: 'css',

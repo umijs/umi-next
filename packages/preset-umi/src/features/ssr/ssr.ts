@@ -2,7 +2,7 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { loaders } from '@umijs/bundler-utils/dist/esbuild';
 import { DEFAULT_OUTPUT_PATH } from '@umijs/bundler-webpack/dist/constants';
 import { EnableBy } from '@umijs/core/dist/types';
-import { readFileSync } from 'fs';
+import { appendFileSync, existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import type { IApi } from '../../types';
 import assetsLoader from './assets-loader';
@@ -30,9 +30,60 @@ export default (api: IApi) => {
 
   api.addBeforeMiddlewares(() => [
     async (req, res, next) => {
-      (await require(absServerBuildPath(api))).default(req, res, next);
+      const modulePath = absServerBuildPath(api);
+      if (existsSync(modulePath)) {
+        (await require(modulePath)).default(req, res, next);
+      } else {
+        res.end('umi.server.js is compiling ...');
+      }
     },
   ]);
+
+  let isCssInjected = false;
+  api.onDevCompileDone(async () => {
+    await esbuild.build({
+      format: 'cjs',
+      platform: 'node',
+      target: 'esnext',
+      bundle: true,
+      watch: {
+        onRebuild() {
+          delete require.cache[absServerBuildPath(api)];
+        },
+      },
+      logLevel: 'silent',
+      loader: loaders,
+      external: ['umi'],
+      entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
+      plugins: [
+        esbuildIgnorePathPrefixPlugin(),
+        esbuildUmiPlugin(api),
+        lessLoader(),
+        svgLoader({}),
+        assetsLoader({}),
+        {
+          name: 'css',
+          setup(build) {
+            build.onEnd((result) => {
+              if (result.errors.length === 0) {
+                const css = readFileSync(
+                  absServerBuildPath(api).replace(/\.js$/, '.css'),
+                );
+                isCssInjected = true;
+                appendFileSync(
+                  absServerBuildPath(api),
+                  `
+${isCssInjected ? '' : 'let'} SERVER_SIDE_STYLES = \`${css.toString()}\`;
+`,
+                );
+              }
+            });
+          },
+        },
+      ],
+      outfile: absServerBuildPath(api),
+    });
+  });
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
   api.onBuildComplete(async ({ err }) => {
@@ -54,11 +105,6 @@ export default (api: IApi) => {
       platform: 'node',
       target: 'esnext',
       bundle: true,
-      watch: api.env === 'development' && {
-        onRebuild() {
-          delete require.cache[absServerBuildPath(api)];
-        },
-      },
       logLevel: 'silent',
       loader: loaders,
       external: ['umi'],
