@@ -117,12 +117,12 @@ test('matchApiRoute `/api/users/1`', () => {
   expect(matched?.params['userId']).toBe('1');
 });
 
-test('matchApiRoute `/api/users/apple`', () => {
+test('matchApiRoute - static route next to dynamic route, but declare before dynamic route', () => {
   const matched = matchApiRoute(apiRoutes, '/api/users/apple');
   expect(matched?.route.path).toBe('users/apple');
 });
 
-test('matchApiRoute `/api/users/banana`', () => {
+test('matchApiRoute - static route next to dynamic route, but declare after dynamic route', () => {
   const matched = matchApiRoute(apiRoutes, '/api/users/banana');
   expect(matched?.route.path).toBe('users/banana');
 });
