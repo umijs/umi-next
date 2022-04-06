@@ -81,7 +81,7 @@ const SERVER_SIDE_STYLES = \`${css.toString()}\`;
             // 帮静态资源打上 staticAssets 的 namespace，然后 onLoad 的时候一起处理
             build.onResolve({ filter: assetsFilter }, (args) => {
               return {
-                path: args.path,
+                path: resolve(args.resolveDir, args.path),
                 namespace: 'staticAssets',
               };
             });
@@ -89,10 +89,15 @@ const SERVER_SIDE_STYLES = \`${css.toString()}\`;
             // 对于静态资源，我们根据 Webpack 最终打包出来的 manifest 文件，将他们解析到静态资源地址
             build.onLoad(
               { filter: assetsFilter, namespace: 'staticAssets' },
-              (args) => {
-                const contents =
-                  manifest['static/' + args.path.split('/').pop()] || '';
-                return { contents, loader: 'text' };
+              async (args) => {
+                const webpackAssetPath =
+                  manifest['static/' + args.path.split('/').pop()];
+                if (!webpackAssetPath)
+                  return {
+                    contents: readFileSync(args.path),
+                    loader: 'dataurl',
+                  };
+                return { contents: webpackAssetPath, loader: 'text' };
               },
             );
 
