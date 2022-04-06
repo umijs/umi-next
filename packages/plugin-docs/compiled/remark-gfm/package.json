@@ -14,5 +14,5 @@
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
   ],
   "type": "module",
-  "main": "index.js"
+  "main": "index.cjs"
 }
