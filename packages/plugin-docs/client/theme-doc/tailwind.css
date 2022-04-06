@@ -91,7 +91,7 @@ article a {
 }
 
 article table {
-  @apply table-auto w-full shadow rounded-xl text-left overflow-hidden dark:shadow-gray-800
+  @apply table-auto w-full shadow rounded-xl text-left overflow-hidden dark:shadow-gray-800 my-8
 }
 
 article table thead {
