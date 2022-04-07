@@ -11,6 +11,7 @@ import type {
   PluginAPI,
 } from '@umijs/core';
 import { Env } from '@umijs/core';
+import type { MiddleWare } from '@umijs/utils';
 import type { CheerioAPI } from '@umijs/utils/compiled/cheerio';
 import type { InlineConfig as ViteInlineConfig } from 'vite';
 
@@ -70,7 +71,7 @@ export type IApi = PluginAPI &
     addApiMiddlewares: IAdd<null, IApiMiddleware>;
     addBeforeBabelPlugins: IAdd<null, any>;
     addBeforeBabelPresets: IAdd<null, any>;
-    addBeforeMiddlewares: IAdd<null, RequestHandler>;
+    addBeforeMiddlewares: IAdd<null, MiddleWare>;
     addEntryCode: IAdd<null, string>;
     addEntryCodeAhead: IAdd<null, string>;
     addEntryImports: IAdd<null, IEntryImport>;

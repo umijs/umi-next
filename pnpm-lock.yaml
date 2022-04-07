@@ -1042,6 +1042,7 @@ importers:
       '@types/color': 3.0.3
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
+      '@types/express': ^4.17.13
       '@types/lodash': 4.14.180
       '@types/mustache': 4.1.2
       '@types/prompts': ^2.0.14
@@ -1078,6 +1079,7 @@ importers:
       '@types/color': 3.0.3
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
+      '@types/express': 4.17.13
       '@types/lodash': 4.14.180
       '@types/mustache': 4.1.2
       '@types/prompts': 2.0.14

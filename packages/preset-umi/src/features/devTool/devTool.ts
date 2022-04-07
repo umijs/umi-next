@@ -1,4 +1,4 @@
-import { existsSync } from 'fs';
+import { serveUmiApp } from '@umijs/utils';
 import { join } from 'path';
 import { IApi } from '../../types';
 
@@ -6,34 +6,28 @@ const devToolAppDist = join(__dirname, '../../../devToolAppDist');
 
 export default (api: IApi) => {
   api.addBeforeMiddlewares(() => {
-    return [
-      (req, res, next) => {
-        const { path } = req;
-
-        // api
-        if (path.startsWith('/__umi/api/')) {
-          const shortPath = path.replace('/__umi/api/', '');
-          if (shortPath === 'config') {
-            return res.json(api.config);
-          }
-          if (shortPath === 'app-data') {
-            return res.json(api.appData);
-          }
-          return next();
-        }
-
-        // static
-        if (!process.env.DEVTOOL_LOCAL && path.startsWith('/__umi/')) {
-          const shortPath = path.replace('/__umi/', '');
-          if (shortPath !== '' && existsSync(join(devToolAppDist, shortPath))) {
-            return res.sendFile(join(devToolAppDist, shortPath));
-          } else {
-            return res.sendFile(join(devToolAppDist, 'index.html'));
-          }
-        }
-
-        return next();
-      },
-    ];
+    if (process.env.DEVTOOL_LOCAL) {
+      return [
+        {
+          path: '/__umi/api/:item',
+          handler: (req, res) => {
+            const { item } = req.params;
+            if (item === 'config') {
+              return res.json(api.config);
+            }
+            if (item === 'app-data') {
+              return res.json(api.appData);
+            }
+            res.json({});
+          },
+        },
+        {
+          path: '/__umi',
+          handler: serveUmiApp(devToolAppDist),
+        },
+      ];
+    } else {
+      return [];
+    }
   });
 };
