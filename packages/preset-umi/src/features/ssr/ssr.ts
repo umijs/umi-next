@@ -2,11 +2,10 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { loaders } from '@umijs/bundler-utils/dist/esbuild';
 import { DEFAULT_OUTPUT_PATH } from '@umijs/bundler-webpack/dist/constants';
 import { EnableBy } from '@umijs/core/dist/types';
-import { appendFileSync, existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import type { IApi } from '../../types';
 import assetsLoader from './assets-loader';
-import cssLoader from './css-loader';
 import { lessLoader } from './esbuild-less-plugin';
 import svgLoader from './svg-loader';
 import {
@@ -39,7 +38,6 @@ export default (api: IApi) => {
     },
   ]);
 
-  let isCssInjected = false;
   api.onDevCompileDone(async () => {
     await esbuild.build({
       format: 'cjs',
@@ -61,25 +59,6 @@ export default (api: IApi) => {
         lessLoader(),
         svgLoader({}),
         assetsLoader({}),
-        {
-          name: 'css',
-          setup(build) {
-            build.onEnd((result) => {
-              if (result.errors.length === 0) {
-                const css = readFileSync(
-                  absServerBuildPath(api).replace(/\.js$/, '.css'),
-                );
-                isCssInjected = true;
-                appendFileSync(
-                  absServerBuildPath(api),
-                  `
-${isCssInjected ? '' : 'let'} SERVER_SIDE_STYLES = \`${css.toString()}\`;
-`,
-                );
-              }
-            });
-          },
-        },
       ],
       outfile: absServerBuildPath(api),
     });
@@ -115,7 +94,6 @@ ${isCssInjected ? '' : 'let'} SERVER_SIDE_STYLES = \`${css.toString()}\`;
         lessLoader(),
         svgLoader(manifest),
         assetsLoader(manifest),
-        cssLoader(api),
       ],
       outfile: absServerBuildPath(api),
     });

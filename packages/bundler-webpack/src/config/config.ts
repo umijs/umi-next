@@ -256,5 +256,25 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     });
   }
 
+  // If ssr is enabled, we limit the number of css chunks to 1.
+  if (opts.userConfig.ssr) {
+    webpackConfig.optimization = {
+      ...webpackConfig.optimization,
+      splitChunks: {
+        ...webpackConfig.optimization?.splitChunks,
+        cacheGroups: {
+          styles: {
+            name: 'styles',
+            test: /\.(less|css|scss|sass)$/,
+            chunks: 'all',
+            minChunks: 1,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+        },
+      },
+    };
+  }
+
   return webpackConfig;
 }
