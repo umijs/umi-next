@@ -36,18 +36,15 @@ test('postcssOptions', () => {
 });
 
 test('autoprefixer', () => {
-  const cssplugins = css({ autoprefixer: { prefixer: 'auto' } }, {}).css
-    ?.postcss.plugins;
+  const cssplugins = css({ autoprefixer: { prefixer: 'auto' } }, {}).css.postcss
+    .plugins;
   expect(
     cssplugins.some(({ plugins }) => {
-      if (plugins instanceof Array === true) {
-        expect(
-          plugins.some(
-            ({ options }) =>
-              options.flexbox === 'no-2009' && options.prefixer === 'auto',
-          ),
-        ).toBe(true);
-        return true;
+      if (plugins instanceof Array) {
+        return plugins.some(
+          ({ options }) =>
+            options.flexbox === 'no-2009' && options.prefixer === 'auto',
+        );
       }
     }),
   ).toBe(true);
