@@ -36,22 +36,21 @@ test('postcssOptions', () => {
 });
 
 test('autoprefixer', () => {
-  const plugins = css({ autoprefixer: { prefixer: 'auto' } }, {}).css?.postcss
-    .plugins;
-  expect(plugins).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        plugins: expect.arrayContaining([
-          expect.objectContaining({
-            options: expect.objectContaining({
-              flexbox: 'no-2009',
-              prefixer: 'auto',
-            }),
-          }),
-        ]),
-      }),
-    ]),
-  );
+  const cssplugins = css({ autoprefixer: { prefixer: 'auto' } }, {}).css
+    ?.postcss.plugins;
+  expect(
+    cssplugins.some(({ plugins }) => {
+      if (plugins instanceof Array === true) {
+        expect(
+          plugins.some(
+            ({ options }) =>
+              options.flexbox === 'no-2009' && options.prefixer === 'auto',
+          ),
+        ).toBe(true);
+        return true;
+      }
+    }),
+  ).toBe(true);
 });
 
 test('extraPostCSSPlugins plugins', () => {
