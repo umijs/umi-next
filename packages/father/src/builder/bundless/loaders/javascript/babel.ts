@@ -22,8 +22,6 @@ class BabelTransformer {
     this.config = this.getBabelConfig(config);
   }
 
-  getRelativePath() {}
-
   getBabelConfig(config: IBundlessConfig): TransformOptions {
     const { platform, extraBabelPlugins, extraBabelPresets, define, alias } =
       config;
