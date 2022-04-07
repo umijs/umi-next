@@ -12,7 +12,7 @@ const resolver = enhancedResolve.create({
   mainFields: ['module', 'browser', 'main'], // es module first
   extensions: ['.js', '.json', '.mjs'],
   exportsFields: ['exports'],
-  conditionNames: ['import', 'module', 'require'],
+  conditionNames: ['import', 'module', 'require', 'node'],
 });
 
 async function resolve(context: string, path: string): Promise<string> {
@@ -68,7 +68,6 @@ export * from '${this.file}';
 
     // none node natives
     const realFile = await this.getRealFile();
-    console.log('xxxx ->', this.file, realFile);
     assert(realFile, `filePath not found of ${this.file}`);
     const content = readFileSync(realFile, 'utf-8');
     return await getExposeFromContent({
