@@ -19,7 +19,7 @@ export async function addMiniCSSExtractPlugin(opts: IOpts) {
       {
         filename: `[name]${hash}.css`,
         chunkFilename: opts.userConfig.ssr
-          ? undefined
+          ? 'umi.css'
           : `[name]${hash}.chunk.css`,
         ignoreOrder: true,
       },
