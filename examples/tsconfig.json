@@ -1,0 +1,17 @@
+{
+  "exclude": ["**/dist/**", "**/*.js"],
+  "include": ["."],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "jsx": "react",
+    "types": ["@types/jest", "jest-playwright-preset", "expect-playwright"],
+    "paths": {
+      "test-utils": ["../test/lib/testUtils.ts"]
+    }
+  }
+}

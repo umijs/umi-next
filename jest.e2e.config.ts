@@ -3,7 +3,6 @@ import { Config, createConfig } from 'umi/test';
 export default {
   ...createConfig(),
   preset: 'jest-playwright-preset',
-  setupFilesAfterEnv: ['expect-playwright'],
   testMatch: ['**/*.e2e.ts'],
   modulePathIgnorePatterns: [
     '<rootDir>/packages/.+/compiled',
