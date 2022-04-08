@@ -11,10 +11,11 @@ interface IOpts {
   userConfig: IConfig;
   cwd: string;
   env: Env;
+  esBuildTarget: string[];
 }
 
 export async function addCompressPlugin(opts: IOpts) {
-  const { config, userConfig, env } = opts;
+  const { config, userConfig, env, esBuildTarget } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
 
@@ -29,8 +30,12 @@ export async function addCompressPlugin(opts: IOpts) {
   config.optimization.minimize(true);
 
   let minify: any;
+  let terserOptions: IConfig['jsMinifierOptions'];
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
+    terserOptions = {
+      target: esBuildTarget,
+    };
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
   } else if (jsMinifier === JSMinifier.swc) {
@@ -40,12 +45,15 @@ export async function addCompressPlugin(opts: IOpts) {
   } else if (jsMinifier !== JSMinifier.none) {
     throw new Error(`Unsupported jsMinifier ${userConfig.jsMinifier}.`);
   }
-
+  terserOptions = {
+    ...terserOptions,
+    ...userConfig.jsMinifierOptions,
+  };
   if (jsMinifier !== JSMinifier.none) {
     config.optimization.minimizer(`js-${jsMinifier}`).use(TerserPlugin, [
       {
         minify,
-        terserOptions: userConfig.jsMinifierOptions,
+        terserOptions: terserOptions,
       },
     ] as any);
   }
