@@ -14,8 +14,9 @@ function svgLoader(webpackAssetManifest: any): esbuild.Plugin {
         };
       });
       build.onLoad({ filter: /\.(svg)$/, namespace: 'svgAssets' }, (args) => {
-        let url = webpackAssetManifest['static/' + args.path.split('/').pop()];
+        let url = webpackAssetManifest[args.path];
         if (!url) url = Buffer.from(readFileSync(args.path)).toString('base64');
+        else url = '/' + url;
         return {
           contents: `
 import React from 'react';

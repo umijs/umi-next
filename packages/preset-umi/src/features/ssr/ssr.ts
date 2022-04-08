@@ -74,7 +74,7 @@ export default (api: IApi) => {
         join(
           api.cwd,
           api.userConfig.outputPath || DEFAULT_OUTPUT_PATH,
-          'asset-manifest.json',
+          'assets.json',
         ),
       ).toString(),
     );

@@ -4,7 +4,6 @@ import { RawSource } from '../../compiled/webpack-sources';
 import type { Env, IConfig } from '../types';
 
 interface AssetsMappingItem {
-  sourcePath: string;
   source: string | Buffer | undefined;
   generatedPath: string | undefined;
 }
@@ -18,7 +17,7 @@ interface AssetsMappingItem {
  * */
 class WebpackAssetsMappingPlugin {
   apply(compiler: webpack.Compiler) {
-    const assets: AssetsMappingItem[] = [];
+    const assets: { [sourcePath: string]: AssetsMappingItem } = {};
     compiler.hooks.compilation.tap(
       'WebpackAssetsMappingPlugin',
       (compilation) => {
@@ -27,11 +26,10 @@ class WebpackAssetsMappingPlugin {
           (a) => {
             for (let i of a) {
               if (i.getSourceTypes().has('asset')) {
-                assets.push({
-                  sourcePath: (i as any).resource,
+                assets[(i as any).resource] = {
                   source: i.originalSource()?.source(),
                   generatedPath: undefined,
-                });
+                };
               }
             }
           },
@@ -40,22 +38,20 @@ class WebpackAssetsMappingPlugin {
           'WebpackAssetsMappingPlugin',
           (a) => {
             for (let i in a) {
-              const f = assets.find((as) => as.source === a[i].source());
-              if (f) f.generatedPath = i;
+              const f = Object.keys(assets).find(
+                (as) => assets[as].source === a[i].source(),
+              );
+              if (f) assets[f].generatedPath = i;
             }
-            // @ts-ignore
+            const assetsResult: { [sourcePath: string]: string } = {};
+            for (let i in assets) {
+              const { generatedPath } = assets[i];
+              if (generatedPath) assetsResult[i] = generatedPath;
+            }
             compilation.emitAsset(
               'assets.json',
-              new RawSource(
-                JSON.stringify(
-                  assets.map((a) => ({
-                    source: a.sourcePath,
-                    generated: a.generatedPath,
-                  })),
-                  null,
-                  2,
-                ),
-              ),
+              // @ts-ignore
+              new RawSource(JSON.stringify(assetsResult, null, 2)),
             );
           },
         );

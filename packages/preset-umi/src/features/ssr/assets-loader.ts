@@ -19,14 +19,13 @@ function assetsLoader(webpackAssetsManifest: any): esbuild.Plugin {
       build.onLoad(
         { filter: assetsFilter, namespace: 'staticAssets' },
         async (args) => {
-          const webpackAssetPath =
-            webpackAssetsManifest['static/' + args.path.split('/').pop()];
+          const webpackAssetPath = webpackAssetsManifest[args.path];
           if (!webpackAssetPath)
             return {
               contents: readFileSync(args.path),
               loader: 'dataurl',
             };
-          return { contents: webpackAssetPath, loader: 'text' };
+          return { contents: '/' + webpackAssetPath, loader: 'text' };
         },
       );
     },
