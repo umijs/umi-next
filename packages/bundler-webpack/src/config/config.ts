@@ -10,6 +10,7 @@ import { RuntimePublicPathPlugin } from '../plugins/RuntimePublicPathPlugin';
 import { Env, IConfig } from '../types';
 import { getBrowsersList } from '../utils/browsersList';
 import { addAssetRules } from './assetRules';
+import addWebpackAssetsMappingPlugin from './assetsPlugin';
 import { addBundleAnalyzerPlugin } from './bundleAnalyzerPlugin';
 import { addCompressPlugin } from './compressPlugin';
 import { addCopyPlugin } from './copyPlugin';
@@ -172,6 +173,9 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addCopyPlugin(applyOpts);
   // manifest
   await addManifestPlugin(applyOpts);
+  // assets-mapping (for esbuild in SSR)
+  await addWebpackAssetsMappingPlugin(applyOpts);
+
   // hmr
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
