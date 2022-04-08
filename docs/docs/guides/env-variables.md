@@ -121,7 +121,7 @@ $ SPEED_MEASURE=JSON bigfish dev
 ```
 
 
-### UMI_PLUGS
+### UMI_PLUGINS
 
 
 指定 umi 命令执行时额外加载的插件的路径，使用 `,` 隔开。
