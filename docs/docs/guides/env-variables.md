@@ -117,7 +117,7 @@ $ SOCKET_SERVER=https://localhost:7001/ umi dev
 分析 Webpack 编译时间，支持 `CONSOLE` 和 `JSON` 两种格式，默认是 `CONSOLE`。
 
 ```shell
-$ SPEED_MEASURE=JSON bigfish dev
+$ SPEED_MEASURE=JSON umi dev
 ```
 
 
