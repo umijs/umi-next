@@ -5,7 +5,7 @@ import Config from '../../compiled/webpack-5-chain';
 import ESBuildCSSMinifyPlugin from '../plugins/ESBuildCSSMinifyPlugin';
 import { ParcelCSSMinifyPlugin } from '../plugins/ParcelCSSMinifyPlugin';
 import { CSSMinifier, Env, IConfig, JSMinifier } from '../types';
-import { getEsBuildTarget } from '../utils/browsersList';
+import { getEsBuildTarget } from '../utils/getEsBuildTarget';
 
 interface IOpts {
   config: Config;
