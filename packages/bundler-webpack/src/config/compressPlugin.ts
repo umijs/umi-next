@@ -5,17 +5,17 @@ import Config from '../../compiled/webpack-5-chain';
 import ESBuildCSSMinifyPlugin from '../plugins/ESBuildCSSMinifyPlugin';
 import { ParcelCSSMinifyPlugin } from '../plugins/ParcelCSSMinifyPlugin';
 import { CSSMinifier, Env, IConfig, JSMinifier } from '../types';
+import { getEsBuildTarget } from '../utils/browsersList';
 
 interface IOpts {
   config: Config;
   userConfig: IConfig;
   cwd: string;
   env: Env;
-  esBuildTarget: string[];
 }
 
 export async function addCompressPlugin(opts: IOpts) {
-  const { config, userConfig, env, esBuildTarget } = opts;
+  const { config, userConfig, env } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
 
@@ -34,7 +34,9 @@ export async function addCompressPlugin(opts: IOpts) {
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
     terserOptions = {
-      target: esBuildTarget,
+      target: getEsBuildTarget({
+        targets: userConfig.targets!,
+      }),
     };
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;

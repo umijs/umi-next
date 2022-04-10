@@ -8,7 +8,7 @@ import {
 } from '../constants';
 import { RuntimePublicPathPlugin } from '../plugins/RuntimePublicPathPlugin';
 import { Env, IConfig } from '../types';
-import { getBrowsersList, getEsBuildTarget } from '../utils/browsersList';
+import { getBrowsersList } from '../utils/browsersList';
 import { addAssetRules } from './assetRules';
 import { addBundleAnalyzerPlugin } from './bundleAnalyzerPlugin';
 import { addCompressPlugin } from './compressPlugin';
@@ -69,9 +69,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     extraBabelPresets: opts.extraBabelPresets || [],
     extraEsbuildLoaderHandler: opts.extraEsbuildLoaderHandler || [],
     browsers: getBrowsersList({
-      targets: userConfig.targets,
-    }),
-    esBuildTarget: getEsBuildTarget({
       targets: userConfig.targets,
     }),
     useHash,
