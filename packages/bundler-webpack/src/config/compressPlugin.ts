@@ -35,7 +35,7 @@ export async function addCompressPlugin(opts: IOpts) {
     minify = TerserPlugin.esbuildMinify;
     terserOptions = {
       target: getEsBuildTarget({
-        targets: userConfig.targets!,
+        targets: userConfig.targets || {},
       }),
     };
   } else if (jsMinifier === JSMinifier.terser) {
