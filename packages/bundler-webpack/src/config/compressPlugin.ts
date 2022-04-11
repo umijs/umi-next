@@ -55,7 +55,7 @@ export async function addCompressPlugin(opts: IOpts) {
     config.optimization.minimizer(`js-${jsMinifier}`).use(TerserPlugin, [
       {
         minify,
-        terserOptions: terserOptions,
+        terserOptions,
       },
     ] as any);
   }
