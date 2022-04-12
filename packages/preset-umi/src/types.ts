@@ -118,6 +118,7 @@ export type IApi = PluginAPI &
     >;
     onBeforeCompiler: IEvent<{}>;
     onBuildComplete: IEvent<{
+      cssManifest?: Map<string, string>;
       err?: Error;
       isFirstCompile: boolean;
       stats: webpack.Stats;
@@ -146,6 +147,7 @@ export type IApi = PluginAPI &
       origin?: Record<string, any>;
     }>;
     onDevCompileDone: IEvent<{
+      cssManifest?: Map<string, string>;
       isFirstCompile: boolean;
       stats: webpack.Stats;
       time: number;

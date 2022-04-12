@@ -58,6 +58,11 @@ export async function dev(opts: IOpts) {
       },
     });
   }
+
+  // The cssManifest records the mapping between
+  // the css module name in source and the output name with hash.
+  const cssManifest = new Map<string, string>();
+
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.development,
@@ -79,6 +84,7 @@ export async function dev(opts: IOpts) {
     hmr: true,
     analyze: process.env.ANALYZE,
     cache: opts.cache,
+    cssManifest,
   });
 
   const depConfig = await getConfig({
@@ -118,5 +124,6 @@ export async function dev(opts: IOpts) {
     host: opts.host,
     afterMiddlewares: [...(opts.afterMiddlewares || [])],
     onDevCompileDone: opts.onDevCompileDone,
+    cssManifest,
   });
 }

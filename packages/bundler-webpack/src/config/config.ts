@@ -50,6 +50,7 @@ export interface IOpts {
     buildDependencies?: string[];
     cacheDirectory?: string;
   };
+  cssManifest?: Map<string, string>;
 }
 
 export async function getConfig(opts: IOpts): Promise<Configuration> {
@@ -74,6 +75,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     useHash,
     staticPathPrefix:
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
+    cssManifest: opts.cssManifest,
   };
 
   // mode

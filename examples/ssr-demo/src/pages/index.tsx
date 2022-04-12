@@ -3,6 +3,8 @@ import { Link, useClientLoaderData, useLoaderData } from 'umi';
 import Button from '../components/Button';
 // @ts-ignore
 import bigImage from './big_image.jpg';
+// @ts-ignore
+import cssStyle from './index.css';
 import './index.less';
 // @ts-ignore
 import styles from './index.less';
@@ -19,6 +21,8 @@ export default function HomePage() {
       <h1 className="title">Hello~</h1>
       <p className={styles.blue}>This is index.tsx</p>
       <img src={SmileUrl} alt="smile" />
+      <p className={cssStyle.title}>I should be pink</p>
+      <p className={cssStyle.blue}>I should be cyan</p>
       <SVGSmile />
       <Button />
       <img src={bigImage} alt="" />

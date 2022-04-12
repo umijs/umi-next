@@ -1,27 +1,40 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { appendFileSync, readFileSync, unlinkSync } from 'fs';
+import { readFileSync } from 'fs';
+import { dirname } from 'path';
 import { IApi } from '../../types';
-import { absServerBuildPath } from './utils';
 
-// 打包完成后，除了 umi.server.js 外，如果项目中有引入样式资源，
-// 还会生成 umi.server.css 文件，我们需要将这个文件写入到 umi.server.ts 中
-// 将 css 写入 umi.server.js 后就可以把 css 构建产物删除了
-function cssLoader(api: IApi): esbuild.Plugin {
+function cssLoader(
+  api: IApi,
+  manifest: Map<string, string> | undefined,
+): esbuild.Plugin {
   return {
     name: 'css-loader',
     setup(build) {
-      build.onEnd((result) => {
-        if (result.errors.length > 0) return;
-        const css = readFileSync(
-          absServerBuildPath(api).replace(/\.js$/, '.css'),
-        );
-        appendFileSync(
-          absServerBuildPath(api),
-          `
-const SERVER_SIDE_STYLES = \`${css.toString()}\`;
-`,
-        );
-        unlinkSync(absServerBuildPath(api).replace(/\.js$/, '.css'));
+      if (!manifest) return;
+
+      build.onLoad({ filter: /\.css$/ }, (args) => {
+        const cssFileContent = readFileSync(args.path);
+        const cssClassNames = cssFileContent
+          .toString()
+          .replace(/{[^{]*?}/g, '')
+          .split('\n')
+          .filter(Boolean);
+
+        const cssModuleObject: { [key: string]: string } = {};
+        cssClassNames.map((className) => {
+          const cssFilePath = args.path.replace(api.cwd, '');
+          const nameFromWebpack = manifest.get(
+            cssFilePath + className.replace(/^\./, '@').trim(),
+          );
+          if (!nameFromWebpack) return;
+          cssModuleObject[className.replace(/^\./, '').trim()] =
+            nameFromWebpack;
+        });
+        return {
+          contents: `export default ${JSON.stringify(cssModuleObject)};`,
+          loader: 'js',
+          resolveDir: dirname(args.path),
+        };
       });
     },
   };

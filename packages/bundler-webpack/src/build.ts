@@ -19,6 +19,10 @@ type IOpts = {
 } & Pick<IConfigOpts, 'cache'>;
 
 export async function build(opts: IOpts): Promise<webpack.Stats> {
+  // The cssManifest records the mapping between
+  // the css module name in source and the output name with hash.
+  const cssManifest = new Map<string, string>();
+
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.production,
@@ -37,6 +41,7 @@ export async function build(opts: IOpts): Promise<webpack.Stats> {
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     cache: opts.cache,
+    cssManifest,
   });
   let isFirstCompile = true;
   return new Promise((resolve, reject) => {
@@ -46,6 +51,7 @@ export async function build(opts: IOpts): Promise<webpack.Stats> {
       opts.onBuildComplete?.({
         err,
         stats,
+        cssManifest,
         isFirstCompile,
         time: stats ? stats.endTime - stats.startTime : null,
       });

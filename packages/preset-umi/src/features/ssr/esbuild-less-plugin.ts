@@ -1,17 +1,19 @@
-/** https://github.com/iam-medvedev/esbuild-plugin-less */
-
 import esbuild, { PartialMessage } from '@umijs/bundler-utils/compiled/esbuild';
 import less from '@umijs/bundler-utils/compiled/less';
 import { readFileSync } from 'fs';
 import { basename, dirname, extname, relative, resolve } from 'path';
+import { IApi } from '../../types';
 
 export const lessLoader = (
+  api: IApi,
+  manifest: Map<string, string> | undefined,
   options: Less.Options = {},
-  onLoaded?: (css: string) => void,
 ): esbuild.Plugin => {
   return {
     name: 'less-loader',
     setup: (build) => {
+      if (!manifest) return;
+
       // Resolve *.less files with namespace
       build.onResolve({ filter: /\.less$/, namespace: 'file' }, (args) => {
         const filePath = resolve(
@@ -39,10 +41,25 @@ export const lessLoader = (
             ...options,
             paths: [...(options.paths || []), dir],
           });
-          onLoaded && onLoaded(result.css);
+
+          const cssClassNames = result.css
+            .replace(/{[^{]*?}/g, '')
+            .split('\n')
+            .filter(Boolean);
+
+          const cssModuleObject: { [key: string]: string } = {};
+          cssClassNames.map((className) => {
+            const cssFilePath = args.path.replace(api.cwd, '');
+            const nameFromWebpack = manifest.get(
+              cssFilePath + className.replace(/^\./, '@').trim(),
+            );
+            if (!nameFromWebpack) return;
+            cssModuleObject[className.replace(/^\./, '').trim()] =
+              nameFromWebpack;
+          });
           return {
-            contents: result.css,
-            loader: 'css',
+            contents: `export default ${JSON.stringify(cssModuleObject)};`,
+            loader: 'js',
             resolveDir: dir,
           };
         } catch (e: any) {
