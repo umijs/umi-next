@@ -216,7 +216,7 @@ module.exports = getConfig()
 |`runtimePublicPath`|`undefined`|同 umijs > [`runtimePublicPath`](https://umijs.org/config#runtimepublicpath)|
 |`implementor`|`undefined`|webpack 实例，需要和项目内使用的唯一实例一致|
 |`buildDepWithESBuild`|`false`|是否使用 `esbuild` 打包依赖|
-|`onMFSUProgress`|`undefined`|获取 MFSU 编译进度的回调
+|`onMFSUProgress`|`undefined`|获取 MFSU 编译进度的回调|
 
 ## 常见问题
 
