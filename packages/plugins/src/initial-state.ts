@@ -34,8 +34,8 @@ import React from 'react';
 import { useModel } from '@@/plugin-model';
 ${
   loading
-    ? `import Loading from ${loading}`
-    : `function Loading() { return <div>loading</div>; }`
+    ? `import Loading from '${loading}'`
+    : `function Loading() { return <div />; }`
 }
 export default function InitialStateProvider(props: any) {
   const appLoaded = React.useRef(false);

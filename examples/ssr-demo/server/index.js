@@ -2,6 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+app.use(async (req, res, next) => {
+  if (req.path.match(/([0-9]+|umi)\.js/)) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  next();
+})
+
 // Logger middleware
 app.use((req, res, next) => {
   console.info(`${req.method} ${req.url}`);

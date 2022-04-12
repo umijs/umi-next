@@ -2,7 +2,7 @@
 import loadable from '@loadable/component';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { RouteContext } from './routeContext';
+import { RouteContext, useRouteData } from './routeContext';
 import { IRoute, IRoutesById } from './types';
 
 export function createClientRoutes(opts: {
@@ -117,7 +117,22 @@ export function createClientRouteWithoutLoading(opts: {
 }
 
 function DefaultLoading() {
-  return <div />;
+  const route = useRouteData();
+  return (
+    <div style={{ margin: 32 }}>
+      Route Component
+      <code
+        style={{
+          backgroundColor: '#eee',
+          margin: '0 4px',
+          padding: '1px 2px',
+        }}
+      >
+        {route.route.file}
+      </code>
+      is Loading ...
+    </div>
+  );
 }
 
 function RemoteComponent(props: any) {

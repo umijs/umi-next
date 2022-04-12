@@ -3,6 +3,7 @@ import { join } from 'path';
 import { IApi } from '../../types';
 
 const devToolAppDist = join(__dirname, '../../../devToolAppDist');
+const assetsDir = join(__dirname, '../../../assets');
 
 export default (api: IApi) => {
   api.addBeforeMiddlewares(() => {
@@ -19,6 +20,17 @@ export default (api: IApi) => {
           if (shortPath === 'app-data') {
             return res.json(api.appData);
           }
+          if (shortPath === 'bundle-status') {
+            const isMFSUEnable = api.config.mfsu !== false;
+            return res.json({
+              bundleStatus: api.appData.bundleStatus,
+              ...(isMFSUEnable
+                ? {
+                    mfsuBundleStatus: api.appData.mfsuBundleStatus,
+                  }
+                : {}),
+            });
+          }
           return next();
         }
 
@@ -30,6 +42,16 @@ export default (api: IApi) => {
           } else {
             return res.sendFile(join(devToolAppDist, 'index.html'));
           }
+        }
+
+        // bundle status
+        const isDone =
+          api.appData.bundleStatus.done &&
+          (api.config.mfsu === false || api.appData.mfsuBundleStatus.done);
+        if (!isDone) {
+          res.setHeader('Content-Type', 'text/html');
+          res.sendFile(join(assetsDir, 'bundle-status.html'));
+          return;
         }
 
         return next();

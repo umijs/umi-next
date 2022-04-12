@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-vite",
-  "version": "4.0.0-canary.20220325.1",
+  "version": "4.0.0-canary.20220412.3",
   "description": "@umijs/bundler-vite",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-vite#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -28,21 +28,21 @@
   },
   "dependencies": {
     "@svgr/core": "6.2.1",
-    "@umijs/bundler-utils": "4.0.0-canary.20220325.1",
-    "@umijs/utils": "4.0.0-canary.20220325.1",
+    "@umijs/bundler-utils": "4.0.0-canary.20220412.3",
+    "@umijs/utils": "4.0.0-canary.20220412.3",
     "@vitejs/plugin-react": "1.2.0",
     "postcss-preset-env": "7.4.3"
   },
   "devDependencies": {
     "@types/caniuse-lite": "1.0.1",
     "@types/rollup-plugin-visualizer": "4.2.1",
-    "@types/svgo": "2.6.2",
+    "@types/svgo": "2.6.3",
     "@vitejs/plugin-legacy": "1.7.1",
-    "caniuse-lite": "1.0.30001319",
+    "caniuse-lite": "1.0.30001327",
     "rollup": "2.70.1",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-visualizer": "5.6.0",
-    "vite": "2.8.6"
+    "vite": "2.9.1"
   },
   "publishConfig": {
     "access": "public"

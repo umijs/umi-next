@@ -160,8 +160,8 @@ export function renderClient(opts: {
   // @ts-ignore
   if (ReactDOM.createRoot) {
     // @ts-ignore
-    ReactDOM.createRoot(rootElement).render(<Browser />);
+    ReactDOM.createRoot(rootElement)(<Browser />);
   } else {
-    ReactDOM.render(<Browser />, rootElement);
+    ReactDOM.hydrate(<Browser />, rootElement);
   }
 }

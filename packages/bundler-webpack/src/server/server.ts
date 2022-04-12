@@ -9,6 +9,7 @@ import http from 'http';
 import { join } from 'path';
 import { MESSAGE_TYPE } from '../constants';
 import { IConfig } from '../types';
+import { createHttpsServer } from './https';
 import { createWebSocketServer } from './ws';
 
 interface IOpts {
@@ -20,6 +21,7 @@ interface IOpts {
   beforeMiddlewares?: any[];
   afterMiddlewares?: any[];
   onDevCompileDone?: Function;
+  onProgress?: Function;
   cssManifest?: Map<string, string>;
 }
 
@@ -76,9 +78,28 @@ export async function createServer(opts: IOpts) {
   });
 
   // webpack dev middleware
-  const compiler = webpack(
-    Array.isArray(webpackConfig) ? webpackConfig : [webpackConfig],
-  );
+  const configs = Array.isArray(webpackConfig)
+    ? webpackConfig
+    : [webpackConfig];
+  const progresses: any[] = [];
+  if (opts.onProgress) {
+    configs.forEach((config) => {
+      const progress = {
+        percent: 0,
+        status: 'waiting',
+      };
+      progresses.push(progress);
+      config.plugins.push(
+        new webpack.ProgressPlugin((percent, msg) => {
+          progress.percent = percent;
+          progress.status = msg;
+          opts.onProgress!({ progresses });
+        }),
+      );
+    });
+  }
+  const compiler = webpack(configs);
+
   const webpackDevMiddleware = require('@umijs/bundler-webpack/compiled/webpack-dev-middleware');
   const compilerMiddleware = webpackDevMiddleware(compiler, {
     publicPath: userConfig.publicPath || '/',
@@ -207,7 +228,13 @@ export async function createServer(opts: IOpts) {
     }
   });
 
-  const server = http.createServer(app);
+  const server = userConfig.https
+    ? await createHttpsServer(app, userConfig.https)
+    : http.createServer(app);
+  if (!server) {
+    return null;
+  }
+
   const ws = createWebSocketServer(server);
 
   ws.wss.on('connection', (socket) => {
@@ -216,10 +243,14 @@ export async function createServer(opts: IOpts) {
     }
   });
 
+  const protocol = userConfig.https ? 'https:' : 'http:';
   const port = opts.port || 8000;
+
   server.listen(port, () => {
     const host = opts.host && opts.host !== '0.0.0.0' ? opts.host : '127.0.0.1';
-    logger.ready(`App listening at ${chalk.green(`http://${host}:${port}`)}`);
+    logger.ready(
+      `App listening at ${chalk.green(`${protocol}//${host}:${port}`)}`,
+    );
   });
 
   return server;

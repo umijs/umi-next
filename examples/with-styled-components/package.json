@@ -7,10 +7,10 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "styled-components": "^5.3.3",
-    "umi": "4.0.0-canary.20220325.1"
+    "styled-components": "^5.3.5",
+    "umi": "4.0.0-canary.20220412.3"
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.24"
+    "@types/styled-components": "^5.1.25"
   }
 }

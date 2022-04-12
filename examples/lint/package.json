@@ -1,0 +1,19 @@
+{
+  "name": "@example/lint",
+  "private": true,
+  "scripts": {
+    "lint": "umi lint",
+    "lint:cssinjs": "umi lint --stylelint-only --cssinjs",
+    "lint:es": "umi lint --eslint-only",
+    "lint:es-fix": "umi lint --eslint-only --fix",
+    "lint:style": "umi lint --stylelint-only",
+    "lint:style-fix": "umi lint --stylelint-only --fix",
+    "start": "npm run dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "stylelint": "^14.6.1",
+    "umi": "4.0.0-rc.10"
+  }
+}

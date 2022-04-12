@@ -1,3 +1,4 @@
+import { readWantedLockfile } from '@pnpm/lockfile-file';
 // @ts-ignore
 import ncc from '@vercel/ncc';
 import { Package } from 'dts-packer';
@@ -126,7 +127,12 @@ Object.keys(exported).forEach(function (key) {
       ) {
         code = code.replace(/require\("node:/g, 'require("');
       }
-      if (code.includes('"node:')) {
+      if (
+        code.includes('"node:') &&
+        opts.pkgName && // skip local file bundle like babel/bundle.js
+        opts.pkgName !== 'stylelint-declaration-block-no-ignored-properties' &&
+        opts.pkgName !== 'vite'
+      ) {
         throw new Error(`${opts.pkgName} has "node:"`);
       }
       fs.writeFileSync(path.join(target, 'index.js'), code, 'utf-8');
@@ -197,6 +203,30 @@ Object.keys(exported).forEach(function (key) {
           `import e = require('@umijs/bundler-utils/compiled/express');\nexport = e;`,
           'utf-8',
         );
+      }
+
+      // validate babel dynamic dep version
+      if (opts.file === './bundles/babel/bundle') {
+        const pkg = require(path.join(opts.base, 'package.json'));
+
+        readWantedLockfile(path.join(__dirname, '..'), {
+          ignoreIncompatible: true,
+        }).then((lockfile) => {
+          const unicodePkgName = 'regenerate-unicode-properties';
+          const [, unicodeParentPkg] = Object.entries(lockfile!.packages!).find(
+            ([name]) => name.startsWith('/regexpu-core/'),
+          )!;
+
+          if (
+            unicodeParentPkg.dependencies![unicodePkgName] !==
+            pkg.dependencies[unicodePkgName]
+          ) {
+            throw new Error(`regenerate-unicode-properties is outdated, please update it to ${
+              unicodeParentPkg.dependencies![unicodePkgName]
+            } in bundler-utils/package.json before update compiled files!
+       ref: https://github.com/umijs/umi/pull/7972`);
+          }
+        });
       }
     }
   }
