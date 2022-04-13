@@ -1003,15 +1003,19 @@ importers:
   packages/server:
     specifiers:
       '@umijs/bundler-utils': 4.0.0-canary.20220412.3
+      '@umijs/renderer-react': workspace:4.0.0-canary.20220412.3
       history: 5.3.0
       react: 17.0.2
       react-dom: 17.0.2
+      react-router: 6.3.0
       react-router-dom: 6.3.0
     dependencies:
       '@umijs/bundler-utils': link:../bundler-utils
+      '@umijs/renderer-react': link:../renderer-react
       history: 5.3.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-router: 6.3.0_react@17.0.2
       react-router-dom: 6.3.0_react-dom@17.0.2+react@17.0.2
 
   packages/testing:

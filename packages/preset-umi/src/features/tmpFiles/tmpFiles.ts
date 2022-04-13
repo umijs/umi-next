@@ -223,6 +223,7 @@ export default function EmptyRoute() {
           routeLoaders: await getRouteLoaders(api, 'loader'),
           pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
           rendererPath: join(dirname(rendererPath), 'server.js'),
+          umiServerPath: resolve(require.resolve('@umijs/server'), '../ssr.js'),
           validKeys,
         },
       });
