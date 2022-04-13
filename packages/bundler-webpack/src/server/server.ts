@@ -23,6 +23,7 @@ interface IOpts {
   onDevCompileDone?: Function;
   onProgress?: Function;
   cssManifest?: Map<string, string>;
+  assetsManifest?: Map<string, string>;
 }
 
 export async function createServer(opts: IOpts) {
@@ -126,6 +127,7 @@ export async function createServer(opts: IOpts) {
         isFirstCompile,
         time: stats.endTime - stats.startTime,
         cssManifest: opts.cssManifest,
+        assetsManifest: opts.assetsManifest,
       });
       isFirstCompile = false;
     });

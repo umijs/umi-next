@@ -52,6 +52,7 @@ export interface IOpts {
     cacheDirectory?: string;
   };
   cssManifest?: Map<string, string>;
+  assetsManifest?: Map<string, string>;
 }
 
 export async function getConfig(opts: IOpts): Promise<Configuration> {
@@ -77,6 +78,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     staticPathPrefix:
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
     cssManifest: opts.cssManifest,
+    assetsManifest: opts.assetsManifest,
   };
 
   // mode

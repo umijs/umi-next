@@ -2,11 +2,15 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-function assetsLoader(webpackAssetsManifest: any): esbuild.Plugin {
+function assetsLoader(
+  webpackAssetsManifest: Map<string, string> | undefined,
+): esbuild.Plugin {
   const assetsFilter = /\.(png|jpg|jpeg|gif|woff|woff2|ttf|eot|mp3|mp4)$/;
   return {
     name: 'assets-loader',
     setup(build) {
+      if (!webpackAssetsManifest) return;
+
       // 帮静态资源打上 staticAssets 的 namespace，然后 onLoad 的时候一起处理
       build.onResolve({ filter: assetsFilter }, (args) => {
         return {
@@ -19,7 +23,7 @@ function assetsLoader(webpackAssetsManifest: any): esbuild.Plugin {
       build.onLoad(
         { filter: assetsFilter, namespace: 'staticAssets' },
         async (args) => {
-          const webpackAssetPath = webpackAssetsManifest[args.path];
+          const webpackAssetPath = webpackAssetsManifest.get(args.path);
           if (!webpackAssetPath)
             return {
               contents: readFileSync(args.path),

@@ -3,10 +3,14 @@ import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 
 // esbuild plugin for umi.server.js bundler to handle svg assets
-function svgLoader(webpackAssetManifest: any): esbuild.Plugin {
+function svgLoader(
+  webpackAssetsManifest: Map<string, string> | undefined,
+): esbuild.Plugin {
   return {
     name: 'svg-loader',
     setup(build) {
+      if (!webpackAssetsManifest) return;
+
       build.onResolve({ filter: /\.(svg)$/ }, (args) => {
         return {
           path: resolve(args.resolveDir, args.path),
@@ -14,7 +18,7 @@ function svgLoader(webpackAssetManifest: any): esbuild.Plugin {
         };
       });
       build.onLoad({ filter: /\.(svg)$/, namespace: 'svgAssets' }, (args) => {
-        let url = webpackAssetManifest[args.path];
+        let url = webpackAssetsManifest.get(args.path);
         if (!url) url = Buffer.from(readFileSync(args.path)).toString('base64');
         else url = '/' + url;
         return {

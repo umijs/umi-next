@@ -1,6 +1,5 @@
 import { webpack } from '..';
 import Config from '../../compiled/webpack-5-chain';
-import { RawSource } from '../../compiled/webpack-sources';
 import type { Env, IConfig } from '../types';
 
 interface AssetsMappingItem {
@@ -16,6 +15,12 @@ interface AssetsMappingItem {
  * It will be used in SSR for esbuild to transform the assets import into correct url.
  * */
 class WebpackAssetsMappingPlugin {
+  private manifest: Map<string, string>;
+
+  constructor(manifest: Map<string, string>) {
+    this.manifest = manifest;
+  }
+
   apply(compiler: webpack.Compiler) {
     const assets: { [sourcePath: string]: AssetsMappingItem } = {};
     compiler.hooks.compilation.tap(
@@ -43,16 +48,10 @@ class WebpackAssetsMappingPlugin {
               );
               if (f) assets[f].generatedPath = i;
             }
-            const assetsResult: { [sourcePath: string]: string } = {};
             for (let i in assets) {
               const { generatedPath } = assets[i];
-              if (generatedPath) assetsResult[i] = generatedPath;
+              if (generatedPath) this.manifest.set(i, generatedPath);
             }
-            compilation.emitAsset(
-              'assets.json',
-              // @ts-ignore
-              new RawSource(JSON.stringify(assetsResult, null, 2)),
-            );
           },
         );
       },
@@ -66,9 +65,13 @@ interface IOpts {
   userConfig: IConfig;
   cwd: string;
   env: Env;
+  assetsManifest?: Map<string, string>;
 }
 
 export default function addWebpackAssetsMappingPlugin(opts: IOpts) {
+  if (!opts.assetsManifest) return;
   const { config } = opts;
-  config.plugin('assets-mapping-plugin').use(WebpackAssetsMappingPlugin);
+  config
+    .plugin('assets-mapping-plugin')
+    .use(WebpackAssetsMappingPlugin, [opts.assetsManifest]);
 }

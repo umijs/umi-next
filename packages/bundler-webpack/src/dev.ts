@@ -75,6 +75,10 @@ export async function dev(opts: IOpts) {
   // the css module name in source and the output name with hash.
   const cssManifest = new Map<string, string>();
 
+  // The assetsManifest records the mapping between
+  // the external assets' path and the output name with hash.
+  const assetsManifest = new Map<string, string>();
+
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
     env: Env.development,
@@ -97,6 +101,7 @@ export async function dev(opts: IOpts) {
     analyze: process.env.ANALYZE,
     cache: opts.cache,
     cssManifest,
+    assetsManifest,
   });
 
   const depConfig = await getConfig({
@@ -112,6 +117,7 @@ export async function dev(opts: IOpts) {
       buildDependencies: opts.cache?.buildDependencies,
       cacheDirectory: join(opts.cwd, 'node_modules', '.cache', 'mfsu-deps'),
     },
+    assetsManifest,
   });
 
   webpackConfig.resolve!.alias ||= {};
@@ -138,5 +144,6 @@ export async function dev(opts: IOpts) {
     onDevCompileDone: opts.onDevCompileDone,
     onProgress: opts.onProgress,
     cssManifest,
+    assetsManifest,
   });
 }
