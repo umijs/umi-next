@@ -30,45 +30,22 @@ class BabelTransformer {
     return {
       presets: [
         [
-          require.resolve(
-            '@umijs/bundler-utils/compiled/babel/preset-typescript',
-          ),
+          require.resolve('@umijs/babel-preset-umi'),
           {
-            allowNamespaces: true,
-            allowDeclareFields: true,
-            onlyRemoveTypeImports: true,
-            optimizeConstEnums: true,
+            presetEnv: {},
+            presetReact: {},
+            presetTypeScript: {},
+            pluginTransformRuntime: {},
+            pluginLockCoreJS: {},
+            pluginAutoCSSModules: false,
+            pluginDynamicImportNode: false,
           },
         ],
-        [
-          require.resolve('@umijs/bundler-utils/compiled/babel/preset-env'),
-          {
-            targets: { browsers: ['last 2 versions', 'IE 11'] },
-            modules: false,
-          },
-        ],
-        ...(isBrowser
-          ? [
-              require.resolve(
-                '@umijs/bundler-utils/compiled/babel/preset-react',
-              ),
-            ]
-          : []),
         ...(extraBabelPresets ? extraBabelPresets : []),
       ],
       plugins: [
         [require.resolve('babel-plugin-transform-define'), define || {}],
-        ...(isBrowser ? [require.resolve('babel-plugin-react-require')] : []),
-        [
-          require.resolve(
-            '@umijs/bundler-utils/compiled/babel/plugin-transform-runtime',
-          ),
-          {
-            helpers: true,
-            regenerator: true,
-            useESModules: false,
-          },
-        ],
+        isBrowser && [require.resolve('babel-plugin-react-require')],
         [
           require.resolve('babel-plugin-module-resolver'),
           {
@@ -77,7 +54,7 @@ class BabelTransformer {
           },
         ],
         ...(extraBabelPlugins ? extraBabelPlugins : []),
-      ],
+      ].filter(Boolean),
     };
   }
 

@@ -39,6 +39,7 @@
     "@types/react": "^17.0.41",
     "@types/react-dom": "^17.0.14",
     "@types/resolve": "^1.20.1",
+    "@umijs/babel-preset-umi": "workspace:*",
     "@umijs/bundler-esbuild": "workspace:*",
     "@umijs/bundler-utils": "workspace:*",
     "@umijs/bundler-vite": "workspace:*",
