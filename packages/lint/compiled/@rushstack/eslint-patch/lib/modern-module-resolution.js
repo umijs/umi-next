@@ -10,6 +10,12 @@
 const path = require('path');
 const fs = require('fs');
 const isModuleResolutionError = (ex) => typeof ex === 'object' && !!ex && 'code' in ex && ex.code === 'MODULE_NOT_FOUND';
+// ==== @umijs/lint fork start ====
+const getBuiltinPluginResolvePath = (pkg) => (
+  require('@umijs/lint/package.json').dependencies[pkg] &&
+  require.resolve('@umijs/lint/package.json')
+);
+// ==== @umijs/lint fork end ====
 // Module path for eslintrc.cjs
 // Example: ".../@eslint/eslintrc/dist/eslintrc.cjs"
 let eslintrcBundlePath = undefined;
@@ -182,7 +188,7 @@ if (!ConfigArrayFactory.__patched) {
             try {
                 ModuleResolver.resolve = function (moduleName, relativeToPath) {
                     // resolve using importerPath instead of relativeToPath
-                    return originalResolve.call(this, moduleName, importerPath);
+                    return originalResolve.call(this, moduleName, getBuiltinPluginResolvePath(moduleName) || importerPath);
                 };
                 return originalLoadPlugin.apply(this, arguments);
             }
@@ -198,7 +204,7 @@ if (!ConfigArrayFactory.__patched) {
             try {
                 ModuleResolver.resolve = function (moduleName, relativeToPath) {
                     // resolve using ctx.filePath instead of relativeToPath
-                    return originalResolve.call(this, moduleName, ctx.filePath);
+                    return originalResolve.call(this, moduleName, getBuiltinPluginResolvePath(moduleName) || ctx.filePath);
                 };
                 return originalLoadPlugin.apply(this, arguments);
             }
