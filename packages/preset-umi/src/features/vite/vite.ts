@@ -11,6 +11,15 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
+  api.modifyConfig((memo) => {
+    memo.alias = {
+      ...memo.alias,
+      // like vite, use to pre-bundling dependencies in vite mode
+      '@fs': '/',
+    };
+    return memo;
+  });
+
   // scan deps into api.appData by default for vite mode
   api.register({
     key: 'onBeforeCompiler',

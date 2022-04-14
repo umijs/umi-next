@@ -109,8 +109,9 @@ export default (api: IApi) => {
         .filter((text) => text !== false)
         .join('\n');
 
-      // transform imports for all javascript-like files
-      if (/\.(t|j)sx?$/.test(absPath)) {
+      const enableVite = !!api.config.vite;
+      // transform imports for all javascript-like files only vite mode enable
+      if (/\.(t|j)sx?$/.test(absPath) && enableVite) {
         content = transformIEAR({ content, path: absPath }, api);
       }
 
