@@ -1,6 +1,8 @@
 import type { RequestHandler } from '@umijs/bundler-utils/compiled/express';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+// import { matchRoutes } from 'react-router-dom';
+// import { createServerRoutes } from './routes';
 import { normalizeScripts } from './scripts';
 import { normalizeStyles } from './styles';
 
@@ -135,6 +137,12 @@ export function createRequestHandler(opts: IOpts): RequestHandler {
       // 如果是 browser，并且配置了非 / base，访问 / 时 redirect 到 base 路径
       res.redirect(opts.base);
     } else if (req.headers.accept?.includes('text/html')) {
+      // 匹配路由，不匹配走 next()
+      // const routes = createServerRoutes({
+      //   routesById: opts.routes,
+      // });
+      // const matches = matchRoutes(routes, req.path, opts.base);
+
       // 其他接受 HTML 的请求都兜底返回 HTML
       res.set('Content-Type', 'text/html');
       const markup = await getMarkup({ ...opts, path: req.path });
