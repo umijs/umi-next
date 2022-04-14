@@ -8,7 +8,7 @@ import { Message } from 'umi';
 
 ### 创建 Model
 
-所谓的 Model，就是一个[自定义的 `hook`](https://zh-hans.reactjs.org/docs/hooks-custom.html)，没有任何使用者需要关注的“黑魔法”。因此，在命名 Model 文件时，应当以 `use` 开头。
+所谓 Model，就是一个[自定义的 `hook`](https://zh-hans.reactjs.org/docs/hooks-custom.html)，没有任何使用者需要关注的“黑魔法”。在命名 Model 文件时，建议遵循 React 官方的 `hook` 命名规范，以 `use` 开头。
 
 数据流管理插件采用约定式目录结构，我们约定在 `src/models` 目录下引入 Model 文件。
 
@@ -18,12 +18,12 @@ import { Message } from 'umi';
 
 Model 文件允许使用 `.js`，`.jsx`，`.ts` 和 `tsx` 四种后缀格式，其文件名将成为它的**命名空间（namespace）**。当我们需要获取某个 Model 中的全局数据时，调用它的命名空间即可。
 
-对于 Model 文件 `useUserModel.ts`，它的命名空间为 `useUserModel`。
+对于 Model 文件 `useUser.ts`，它的命名空间为 `useUser`。
 
 编写一个**默认导出**的函数：
 
 ```ts
-// src/models/useUserModel.ts
+// src/models/useUser.ts
 export default () => {
   const user = {
     username: 'umi',
@@ -42,7 +42,7 @@ Model 文件需要默认导出一个函数，此函数为一个 React 的自定�
 Model 中允许使用其它 `hook`，以计数器为例：
 
 ```ts
-// src/models/useCounterModel.ts
+// src/models/useCounter.ts
 import { useState, useCallback } from 'react';
 
 export default () => {
@@ -58,7 +58,7 @@ export default () => {
 在项目实践中，我们通常需要请求后端接口，来获取所需的数据。现在让我们来扩展前面获取用户信息的例子：
 
 ```ts
-// src/models/useUserModel.ts
+// src/models/useUser.ts
 import { useState, useEffect } from 'react';
 import { getUser } from '@/services/user';
 
@@ -83,7 +83,7 @@ export default () => {
 如果您在项目中使用了 [ahooks](https://ahooks.js.org)，可以像这样组织您的代码：
 
 ```ts
-// src/models/useUserModel.ts
+// src/models/useUser.ts
 import { useRequest } from 'ahooks';
 import { getUser } from '@/services/user';
 
@@ -105,14 +105,14 @@ export default () => {
 
 ### 使用 Model
 
-现在，您想要在某个组件中使用 Model 中存储的全局状态或数据。以用户信息为例，只需要调用 `useModel()` 这一钩子函数：
+现在，您想要在某个组件中使用 Model 中存储的全局状态或数据。只需要调用 `useModel()` 这一钩子函数，以用户信息为例：
 
 ```tsx
 // src/components/Username/index.tsx
 import { useModel } from 'umi';
 
 export default () => {
-  const { user, loading } = useModel('useUserModel');
+  const { user, loading } = useModel('useUser');
 
   return (
     {loading ? <></>: <div>{user.username}</div>}
@@ -123,7 +123,7 @@ export default () => {
 其中，`useModel()` 方法传入的参数为 Model 的**命名空间**。
 
 <Message emoji="💡">
-如果您使用 VSCode 作为 Umi 项目开发的 IDE，推荐搭配 [@umijs/plugin-model](https://marketplace.visualstudio.com/items?itemName=litiany4.umijs-plugin-model) 插件使用。它允许您快速跳转到定义 Model 的文件：
+如果您使用 VSCode 作为 Umi 项目开发的 IDE，推荐搭配 [@umijs/plugin-model 插件](https://marketplace.visualstudio.com/items?itemName=litiany4.umijs-plugin-model)使用。它允许您快速跳转到定义 Model 的文件：
 
 ![vscode - @umijs/plugin-model 插件演示](https://gw.alipayobjects.com/zos/antfincdn/WcVbbF6KG2/1577073518336-afe6f03d-f817-491a-848a-5feeb4ecd72b.gif) </Message>
 
@@ -136,7 +136,7 @@ export default () => {
 import { useModel } from 'umi';
 
 export default () => {
-  const { add, minus } = useModel('useCounterModel', (model) => ({
+  const { add, minus } = useModel('useCounter', (model) => ({
     add: model.increment,
     minus: model.decrement,
   }));
@@ -168,6 +168,7 @@ import { fetchInitialData } from '@/services/initial';
 
 export async function getInitialState() {
   const initialData = await fetchInitialData();
+
   return initialData;
 }
 ```
@@ -182,6 +183,7 @@ import { useModel } from 'umi';
 export default () => {
   const { initialState, loading, error, refresh, setInitialState } =
     useModel('@@initialState');
+
   return <>{initialState}</>;
 };
 ```
@@ -200,7 +202,7 @@ export default () => {
 
 `@umi/max` 内置了 **Qiankun 微前端**插件 [`@umijs/plugin-qiankun`](https://github.com/umijs/umi-next/blob/master/packages/plugins/src/qiankun.ts)，当使用 `@umijs/plugin-model` 时，它允许微应用通过 `useModel('@@qiankunStateFromMaster')` 方法获取父应用传递给子应用的数据 Model，进而实现父子应用间的通信。
 
-具体的使用方法请查阅[微前端的父子应用通信章节](./micro-frontend.md#父子应用通信)。
+具体的使用方法请查阅[微前端的父子应用通信章节](./micro-frontend#父子应用通信)。
 
 ## API
 
@@ -218,11 +220,11 @@ export default () => {
 import { useModel } from 'umi';
 
 export default () => {
-  const { user, fetchUser } = useModel('useAdminModel', (model) => ({
+  const { user, fetchUser } = useModel('useAdmin', (model) => ({
     user: model.admin,
     fetchUser: model.fetchAdmin,
   }));
 
-  return <>hello</>;
+  return <>Hello, {user.username}!</>;
 };
 ```
