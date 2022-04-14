@@ -83,6 +83,7 @@ export default (api: IApi) => {
           existsSync(join(api.paths.absSrcPath, 'loading.tsx')) ||
           existsSync(join(api.paths.absSrcPath, 'loading.jsx')) ||
           existsSync(join(api.paths.absSrcPath, 'loading.js')),
+        hydrate: !!api.userConfig.ssr,
       },
     });
 

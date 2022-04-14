@@ -23,8 +23,8 @@
     "@umijs/bundler-utils": "4.0.0-canary.20220412.3",
     "@umijs/renderer-react": "workspace:4.0.0-canary.20220412.3",
     "history": "5.3.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
     "react-router": "6.3.0",
     "react-router-dom": "6.3.0"
   },

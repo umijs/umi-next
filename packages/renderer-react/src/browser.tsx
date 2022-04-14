@@ -1,6 +1,6 @@
 import { History } from 'history';
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import React, { startTransition, useEffect, useState } from 'react';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { AppContext, useAppData } from './appContext';
 import { createClientRoutes } from './routes';
@@ -61,9 +61,10 @@ export function renderClient(opts: {
   basename?: string;
   loadingComponent?: React.ReactNode;
   history: History;
+  hydrate?: boolean;
 }) {
   const basename = opts.basename || '/';
-  const rootElement = opts.rootElement || document.getElementById('root');
+  let rootElement = opts.rootElement || document.getElementById('root');
   const clientRoutes = createClientRoutes({
     routesById: opts.routes,
     routeComponents: opts.routeComponents,
@@ -101,7 +102,7 @@ export function renderClient(opts: {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
     const [loaderData, setLoaderData] = useState<ILoaderData>(
       // @ts-ignore
-      window.__UMI_LOADER_DATA__,
+      window.__UMI_LOADER_DATA__ || {},
     );
     useEffect(() => {
       return opts.history.listen((e) => {
@@ -115,14 +116,18 @@ export function renderClient(opts: {
             fetch('/__umi?route=' + match)
               .then((d) => d.json())
               .then((data) => {
-                setLoaderData((d) => ({ ...d, [match]: data }));
+                startTransition(() => {
+                  setLoaderData((d) => ({ ...d, [match]: data }));
+                });
               })
               .catch(console.error);
           }
           const clientLoader = opts.routes[match].loader;
           if (clientLoader)
             clientLoader().then((data) => {
-              setClientLoaderData((d) => ({ ...d, [match]: data }));
+              startTransition(() => {
+                setClientLoaderData((d) => ({ ...d, [match]: data }));
+              });
             });
         });
       });
@@ -134,7 +139,9 @@ export function renderClient(opts: {
         const clientLoader = opts.routes[match].loader;
         if (clientLoader)
           clientLoader().then((data) => {
-            setClientLoaderData((d) => ({ ...d, [match]: data }));
+            startTransition(() => {
+              setClientLoaderData((d) => ({ ...d, [match]: data }));
+            });
           });
       });
     }, []);
@@ -157,11 +164,15 @@ export function renderClient(opts: {
     );
   }
 
-  // @ts-ignore
-  if (ReactDOM.createRoot) {
-    // @ts-ignore
-    ReactDOM.createRoot(rootElement)(<Browser />);
+  if (!rootElement) {
+    rootElement = document.createElement('div');
+    rootElement.id = 'root';
+  }
+
+  if (opts.hydrate) {
+    hydrateRoot(rootElement, <Browser />);
   } else {
-    ReactDOM.hydrate(<Browser />, rootElement);
+    const root = createRoot(rootElement);
+    root.render(<Browser />);
   }
 }

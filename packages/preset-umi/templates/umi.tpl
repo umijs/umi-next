@@ -37,6 +37,9 @@ async function render() {
 {{#basename}}
     basename: '{{{ basename }}}',
 {{/basename}}
+{{#hydrate}}
+    hydrate: '{{{ hydrate }}}',
+{{/hydrate}}
   };
 
   return (pluginManager.applyPlugins({

@@ -1,4 +1,5 @@
-import ReactDOMServer from 'react-dom/server';
+// @ts-ignore
+import { renderToPipeableStream } from 'react-dom/server';
 import { matchRoutes } from 'react-router';
 import type { IRoutesById } from './types';
 
@@ -59,31 +60,21 @@ export default function createRequestHandler(
       pluginManager,
       location: req.url,
       loaderData,
+      matches,
     };
 
     const jsx = await opts.getClientRootComponent(context);
-    const html = ReactDOMServer.renderToStaticMarkup(jsx);
 
-    res.end(
-      `<!DOCTYPE html><html><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="/umi.css">
-  </head>
-  <body>
-  <div id="root" data-reactroot="">
-  ${html}
-  </div>
-  <script>window.__UMI_LOADER_DATA__ = ${JSON.stringify(
-    context.loaderData,
-  )}</script>
-  <script>window.__UMI_SERVER_RENDERED_ROUTES__ = ${JSON.stringify(
-    matches,
-  )}</script>
-  <script src="/umi.js"></script>
-  </body></html>`,
-    );
+    const stream = renderToPipeableStream(jsx, {
+      bootstrapScripts: ['/umi.js'],
+      onShellReady() {
+        res.setHeader('Content-type', 'text/html');
+        stream.pipe(res);
+      },
+      onError(x: any) {
+        console.error(x);
+      },
+    });
   };
 }
 

@@ -159,7 +159,9 @@ export async function getRouteComponents(opts: {
       if (route.file.startsWith('(')) {
         return `'${key}': () => Promise.resolve(${preCompiledPath}),`;
       }
-      return `'${key}': () => import('${winPath(preCompiledPath)}'),`;
+      return `'${key}': React.lazy(() => import('${winPath(
+        preCompiledPath,
+      )}')),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;
