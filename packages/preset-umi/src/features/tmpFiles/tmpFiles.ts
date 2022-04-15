@@ -232,13 +232,9 @@ export default function EmptyRoute() {
   });
 
   async function getExports(opts: { path: string }) {
-    try {
-      const content = readFileSync(opts.path, 'utf-8');
-      const [_, exports] = await parseModule({ content, path: opts.path });
-      return exports || [];
-    } catch (err) {
-      return [];
-    }
+    const content = readFileSync(opts.path, 'utf-8');
+    const [_, exports] = await parseModule({ content, path: opts.path });
+    return exports || [];
   }
 
   function checkMembers(opts: {
