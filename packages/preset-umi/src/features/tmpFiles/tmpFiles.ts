@@ -299,6 +299,7 @@ export default function EmptyRoute() {
         format: 'esm',
         splitting: true,
         bundle: true,
+        watch: api.env === 'development',
         external: ['umi', 'react', 'react-dom'],
         outdir: join(api.paths.absTmpPath, 'pages'),
         entryNames: '[name]',
