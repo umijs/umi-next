@@ -11,7 +11,7 @@ export default (api: IApi) => {
       (req, res, next) => {
         const { path } = req;
 
-        const enableVite = !!api.config.vite;
+        const enableVite = api.appData.vite;
 
         // api
         if (path.startsWith('/__umi/api/')) {
