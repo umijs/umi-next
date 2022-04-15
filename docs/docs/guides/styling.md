@@ -89,7 +89,7 @@ export default function () {
 ## 使用 Tailwindcss
 
 Umi 提供了内置的 [Tailwindcss](https://tailwindcss.com/)
-插件，并且可以直接方便地使用 [微生成器](,/generator#tailwind-css-配置生成器) 来启用。
+插件，并且可以直接方便地使用 [微生成器](./generator#tailwind-css-配置生成器) 来启用。
 
 ## 使用 UnoCSS
 
