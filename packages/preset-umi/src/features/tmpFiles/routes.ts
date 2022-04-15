@@ -135,20 +135,20 @@ export async function getRouteComponents(opts: {
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
-        return `'${key}': () => import('./EmptyRoute'),`;
+        return `'${key}': React.lazy(() => import('./EmptyRoute')),`;
       }
       if (isPluginDocsEnable) {
         // e.g.
         // component: () => <h1>foo</h1>
         // component: (() => () => <h1>foo</h1>)()
         if (route.file.startsWith('(')) {
-          return `'${key}': () => Promise.resolve(${route.file}),`;
+          return `'${key}': React.lazy(() => Promise.resolve(${route.file})),`;
         }
         const path =
           isAbsolute(route.file) || route.file.startsWith('@/')
             ? route.file
             : `${opts.prefix}${route.file}`;
-        return `'${key}': () => import('${winPath(path)}'),`;
+        return `'${key}': React.lazy(() => import('${winPath(path)}')),`;
       }
 
       const preCompiledPath = join(
@@ -157,7 +157,7 @@ export async function getRouteComponents(opts: {
         route.id.replace(/\//g, '_') + '.js',
       );
       if (route.file.startsWith('(')) {
-        return `'${key}': () => Promise.resolve(${preCompiledPath}),`;
+        return `'${key}': React.lazy(() => Promise.resolve(${preCompiledPath})),`;
       }
       return `'${key}': React.lazy(() => import('${winPath(
         preCompiledPath,

@@ -116,18 +116,27 @@ export default function EmptyRoute() {
     const prefix = hasSrc ? `../../../src/${pages}/` : `../../${pages}/`;
     const clonedRoutes = lodash.cloneDeep(routes);
     for (const id of Object.keys(clonedRoutes)) {
-      const exports = await getExports({
-        path: join(api.paths.absPagesPath, clonedRoutes[id].file),
-      });
-      clonedRoutes[id].hasLoader = exports.includes('loader');
-      if (exports.includes('clientLoader'))
-        clonedRoutes[id].loader = `clientLoaders.${
-          id.replace('/', '_') + '_client_loader'
-        }`;
       for (const key of Object.keys(clonedRoutes[id])) {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];
         }
+      }
+      // If the source file is not js, we don't need to check whether it has loader or not.
+      if (
+        ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
+          clonedRoutes[id].file.endsWith(ext),
+        )
+      ) {
+        const exports = await getExports({
+          path: isAbsolute(clonedRoutes[id].file)
+            ? clonedRoutes[id].file
+            : join(api.paths.absPagesPath, clonedRoutes[id].file),
+        });
+        clonedRoutes[id].hasLoader = exports.includes('loader');
+        if (exports.includes('clientLoader'))
+          clonedRoutes[id].loader = `clientLoaders.${
+            id.replace('/', '_') + '_client_loader'
+          }`;
       }
     }
     api.writeTmpFile({
@@ -232,6 +241,7 @@ export default function EmptyRoute() {
   });
 
   async function getExports(opts: { path: string }) {
+    if (!existsSync(opts.path)) return [];
     const content = readFileSync(opts.path, 'utf-8');
     const [_, exports] = await parseModule({ content, path: opts.path });
     return exports || [];
