@@ -110,7 +110,7 @@ export default (api: IApi) => {
         .join('\n');
 
       // transform imports for all javascript-like files only vite mode enable
-      if (/\.(t|j)sx?$/.test(absPath) && api.appData.vite) {
+      if (api.appData.vite && /\.(t|j)sx?$/.test(absPath)) {
         content = transformIEAR({ content, path: absPath }, api);
       }
 
