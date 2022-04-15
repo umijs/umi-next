@@ -15,9 +15,9 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   routes: [
-    { path: '/', component: '@/pages/index' },
+    { path: '/', component: './pages/index' },
   ],
 });
 ```
 
-![defineConfig](https://img.alicdn.com/tfs/TB1EV1pv.T1gK0jSZFhXXaAtVXa-1204-838.png)
+![defineConfig](https://img.alicdn.com/imgextra/i4/O1CN01WqZ2Ma1ZqiNbTefi6_!!6000000003246-2-tps-1240-1000.png)
