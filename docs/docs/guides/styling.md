@@ -47,14 +47,16 @@ export default function () {
 
 上面的示例中，`index.css` 文件中声明的样式不会对全局样式造成影响，只会对从 `styles` 变量中使用的样式生效。
 
-## 使用 LESS 样式
+## 使用 CSS 预处理器
 
-Umi 默认支持 LESS 样式的导入，你可以直接按照引入 CSS 文件的方式引入并使用 LESS 样式。
+Umi 默认支持 LESS (推荐), SASS 和 SCSS 样式的导入，你可以直接按照引入 CSS 文件的方式引入并使用这些由 CSS 预处理器处理的样式。
 
 ```jsx
 // src/pages/index.js
 
 import './index.less';
+import './index.sass';
+import './index.scss';
 
 export default function () {
   return <div className="title">Hello World</div>;
@@ -66,52 +68,28 @@ export default function () {
 ```jsx
 // src/pages/index.js
 
-import styles from './index.less';
+import lessStyles from './index.less';
+import sassStyles from './index.sass';
+import scssStyles from './index.scss';
 
 export default function () {
-  return <div className={styles.title}>
+  return <div className={lessStyles.title}>
     Hello World
+    <p className={sassStyles.blue}>I am blue</p>
+    <p className={scssStyles.red}>I am red</p>
   </div>;
 }
 ```
 
-## 使用其他 CSS 预处理器
+## 进阶设置
 
-如果你需要使用 LESS 以外的其他 CSS 预处理器，例如 SASS, SCSS 等，你可以透过 Umi
+如果你需要使用除了常见的 LESS, SASS 或 SCSS 以外的其他样式预处理器，你可以透过 Umi
 插件提供的 [chainWebpack 接口](../api/config#chainwebpack)来加入自己需要的 Loader。
 
 ## 使用 Tailwindcss
 
-Umi 提供了内置的 [Tailwindcss](https://tailwindcss.com/) 插件，可以直接按照以下步骤开启并使用：
-
-1. 通过套件安装或设置文件的方式将插件加入到 umi 项目中
-2. 安装 tailwindcss 套件
-
-```bash
-pnpm i tailwindcss
-```
-
-3. 在目录下加入 `tailwind.config.ts`，可按项目需求修改 tailwindcss 相关配置：
-
-```js
-// tailwind.config.js
-
-module.exports = {
-  content: [
-    './pages/**/*.tsx'
-  ],
-}
-```
-
-4. 在目录下加入 tailwind.css，可按需求增减引入的部件：
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-5. 启动项目，即可使用 tailwindcss
+Umi 提供了内置的 [Tailwindcss](https://tailwindcss.com/)
+插件，并且可以直接方便地使用 [微生成器](,/generator#tailwind-css-配置生成器) 来启用。
 
 ## 使用 UnoCSS
 
