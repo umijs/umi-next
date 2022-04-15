@@ -12,11 +12,8 @@ export default (api: IApi) => {
   });
 
   api.modifyConfig((memo) => {
-    memo.alias = {
-      ...memo.alias,
-      // like vite, use to pre-bundling dependencies in vite mode
-      '@fs': '/',
-    };
+    // like vite, use to pre-bundling dependencies in vite mode
+    memo.alias['@fs'] = '/';
     return memo;
   });
 
