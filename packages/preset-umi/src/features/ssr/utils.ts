@@ -1,5 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { join, resolve } from 'path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, join, resolve } from 'path';
 import { IApi, IRoute } from '../../types';
 
 /**
@@ -121,4 +122,76 @@ export function absServerBuildPath(api: IApi) {
     api.paths.cwd,
     api.userConfig.ssr.serverBuildPath || 'server/umi.server.js',
   );
+}
+
+export async function saveMapToFile(
+  map: Map<string, string> | undefined,
+  filePath: string,
+) {
+  if (!map) return {};
+  const obj: { [key: string]: string } = {};
+  for (const [key, value] of map) {
+    obj[key] = value;
+  }
+  if (!existsSync(dirname(filePath))) {
+    mkdirSync(dirname(filePath), { recursive: true });
+  }
+  return writeFileSync(filePath, JSON.stringify(obj));
+}
+
+export async function readMapFromFile(
+  map: Map<string, string>,
+  filePath: string,
+) {
+  if (!existsSync(filePath)) return;
+  const obj = JSON.parse(readFileSync(filePath, 'utf-8'));
+  for (const [key, value] of Object.entries(obj)) {
+    if (!map.has(key)) map.set(key, value as string);
+  }
+}
+
+function getSSRCacheDir(api: IApi) {
+  const nodeModulesPath = resolve(api.cwd, 'node_modules');
+  return join(nodeModulesPath, '.cache/ssr');
+}
+
+export async function saveCssManifestToCache(
+  api: IApi,
+  cssManifest: Map<string, string> | undefined,
+) {
+  if (!cssManifest) return;
+  const cssManifestCachePath = join(getSSRCacheDir(api), 'css-manifest.json');
+  return saveMapToFile(cssManifest, cssManifestCachePath);
+}
+
+export async function saveAssetsManifestToCache(
+  api: IApi,
+  assetsManifest: Map<string, string> | undefined,
+) {
+  if (!assetsManifest) return;
+  const assetsManifestCachePath = join(
+    getSSRCacheDir(api),
+    'assets-manifest.json',
+  );
+  return saveMapToFile(assetsManifest, assetsManifestCachePath);
+}
+
+export async function readCssManifestFromCache(
+  api: IApi,
+  cssManifest: Map<string, string> | undefined,
+) {
+  const cssManifestCachePath = join(getSSRCacheDir(api), 'css-manifest.json');
+  if (cssManifest) await readMapFromFile(cssManifest, cssManifestCachePath);
+}
+
+export async function readAssetsManifestFromCache(
+  api: IApi,
+  assetsManifest: Map<string, string> | undefined,
+) {
+  const assetsManifestCachePath = join(
+    getSSRCacheDir(api),
+    'assets-manifest.json',
+  );
+  if (assetsManifest)
+    await readMapFromFile(assetsManifest, assetsManifestCachePath);
 }

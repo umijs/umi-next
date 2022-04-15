@@ -12,6 +12,10 @@ import {
   absServerBuildPath,
   esbuildIgnorePathPrefixPlugin,
   esbuildUmiPlugin,
+  readAssetsManifestFromCache,
+  readCssManifestFromCache,
+  saveAssetsManifestToCache,
+  saveCssManifestToCache,
 } from './utils';
 
 export default (api: IApi) => {
@@ -38,31 +42,39 @@ export default (api: IApi) => {
     },
   ]);
 
+  let isFirstDevCompileDone = true;
   api.onDevCompileDone(async ({ cssManifest, assetsManifest }) => {
-    await esbuild.build({
-      format: 'cjs',
-      platform: 'node',
-      target: 'esnext',
-      bundle: true,
-      watch: {
-        onRebuild() {
-          delete require.cache[absServerBuildPath(api)];
+    if (isFirstDevCompileDone) {
+      isFirstDevCompileDone = false;
+      await readCssManifestFromCache(api, cssManifest);
+      await readAssetsManifestFromCache(api, assetsManifest);
+      await esbuild.build({
+        format: 'cjs',
+        platform: 'node',
+        target: 'esnext',
+        bundle: true,
+        watch: {
+          onRebuild() {
+            saveCssManifestToCache(api, cssManifest);
+            saveAssetsManifestToCache(api, assetsManifest);
+            delete require.cache[absServerBuildPath(api)];
+          },
         },
-      },
-      logLevel: 'silent',
-      loader: loaders,
-      external: ['umi'],
-      entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
-      plugins: [
-        esbuildIgnorePathPrefixPlugin(),
-        esbuildUmiPlugin(api),
-        lessLoader(api, cssManifest),
-        cssLoader(api, cssManifest),
-        svgLoader(assetsManifest),
-        assetsLoader(assetsManifest),
-      ],
-      outfile: absServerBuildPath(api),
-    });
+        logLevel: 'silent',
+        loader: loaders,
+        external: ['umi'],
+        entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
+        plugins: [
+          esbuildIgnorePathPrefixPlugin(),
+          esbuildUmiPlugin(api),
+          lessLoader(api, cssManifest),
+          cssLoader(api, cssManifest),
+          svgLoader(assetsManifest),
+          assetsLoader(assetsManifest),
+        ],
+        outfile: absServerBuildPath(api),
+      });
+    }
   });
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
