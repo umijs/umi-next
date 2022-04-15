@@ -87,7 +87,7 @@ function useRequest<Item = any, U extends Item = any>(
 ): PaginatedResult<Item>;
 function useRequest(service: any, options: any = {}) {
   return useUmiRequest(service, {
-    formatResult: result => result?.{{{dataField}}},
+    formatResult: {{{formatResult}}},
     requestMethod: (requestOptions: any) => {
       if (typeof requestOptions === 'string') {
         return request(requestOptions);
@@ -204,13 +204,16 @@ export type {
       dirname(require.resolve('@ahooksjs/use-request/package.json')),
     );
     const axiosPath = winPath(dirname(require.resolve('axios/package.json')));
-    const dataField = api.config.request?.dataField || 'data';
+    let dataField = api.config.request?.dataField;
+    if (dataField === undefined) dataField = 'data';
+    const formatResult =
+      dataField === '' ? `result => result` : `result => result?.${dataField}`;
     api.writeTmpFile({
       path: 'request.ts',
       content: Mustache.render(requestTpl, {
         umiRequestPath,
         axiosPath,
-        dataField,
+        formatResult,
       }),
     });
     api.writeTmpFile({
