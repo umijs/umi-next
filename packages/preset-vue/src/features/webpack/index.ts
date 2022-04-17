@@ -1,4 +1,5 @@
 import type { IApi } from 'umi';
+import VueLoaderPlugin from 'vue-loader/dist/pluginWebpack5.js';
 import { addAssetRules } from './assetRules';
 import { addCSSRules } from './cssRules';
 
@@ -31,9 +32,7 @@ export default (api: IApi) => {
         babelParserPlugins: ['jsx', 'classProperties', 'decorators-legacy'],
       });
 
-    config
-      .plugin('vue-loader-plugin')
-      .use(require('vue-loader').VueLoaderPlugin);
+    config.plugin('vue-loader-plugin').use(VueLoaderPlugin);
 
     // https://github.com/vuejs/vue-loader/issues/1435#issuecomment-869074949
     config.module
