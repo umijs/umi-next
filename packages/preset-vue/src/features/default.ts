@@ -66,41 +66,4 @@ export default (api: IApi) => {
     'onAppCreated',
     'onMounted',
   ]);
-
-  // const babelPresets = [
-  //   require.resolve('@ksuni/babel-preset-vue'),
-  //   {
-  //     presetEnv: {},
-  //     presetTypeScript: {},
-  //     pluginTransformRuntime: {},
-  //     pluginLockCoreJS: {},
-  //     pluginDynamicImportNode: false,
-  //     pluginAutoCSSModules: false,
-  //   },
-  // ];
-
-  // 处理mfsu
-  // api.modifyConfig((memo) => {
-  //   // 处理 vue 框架 node_modules 中 tsx 文件编译
-  //   const enableMFSU = api.config.mfsu !== false;
-
-  //   if (enableMFSU) {
-  //     memo.mfsu = {
-  //       chainWebpack(config: any) {
-  //         config.module
-  //           .rule('jsx-ts-tsx')
-  //           .use('babel-loader')
-  //           .tap((options: any) => {
-  //             options.presets = [babelPresets];
-  //             return options;
-  //           });
-
-  //         return config;
-  //       },
-  //       ...(api.config.mfsu || {}),
-  //     };
-  //   }
-
-  //   return memo;
-  // });
 };

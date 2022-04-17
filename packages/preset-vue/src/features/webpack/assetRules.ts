@@ -12,7 +12,6 @@ export async function addAssetRules(opts: IOpts) {
 
   const inlineLimit = parseInt(userConfig.inlineLimit || '10000', 10);
 
-  // TODO 需要读取正确的配置
   const staticPathPrefix =
     api.config.staticPathPrefix !== undefined
       ? api.config.staticPathPrefix
@@ -29,7 +28,7 @@ export async function addAssetRules(opts: IOpts) {
       },
     })
     .generator({
-      filename: `${api.config.sta}[name].[hash:8].[ext]`,
+      filename: `${staticPathPrefix}[name].[hash:8].[ext]`,
     });
 
   config.module

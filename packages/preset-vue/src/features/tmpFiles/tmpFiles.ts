@@ -49,7 +49,6 @@ export default (api: IApi) => {
         `,
       });
     },
-    // 覆盖preset-umi 中的文件生成
     stage: Infinity,
   });
 };
