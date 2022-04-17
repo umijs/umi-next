@@ -1,6 +1,7 @@
 // @ts-ignore
 import { RouterOptions } from 'vue-router';
 
+// @ts-ignore
 export {
   createMemoryHistory,
   createRouter,
@@ -13,6 +14,7 @@ export {
   useLink,
   useRoute,
   useRouter,
+// @ts-ignore
 } from 'vue-router';
 export { useAppData } from './appContext';
 export { renderClient } from './browser';
