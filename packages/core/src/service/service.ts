@@ -20,7 +20,6 @@ import {
   ServiceStage,
 } from '../types';
 import { Command } from './command';
-import { loadEnv } from './env';
 import { Generator } from './generator';
 import { Hook } from './hook';
 import { getPaths } from './path';
@@ -242,9 +241,7 @@ export class Service {
     this.args = args;
     this.name = name;
 
-    // loadEnv
     this.stage = ServiceStage.init;
-    loadEnv({ cwd: this.cwd, envFile: '.env' });
     // get pkg from package.json
     let pkg: Record<string, string | Record<string, any>> = {};
     let pkgPath: string = '';

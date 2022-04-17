@@ -1,6 +1,7 @@
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { Env } from '../types';
+import { loadEnv } from './env';
 import { Service } from './service';
 
 const base = join(__dirname, '../../fixtures/service');
@@ -8,6 +9,7 @@ const base = join(__dirname, '../../fixtures/service');
 function buildService(opts: { name: string }) {
   const cwd = join(base, opts.name);
   const pluginPath = join(cwd, 'plugin.ts');
+  loadEnv({ cwd, envFile: '.env' });
   return new Service({
     cwd,
     env: Env.development,
