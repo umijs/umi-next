@@ -1,6 +1,8 @@
 // @ts-ignore
 import App from '@@/core/App.vue';
+// @ts-ignore
 import { createApp } from 'vue';
+// @ts-ignore
 import { createRouter, RouterHistory } from 'vue-router';
 import { AppContextKey } from './appContext';
 import { createClientRoutes } from './routes';

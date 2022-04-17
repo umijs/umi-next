@@ -1,3 +1,4 @@
+// @ts-ignore
 import { inject } from 'vue';
 
 export const AppContextKey = Symbol('AppContextKey');

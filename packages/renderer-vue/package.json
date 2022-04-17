@@ -20,10 +20,6 @@
     "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
     "dev": "pnpm build -- --watch"
   },
-  "devDependencies": {
-    "vue": "3.2.31",
-    "vue-router": "4.0.12"
-  },
   "peerDependencies": {
     "vue": ">=3.2.31",
     "vue-router": ">=4.0.12"

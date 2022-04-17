@@ -1,4 +1,6 @@
+// @ts-ignore
 import { RouterOptions } from 'vue-router';
+
 export {
   createMemoryHistory,
   createRouter,
