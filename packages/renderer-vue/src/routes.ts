@@ -12,6 +12,7 @@ export function createClientRoutes(opts: {
       const route = createClientRoute({
         route: routesById[id],
         routeComponent: routeComponents[id],
+        parentId,
       });
 
       const children = createClientRoutes({
@@ -34,6 +35,7 @@ export function createClientRoutes(opts: {
 export function createClientRoute(opts: {
   route: IRoute;
   routeComponent: any;
+  parentId?: string;
 }) {
   const { route } = opts;
   const { id, path, redirect } = route;
@@ -46,10 +48,16 @@ export function createClientRoute(opts: {
     };
   }
 
-  const item: Record<string, any> = { id, component: opts.routeComponent };
+  const item: Record<string, any> = {
+    id,
+    component: opts.routeComponent,
+    path,
+  };
 
-  if (path) {
-    item.path = path;
+  if (opts.parentId === undefined && path && !path.startsWith('/')) {
+    // fix Uncaught (in promise) Error: Route paths should start with a "/": "users" should be "/users".
+    item.path = `/${path}`;
   }
+
   return item;
 }

@@ -1,5 +1,5 @@
 // @ts-ignore
-import App from '@@/plugin-vue/App.vue';
+import App from '@@/core/App.vue';
 import { createApp } from 'vue';
 import { createRouter, RouterHistory } from 'vue-router';
 import { AppContextKey } from './appContext';
@@ -80,8 +80,6 @@ export function renderClient(opts: {
   });
 
   app.use(router);
-
-  console.log('vue render', opts);
 
   app.mount(opts.rootElement);
 

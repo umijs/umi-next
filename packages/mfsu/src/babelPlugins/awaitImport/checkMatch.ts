@@ -44,6 +44,7 @@ export function checkMatch({
   const remoteName = opts.remoteName || 'mf';
   // FIXME: hard code for vite mode
   value = value.replace(/^@fs\//, '/');
+
   if (
     // unMatch specified libs
     opts.unMatchLibs?.includes(value) ||
@@ -60,7 +61,9 @@ export function checkMatch({
     // don't match externals
     isExternals({ value, externals: opts.externals }) ||
     // relative import
-    value.startsWith('.')
+    value.startsWith('.') ||
+    // TODO mfsu 打包 vue 会导致 provide/inject 失效
+    value.startsWith('vue')
   ) {
     isMatch = false;
   } else if (isAbsolute(value)) {
