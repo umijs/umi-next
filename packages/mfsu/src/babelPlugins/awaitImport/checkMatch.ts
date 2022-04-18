@@ -62,8 +62,8 @@ export function checkMatch({
     isExternals({ value, externals: opts.externals }) ||
     // relative import
     value.startsWith('.') ||
-    // TODO mfsu 打包 vue 会导致 provide/inject 失效
-    value.startsWith('vue')
+    // TODO 排除renderer-vue 会导致本身的 provide/inject 失效
+    value.includes('renderer-vue')
   ) {
     isMatch = false;
   } else if (isAbsolute(value)) {

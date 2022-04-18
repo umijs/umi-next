@@ -330,12 +330,14 @@ importers:
 
   examples/vue-demo:
     specifiers:
-      '@umijs/preset-vue': 4.0.0-canary.20220414.1
-      umi: 4.0.0-canary.20220414.1
+      '@umijs/preset-vue': 4.0.0-canary.20220418.2
+      umi: 4.0.0-canary.20220418.2
+      vant: 3.4.8
       vue: 3.2.31
     dependencies:
       '@umijs/preset-vue': link:../../packages/preset-vue
       umi: link:../../packages/umi
+      vant: 3.4.8_vue@3.2.31
       vue: 3.2.31
 
   examples/with-dva:
@@ -1008,10 +1010,10 @@ importers:
 
   packages/preset-vue:
     specifiers:
-      '@umijs/renderer-vue': 4.0.0-canary.20220414.1
+      '@umijs/renderer-vue': 4.0.0-canary.20220418.2
       css-loader: 6.7.1
       postcss-preset-env: 7.0.1
-      umi: 4.0.0-canary.20220414.1
+      umi: 4.0.0-canary.20220418.2
       vue: 3.2.31
       vue-loader: 17.0.0
       vue-router: 4.0.12
@@ -6432,6 +6434,10 @@ packages:
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
 
+  /@popperjs/core/2.11.5:
+    resolution: {integrity: sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==}
+    dev: false
+
   /@probe.gl/env/3.5.0:
     resolution: {integrity: sha512-YdlpZZshhyYxvWDBmZ5RIW2pTR14Pw4p9czMlt/v7F6HbFzWfAdmH7q6xVwFRYxUpQLwhWensWyv4aFysiWl4g==}
     dependencies:
@@ -8111,6 +8117,20 @@ packages:
       loader-utils: 2.0.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@vant/icons/1.8.0:
+    resolution: {integrity: sha512-sKfEUo2/CkQFuERxvkuF6mGQZDKu3IQdj5rV9Fm0weJXtchDSSQ+zt8qPCNUEhh9Y8shy5PzxbvAfOOkCwlCXg==}
+    dev: false
+
+  /@vant/popperjs/1.1.0:
+    resolution: {integrity: sha512-8MD1gz146awV/uPxYjz4pet22f7a9YVKqk7T+gFkWFwT9mEcrIUEg/xPrdOnWKLP9puXyYtm7oVfSDSefZ/p/w==}
+    dependencies:
+      '@popperjs/core': 2.11.5
+    dev: false
+
+  /@vant/use/1.3.6:
+    resolution: {integrity: sha512-3z+nywPaV2F5BdJO7RQxWlgfzJeEOmViD2yHMb7Tg+R4NR/7iQskqW8v2Cnv9FWSJgTOSHlcr7UzeLpiTAP4HA==}
     dev: false
 
   /@vercel/ncc/0.33.3:
@@ -23646,6 +23666,17 @@ packages:
       proxy-compare: 2.1.0
       react: 17.0.2
       use-sync-external-store: 1.0.0_react@17.0.2
+    dev: false
+
+  /vant/3.4.8_vue@3.2.31:
+    resolution: {integrity: sha512-xPAiPdCiaZbcdbVplVh4N2lmYzDAr2UdadkUHoa9uwfHS9/dab4f8TigfCFzlfAEk53U1J6w+6qZ+whtt4T3hw==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      '@vant/icons': 1.8.0
+      '@vant/popperjs': 1.1.0
+      '@vant/use': 1.3.6
+      vue: 3.2.31
     dev: false
 
   /vary/1.1.2:

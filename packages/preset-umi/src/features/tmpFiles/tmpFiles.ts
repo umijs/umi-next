@@ -235,7 +235,14 @@ export default function EmptyRoute() {
       // @umijs/renderer-react
       exports.push('// @umijs/renderer-*');
 
-      exports.push(`export * from '${rendererPath}';`);
+      exports.push(
+        `export { ${(
+          await getExportsAndCheck({
+            path: join(rendererPath, 'dist/index.js'),
+            exportMembers,
+          })
+        ).join(', ')} } from '${rendererPath}';`,
+      );
 
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
