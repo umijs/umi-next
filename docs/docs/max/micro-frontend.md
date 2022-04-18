@@ -10,9 +10,9 @@ import { Message } from 'umi';
 
 ![微前端示例](https://gw.alipayobjects.com/mdn/rms_655822/afts/img/A*TroZSp_cH0MAAAAAAAAAAAAAARQnAQ)
 
-如上图所示：在根应用里，我们通过导航栏切换路由后，下方显示的内容来自于不同的子应用。子应用支持单独打开；子应用之间也支持任意的嵌套。
+如上图所示：在父应用里，我们通过导航栏切换路由后，下方显示的内容来自于不同的子应用。子应用支持单独打开；子应用之间也支持任意的嵌套。
 
-换一种更直观的理解方式：根应用和子应用其实都是**独立的前端项目**，根应用可以在内部引入子应用，子应用也可以在自己内部继续引入孙子应用，以此类推。
+换一种更直观的理解方式：父应用和子应用其实都是**独立的前端项目**，父应用可以在内部引入子应用，子应用也可以在自己内部继续引入孙子应用，以此类推。
 
 当应用能够作为子应用被其它应用引入的时候，它就成为了我们所说的微应用。
 
@@ -55,7 +55,7 @@ export default {
 };
 ```
 
-其中，`master` 对象的 API 可[见此](#MasterOptions)。
+其中，`name` 为子应用的名称，在引入子应用时需要使用到它；`entry` 为子应用运行的 HTTP 地址；`master` 对象的完整 API 可[见此](#MasterOptions)。
 
 #### 运行时注册子应用
 
@@ -620,7 +620,7 @@ export default {
 };
 ```
 
-需注意的是，当存在相同的配置项时，例如 `apps`，`config/config.ts` 中的配置项将**覆盖**环境变量中的配置项。
+需注意的是，当存在相同的配置项时，例如 `apps` 项，写在 `config/config.ts` 中的配置项将**覆盖**环境变量中的配置项。
 
 同理，对于子应用，可以编写环境变量 `.env` 文件如下：
 
@@ -680,4 +680,4 @@ export default {
 | `autoCaptureError` | 否 | 自动设置微应用的错误捕获 | `boolean` | `false` |
 | `errorBoundary` | 否 | 自定义的微应用错误捕获组件 | `(error: any) => React.ReactNode` | `null` |
 | `className` | 否 | 微应用的样式类 | `string` | `null` |
-| `wrapperClassName` | 否 | 包裹微应用加载组件、错误捕获组件和微应用的样式类，仅在启用加载组件或样式捕获组件时有效 | `string` | `null` |
+| `wrapperClassName` | 否 | 包裹微应用加载组件、错误捕获组件和微应用的样式类，仅在启用加载组件或错误捕获组件时有效 | `string` | `null` |
