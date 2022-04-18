@@ -16,7 +16,7 @@ import { Message } from 'umi';
 如果 Umi 项目配置了 `singular: true`，则应当使用 `src/model` 作为存放 Model 文件的目录。
 </Message>
 
-Model 文件允许使用 `.js`，`.jsx`，`.ts` 和 `tsx` 四种后缀格式，其文件名将成为它的**命名空间（namespace）**。当我们需要获取某个 Model 中的全局数据时，调用它的命名空间即可。
+Model 文件允许使用 `.js`，`.jsx`，`.ts` 和 `.tsx` 四种后缀格式，其文件名将成为它的**命名空间（namespace）**。当我们需要获取某个 Model 中的全局数据时，调用它的命名空间即可。
 
 对于 Model 文件 `useUser.ts`，它的命名空间为 `useUser`。
 
