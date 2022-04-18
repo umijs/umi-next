@@ -12,6 +12,7 @@ export default (api: IApi) => {
     'onGenerateFiles',
     'onBeforeCompiler',
     'onBuildComplete',
+    'onBuildHtmlComplete',
     'onPatchRoute',
     // 'onPatchRouteBefore',
     // 'onPatchRoutes',
@@ -109,8 +110,8 @@ export default (api: IApi) => {
         .filter((text) => text !== false)
         .join('\n');
 
-      // transform imports for all javascript-like files
-      if (/\.(t|j)sx?$/.test(absPath)) {
+      // transform imports for all javascript-like files only vite mode enable
+      if (api.appData.vite && /\.(t|j)sx?$/.test(absPath)) {
         content = transformIEAR({ content, path: absPath }, api);
       }
 

@@ -1,6 +1,6 @@
 {
   "name": "@umijs/server",
-  "version": "4.0.0-canary.20220412.3",
+  "version": "4.0.0-canary.20220418.2",
   "description": "@umijs/server",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/server#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -20,8 +20,8 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@umijs/bundler-utils": "4.0.0-canary.20220412.3",
-    "@umijs/renderer-react": "workspace:4.0.0-canary.20220412.3",
+    "@umijs/bundler-utils": "4.0.0-canary.20220418.2",
+    "@umijs/renderer-react": "4.0.0-canary.20220418.2",
     "history": "5.3.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@umijs/lint",
-  "version": "4.0.0-canary.20220412.3",
+  "version": "4.0.0-canary.20220418.2",
   "description": "@umijs/lint",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/lint#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -23,11 +23,10 @@
   "dependencies": {
     "@babel/core": "7.17.9",
     "@babel/eslint-parser": "7.17.0",
-    "@rushstack/eslint-patch": "1.1.2",
     "@stylelint/postcss-css-in-js": "^0.37.2",
     "@typescript-eslint/eslint-plugin": "5.19.0",
     "@typescript-eslint/parser": "5.19.0",
-    "@umijs/babel-preset-umi": "4.0.0-canary.20220412.3",
+    "@umijs/babel-preset-umi": "4.0.0-canary.20220418.2",
     "eslint-plugin-jest": "26.1.4",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.4.0",
@@ -36,6 +35,7 @@
     "stylelint-config-standard": "25.0.0"
   },
   "devDependencies": {
+    "@rushstack/eslint-patch": "1.1.2",
     "postcss-less": "6.0.0",
     "stylelint-config-css-modules": "4.1.0",
     "stylelint-config-prettier": "9.0.3",
