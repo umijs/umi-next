@@ -23,9 +23,19 @@ type IOpts = {
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
   cwd: string;
+  rootDir?: string;
   config: IConfig;
   entry: Record<string, string>;
 } & Pick<IConfigOpts, 'cache'>;
+
+export function stripUndefined(obj: any) {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === undefined) {
+      delete obj[key];
+    }
+  });
+  return obj;
+}
 
 export async function dev(opts: IOpts) {
   const enableMFSU = opts.config.mfsu !== false;
@@ -46,23 +56,24 @@ export async function dev(opts: IOpts) {
       runtimePublicPath: opts.config.runtimePublicPath,
       tmpBase:
         opts.config.mfsu?.cacheDirectory ||
-        join(opts.cwd, 'node_modules/.cache/mfsu'),
+        join(opts.rootDir || opts.cwd, 'node_modules/.cache/mfsu'),
       onMFSUProgress: opts.onMFSUProgress,
       getCacheDependency() {
-        return {
+        return stripUndefined({
           version: require('../package.json').version,
           esbuildMode: !!opts.config.mfsu?.esbuild,
           alias: opts.config.alias,
           externals: opts.config.externals,
           theme: opts.config.theme,
-          runtimePublicPath: !!opts.config.runtimePublicPath,
+          runtimePublicPath: opts.config.runtimePublicPath,
           publicPath: opts.config.publicPath,
-        };
+        });
       },
     });
   }
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
+    rootDir: opts.rootDir,
     env: Env.development,
     entry: opts.entry,
     userConfig: opts.config,
@@ -86,6 +97,7 @@ export async function dev(opts: IOpts) {
 
   const depConfig = await getConfig({
     cwd: opts.cwd,
+    rootDir: opts.rootDir,
     env: Env.development,
     entry: opts.entry,
     userConfig: opts.config,
@@ -95,7 +107,12 @@ export async function dev(opts: IOpts) {
     chainWebpack: opts.config.mfsu?.chainWebpack,
     cache: {
       buildDependencies: opts.cache?.buildDependencies,
-      cacheDirectory: join(opts.cwd, 'node_modules', '.cache', 'mfsu-deps'),
+      cacheDirectory: join(
+        opts.rootDir || opts.cwd,
+        'node_modules',
+        '.cache',
+        'mfsu-deps',
+      ),
     },
   });
 

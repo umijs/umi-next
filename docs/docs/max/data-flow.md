@@ -168,7 +168,6 @@ import { fetchInitialData } from '@/services/initial';
 
 export async function getInitialState() {
   const initialData = await fetchInitialData();
-
   return initialData;
 }
 ```
@@ -183,7 +182,6 @@ import { useModel } from 'umi';
 export default () => {
   const { initialState, loading, error, refresh, setInitialState } =
     useModel('@@initialState');
-
   return <>{initialState}</>;
 };
 ```
