@@ -1,16 +1,10 @@
 import { dirname } from 'path';
 import type { IApi } from 'umi';
-import { resolveProjectDep } from 'umi/plugin-utils';
+import { resolveProjectDep } from '../utils/resolveProjectDep';
 
 export default (api: IApi) => {
   api.describe({
-    key: 'vue',
-    config: {
-      schema(joi) {
-        return joi.object();
-      },
-      onChange: api.ConfigChangeType.reload,
-    },
+    key: 'preset-vue:default',
   });
 
   const vuePath =

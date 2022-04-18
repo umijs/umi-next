@@ -32,7 +32,6 @@ export * from './isStyleFile';
 export * from './npmClient';
 export * from './randomColor/randomColor';
 export * as register from './register';
-export * from './resolveProjectDep';
 export * from './tryPaths';
 export * from './winPath';
 export {

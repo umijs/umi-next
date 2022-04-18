@@ -3,13 +3,13 @@ import './requireHook';
 
 export default (api: IApi) => {
   api.describe({
-    key: 'preset-vue',
+    key: 'vue',
     config: {
       schema(joi) {
         return joi.object();
       },
-      onChange: api.ConfigChangeType.reload,
     },
+    enableBy: api.EnableBy.config,
   });
 
   return {
