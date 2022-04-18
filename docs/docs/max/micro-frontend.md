@@ -40,7 +40,6 @@ import { Message } from 'umi';
 export default {
   qiankun: {
     master: {
-      enable: true,
       apps: [
         {
           name: 'app1',
@@ -66,9 +65,7 @@ export default {
 // .umirc.ts
 export default {
   qiankun: {
-    master: {
-      enable: true,
-    },
+    master: {},
   },
 };
 ```
@@ -103,9 +100,7 @@ export const qiankun = {
 // .umirc.ts
 export default {
   qiankun: {
-    slave: {
-      enable: true,
-    },
+    slave: {},
   },
 };
 ```
@@ -630,7 +625,7 @@ export default {
 同理，对于子应用，可以编写环境变量 `.env` 文件如下：
 
 ```plaintext
-INITIAL_QIANKUN_SLAVE_OPTIONS="{\"enable\":true}"
+INITIAL_QIANKUN_SLAVE_OPTIONS="{\"enable\":false}"
 ```
 
 相当于编写了如下配置信息：
@@ -639,7 +634,7 @@ INITIAL_QIANKUN_SLAVE_OPTIONS="{\"enable\":true}"
 export default {
   qiankun: {
     slave: {
-      ...{ enable: true },
+      enable: false,
       // ... .umirc.ts 中其它的配置信息
     },
   },
@@ -652,13 +647,19 @@ export default {
 
 | 属性 | 必填 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `enable` | 是 | 启用 Qiankun 微应用插件 | `boolean` | `false` |
+| `enable` | 否 | 启用 Qiankun 微应用插件，设置为 `false` 时为不启用 | `boolean` | `undefined` |
 | `apps` | 是 | 微应用配置 | [`App[]`](#App) |
 | `routes` | 否 | 微应用运行时的路由 | [`Route[]`](#Route) | `undefined` |
 | `sandbox` | 否 | 是否开启沙箱模式 | `boolean | { strictStyleIsolation?: boolean, experimentalStyleIsolation?: boolean }` | `true` |
 | `prefetch` | 否 | 是否启用微应用预加载 | `boolean | 'all' | string[] | (( apps: RegistrableApp[] ) => { criticalAppNames: string[]; minorAppsName: string[] })` | `true` |
 
 关于沙箱和预加载的介绍可见[此页面](https://qiankun.umijs.org/zh/api/#startopts)。
+
+### SlaveOptions
+
+| 属性 | 必填 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- | --- |
+| `enable` | 否 | 启用 Qiankun 微应用插件，设置为 `false` 时为不启用 | `boolean` | `undefined` |
 
 ### App
 
@@ -682,8 +683,8 @@ export default {
 | 属性 | 必填 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- | --- |
 | `autoSetLoading` | 否 | 自动设置微应用的加载状态 | `boolean` | `false` |
-| `loader` | 否 | 自定义的微应用加载状态组件 | `(loading) => React.ReactNode` | `null` |
+| `loader` | 否 | 自定义的微应用加载状态组件 | `(loading) => React.ReactNode` | `undefined` |
 | `autoCaptureError` | 否 | 自动设置微应用的错误捕获 | `boolean` | `false` |
-| `errorBoundary` | 否 | 自定义的微应用错误捕获组件 | `(error: any) => React.ReactNode` | `null` |
-| `className` | 否 | 微应用的样式类 | `string` | `null` |
-| `wrapperClassName` | 否 | 包裹微应用加载组件、错误捕获组件和微应用的样式类，仅在启用加载组件或错误捕获组件时有效 | `string` | `null` |
+| `errorBoundary` | 否 | 自定义的微应用错误捕获组件 | `(error: any) => React.ReactNode` | `undefined` |
+| `className` | 否 | 微应用的样式类 | `string` | `undefined` |
+| `wrapperClassName` | 否 | 包裹微应用加载组件、错误捕获组件和微应用的样式类，仅在启用加载组件或错误捕获组件时有效 | `string` | `undefined` |
