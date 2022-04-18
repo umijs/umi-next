@@ -36,7 +36,7 @@ import { Message } from 'umi';
 修改父应用的 Umi 配置文件，添加如下内容：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   qiankun: {
     master: {
@@ -62,7 +62,7 @@ export default {
 修改父应用的 Umi 配置文件，添加如下内容：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   qiankun: {
     master: {},
@@ -97,7 +97,7 @@ export const qiankun = {
 修改子应用的 Umi 的配置文件，添加如下内容：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   qiankun: {
     slave: {},
@@ -121,12 +121,12 @@ export default {
 
 基于 [Umi 路由](https://umijs.org/docs/guides/routes)绑定子应用。
 
-您需要手动配置 `config/config.ts` 文件中的 `routes` 项以通过路由的方式绑定子应用。如果您更倾向于约定式路由模式，请考虑[使用组件的方式](#microapp--组件引入子应用)引入子应用。
+您需要手动配置 `.umirc.ts` 文件中的 `routes` 项以通过路由的方式绑定子应用。如果您更倾向于约定式路由模式，请考虑[使用组件的方式](#microapp--组件引入子应用)引入子应用。
 
 现在，我们想要在 `/app1/project` 和 `/app2` 路由分别加载 `app1` 和 `app2` 子应用，可以配置父应用的 Umi 路由如下：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   routes: [
     {
@@ -449,7 +449,7 @@ export const qiankun = {
 如果通过路由的模式引入子应用，可以配置如下：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   routes: [
     {
@@ -480,7 +480,7 @@ export default () => {
 如果通过路由的模式引入子应用，可以配置如下：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 import CustomLoader from '../src/components/CustomLoader';
 
 export default {
@@ -525,7 +525,7 @@ export default () => {
 如果通过路由的模式引入子应用，可以配置如下：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 export default {
   routes: [
     {
@@ -556,7 +556,7 @@ export default () => {
 如果通过路由的模式引入子应用，可以配置如下：
 
 ```ts
-// config/config.ts
+// .umirc.ts
 import CustomErrorBoundary from '../src/components/CustomErrorBoundary';
 
 export default {
@@ -592,7 +592,7 @@ export default () => {
 
 ## 环境变量
 
-如果您有一些不能显式编写在 `config/config.ts` 或 `src/app.ts` 中的配置信息，可以将它们存放在环境变量文件中。例如编写父应用的环境变量文件 `.env` 如下：
+如果您有一些不能显式编写在 `.umirc.ts` 或 `src/app.ts` 中的配置信息，可以将它们存放在环境变量文件中。例如编写父应用的环境变量文件 `.env` 如下：
 
 ```plaintext
 INITIAL_QIANKUN_MASTER_OPTIONS="{\"apps\":[{\"name\":\"app1\",\"entry\":\"//localhost:7001\"},{\"name\":\"app2\",\"entry\":\"//localhost:7002\"}]}"
@@ -614,13 +614,13 @@ export default {
           entry: '//localhost:7002',
         },
       ],
-      // ... config/config.ts 中其它的配置信息
+      // ... .umirc.ts 中其它的配置信息
     },
   },
 };
 ```
 
-需注意的是，当存在相同的配置项时，例如 `apps` 项，写在 `config/config.ts` 中的配置项将**覆盖**环境变量中的配置项。
+需注意的是，当存在相同的配置项时，例如 `apps` 项，写在 `.umirc.ts` 中的配置项将**覆盖**环境变量中的配置项。
 
 同理，对于子应用，可以编写环境变量 `.env` 文件如下：
 
@@ -635,7 +635,7 @@ export default {
   qiankun: {
     slave: {
       ...JSON.parse('{}'),
-      // ... config/config.ts 中其它的配置信息
+      // ... .umirc.ts 中其它的配置信息
     },
   },
 };
