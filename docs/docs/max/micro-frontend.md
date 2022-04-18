@@ -40,6 +40,7 @@ import { Message } from 'umi';
 export default {
   qiankun: {
     master: {
+      enable: true,
       apps: [
         {
           name: 'app1',
@@ -65,7 +66,9 @@ export default {
 // .umirc.ts
 export default {
   qiankun: {
-    master: {},
+    master: {
+      enable: true,
+    },
   },
 };
 ```
@@ -100,7 +103,9 @@ export const qiankun = {
 // .umirc.ts
 export default {
   qiankun: {
-    slave: {},
+    slave: {
+      enable: true,
+    },
   },
 };
 ```
@@ -625,7 +630,7 @@ export default {
 同理，对于子应用，可以编写环境变量 `.env` 文件如下：
 
 ```plaintext
-INITIAL_QIANKUN_SLAVE_OPTIONS="{}"
+INITIAL_QIANKUN_SLAVE_OPTIONS="{\"enable\":true}"
 ```
 
 相当于编写了如下配置信息：
@@ -634,7 +639,7 @@ INITIAL_QIANKUN_SLAVE_OPTIONS="{}"
 export default {
   qiankun: {
     slave: {
-      ...JSON.parse('{}'),
+      ...{ enable: true },
       // ... .umirc.ts 中其它的配置信息
     },
   },
@@ -647,6 +652,7 @@ export default {
 
 | 属性 | 必填 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| `enable` | 是 | 启用 Qiankun 微应用插件 | `boolean` | `false` |
 | `apps` | 是 | 微应用配置 | [`App[]`](#App) |
 | `routes` | 否 | 微应用运行时的路由 | [`Route[]`](#Route) | `undefined` |
 | `sandbox` | 否 | 是否开启沙箱模式 | `boolean | { strictStyleIsolation?: boolean, experimentalStyleIsolation?: boolean }` | `true` |
