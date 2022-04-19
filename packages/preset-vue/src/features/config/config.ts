@@ -2,7 +2,6 @@ import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import { IApi } from 'umi';
 import VueLoaderPlugin from 'vue-loader/dist/pluginWebpack5.js';
 import { addAssetRules } from './assetRules';
-import { addCSSRules } from './cssRules';
 
 export function getConfig(config: Config, api: IApi) {
   config.module.noParse(/^(vue|vue-router|vuex|vuex-router-sync)$/);
@@ -44,9 +43,6 @@ export function getConfig(config: Config, api: IApi) {
     .end()
     .type('javascript/auto')
     .resolve.fullySpecified(false);
-
-  // css
-  addCSSRules({ api, config });
 
   // asset
   addAssetRules({ api, config });
