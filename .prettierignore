@@ -11,4 +11,4 @@ fixtures
 *.yaml
 *.less
 /packages/plugin-docs/client/theme-doc/tailwind.out.css
-/packages/renderer-vue/src/index.ts
+.turbo
