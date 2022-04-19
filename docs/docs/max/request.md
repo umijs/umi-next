@@ -168,7 +168,7 @@ request('/api/user', {
 }
 ```
 
-request 默认返回的是你后端的数据，如果你想要拿到 axios 完整的 response 结构，可以通过传入 { getResponse: true } 来实现。
+request 默认返回的是你后端的数据，如果你想要拿到 axios 完整的 response 结构，可以通过传入 `{ getResponse: true }` 来实现。
 
 ### `RequestConfig`
 这是一个接口的定义，可以帮助你更好地配置运行时配置。
