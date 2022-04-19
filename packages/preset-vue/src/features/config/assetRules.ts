@@ -6,8 +6,10 @@ interface IOpts {
   api: IApi;
 }
 
-export async function addAssetRules(opts: IOpts) {
-  const { config, api } = opts;
+export async function addAssetRules({ config, api }: IOpts) {
+  // bundler-webpack 本身自带的静态资源会触发 vue-loader currently does not support vue rules with oneOf. 需要禁用掉
+  config.module.rules.delete('asset');
+
   const { userConfig } = api;
 
   const inlineLimit = parseInt(userConfig.inlineLimit || '10000', 10);

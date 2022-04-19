@@ -61,9 +61,7 @@ export function checkMatch({
     // don't match externals
     isExternals({ value, externals: opts.externals }) ||
     // relative import
-    value.startsWith('.') ||
-    // TODO 排除renderer-vue 会导致本身的 provide/inject 失效
-    value.includes('renderer-vue')
+    value.startsWith('.')
   ) {
     isMatch = false;
   } else if (isAbsolute(value)) {
