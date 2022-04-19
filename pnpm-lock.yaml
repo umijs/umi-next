@@ -1017,7 +1017,6 @@ importers:
       vue: 3.2.31
       vue-loader: 17.0.0
       vue-router: 4.0.12
-      vue-style-loader: 4.1.3
     dependencies:
       '@umijs/renderer-vue': link:../renderer-vue
       css-loader: 6.7.1
@@ -1025,7 +1024,6 @@ importers:
       vue: 3.2.31
       vue-loader: 17.0.0
       vue-router: 4.0.12_vue@3.2.31
-      vue-style-loader: 4.1.3
     devDependencies:
       umi: link:../umi
 
@@ -13785,10 +13783,6 @@ packages:
       readable-stream: 3.6.0
       safe-buffer: 5.2.1
 
-  /hash-sum/1.0.2:
-    resolution: {integrity: sha1-M7QHd3VMZDJXPBIMw4CLvRDUfwQ=}
-    dev: false
-
   /hash-sum/2.0.0:
     resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
     dev: false
@@ -15577,6 +15571,7 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.6
+    dev: true
 
   /json5/2.2.0:
     resolution: {integrity: sha512-f+8cldu7X/y7RAJurMEJmdoKXGB/X550w2Nr3tTbezL6RwEE/iMcm+tZnXeoZtKuOq6ft8+CqzEkrIgx1fPoQA==}
@@ -15943,6 +15938,7 @@ packages:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 1.0.1
+    dev: true
 
   /loader-utils/2.0.2:
     resolution: {integrity: sha512-TM57VeHptv569d/GKh6TAYdzKblwDNiumOdkFnejjD0XwTH87K90w3O7AiJRqdQoXygvi1VQTJTLGhJl7WqA7A==}
@@ -23768,13 +23764,6 @@ packages:
     dependencies:
       '@vue/devtools-api': 6.1.4
       vue: 3.2.31
-    dev: false
-
-  /vue-style-loader/4.1.3:
-    resolution: {integrity: sha512-sFuh0xfbtpRlKfm39ss/ikqs9AbKCoXZBpHeVZ8Tx650o0k0q/YCM7FRvigtxpACezfq6af+a7JeqVTWvncqDg==}
-    dependencies:
-      hash-sum: 1.0.2
-      loader-utils: 1.4.0
     dev: false
 
   /vue/3.2.31:
