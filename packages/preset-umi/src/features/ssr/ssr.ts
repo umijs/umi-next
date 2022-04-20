@@ -42,6 +42,17 @@ export default (api: IApi) => {
     },
   ]);
 
+  // react-shim.js is for esbuild to build umi.server.js
+  api.onGenerateFiles(() => {
+    api.writeTmpFile({
+      path: 'react-shim.js',
+      content: `
+      import * as React from 'react';
+export { React };
+`,
+    });
+  });
+
   let isFirstDevCompileDone = true;
   api.onDevCompileDone(async ({ cssManifest, assetsManifest }) => {
     if (isFirstDevCompileDone) {
@@ -53,6 +64,7 @@ export default (api: IApi) => {
         platform: 'node',
         target: 'esnext',
         bundle: true,
+        inject: [resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js')],
         watch: {
           onRebuild() {
             saveCssManifestToCache(api, cssManifest);
@@ -87,6 +99,7 @@ export default (api: IApi) => {
       target: 'esnext',
       bundle: true,
       logLevel: 'silent',
+      inject: [resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js')],
       loader: loaders,
       external: ['umi'],
       entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
