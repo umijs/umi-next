@@ -23,8 +23,6 @@
   },
   "dependencies": {
     "@umijs/renderer-vue": "4.0.0-canary.20220418.2",
-    "css-loader": "6.7.1",
-    "postcss-preset-env": "7.0.1",
     "vue": "3.2.31",
     "vue-loader": "17.0.0",
     "vue-router": "4.0.12"

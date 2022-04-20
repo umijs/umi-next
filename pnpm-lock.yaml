@@ -1011,21 +1011,17 @@ importers:
   packages/preset-vue:
     specifiers:
       '@umijs/renderer-vue': 4.0.0-canary.20220418.2
-      css-loader: 6.7.1
-      postcss-preset-env: 7.0.1
       umi: 4.0.0-canary.20220418.2
       vue: 3.2.31
       vue-loader: 17.0.0
       vue-router: 4.0.12
     dependencies:
       '@umijs/renderer-vue': link:../renderer-vue
-      css-loader: 6.7.1
-      postcss-preset-env: 7.0.1
       vue: 3.2.31
+      vue-loader: 17.0.0
       vue-router: 4.0.12_vue@3.2.31
     devDependencies:
       umi: link:../umi
-      vue-loader: 17.0.0
 
   packages/renderer-react:
     specifiers:
@@ -10496,16 +10492,6 @@ packages:
       randombytes: 2.1.0
       randomfill: 1.0.4
 
-  /css-blank-pseudo/2.0.0_postcss@8.4.12:
-    resolution: {integrity: sha512-n7fxEOyuvAVPLPb9kL4XTIK/gnp2fKQ7KFQ+9lj60W9pDn/jTr5LjS/kHHm+rES/YJ3m0S6+uJgYSuAJg9zOyA==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.3
-    dependencies:
-      postcss: 8.4.12
-    dev: false
-
   /css-blank-pseudo/3.0.3:
     resolution: {integrity: sha512-VS90XWtsHGqoM0t4KpH053c4ehxZ2E6HtGI7x68YFV0pTo/QmkV/YFA+NnlvK8guxZVNWGQhVNJGC39Q8XF4OQ==}
     engines: {node: ^12 || ^14 || >=16}
@@ -10542,17 +10528,6 @@ packages:
   /css-functions-list/3.0.1:
     resolution: {integrity: sha512-PriDuifDt4u4rkDgnqRCLnjfMatufLmWNfQnGCq34xZwpY3oabwhB9SqRBmuvWUgndbemCFlKqg+nO7C2q0SBw==}
     engines: {node: '>=12.22'}
-
-  /css-has-pseudo/2.0.0_postcss@8.4.12:
-    resolution: {integrity: sha512-URYSGI0ggED1W1/xOAH0Zn1bf+YL6tYh1PQzAPlWddEAyyO37mPqMbwCzSjTTNmeCR8BMNXSFLaT5xb6MERdAA==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      postcss: '>=8.3'
-    dependencies:
-      postcss: 8.4.12
-      postcss-selector-parser: 6.0.10
-    dev: false
 
   /css-has-pseudo/3.0.4:
     resolution: {integrity: sha512-Vse0xpR1K9MNlp2j5w1pgWIJtm1a8qS0JwS9goFYcImjlHEmywP9VUF05aGBXzGpDJF86QXk4L0ypBmwPhGArw==}
@@ -10594,6 +10569,7 @@ packages:
       postcss-modules-values: 4.0.0_postcss@8.4.12
       postcss-value-parser: 4.2.0
       semver: 7.3.5
+    dev: true
 
   /css-loader/6.7.1_webpack@5.72.0:
     resolution: {integrity: sha512-yB5CNFa14MbPJcomwNh3wLThtkZgcNyI2bNMRt8iE5Z8Vwl7f8vQXFAzn2HDOJvtDq2NTZBUGMSUNNyrv3/+cw==}
@@ -10640,16 +10616,6 @@ packages:
       source-map: 0.6.1
       webpack: 5.72.0_500f840d667fb94beb8bf3d4ee61670e
     dev: true
-
-  /css-prefers-color-scheme/5.0.0_postcss@8.4.12:
-    resolution: {integrity: sha512-XpzVrdwbppHm+Nnrzcb/hQb8eq1aKv4U8Oh59LsLfTsbIZZ6Fvn9razb66ihH2aTJ0VhO9n9sVm8piyKXJAZMA==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.3
-    dependencies:
-      postcss: 8.4.12
-    dev: false
 
   /css-prefers-color-scheme/6.0.3:
     resolution: {integrity: sha512-4BqMbZksRkJQx2zAjrokiGMd07RqOa2IxIrrN10lyBe9xhn9DEvjUK79J6jkeiv9D9hQFXKb6g1jwU62jziJZA==}
@@ -10717,10 +10683,6 @@ packages:
 
   /csscolorparser/1.0.3:
     resolution: {integrity: sha1-s085HupNqPPpgjHizNjfnAQfFxs=}
-    dev: false
-
-  /cssdb/5.1.0:
-    resolution: {integrity: sha512-/vqjXhv1x9eGkE/zO6o8ZOI7dgdZbLVLUGyVRbPgk6YipXbW87YzUCcO+Jrmi5bwJlAH6oD+MNeZyRgXea1GZw==}
     dev: false
 
   /cssdb/6.5.0:
@@ -13785,7 +13747,7 @@ packages:
 
   /hash-sum/2.0.0:
     resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
-    dev: true
+    dev: false
 
   /hash.js/1.1.7:
     resolution: {integrity: sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==}
@@ -19148,46 +19110,6 @@ packages:
       postcss: 8.4.12
       postcss-value-parser: 4.2.0
 
-  /postcss-preset-env/7.0.1:
-    resolution: {integrity: sha512-oB7IJGwLBEwnao823mS2b9hqbp5Brm0EZKWRVROayjGwyPQVjY9gZpPZk/ItFakdx7GAPgv3ya+9R3KrUqCwYA==}
-    engines: {node: '>=12'}
-    dependencies:
-      autoprefixer: 10.4.4_postcss@8.4.12
-      browserslist: 4.20.2
-      caniuse-lite: 1.0.30001327
-      css-blank-pseudo: 2.0.0_postcss@8.4.12
-      css-has-pseudo: 2.0.0_postcss@8.4.12
-      css-prefers-color-scheme: 5.0.0_postcss@8.4.12
-      cssdb: 5.1.0
-      postcss: 8.4.12
-      postcss-attribute-case-insensitive: 5.0.0_postcss@8.4.12
-      postcss-color-functional-notation: 4.2.2_postcss@8.4.12
-      postcss-color-hex-alpha: 8.0.3_postcss@8.4.12
-      postcss-color-rebeccapurple: 7.0.2_postcss@8.4.12
-      postcss-custom-media: 8.0.0_postcss@8.4.12
-      postcss-custom-properties: 12.1.5_postcss@8.4.12
-      postcss-custom-selectors: 6.0.0_postcss@8.4.12
-      postcss-dir-pseudo-class: 6.0.4_postcss@8.4.12
-      postcss-double-position-gradients: 3.1.1_postcss@8.4.12
-      postcss-env-function: 4.0.6_postcss@8.4.12
-      postcss-focus-visible: 6.0.4_postcss@8.4.12
-      postcss-focus-within: 5.0.4_postcss@8.4.12
-      postcss-font-variant: 5.0.0_postcss@8.4.12
-      postcss-gap-properties: 3.0.3_postcss@8.4.12
-      postcss-image-set-function: 4.0.6_postcss@8.4.12
-      postcss-initial: 4.0.1_postcss@8.4.12
-      postcss-lab-function: 4.1.2_postcss@8.4.12
-      postcss-logical: 5.0.4_postcss@8.4.12
-      postcss-media-minmax: 5.0.0_postcss@8.4.12
-      postcss-nesting: 10.1.3_postcss@8.4.12
-      postcss-overflow-shorthand: 3.0.3_postcss@8.4.12
-      postcss-page-break: 3.0.4_postcss@8.4.12
-      postcss-place: 7.0.4_postcss@8.4.12
-      postcss-pseudo-class-any-link: 7.1.1_postcss@8.4.12
-      postcss-replace-overflow-wrap: 4.0.0_postcss@8.4.12
-      postcss-selector-not: 5.0.0_postcss@8.4.12
-    dev: false
-
   /postcss-preset-env/7.4.3:
     resolution: {integrity: sha512-dlPA65g9KuGv7YsmGyCKtFkZKCPLkoVMUE3omOl6yM+qrynVHxFvf0tMuippIrXB/sB/MyhL1FgTIbrO+qMERg==}
     engines: {node: ^12 || ^14 || >=16}
@@ -23755,7 +23677,7 @@ packages:
       chalk: 4.1.2
       hash-sum: 2.0.0
       loader-utils: 2.0.2
-    dev: true
+    dev: false
 
   /vue-router/4.0.12_vue@3.2.31:
     resolution: {integrity: sha512-CPXvfqe+mZLB1kBWssssTiWg4EQERyqJZes7USiqfW9B5N2x+nHlnsM1D3b5CaJ6qgCvMmYJnz+G0iWjNCvXrg==}
