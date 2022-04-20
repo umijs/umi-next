@@ -29,7 +29,7 @@ export function createConfig(opts?: {
       '^.+\\.(css|less|sass|scss|stylus)$':
         require.resolve('identity-obj-proxy'),
     },
-    testTimeout: 30000,
+    testTimeout: (process.env.CI ? 60 : 30) * 1e3,
     modulePathIgnorePatterns: [
       '<rootDir>/packages/.+/compiled',
       '<rootDir>/packages/.+/fixtures',
