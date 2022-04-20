@@ -1022,10 +1022,10 @@ importers:
       css-loader: 6.7.1
       postcss-preset-env: 7.0.1
       vue: 3.2.31
-      vue-loader: 17.0.0
       vue-router: 4.0.12_vue@3.2.31
     devDependencies:
       umi: link:../umi
+      vue-loader: 17.0.0
 
   packages/renderer-react:
     specifiers:
@@ -13785,7 +13785,7 @@ packages:
 
   /hash-sum/2.0.0:
     resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
-    dev: false
+    dev: true
 
   /hash.js/1.1.7:
     resolution: {integrity: sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==}
@@ -23755,7 +23755,7 @@ packages:
       chalk: 4.1.2
       hash-sum: 2.0.0
       loader-utils: 2.0.2
-    dev: false
+    dev: true
 
   /vue-router/4.0.12_vue@3.2.31:
     resolution: {integrity: sha512-CPXvfqe+mZLB1kBWssssTiWg4EQERyqJZes7USiqfW9B5N2x+nHlnsM1D3b5CaJ6qgCvMmYJnz+G0iWjNCvXrg==}

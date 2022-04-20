@@ -8,6 +8,24 @@ export default (api: IApi) => {
     key: 'preset-vue:tmpFiles',
   });
 
+  api.onGenerateFiles(async () => {
+    // useAppData.ts
+    const rendererPath = winPath(
+      await api.applyPlugins({
+        key: 'modifyRendererPath',
+      }),
+    );
+
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: 'plugin-vue/index.ts',
+      tplPath: join(TEMPLATES_DIR, 'useAppData.tpl'),
+      context: {
+        rendererPath,
+      },
+    });
+  });
+
   api.register({
     key: 'onGenerateFiles',
     fn: async () => {
@@ -27,14 +45,18 @@ export default (api: IApi) => {
         },
       });
 
-      // EmptyRoutes.vue
+      // EmptyRoutes.tsx
       api.writeTmpFile({
         noPluginDir: true,
-        path: 'core/EmptyRoute.vue',
+        path: 'core/EmptyRoute.tsx',
         content: `
-      <template>
-      <router-view></router-view>
-      </template>
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  setup() {
+    return () => <router-view></router-view>;
+  },
+});
         `,
       });
 
@@ -43,9 +65,9 @@ export default (api: IApi) => {
         noPluginDir: true,
         path: 'core/App.vue',
         content: `
-      <template>
-      <router-view></router-view>
-      </template>
+<template>
+  <router-view></router-view>
+</template>
         `,
       });
     },

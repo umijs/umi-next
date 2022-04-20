@@ -14,9 +14,7 @@ export {
   useLink,
   useRoute,
   useRouter,
-// @ts-ignore
 } from 'vue-router';
-export { useAppData } from './appContext';
-export { renderClient } from './browser';
+export { AppContextKey, renderClient } from './browser';
 
 export type RouterConfig = Omit<RouterOptions, 'history' | 'routes'>;

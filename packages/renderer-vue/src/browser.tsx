@@ -4,9 +4,10 @@ import App from '@@/core/App.vue';
 import { createApp } from 'vue';
 // @ts-ignore
 import { createRouter, RouterHistory } from 'vue-router';
-import { AppContextKey } from './appContext';
 import { createClientRoutes } from './routes';
 import { IRouteComponents, IRoutesById } from './types';
+
+export const AppContextKey = Symbol('AppContextKey');
 
 export function renderClient(opts: {
   rootElement: string;
@@ -72,6 +73,10 @@ export function renderClient(opts: {
     },
   });
 
+  app.use(router);
+
+  app.mount(opts.rootElement);
+
   // 注入appData 数据
   app.provide(AppContextKey, {
     routes: opts.routes,
@@ -80,10 +85,6 @@ export function renderClient(opts: {
     pluginManager: opts.pluginManager,
     rootElement: opts.rootElement,
   });
-
-  app.use(router);
-
-  app.mount(opts.rootElement);
 
   opts.pluginManager.applyPlugins({
     type: 'event',

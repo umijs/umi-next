@@ -11,11 +11,15 @@
        <router-link to="/users/foo">Go to Users Foo</router-link>
     </div>
     <VantDemo/>
+    <div>
+      <h4>useAppData</h4>
+      <pre>{{ app }}</pre>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref, inject } from 'vue';
-import { useAppData, useRouter } from 'umi';
+import { useAppData } from 'umi';
 import VantDemo from '@/components/VantDemo.vue'
 
 const hello = ref<string>('hello vue');
@@ -23,7 +27,6 @@ const app = useAppData();
 
 const umiHello = inject('umi-hello')
 
-console.log('appData', app);
 </script>
 <style lang="less" scoped>
 div {

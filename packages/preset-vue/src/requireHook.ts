@@ -13,26 +13,6 @@ const hookPropertyMap = new Map([
   ['webpack/package.json', '@umijs/bundler-webpack/compiled/webpack/package'],
   ['webpack/lib/webpack', '@umijs/bundler-webpack/compiled/webpack'],
   ['webpack/lib/webpack.js', '@umijs/bundler-webpack/compiled/webpack'],
-  [
-    'webpack/lib/rules/BasicEffectRulePlugin',
-    require.resolve('../compiled/webpack/rules/BasicEffectRulePlugin'),
-  ],
-  [
-    'webpack/lib/rules/BasicMatcherRulePlugin',
-    require.resolve('../compiled/webpack/rules/BasicMatcherRulePlugin'),
-  ],
-  [
-    'webpack/lib/rules/UseEffectRulePlugin',
-    require.resolve('../compiled/webpack/rules/UseEffectRulePlugin'),
-  ],
-  [
-    'webpack/lib/rules/RuleSetCompiler',
-    require.resolve('../compiled/webpack/rules/RuleSetCompiler'),
-  ],
-  [
-    'webpack/lib/rules/ObjectMatcherRulePlugin',
-    require.resolve('../compiled/webpack/rules/ObjectMatcherRulePlugin'),
-  ],
   ['tapable', '@umijs/bundler-webpack/compiled/tapable'],
   ['vite', '@umijs/bundler-vite/compiled/vite'],
 ]);
