@@ -280,7 +280,7 @@ export default function EmptyRoute() {
     // Pack the route component **without loaders** into tmpDir/pages
     // These generated route components will be imported by core/route.tsx
     api.onBeforeCompiler(async () => {
-      const routes = api.appData.routes;
+      const routes = await getRoutes({ api });
       const entryPoints: { [key: string]: string } = {};
       Object.keys(routes).map((key) => {
         if (isAbsolute(routes[key].file)) {
@@ -289,10 +289,23 @@ export default function EmptyRoute() {
           );
           return;
         }
-        entryPoints[routes[key].id.replace(/\//g, '_')] = join(
-          api.paths.absPagesPath,
-          routes[key].file + '?browser',
-        );
+        if (
+          ['.tsx', '.jsx', '.ts', '.js'].some((ext) =>
+            routes[key].file.endsWith(ext),
+          )
+        ) {
+          entryPoints[routes[key].id.replace(/\//g, '_')] =
+            join(api.paths.absPagesPath, routes[key].file) + '?browser';
+          return;
+        }
+        ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
+          const filePath = join(api.paths.absPagesPath, routes[key].file + ext);
+          if (existsSync(filePath)) {
+            entryPoints[routes[key].id.replace(/\//g, '_')] =
+              filePath + '?browser';
+            return;
+          }
+        });
       });
       await esbuild.build({
         entryPoints,
@@ -300,7 +313,7 @@ export default function EmptyRoute() {
         splitting: true,
         bundle: true,
         watch: api.env === 'development',
-        external: ['umi', 'react', 'react-dom'],
+        jsx: 'preserve',
         outdir: join(api.paths.absTmpPath, 'pages'),
         entryNames: '[name]',
         chunkNames: '_shared/[name]-[hash]',
@@ -308,20 +321,15 @@ export default function EmptyRoute() {
         plugins: [
           IgnorePathPrefixPlugin(),
           BrowserRouteModulePlugin(),
-          // 在预编译阶段，静态文件直接替换成绝对路径并表示为 external，因为在构建客户端产物的
-          // 流程中，实际的文件加载是由下一步的 webpack 负责的
           {
             name: 'assets',
             setup(build) {
-              build.onResolve(
-                { filter: /\.(css|less|svg|png|jpg)$/ },
-                (args) => {
-                  return {
-                    path: resolve(args.resolveDir, args.path),
-                    external: true,
-                  };
-                },
-              );
+              build.onResolve({ filter: /.*/ }, (args) => {
+                let path = args.path;
+                if (args.path.startsWith('./') || args.path.startsWith('../'))
+                  path = resolve(args.resolveDir, args.path);
+                return { path, external: !args.importer.endsWith('?browser') };
+              });
             },
           },
         ],
