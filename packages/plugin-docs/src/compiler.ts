@@ -8,7 +8,6 @@ import remarkGfm from '../compiled/remark-gfm';
 
 // https://rehype-pretty-code.netlify.app
 const rehypePrettyCodeOptions = {
-  // Theme list: https://github.com/shikijs/shiki/blob/main/docs/themes.md#all-themes
   theme: 'dark-plus',
   onVisitLine(node: any) {
     // Prevent lines from collapsing in `display: grid` mode, and

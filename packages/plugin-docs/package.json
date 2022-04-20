@@ -28,6 +28,7 @@
   "dependencies": {
     "keymaster": "1.6.2",
     "react-helmet": "^6.1.0",
+    "rehype-pretty-code": "^0.3.0",
     "shiki": "^0.10.1"
   },
   "devDependencies": {
@@ -35,8 +36,8 @@
     "@types/keymaster": "^1.6.30",
     "@types/react-helmet": "^6.1.5",
     "classnames": "^2.3.1",
-    "rehype-pretty-code": "^0.3.0",
     "rehype-slug": "5.0.1",
+    "remark-gfm": "^3.0.1",
     "tailwindcss": "^3.0.23",
     "umi": "4.0.0-canary.20220418.2"
   },
@@ -49,12 +50,14 @@
   "compiledConfig": {
     "deps": [
       "@mdx-js/mdx",
-      "rehype-slug"
+      "rehype-slug",
+      "remark-gfm"
     ],
     "externals": {},
     "excludeDtsDeps": [
       "@mdx-js/mdx",
-      "rehype-slug"
+      "rehype-slug",
+      "remark-gfm"
     ]
   }
 }
