@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React from 'react';
+import { useThemeContext } from './context';
 import Github from './Github';
 import LangSwitch from './LangSwitch';
 import Logo from './Logo';
@@ -13,6 +14,7 @@ interface HeadProps {
 }
 
 export default (props: HeadProps) => {
+  const { themeConfig } = useThemeContext()!;
   return (
     <div
       className="w-full flex flex-row items-center justify-between
@@ -35,9 +37,11 @@ export default (props: HeadProps) => {
         <div className="ml-4 hidden lg:block">
           <LangSwitch />
         </div>
-        <div className="ml-4 hidden lg:block">
-          <ThemeSwitch />
-        </div>
+        {themeConfig.themeSwitch !== false && (
+          <div className="ml-4 hidden lg:block">
+            <ThemeSwitch />
+          </div>
+        )}
         <div className="ml-4 hidden lg:block">
           <Github />
         </div>
