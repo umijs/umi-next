@@ -1,4 +1,5 @@
 // @ts-ignore
+import { logger } from '@umijs/utils';
 import { createProcessor } from '../compiled/@mdx-js/mdx';
 // @ts-ignore
 import rehypeSlug from '../compiled/rehype-slug';
@@ -11,10 +12,11 @@ export async function compile(opts: { content: string }) {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeSlug],
   });
-  let result = String(await compiler.process(opts.content));
-  result = result.replace(
-    'function MDXContent(props = {}) {',
-    `
+  try {
+    let result = String(await compiler.process(opts.content));
+    result = result.replace(
+      'function MDXContent(props = {}) {',
+      `
 import { useEffect } from 'react';
 
 function MDXContent(props = {}) {
@@ -28,6 +30,10 @@ function MDXContent(props = {}) {
   }, []);
 
 `,
-  );
-  return { result };
+    );
+    return { result };
+  } catch (e: any) {
+    logger.error(e.reason);
+    return { result: '' };
+  }
 }
