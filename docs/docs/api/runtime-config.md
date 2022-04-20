@@ -30,7 +30,7 @@ export function patchRoutes({ routes }) {
 e.g.
 ```ts
 export function render(oldRender){
-  fetch('/api/autn').then(
+  fetch('/api/auth').then(
     auth => {
       if(auth.isLogin) oldRender()
       else{
