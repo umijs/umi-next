@@ -1,5 +1,6 @@
 import { IApi } from '../../types';
 import babelPlugin from './babelPlugin';
+import CodeFrameError from './CodeFrameError';
 
 export default (api: IApi) => {
   api.addBeforeBabelPresets(() => {
@@ -14,7 +15,11 @@ export default (api: IApi) => {
               onCheckCode({ args }: any) {
                 api.applyPlugins({
                   key: 'onCheckCode',
-                  args: args,
+                  args: {
+                    ...args,
+                    CodeFrameError,
+                  },
+                  sync: true,
                 });
               },
             },
