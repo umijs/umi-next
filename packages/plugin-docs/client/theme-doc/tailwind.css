@@ -36,7 +36,7 @@ article ul {
 }
 
 article li {
-  @apply mt-2 dark:text-white;
+  @apply text-base mt-2 leading-7 text-gray-700 dark:text-white;
 }
 
 article ol {
