@@ -142,7 +142,7 @@ export async function getRouteComponents(opts: {
         // component: () => <h1>foo</h1>
         // component: (() => () => <h1>foo</h1>)()
         if (route.file.startsWith('(')) {
-          return `'${key}': React.lazy(() => Promise.resolve(${route.file})),`;
+          return `'${key}': React.lazy(() => Promise.resolve('${route.file}')),`;
         }
         const path =
           isAbsolute(route.file) || route.file.startsWith('@/')
@@ -157,7 +157,7 @@ export async function getRouteComponents(opts: {
         route.id.replace(/\//g, '_') + '.js',
       );
       if (route.file.startsWith('(')) {
-        return `'${key}': React.lazy(() => Promise.resolve(${preCompiledPath})),`;
+        return `'${key}': React.lazy(() => Promise.resolve('${preCompiledPath}')),`;
       }
       return `'${key}': React.lazy(() => import('${winPath(
         preCompiledPath,
