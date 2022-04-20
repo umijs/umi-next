@@ -34,7 +34,7 @@ export default (api: IApi) => {
                       })}\n`,
                     );
                   } else if (err instanceof Error) {
-                    // throw normal error with red message
+                    // throw normal error with red text color
                     throw new Error(chalk.redBright(err.message));
                   } else {
                     // log error
