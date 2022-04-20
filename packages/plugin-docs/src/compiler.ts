@@ -1,5 +1,5 @@
-// @ts-ignore
 import { logger } from '@umijs/utils';
+// @ts-ignore
 import { createProcessor } from '../compiled/@mdx-js/mdx';
 // @ts-ignore
 import rehypeSlug from '../compiled/rehype-slug';
