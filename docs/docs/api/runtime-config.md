@@ -7,7 +7,7 @@
 
 ## 配置项
 
-### patchRoutes({routes})
+### patchRoutes({ routes })
 
 修改路由。
 
