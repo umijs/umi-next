@@ -14,6 +14,7 @@ export {
   useLink,
   useRoute,
   useRouter,
+// @ts-ignore
 } from 'vue-router';
 export { AppContextKey, renderClient } from './browser';
 
