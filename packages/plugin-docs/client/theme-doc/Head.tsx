@@ -37,7 +37,7 @@ export default (props: HeadProps) => {
         <div className="ml-4 hidden lg:block">
           <LangSwitch />
         </div>
-        {themeConfig.themeSwitch !== false && (
+        {themeConfig.themeSwitch && (
           <div className="ml-4 hidden lg:block">
             <ThemeSwitch />
           </div>

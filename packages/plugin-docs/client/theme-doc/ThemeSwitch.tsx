@@ -10,7 +10,7 @@ export default () => {
 
   useEffect(() => {
     // If themeConfig disabled the themeSwitch, just set to light theme
-    if (themeConfig.themeSwitch === false) {
+    if (!themeConfig.themeSwitch) {
       document.body.classList.remove('dark');
       return;
     }
