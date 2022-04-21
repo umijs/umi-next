@@ -134,6 +134,7 @@ export type IApi = PluginAPI &
       file: string;
       imports: {
         default: string;
+        kind: ImportDeclaration;
         loc: any;
         namespace: string;
         source: string;
