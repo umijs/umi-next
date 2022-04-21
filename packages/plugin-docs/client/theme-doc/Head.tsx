@@ -22,11 +22,7 @@ export default (props: HeadProps) => {
     >
       <div className="flex flex-row items-center">
         <Logo />
-        {themeConfig.leftNavComponents?.map((Comp, i) => (
-          <div className="ml-4 hidden lg:block" key={i}>
-            <Comp />
-          </div>
-        ))}
+        {themeConfig.extraNavLeft && <themeConfig.extraNavLeft />}
       </div>
       <div className="flex flex-row items-center">
         <Search />
@@ -50,11 +46,7 @@ export default (props: HeadProps) => {
         <div className="ml-4 hidden lg:block">
           <Github />
         </div>
-        {themeConfig.rightNavComponents?.map((Comp, i) => (
-          <div className="ml-4 hidden lg:block" key={i}>
-            <Comp />
-          </div>
-        ))}
+        {themeConfig.extraNavRight && <themeConfig.extraNavRight />}
       </div>
     </div>
   );

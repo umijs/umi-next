@@ -16,9 +16,9 @@ interface IContext {
     // 供 useLanguage 使用
     locales: { [locale: string]: { [key: string]: string } };
     // 顶部导航栏右侧自定义组件
-    rightNavComponents: React.FC[];
+    extraNavRight?: React.FC;
     // 底部导航栏左侧自定义组件
-    leftNavComponents: React.FC[];
+    extraNavLeft?: React.FC;
     navs: {
       path: string;
       title: string;
