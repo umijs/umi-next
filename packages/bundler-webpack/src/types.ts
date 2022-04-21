@@ -1,4 +1,5 @@
 import type { Config as SwcConfig } from '@swc/core';
+import type { HttpsParams } from '@umijs/bundler-utils';
 import type { Options as ProxyOptions } from '../compiled/http-proxy-middleware';
 import { Configuration } from '../compiled/webpack';
 import Config from '../compiled/webpack-5-chain';
@@ -45,12 +46,6 @@ export interface DeadCodeParams {
   detectUnusedFiles?: boolean;
   detectUnusedExport?: boolean;
   context?: string;
-}
-
-export interface HttpsParams {
-  key?: string;
-  cert?: string;
-  hosts?: string[]; // 默认值 ['localhost', '127.0.0.1']
 }
 
 export interface IConfig {

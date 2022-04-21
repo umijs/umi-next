@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'fs';
 import { RequestListener } from 'http';
 import https from 'https';
 import { join } from 'path';
-import { HttpsParams } from '../types';
+import { HttpsParams } from './types';
 
 const defaultHttpsHosts: HttpsParams['hosts'] = ['localhost', '127.0.0.1'];
 
