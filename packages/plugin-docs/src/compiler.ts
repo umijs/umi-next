@@ -6,7 +6,7 @@ import rehypeSlug from '../compiled/rehype-slug';
 // @ts-ignore
 import remarkGfm from '../compiled/remark-gfm';
 
-export async function compile(opts: { content: string }) {
+export async function compile(opts: { content: string; fileName: string }) {
   const compiler = createProcessor({
     jsx: true,
     remarkPlugins: [remarkGfm],
@@ -34,6 +34,14 @@ function MDXContent(props = {}) {
     return { result };
   } catch (e: any) {
     logger.error(e.reason);
+    logger.error(`Above error occurred in ${opts.fileName} at line ${e.line}`);
+    logger.error(
+      opts.content
+        .split('\n')
+        .filter((_, i) => i == e.line - 1)
+        .join('\n'),
+    );
+    logger.error(' '.repeat(e.column - 1) + '^');
     return { result: '' };
   }
 }
