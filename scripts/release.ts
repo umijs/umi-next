@@ -165,7 +165,7 @@ import { assert, eachPkg, getPkgs } from './utils';
     do {
       // get otp from user
       otp = await question('This operation requires a one-time password: ');
-    } while (otp.length === 6);
+    } while (otp.length !== 6);
   }
 
   await Promise.all(
