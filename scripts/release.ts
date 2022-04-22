@@ -164,12 +164,17 @@ import { assert, eachPkg, getPkgs } from './utils';
     (await $`npm profile get "two-factor auth"`).toString().includes('writes')
   ) {
     // get otp from user
-    ({ otp } = await prompts({
-      type: 'text',
-      name: 'otp',
-      message: 'This operation requires a one-time password:',
-      validate: (t) => t.length === 6 || 'Must be 6 digits',
-    }));
+    ({ otp } = await prompts(
+      {
+        type: 'text',
+        name: 'otp',
+        message: 'This operation requires a one-time password',
+        validate: (t) => t.length === 6 || 'Must be 6 digits',
+      },
+      {
+        onCancel: () => process.exit(0),
+      },
+    ));
   }
 
   await Promise.all(
