@@ -1,3 +1,4 @@
+import prompts from '@umijs/utils/compiled/prompts';
 import * as logger from '@umijs/utils/src/logger';
 import { existsSync } from 'fs';
 import getGitRepoInfo from 'git-repo-info';
@@ -156,15 +157,37 @@ import { assert, eachPkg, getPkgs } from './utils';
     // do not publish father
     (pkg) => !['umi', 'max', 'father'].includes(pkg),
   );
+
+  // check 2fa config
+  let otp = '';
+
+  // get otp from user
+  if (
+    (await $`npm profile get "two-factor auth"`).toString().includes('writes')
+  ) {
+    ({ otp } = await prompts({
+      type: 'text',
+      name: 'otp',
+      message: 'This operation requires a one-time password:',
+      validate: (t) => t.length === 6 || 'Must be 6 digits',
+    }));
+  }
+
   await Promise.all(
     innerPkgs.map(async (pkg) => {
-      await $`cd packages/${pkg} && npm publish --tag ${tag}`;
+      await $`cd packages/${pkg} && npm publish --tag ${tag}${
+        otp ? ` --otp ${otp}` : ''
+      }`;
       logger.info(`+ ${pkg}`);
     }),
   );
-  await $`cd packages/umi && npm publish --tag ${tag}`;
+  await $`cd packages/umi && npm publish --tag ${tag}${
+    otp ? ` --otp ${otp}` : ''
+  }`;
   logger.info(`+ umi`);
-  await $`cd packages/max && npm publish --tag ${tag}`;
+  await $`cd packages/max && npm publish --tag ${tag}${
+    otp ? ` --otp ${otp}` : ''
+  }`;
   logger.info(`+ @umijs/max`);
   $.verbose = true;
 
