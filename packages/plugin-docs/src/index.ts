@@ -1,7 +1,7 @@
 import { parseModuleSync } from '@umijs/bundler-utils';
 import { winPath } from '@umijs/utils';
 import fs, { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { IApi } from 'umi';
 import { parseTitle } from './markdown';
 
@@ -57,6 +57,15 @@ export default (api: IApi) => {
         route.path = route.path.replace(/README$/, '');
       }
     }
+
+    // If markdown starts with [redirect]:- "/new/path", then redirect to "/new/path"
+    if (route.__content) {
+      const lines = route.__content.split('\n');
+      if (lines[0] && lines[0].startsWith('[redirect]:-')) {
+        const r = lines[0].replace(/^\[redirect]:- "(.*)"$/, '$1');
+        route.redirect = resolve('/' + route.path, r);
+      }
+    }
   });
 
   // 检查路由是否存在其他语言，没有的话做 fallback 处理
@@ -74,6 +83,21 @@ export default (api: IApi) => {
             ...r[defaultLangFile],
             path: `/${l}/${r[defaultLangFile].path}`,
           };
+
+          // If markdown starts with [redirect]:- "/new/path", then redirect to "/new/path"
+          if (r[defaultLangFile].__content) {
+            const lines = r[defaultLangFile].__content.split('\n');
+            if (lines[0] && lines[0].startsWith('[redirect]:-')) {
+              const redirectPath = lines[0].replace(
+                /^\[redirect]:- "(.*)"$/,
+                '$1',
+              );
+              r[defaultLangFile + '.' + l].redirect = resolve(
+                `/${l}/${r[defaultLangFile].path}`,
+                redirectPath,
+              );
+            }
+          }
         }
       });
     }
