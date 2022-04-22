@@ -14,7 +14,4 @@ assert(existsSync(scriptsPath) && !name.startsWith('.'), `Executed script '${nam
 
 console.log(`umi-scripts: ${name}\n`)
 
-fork(esno, [
-  scriptsPath,
-  ...argv.slice(1)
-], { env: process.env, cwd: process.cwd() })
+fork(esno, [scriptsPath, ...argv.slice(1)], { env: process.env, cwd: process.cwd() })
