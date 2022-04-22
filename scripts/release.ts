@@ -160,11 +160,10 @@ import { assert, eachPkg, getPkgs } from './utils';
 
   // check 2fa config
   let otp = '';
-
-  // get otp from user
   if (
     (await $`npm profile get "two-factor auth"`).toString().includes('writes')
   ) {
+    // get otp from user
     ({ otp } = await prompts({
       type: 'text',
       name: 'otp',
