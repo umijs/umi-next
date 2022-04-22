@@ -22,7 +22,6 @@ const replaces = [
 
 console.log('patch ncc');
 const path = join(
-  __dirname,
   PATHS.ROOT,
   './node_modules/@vercel/ncc/dist/ncc/index.js.cache.js',
 );
