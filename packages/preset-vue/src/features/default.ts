@@ -24,7 +24,7 @@ export default (api: IApi) => {
   api.modifyDefaultConfig((config) => {
     config.alias = {
       ...config.alias,
-      vue$: api.userConfig.vue?.runtimeCompiler ? vuePath : vueRuntimePath,
+      vue: api.userConfig.vue?.runtimeCompiler ? vuePath : vueRuntimePath,
       'vue-router':
         resolveProjectDep({
           pkg: api.pkg,

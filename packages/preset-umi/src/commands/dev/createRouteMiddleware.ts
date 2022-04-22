@@ -39,7 +39,10 @@ function createRouteMiddleware(opts: { api: IApi }) {
     return async (req, res, next) => {
       const viteScripts: IOpts['scripts'] = [
         // add noshim attr for skip import-maps shim logic for this modules
-        { content: viteRefreshScript, noshim: '' },
+        {
+          content: !opts.api.appData.isVue ? viteRefreshScript : '',
+          noshim: '',
+        },
         { src: '/@vite/client', noshim: '' },
         opts.api.appData.hasSrcDir ? '/src/.umi/umi.ts' : '/.umi/umi.ts',
       ];

@@ -5,7 +5,7 @@ import {
 } from '@umijs/core';
 import { resolve, winPath } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
-import { isAbsolute, join } from 'path';
+import { extname, isAbsolute, join } from 'path';
 import { IApi } from '../../types';
 
 // get api routs
@@ -79,6 +79,8 @@ export async function getRoutes(opts: { api: IApi }) {
           extensions: ['.js', '.jsx', '.tsx', '.ts', '.vue'],
         });
       }
+      // 用于解决 vite 模式渲染 vue 需要包含后缀, 路由配置时可以不写后缀, 所以需要真实路径
+      routes[id].__filePath = file;
       routes[id].__content = readFileSync(file, 'utf-8');
     }
   }
@@ -130,6 +132,7 @@ export async function getRoutes(opts: { api: IApi }) {
 export async function getRouteComponents(opts: {
   routes: Record<string, any>;
   prefix: string;
+  api: IApi;
 }) {
   const imports = Object.keys(opts.routes)
     .map((key) => {
@@ -143,10 +146,21 @@ export async function getRouteComponents(opts: {
       if (route.file.startsWith('(')) {
         return `'${key}': () => Promise.resolve(${route.file}),`;
       }
-      const path =
+
+      let path =
         isAbsolute(route.file) || route.file.startsWith('@/')
           ? route.file
           : `${opts.prefix}${route.file}`;
+
+      // vite vue require a suffix
+      const isHasExt = opts.api.appData.vite && opts.api.appData.isVue;
+      const ext =
+        isHasExt && route.__filePath ? extname(route.__filePath) : undefined;
+
+      if (ext && !path.endsWith(ext)) {
+        path = `${path}${ext}`;
+      }
+
       return `'${key}': () => import('${winPath(path)}'),`;
     })
     .join('\n');
