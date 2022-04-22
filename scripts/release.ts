@@ -1,4 +1,3 @@
-import prompts from '@umijs/utils/compiled/prompts';
 import * as logger from '@umijs/utils/src/logger';
 import { existsSync } from 'fs';
 import getGitRepoInfo from 'git-repo-info';
@@ -163,18 +162,10 @@ import { assert, eachPkg, getPkgs } from './utils';
   if (
     (await $`npm profile get "two-factor auth"`).toString().includes('writes')
   ) {
-    // get otp from user
-    ({ otp } = await prompts(
-      {
-        type: 'text',
-        name: 'otp',
-        message: 'This operation requires a one-time password',
-        validate: (t) => t.length === 6 || 'Must be 6 digits',
-      },
-      {
-        onCancel: () => process.exit(0),
-      },
-    ));
+    do {
+      // get otp from user
+      otp = await question('This operation requires a one-time password: ');
+    } while (otp.length === 6);
   }
 
   await Promise.all(
