@@ -57,6 +57,7 @@ eachPkg(getPkgs(), ({ pkgJson, dir, name, pkgPath }) => {
   } else {
     delete pkgJson.scripts.test;
   }
+  pkgJson.scripts['build:deps'] = 'umi-scripts bundleDeps';
   if (!lodash.isEqual(oldPkgJson, pkgJson)) {
     fs.writeFileSync(pkgPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf-8');
   }
