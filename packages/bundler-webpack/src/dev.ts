@@ -1,5 +1,6 @@
 import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
-import { logger } from '@umijs/utils';
+import { logger, rimraf } from '@umijs/utils';
+import { statSync } from 'fs';
 import { join } from 'path';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
@@ -126,6 +127,31 @@ export async function dev(opts: IOpts) {
     config: webpackConfig as any,
     depConfig: depConfig as any,
   });
+
+  if (
+    mfsu &&
+    webpackConfig.cache &&
+    typeof webpackConfig.cache !== 'boolean' &&
+    webpackConfig.cache?.type === 'filesystem'
+  ) {
+    const webpackCachePath = join(
+      webpackConfig.cache.cacheDirectory!,
+      `${webpackConfig.cache.name!}`,
+      'index.pack',
+    );
+
+    const mtimeDepCache = getMTime(mfsu.depInfo.cacheFilePath);
+    const mtimeWebpackCache = getMTime(webpackCachePath);
+
+    // webpack cache is newer then mfsu cache, clear webpack cache
+    if (mtimeWebpackCache > 0 && mtimeWebpackCache >= mtimeDepCache) {
+      logger.warn(
+        `webpack cache invalidate due to newer(${mtimeWebpackCache}) than mfsu cache(${mtimeDepCache})`,
+      );
+      rimraf.sync(webpackConfig.cache.cacheDirectory!);
+    }
+  }
+
   await createServer({
     webpackConfig,
     userConfig: opts.config,
@@ -140,4 +166,14 @@ export async function dev(opts: IOpts) {
     onDevCompileDone: opts.onDevCompileDone,
     onProgress: opts.onProgress,
   });
+}
+
+function getMTime(file: string): number {
+  try {
+    const { mtimeMs } = statSync(file);
+    return mtimeMs;
+  } catch (e) {
+    logger.warn(`get file ${file} mtime failed, treat as not exists`);
+    return 0;
+  }
 }
