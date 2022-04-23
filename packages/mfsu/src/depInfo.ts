@@ -51,6 +51,14 @@ export class DepInfo {
     }
   }
 
+  touchCache() {
+    if (existsSync(this.cacheFilePath)) {
+      const now = new Date();
+      fsExtra.utimesSync(this.cacheFilePath, now, now);
+      return;
+    }
+  }
+
   writeCache() {
     fsExtra.mkdirpSync(dirname(this.cacheFilePath));
     const newContent = JSON.stringify(
@@ -65,6 +73,8 @@ export class DepInfo {
       existsSync(this.cacheFilePath) &&
       readFileSync(this.cacheFilePath, 'utf-8') === newContent
     ) {
+      const now = new Date();
+      fsExtra.utimesSync(this.cacheFilePath, now, now);
       return;
     }
 

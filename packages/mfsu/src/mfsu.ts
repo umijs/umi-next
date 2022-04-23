@@ -243,6 +243,7 @@ promise new Promise(resolve => {
     const shouldBuild = this.depInfo.shouldBuild();
     if (!shouldBuild) {
       logger.info('MFSU skip buildDeps');
+      this.depInfo.touchCache();
       return;
     }
     this.depInfo.snapshot();
