@@ -3,7 +3,7 @@ import * as logger from '@umijs/utils/src/logger';
 import type { SpawnSyncOptions } from 'child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { PATHS } from './.internal/constants';
+import { PATHS } from './constants';
 
 export function getPkgs(opts?: { base?: string }): string[] {
   const base = opts?.base || PATHS.PACKAGES;

@@ -8,7 +8,7 @@ const esno = require.resolve('esno/esno')
 
 const argv = process.argv.slice(2)
 const name = argv[0]
-const scriptsPath = join(__dirname, `../src/${name}.ts`)
+const scriptsPath = join(__dirname, `../${name}.ts`)
 
 assert(existsSync(scriptsPath) && !name.startsWith('.'), `Executed script '${name}' does not exist`)
 

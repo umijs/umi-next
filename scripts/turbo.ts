@@ -1,7 +1,7 @@
 import yArgs from '@umijs/utils/compiled/yargs-parser';
 import * as logger from '@umijs/utils/src/logger';
 import { PATHS } from './.internal/constants';
-import { spawnSync } from './utils';
+import { spawnSync } from './.internal/utils';
 
 (async () => {
   const args = yArgs(process.argv.slice(2));
