@@ -68,6 +68,7 @@ export default {
             'guides/lint',
             'guides/test',
             'guides/plugins',
+            'guides/use-vue',
           ],
         },
         {
