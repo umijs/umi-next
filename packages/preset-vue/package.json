@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "@umijs/renderer-vue": "4.0.0-canary.20220424.1",
-    "@vitejs/plugin-vue": "2.3.1",
     "vue": "3.2.31",
     "vue-loader": "17.0.0",
     "vue-router": "4.0.12"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "2.3.1",
     "umi": "4.0.0-canary.20220424.1"
   },
   "publishConfig": {
@@ -36,5 +36,19 @@
   },
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ]
+  ],
+  "compiledConfig": {
+    "deps": [
+      "@vitejs/plugin-vue"
+    ],
+    "externals": {
+      "vue": "vue",
+      "vue/compiler-sfc": "vue/compiler-sfc",
+      "vite": "@umijs/bundler-vite/compiled/vite",
+      "esbuild": "@umijs/bundler-utils/compiled/esbuild"
+    },
+    "excludeDtsDeps": [
+      "@vitejs/plugin-vue"
+    ]
+  }
 }

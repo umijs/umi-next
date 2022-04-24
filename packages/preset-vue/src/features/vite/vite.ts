@@ -1,5 +1,6 @@
-import vuePlugin from '@vitejs/plugin-vue';
+// @ts-ignore
 import type { IApi } from 'umi';
+import vuePlugin from '../../../compiled/@vitejs/plugin-vue';
 
 export default (api: IApi) => {
   api.describe({

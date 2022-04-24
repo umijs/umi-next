@@ -1,4 +1,7 @@
-import { AsyncSeriesWaterfallHook, SyncWaterfallHook } from '@umijs/bundler-utils/compiled/tapable';
+import {
+  AsyncSeriesWaterfallHook,
+  SyncWaterfallHook,
+} from '@umijs/bundler-utils/compiled/tapable';
 import { chalk, lodash, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
@@ -11,6 +14,7 @@ import {
   EnableBy,
   Env,
   IEvent,
+  IFrameworkType,
   IModify,
   PluginType,
   ServiceStage,
@@ -44,6 +48,7 @@ export class Service {
         external?: boolean;
       }
     >;
+    framework?: IFrameworkType;
     [key: string]: any;
   } = {};
   args: yParser.Arguments = { _: [], $0: '' };
