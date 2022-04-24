@@ -5,10 +5,11 @@ import webpack, {
 } from '@umijs/bundler-webpack/compiled/webpack';
 import { chalk, logger } from '@umijs/utils';
 import { createReadStream, existsSync } from 'fs';
+import http from 'http';
 import { join } from 'path';
 import { MESSAGE_TYPE } from '../constants';
 import { IConfig } from '../types';
-import { getServer } from '../utils/server';
+import { createHttpsServer } from './https';
 import { createWebSocketServer } from './ws';
 
 interface IOpts {
@@ -20,27 +21,13 @@ interface IOpts {
   beforeMiddlewares?: any[];
   afterMiddlewares?: any[];
   onDevCompileDone?: Function;
+  onProgress?: Function;
 }
 
 export async function createServer(opts: IOpts) {
   const { webpackConfig, userConfig } = opts;
   const { proxy } = userConfig;
   const app = express();
-
-  // basename middleware
-  app.use((req, _res, next) => {
-    const { url, path } = req;
-    const { basename, history } = userConfig;
-    if (
-      history?.type === 'browser' &&
-      basename !== '/' &&
-      url.startsWith(basename)
-    ) {
-      req.url = url.slice(basename.length);
-      req.path = path.slice(basename.length);
-    }
-    next();
-  });
 
   // cros
   app.use((_req, res, next) => {
@@ -75,9 +62,28 @@ export async function createServer(opts: IOpts) {
   });
 
   // webpack dev middleware
-  const compiler = webpack(
-    Array.isArray(webpackConfig) ? webpackConfig : [webpackConfig],
-  );
+  const configs = Array.isArray(webpackConfig)
+    ? webpackConfig
+    : [webpackConfig];
+  const progresses: any[] = [];
+  if (opts.onProgress) {
+    configs.forEach((config) => {
+      const progress = {
+        percent: 0,
+        status: 'waiting',
+      };
+      progresses.push(progress);
+      config.plugins.push(
+        new webpack.ProgressPlugin((percent, msg) => {
+          progress.percent = percent;
+          progress.status = msg;
+          opts.onProgress!({ progresses });
+        }),
+      );
+    });
+  }
+  const compiler = webpack(configs);
+
   const webpackDevMiddleware = require('@umijs/bundler-webpack/compiled/webpack-dev-middleware');
   const compilerMiddleware = webpackDevMiddleware(compiler, {
     publicPath: userConfig.publicPath || '/',
@@ -205,7 +211,9 @@ export async function createServer(opts: IOpts) {
     }
   });
 
-  const server = await getServer(app, userConfig.https);
+  const server = userConfig.https
+    ? await createHttpsServer(app, userConfig.https)
+    : http.createServer(app);
   if (!server) {
     return null;
   }

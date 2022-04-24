@@ -36,6 +36,7 @@ interface IOpts {
   excludeNodeNatives?: boolean;
   exportAllMembers?: Record<string, string[]>;
   getCacheDependency?: Function;
+  onMFSUProgress?: Function;
   mfName?: string;
   mode?: Mode;
   tmpBase?: string;
@@ -54,6 +55,10 @@ export class MFSU {
   public depBuilder: DepBuilder;
   public depConfig: Configuration | null = null;
   public buildDepsAgain: boolean = false;
+  public progress: any = { done: false };
+  public onProgress: Function;
+  public publicPath: string = '/';
+
   constructor(opts: IOpts) {
     this.opts = opts;
     this.opts.mfName = this.opts.mfName || DEFAULT_MF_NAME;
@@ -61,6 +66,13 @@ export class MFSU {
       this.opts.tmpBase || join(process.cwd(), DEFAULT_TMP_DIR_NAME);
     this.opts.mode = this.opts.mode || Mode.development;
     this.opts.getCacheDependency = this.opts.getCacheDependency || (() => ({}));
+    this.onProgress = (progress: any) => {
+      this.progress = {
+        ...this.progress,
+        ...progress,
+      };
+      this.opts.onMFSUProgress?.(this.progress);
+    };
     this.opts.cwd = this.opts.cwd || process.cwd();
     this.depInfo = new DepInfo({ mfsu: this });
     this.depBuilder = new DepBuilder({ mfsu: this });
@@ -152,6 +164,7 @@ export class MFSU {
     if (publicPath === 'auto') {
       publicPath = '/';
     }
+    this.publicPath = publicPath as string;
 
     opts.config.plugins!.push(
       ...[
@@ -194,9 +207,18 @@ promise new Promise(resolve => {
             if (this.depBuilder.isBuilding) {
               this.buildDepsAgain = true;
             } else {
-              this.buildDeps().catch((e: Error) => {
-                logger.error(e);
-              });
+              this.buildDeps()
+                .then(() => {
+                  this.onProgress({
+                    done: true,
+                  });
+                })
+                .catch((e: Error) => {
+                  logger.error(e);
+                  this.onProgress({
+                    done: true,
+                  });
+                });
             }
           },
         }),
@@ -250,7 +272,7 @@ promise new Promise(resolve => {
   getMiddlewares() {
     return [
       (req: Request, res: Response, next: NextFunction) => {
-        const publicPath = '/';
+        const publicPath = this.publicPath;
         const isMF =
           req.path.startsWith(`${publicPath}${MF_VA_PREFIX}`) ||
           req.path.startsWith(`${publicPath}${MF_DEP_PREFIX}`) ||

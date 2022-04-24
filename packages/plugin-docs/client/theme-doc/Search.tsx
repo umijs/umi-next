@@ -63,6 +63,7 @@ export default () => {
   return (
     <Fragment>
       <div
+        id="search-input-wrapper"
         className="rounded-lg w-40 lg:w-64 flex items-center pr-2 flex-row hover:bg-gray-50
      transition duration-300 bg-gray-100 border border-white focus-within:border-gray-100
      focus-within:bg-white dark:bg-gray-700 dark:border-gray-700 relative
@@ -74,7 +75,7 @@ export default () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           id="search-input"
-          className="w-full bg-transparent outline-none text-sm px-4 py-2 "
+          className="w-full bg-transparent outline-none text-sm px-4 py-2"
           placeholder={render('Search anything ...')}
         />
         <div
@@ -84,6 +85,7 @@ export default () => {
           {isMac ? macSearchKey : windowsSearchKey}
         </div>
         <div
+          id="search-results-wrapper"
           className={cx(
             'absolute transition-all duration-500 top-12 w-96 rounded-lg',
             'cursor-pointer shadow overflow-hidden',

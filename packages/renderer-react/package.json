@@ -1,6 +1,6 @@
 {
   "name": "@umijs/renderer-react",
-  "version": "4.0.0-rc.10",
+  "version": "4.0.0-canary.20220424.1",
   "description": "@umijs/renderer-react",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/renderer-react#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -17,13 +17,14 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "build:deps": "umi-scripts bundleDeps",
+    "dev": "pnpm build -- --watch",
+    "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
     "@loadable/component": "5.15.2",
     "history": "5.3.0",
-    "react-router-dom": "6.2.2"
+    "react-router-dom": "6.3.0"
   },
   "devDependencies": {
     "react": "17.0.2",

@@ -1,16 +1,16 @@
-import * as logger from '@umijs/utils/src/logger';
-import spawn from '@umijs/utils/compiled/cross-spawn';
 import yArgs from '@umijs/utils/compiled/yargs-parser';
-import { join } from 'path';
+import * as logger from '@umijs/utils/src/logger';
+import { PATHS } from './.internal/constants';
+import { spawnSync } from './.internal/utils';
 
 (async () => {
   const args = yArgs(process.argv.slice(2));
-  const scope = args.scope || '!@example/*';
+  const filter = args.filter || './packages/*';
   const extra = (args._ || []).join(' ');
 
   await turbo({
     cmd: args.cmd,
-    scope,
+    filter,
     extra,
     cache: args.cache,
     parallel: args.parallel,
@@ -24,10 +24,8 @@ import { join } from 'path';
  *        https://github.com/google/zx/issues/212
  */
 async function cmd(command: string) {
-  const result = spawn.sync(command, {
-    stdio: 'inherit',
-    shell: true,
-    cwd: join(__dirname, '../'),
+  const result = spawnSync(command, {
+    cwd: PATHS.ROOT,
   });
   if (result.status !== 0) {
     // sub package command don't stop when execute fail.
@@ -39,7 +37,7 @@ async function cmd(command: string) {
 }
 
 async function turbo(opts: {
-  scope: string;
+  filter: string;
   cmd: string;
   extra?: string;
   cache?: boolean;
@@ -52,9 +50,7 @@ async function turbo(opts: {
   const options = [
     opts.cmd,
     `--cache-dir=".turbo"`,
-    `--scope="${opts.scope}"`,
-    `--no-deps`,
-    `--include-dependencies`,
+    `--filter="${opts.filter}"`,
     cacheCmd,
     parallelCmd,
     extraCmd,

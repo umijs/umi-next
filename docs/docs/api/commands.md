@@ -107,6 +107,24 @@ Details:
     umi build --clean
 ```
 
+## lint
+
+用于检查及修正代码是否符合规则。
+
+```bash
+$ umi lint
+Usage: umi lint 
+
+ 支持只校验 js、ts、tsx、jsx 类型文件： umi lint --eslint-only
+
+ 支持只校验 css、less 等样式文件： umi lint --stylelint-only
+
+ 支持校验 cssinjs 模式校验： umi lint --stylelint-only --cssinjs
+
+ 修正代码： --fix
+
+```
+
 ## plugin
 
 插件相关操作，目前只支持 `list` 子命令。
@@ -159,3 +177,25 @@ npx --no-install umi verify-ommit $1
 $ umi version
 4.0.0
 ```
+
+## preview
+
+`umi preview` 命令会在本地启动一个静态 Web 服务器，将 dist 文件夹运行在 http://127.0.0.1:4172  用于预览构建后产物, 支持proxy, mock 等设置。
+
+你可以通过 --port 参数来配置服务的运行端口。
+
+```bash
+umi preview --port 9527
+```
+
+现在 `preview` 命令会将服务器运行在 http://127.0.0.1:9527。
+
+通过 --host 参数来指定 配置服务运行的hostname
+
+也下用户配置 在 preview 以会生效
+
+* [https](./config#https) 
+* [proxy](../guides/proxy)
+* [数据mock](../guides/mock)
+
+注意 `dist` 目录会随着 配置 `outputPath` 的变更而变更

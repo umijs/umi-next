@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@umijs/bundler-webpack';
-import { lodash, logger, portfinder, winPath } from '@umijs/utils';
+import { chalk, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
@@ -40,6 +40,7 @@ umi dev
 PORT=8888 umi dev
 `,
     async fn() {
+      logger.info(chalk.cyan.bold(`Umi v${api.appData.umi.version}`));
       const enableVite = !!api.config.vite;
 
       // clear tmp except cache
@@ -230,6 +231,7 @@ PORT=8888 umi dev
       const opts = {
         config: api.config,
         cwd: api.cwd,
+        rootDir: process.cwd(),
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),
         },
@@ -249,10 +251,20 @@ PORT=8888 umi dev
         afterMiddlewares: middlewares.concat(createRouteMiddleware({ api })),
         onDevCompileDone(opts: any) {
           debouncedPrintMemoryUsage();
+          api.appData.bundleStatus.done = true;
           api.applyPlugins({
             key: 'onDevCompileDone',
             args: opts,
           });
+        },
+        onProgress(opts: any) {
+          api.appData.bundleStatus.progresses = opts.progresses;
+        },
+        onMFSUProgress(opts: any) {
+          api.appData.mfsuBundleStatus = {
+            ...api.appData.mfsuBundleStatus,
+            ...opts,
+          };
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
         cache: {

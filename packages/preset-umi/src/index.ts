@@ -1,5 +1,5 @@
 export type { UmiApiRequest, UmiApiResponse } from './features/apiRoute';
-export type { IApi, IConfig, webpack } from './types';
+export type { IApi, IConfig, IRoute, webpack } from './types';
 export default () => {
   return {
     plugins: [
@@ -18,6 +18,7 @@ export default () => {
       require.resolve('./features/mock/mock'),
       require.resolve('./features/polyfill/polyfill'),
       require.resolve('./features/polyfill/publicPathPolyfill'),
+      require.resolve('./features/terminal/terminal'),
       require.resolve('./features/tmpFiles/tmpFiles'),
       require.resolve('./features/tmpFiles/configTypes'),
       require.resolve('./features/transform/transform'),
@@ -31,6 +32,7 @@ export default () => {
       require.resolve('./commands/config/config'),
       require.resolve('./commands/dev/dev'),
       require.resolve('./commands/help'),
+      require.resolve('./commands/lint'),
       require.resolve('./commands/setup'),
       require.resolve('./commands/version'),
       require.resolve('./commands/generators/page'),
@@ -39,8 +41,12 @@ export default () => {
       require.resolve('./commands/generators/jest'),
       require.resolve('./commands/generators/tailwindcss'),
       require.resolve('./commands/generators/dva'),
+      require.resolve('./commands/generators/component'),
+      require.resolve('./commands/generators/mock'),
+      require.resolve('./commands/generators/api'),
       require.resolve('./commands/plugin'),
       require.resolve('./commands/verify-commit'),
+      require.resolve('./commands/preview'),
     ],
   };
 };

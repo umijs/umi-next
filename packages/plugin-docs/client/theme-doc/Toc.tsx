@@ -7,7 +7,7 @@ function getLinkFromTitle(title: string) {
   return title
     .toLowerCase()
     .replace(/\s/g, '-')
-    .replace(/[（）]/g, '');
+    .replace(/[（）()\\{},]/g, '');
 }
 
 export default () => {
@@ -30,8 +30,9 @@ export default () => {
   return (
     <div
       className="w-full lg:m-12 mb-12 border
-      border-gray-100 p-8 rounded-xl z-20"
+      border-gray-100 p-4 rounded-xl z-20"
     >
+      {/* @ts-ignore */}
       <Helmet>
         <title>
           {route.titles[0].title} | {themeConfig.title}
@@ -52,7 +53,7 @@ export default () => {
                 className={item.level > 2 ? 'text-sm' : ''}
                 href={'#' + getLinkFromTitle(item.title)}
               >
-                {item.title}
+                {item.title.replace(/\\{/g, '{').replace(/\\}/g, '}')}
               </a>
             </li>
           );

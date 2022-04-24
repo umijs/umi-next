@@ -11,11 +11,12 @@ interface IOpts {
 
 export async function addNodePolyfill(opts: IOpts) {
   const { config } = opts;
-
   const nodeLibs = require('node-libs-browser');
+
   config.plugin('node-polyfill-provider').use(ProvidePlugin, [
     {
       Buffer: ['buffer', 'Buffer'],
+      process: nodeLibs['process'],
     },
   ]);
 

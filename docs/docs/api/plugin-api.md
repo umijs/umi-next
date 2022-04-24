@@ -479,6 +479,9 @@ generate 之后，webpack / vite compiler 之前。传入的 fn 不接收任何�
 ### onBuildComplete
 build 完成时。传入的 fn 接收 `{ isFirstCompile: boolean, stats, time: number, err?: Error }` 作为参数。
 
+### onBuildHtmlComplete
+build 完成且 html 完成构建之后。
+
 ### onCheck
 检查时，在 onStart 之前执行。传入的 fn 不接收任何参数
 
@@ -494,7 +497,8 @@ args: {
     loc: any;
     default: string;
     namespace: string;
-    specifiers: Record<string, string>;
+    kind: babelImportKind;
+    specifiers: Record<string, { name: string; kind: babelImportKind }>;
   }[];
   exports: any[];
   cjsExports: string[]; 
