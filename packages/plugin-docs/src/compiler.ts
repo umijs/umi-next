@@ -16,8 +16,15 @@ const rehypePrettyCodeOptions = {
       node.children = [{ type: 'text', value: ' ' }];
     }
   },
+  // 允许高亮代码行
+  // 对于高亮的代码行，设置为 highlighted 样式表类
   onVisitHighlightedLine(node: any) {
     node.properties.className.push('highlighted');
+  },
+  // 允许高亮代码文字
+  // 对于高亮的代码文字，设置为 word 样式表类
+  onVisitHighlightedWord(node: any) {
+    node.properties.className = ['word'];
   },
 };
 
@@ -38,8 +45,9 @@ function MDXContent(props = {}) {
   useEffect(() => {
     if (window.location.hash.length !== 0) {
       const hash = window.location.hash;
-      window.location.hash = '';
-      window.location.hash = hash;
+      document.getElementById(hash.slice(1))?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
     }
   }, []);
 
