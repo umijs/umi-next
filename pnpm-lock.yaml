@@ -1027,11 +1027,11 @@ importers:
       vue-router: 4.0.12
     dependencies:
       '@umijs/renderer-vue': link:../renderer-vue
-      '@vitejs/plugin-vue': 2.3.1_vue@3.2.31
       vue: 3.2.31
       vue-loader: 17.0.0
       vue-router: 4.0.12_vue@3.2.31
     devDependencies:
+      '@vitejs/plugin-vue': 2.3.1_vue@3.2.31
       umi: link:../umi
 
   packages/renderer-react:
@@ -8595,7 +8595,7 @@ packages:
       vue: ^3.2.25
     dependencies:
       vue: 3.2.31
-    dev: false
+    dev: true
 
   /@vue/compiler-core/3.2.31:
     resolution: {integrity: sha512-aKno00qoA4o+V/kR6i/pE+aP+esng5siNAVQ422TkBNM6qA4veXiZbSe8OTXHXquEi/f6Akc+nLfB4JGfe4/WQ==}
