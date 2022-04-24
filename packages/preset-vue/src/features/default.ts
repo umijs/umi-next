@@ -49,6 +49,11 @@ export default (api: IApi) => {
     return memo;
   });
 
+  api.modifyAppData((memo) => {
+    memo.framework = 'vue';
+    return memo;
+  });
+
   api.modifyRendererPath(() =>
     dirname(require.resolve('@umijs/renderer-vue/package.json')),
   );

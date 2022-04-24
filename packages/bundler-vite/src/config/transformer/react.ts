@@ -7,8 +7,8 @@ import type { IConfigProcessor } from '.';
 export default (function react(userConfig) {
   const config: ReturnType<IConfigProcessor> = { plugins: [] };
 
-  // add react plugin config ability and disable the react plugin based on the config.
-  if (userConfig.react !== false) {
+  // add react plugin config ability.
+  if (!userConfig.vue) {
     config.plugins?.push(
       // pre-compiled rollup type is different with installed rollup type
       // so this plugin type is not compatible with config.plugins

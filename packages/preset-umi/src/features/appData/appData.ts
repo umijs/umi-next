@@ -73,7 +73,7 @@ export default (api: IApi) => {
       memo.git = git;
     }
 
-    memo.isVue = !!api.service.plugins['virtual:preset-vue'];
+    memo.framework = 'react';
 
     return memo;
   });

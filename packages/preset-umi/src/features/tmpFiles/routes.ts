@@ -79,8 +79,14 @@ export async function getRoutes(opts: { api: IApi }) {
           extensions: ['.js', '.jsx', '.tsx', '.ts', '.vue'],
         });
       }
-      // 用于解决 vite 模式渲染 vue 需要包含后缀, 路由配置时可以不写后缀, 所以需要真实路径
-      routes[id].__filePath = file;
+
+      // vite vue require a suffix
+      const originalFile = routes[id].file;
+      const ext = extname(file);
+      if (ext && !originalFile.endsWith(ext)) {
+        routes[id].file = `${originalFile}${ext}`;
+      }
+
       routes[id].__content = readFileSync(file, 'utf-8');
     }
   }
@@ -151,15 +157,6 @@ export async function getRouteComponents(opts: {
         isAbsolute(route.file) || route.file.startsWith('@/')
           ? route.file
           : `${opts.prefix}${route.file}`;
-
-      // vite vue require a suffix
-      const isHasExt = opts.api.appData.vite && opts.api.appData.isVue;
-      const ext =
-        isHasExt && route.__filePath ? extname(route.__filePath) : undefined;
-
-      if (ext && !path.endsWith(ext)) {
-        path = `${path}${ext}`;
-      }
 
       return `'${key}': () => import('${winPath(path)}'),`;
     })

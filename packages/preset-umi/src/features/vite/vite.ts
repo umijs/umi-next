@@ -34,7 +34,7 @@ export default (api: IApi) => {
     memo.optimizeDeps = {
       ...(memo.optimizeDeps || {}),
       include: memo.optimizeDeps?.include?.concat(
-        Object.values(api.appData.deps!)
+        Object.values(api.appData.deps! || {})
           .map(({ matches }) => matches[0])
           .filter(
             (item) =>

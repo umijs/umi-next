@@ -37,10 +37,12 @@ function createRouteMiddleware(opts: { api: IApi }) {
     }
 
     return async (req, res, next) => {
+      const isVue = opts.api.appData.framework === 'vue';
+
       const viteScripts: IOpts['scripts'] = [
         // add noshim attr for skip import-maps shim logic for this modules
         {
-          content: !opts.api.appData.isVue ? viteRefreshScript : '',
+          content: !isVue ? viteRefreshScript : '',
           noshim: '',
         },
         { src: '/@vite/client', noshim: '' },

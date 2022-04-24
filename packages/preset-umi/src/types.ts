@@ -8,8 +8,9 @@ import type {
   IEvent,
   IModify,
   IRoute as ICoreRoute,
-  IServicePluginAPI,
+  IServicePluginAPI as ICoreServicePluginAPI,
   PluginAPI,
+  Service,
 } from '@umijs/core';
 import { Env } from '@umijs/core';
 import type { CheerioAPI } from '@umijs/utils/compiled/cheerio';
@@ -67,6 +68,20 @@ export type IEntryImport = {
   specifier?: string;
 };
 export type IRoute = ICoreRoute;
+
+export type IFrameworkType = 'vue' | 'react';
+
+export type IAppData = typeof Service.prototype.appData & {
+  framework?: IFrameworkType;
+};
+
+export interface IServicePluginAPI
+  extends Omit<ICoreServicePluginAPI, 'appData' | 'modifyAppData'> {
+  appData: IAppData;
+
+  modifyAppData: IModify<IAppData, null>;
+}
+
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     addApiMiddlewares: IAdd<null, IApiMiddleware>;

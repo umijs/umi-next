@@ -44,7 +44,7 @@ export interface IConfig {
   postcssLoader?: { postcssOptions: any };
   proxy?: { [key: string]: ProxyOptions };
   publicPath?: string;
-  svgr?: { [key: string]: any } | false;
+  svgr?: { [key: string]: any };
   svgo?: { [key: string]: any } | false;
   targets?: { [key: string]: any };
   [key: string]: any;
