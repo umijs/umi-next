@@ -22,7 +22,7 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@umijs/renderer-vue": "4.0.0-canary.20220422.3",
+    "@umijs/renderer-vue": "4.0.0-canary.20220424.1",
     "@vitejs/plugin-vue": "2.3.1",
     "vue": "3.2.31",
     "vue-loader": "17.0.0",
