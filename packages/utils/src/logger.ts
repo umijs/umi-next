@@ -1,76 +1,97 @@
-import dayjs from 'dayjs';
 import fs from 'fs';
 import path from 'path';
-import pino from 'pino';
-import type { Options } from 'rotating-file-stream';
-import { omit as _omit } from '../compiled/lodash/index';
+import pino, { LoggerOptions } from 'pino';
+import dayjs from '../compiled/dayjs';
+import { omit as _omit } from '../compiled/lodash';
+import type { PrettyOptions } from '../compiled/pino-pretty';
+import type { Options } from '../compiled/rotating-file-stream';
 
-type RotationFileConfig = Options & {
+interface RotationFileConfig extends Options {
   level: string;
-};
+}
+
+enum CustomLevels {
+  ready = 'ready',
+  event = 'event',
+  wait = 'wait',
+}
+
+interface PinoCustomLevelParams {
+  customLevels: string;
+  customColors: string;
+  pinoCustomLevels: {
+    [key in string]: number;
+  };
+}
+
+interface CustomLevelConfig {
+  level: CustomLevels;
+  value: number;
+  color: string;
+}
 
 // { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 } }
-const CUSTOM_LEVELS = [
+const CUSTOM_LEVELS_CONFIG: CustomLevelConfig[] = [
   {
-    level: 'ready',
+    level: CustomLevels.ready,
     value: 11,
     color: 'green',
   },
   {
-    level: 'event',
+    level: CustomLevels.event,
     value: 12,
     color: 'magenta',
   },
   {
-    level: 'wait',
+    level: CustomLevels.wait,
     value: 13,
     color: 'cyan',
   },
 ];
-const [customLevels, customColors, pinoCustomLevels] = CUSTOM_LEVELS.reduce<
-  [
-    string,
-    string,
-    {
-      [key: string]: number;
-    },
-  ]
->(
-  (pre, current) => {
-    const [preLevels, preColors, prePinoLevles] = pre;
-    return [
-      `${preLevels}${current.level}:${current.value},`,
-      `${preColors}${current.level}:${current.color},`,
-      {
-        ...prePinoLevles,
+
+const { customLevels, customColors, pinoCustomLevels } =
+  CUSTOM_LEVELS_CONFIG.reduce<PinoCustomLevelParams>((pre, current) => {
+    const { customLevels = '', customColors = '', pinoCustomLevels = {} } = pre;
+    return {
+      customLevels: `${customLevels}${current.level}:${current.value},`,
+      customColors: `${customColors}${current.level}:${current.color},`,
+      pinoCustomLevels: {
+        ...pinoCustomLevels,
         [current.level]: current.value,
       },
-    ];
-  },
-  ['', '', Object.create(null)],
-);
+    };
+  }, Object.create(null));
 
-const defaultConfig: RotationFileConfig = {
+const DEFAULT_CONFIG: RotationFileConfig = {
   path: path.resolve(process.cwd(), 'node_modules/.cache/umi/logger'),
   size: '4MB',
   interval: '12h',
-  maxFiles: 40,
+  maxFiles: 20,
   level: 'trace',
 };
+
 const config: RotationFileConfig = {
-  path: process.env.UMI_LOG_PATH || defaultConfig.path,
-  size: process.env.UMI_LOG_FILE_SIZE || defaultConfig.size,
-  interval: process.env.UMI_LOG_INTERVAL || defaultConfig.interval,
-  maxFiles: Number(process.env.UMI_LOG_MAX_FILES) || defaultConfig.maxFiles,
-  level: process.env.UMI_LOG_LEVEL || defaultConfig.level,
+  path: process.env.UMI_LOG_PATH || DEFAULT_CONFIG.path,
+  size: process.env.UMI_LOG_FILE_SIZE || DEFAULT_CONFIG.size,
+  interval: process.env.UMI_LOG_INTERVAL || DEFAULT_CONFIG.interval,
+  maxFiles: Number(process.env.UMI_LOG_MAX_FILES) || DEFAULT_CONFIG.maxFiles,
+  level: process.env.UMI_LOG_LEVEL || DEFAULT_CONFIG.level,
   history: 'history',
 };
 
-const transport = pino.transport<any>({
+type TransportOptions = PrettyOptions &
+  Omit<RotationFileConfig, 'level'> &
+  Omit<LoggerOptions, 'customLevels'> & {
+    useOnlyCustomProps?: boolean;
+    customColors?: string;
+    customLevels?: string;
+  };
+
+const transport = pino.transport<TransportOptions>({
   targets: [
     {
       level: config.level,
-      target: path.join(__dirname, '..', 'node_modules/pino-pretty/index.js'),
+      target: require.resolve('../compiled/pino-pretty'),
       options: {
         useOnlyCustomProps: false,
         ignore: 'hostname,pid',
@@ -101,8 +122,8 @@ const logger = pino(
 export function getLatestLogFilePath() {
   const files = fs
     .readdirSync(config.path!)
-    .filter((f) => f.endsWith('.txt') && f.indexOf('history') == -1);
-  const res = files.sort(function (a, b) {
+    .filter((f) => f.endsWith('.txt') && !f.includes('history'));
+  const res = files.sort((a, b) => {
     return (
       fs.statSync(path.resolve(config.path!, a)).mtime.getTime() -
       fs.statSync(path.resolve(config.path!, b)).mtime.getTime()
@@ -115,35 +136,35 @@ export function flush() {
   logger.flush();
 }
 
-export function fatal(o: any, ...args: any) {
-  logger.fatal(o, ...args);
+export function fatal(...args: any[]) {
+  logger.fatal(args);
 }
 
-export function wait(o: any, ...args: any) {
+export function wait(o: any, ...args: any[]) {
   logger.wait(o, ...args);
 }
 
-export function error(o: any, ...args: any) {
+export function error(o: any, ...args: any[]) {
   logger.error(o, ...args);
 }
 
-export function warn(o: any, ...args: any) {
+export function warn(o: any, ...args: any[]) {
   logger.warn(o, ...args);
 }
 
-export function ready(o: any, ...args: any) {
+export function ready(o: any, ...args: any[]) {
   logger.ready(o, ...args);
 }
 
-export function info(o: any, ...args: any) {
+export function info(o: any, ...args: any[]) {
   logger.info(o, ...args);
 }
 
-export function event(o: any, ...args: any) {
+export function event(o: any, ...args: any[]) {
   logger.event(o, ...args);
 }
 
-export function debug(o: any, ...args: any) {
+export function debug(o: any, ...args: any[]) {
   if (process.env.DEBUG) {
     logger.debug(o, ...args);
   }
