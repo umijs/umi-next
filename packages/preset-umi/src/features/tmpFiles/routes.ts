@@ -138,7 +138,6 @@ export async function getRoutes(opts: { api: IApi }) {
 export async function getRouteComponents(opts: {
   routes: Record<string, any>;
   prefix: string;
-  api: IApi;
 }) {
   const imports = Object.keys(opts.routes)
     .map((key) => {

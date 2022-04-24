@@ -123,7 +123,7 @@ export default function EmptyRoute() {
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
         routes: JSON.stringify(clonedRoutes),
-        routeComponents: await getRouteComponents({ routes, prefix, api }),
+        routeComponents: await getRouteComponents({ routes, prefix }),
       },
     });
 
