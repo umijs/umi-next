@@ -1,5 +1,5 @@
-// @ts-ignore
 import type { IApi } from 'umi';
+// @ts-ignore
 import vuePlugin from '../../../compiled/@vitejs/plugin-vue';
 
 export default (api: IApi) => {
