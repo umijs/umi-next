@@ -158,10 +158,8 @@ importers:
 
   examples/boilerplate:
     specifiers:
-      spdy: ^4.0.2
       umi: 4.0.0-canary.20220424.1
     dependencies:
-      spdy: 4.0.2
       umi: link:../../packages/umi
 
   examples/bug-mfsu-fast-refresh:
