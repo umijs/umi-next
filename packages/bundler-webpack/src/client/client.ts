@@ -3,6 +3,7 @@ import stripAnsi from '@umijs/utils/compiled/strip-ansi';
 import * as ErrorOverlay from 'react-error-overlay';
 import { MESSAGE_TYPE } from '../constants';
 import { formatWebpackMessages } from '../utils/formatWebpackMessages';
+import { SimpleAutoReconnectWebSocket } from '../utils/SimpleAutoReconnectWebSocket';
 
 console.log('[webpack] connecting...');
 
@@ -23,7 +24,7 @@ let mostRecentCompilationHash: string | null = null;
 let hasCompileErrors = false;
 let hadRuntimeError = false;
 
-const socket = new WebSocket(getSocketHost(), 'webpack-hmr');
+const socket = new SimpleAutoReconnectWebSocket(getSocketHost(), 'webpack-hmr');
 
 socket.addEventListener('message', async ({ data }) => {
   data = JSON.parse(data);
@@ -37,23 +38,9 @@ socket.addEventListener('message', async ({ data }) => {
   }
 });
 
-async function waitForSuccessfulPing(ms = 1000) {
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    try {
-      await fetch(`/__umi_ping`);
-      break;
-    } catch (e) {
-      await new Promise((resolve) => setTimeout(resolve, ms));
-    }
-  }
-}
-
 socket.addEventListener('close', async () => {
   if (pingTimer) clearInterval(pingTimer);
   console.info('[webpack] Dev server disconnected. Polling for restart...');
-  await waitForSuccessfulPing();
-  location.reload();
 });
 
 ErrorOverlay.startReportingRuntimeErrors({
