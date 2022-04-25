@@ -136,22 +136,22 @@ export const request: RequestConfig = {
 ```
 
 #### requestInterceptors
-为 request 方法添加 request 阶段的拦截器。传入一个数组，每个元素都是一个拦截器，它们会被按顺序依次注册到 axios 实例上。拦截器的写法同 axios。我们建议你使用 `RequestConfig`，它能帮助你规范地书写你的拦截器。
+为 request 方法添加 request 阶段的拦截器。传入一个数组，每个元素都是一个拦截器，它们会被按顺序依次注册到 axios 实例上。拦截器的写法同 axios 有一点区别，它需要接收两个参数，分别为 url 和 options，后者是请求的 config，并且将它们返回。我们建议你使用 `RequestConfig`，它能帮助你规范地书写你的拦截器。
 
 e.g.
 ```ts
 const request: RequestConfig = {
   requestInterceptors: [
     // 直接写一个 function，作为拦截器
-    (config) => 
+    (url, options) => 
       {
         // do something
-        return config 
+        return { url, options } 
       },
     // 一个二元组，第一个元素是 request 拦截器，第二个元素是错误处理
-    [(config) => {return config}, (error) => {return Promise.reject(error)}]
+    [(url, options) => {return { url, options }}, (error) => {return Promise.reject(error)}]
     // 数组，省略错误处理
-    [(config) => {return config}]
+    [(url, options) => {return { url, options }}]
   ]
   
 }
