@@ -1,4 +1,7 @@
-import rules, { typescript as tsRules } from './rules/recommended';
+import rules, {
+  jest as jestRules,
+  typescript as tsRules,
+} from './rules/recommended';
 import './setup';
 
 module.exports = {
@@ -7,6 +10,9 @@ module.exports = {
   settings: {
     react: {
       version: 'detect',
+    },
+    jest: {
+      version: 26,
     },
   },
   env: {
@@ -22,6 +28,11 @@ module.exports = {
       plugins: ['@typescript-eslint/eslint-plugin'],
       files: ['**/*.{ts,tsx}'],
       rules: tsRules,
+    },
+    {
+      files: ['*.test.ts'],
+      plugins: ['eslint-plugin-jest'],
+      rules: jestRules,
     },
   ],
   parserOptions: {
