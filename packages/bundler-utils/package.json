@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-utils",
-  "version": "4.0.0-canary.20220422.3",
+  "version": "4.0.0-canary.20220424.1",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-utils#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
   "repository": {
@@ -20,7 +20,7 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
-    "@umijs/utils": "4.0.0-canary.20220422.3",
+    "@umijs/utils": "4.0.0-canary.20220424.1",
     "esbuild": "0.14.36",
     "regenerate-unicode-properties": "10.0.1"
   },
@@ -38,6 +38,7 @@
     "@babel/plugin-proposal-partial-application": "7.16.7",
     "@babel/plugin-proposal-pipeline-operator": "7.17.6",
     "@babel/plugin-proposal-record-and-tuple": "7.16.7",
+    "@babel/plugin-transform-react-jsx-development": "7.16.7",
     "@babel/plugin-transform-runtime": "7.17.0",
     "@babel/preset-env": "7.16.11",
     "@babel/preset-react": "7.16.7",
@@ -72,7 +73,8 @@
       "express",
       "less",
       "tapable",
-      "./bundles/babel/bundle"
+      "./bundles/babel/bundle",
+      "@babel/plugin-transform-react-jsx-development"
     ],
     "externals": {
       "cjs-module-lexer": "$$LOCAL",
@@ -83,6 +85,9 @@
       "less": "$$LOCAL",
       "tapable": "$$LOCAL"
     },
+    "excludeDtsDeps": [
+      "@babel/plugin-transform-react-jsx-development"
+    ],
     "noMinify": [
       "./bundles/babel/bundle"
     ],
