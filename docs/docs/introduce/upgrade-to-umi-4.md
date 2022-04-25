@@ -14,7 +14,7 @@
 
 项目的 `package.json` 需要升级 Umi，并替换掉对应的 Umi 插件。
 
-如果 `umi@3` 中是使用 `umi` + `@umijs/preset-react` 的组合进行开发的，那可以直接使用新版的 `umimax` 直接升级。
+如果 `umi@3` 中是使用 `umi` + `@umijs/preset-react` 的组合进行开发的，那可以直接使用新版的 `max` 直接升级。
 
 ```diff
 {
