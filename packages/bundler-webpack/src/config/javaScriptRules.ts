@@ -1,6 +1,7 @@
 import type { Program } from '@swc/core';
 import { autoCssModulesHandler, esbuildLoader } from '@umijs/mfsu';
 import { chalk } from '@umijs/utils';
+import path from 'path';
 import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
@@ -14,6 +15,7 @@ interface IOpts {
   env: Env;
   extraBabelPlugins: any[];
   extraBabelPresets: any[];
+  extraBabelIncludes: string[];
   extraEsbuildLoaderHandler: any[];
   babelPreset: any;
   name?: string;
@@ -43,16 +45,38 @@ export async function addJavaScriptRules(opts: IOpts) {
     config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
-      .include.add((path: string) => {
-        try {
-          // do src transform for bundler-webpack/client/client/client.js
-          if (path.includes('client/client/client')) return true;
-          return isMatch({ path, pkgs: depPkgs });
-        } catch (e) {
-          console.error(chalk.red(e));
-          throw e;
-        }
-      })
+      .include.add([
+        // support extraBabelIncludes
+        ...opts.extraBabelIncludes.map((p) => {
+          // handle absolute path
+          if (path.isAbsolute(p)) {
+            return p;
+          }
+
+          // resolve npm package name
+          if (/^(@[\w-]+\/)?[\w-]+$/.test(p)) {
+            try {
+              return path.dirname(
+                require.resolve(`${p}/package.json`, { paths: [opts.cwd] }),
+              );
+            } catch {}
+          }
+
+          // handle relative path
+          return path.join(opts.cwd, p);
+        }),
+        // support es5ImcompatibleVersions
+        (path: string) => {
+          try {
+            // do src transform for bundler-webpack/client/client/client.js
+            if (path.includes('client/client/client')) return true;
+            return isMatch({ path, pkgs: depPkgs });
+          } catch (e) {
+            console.error(chalk.red(e));
+            throw e;
+          }
+        },
+      ])
       .end(),
   ] as Config.Rule<Config.Module>[];
   if (userConfig.mdx) {
