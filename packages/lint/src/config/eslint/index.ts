@@ -27,8 +27,10 @@ module.exports = {
       rules: tsRules,
     },
     {
-      jest: {
-        version: 26,
+      settings: {
+        jest: {
+          version: 26,
+        },
       },
       files: ['**/*.{test,spec,unit,e2e}.{ts,tsx,js,jsx}'],
       plugins: ['eslint-plugin-jest'],
