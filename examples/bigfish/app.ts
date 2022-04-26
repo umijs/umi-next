@@ -47,8 +47,12 @@ interface ResponseStructure {
 
 export const request: RequestConfig = {
   requestInterceptors: [
+    (config) => {
+      console.log('Interceptor：', config);
+      return config;
+    },
     (url, options) => {
-      console.log('requestInterceptor', url, options);
+      console.log(url, options);
       return { url, options };
     },
   ],

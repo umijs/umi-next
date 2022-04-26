@@ -128,7 +128,9 @@ interface IRequest{
 interface IErrorHandler {
   (error: RequestError, opts: IRequestOptions): void;
 }
-type IRequestInterceptor = (url: string, config : RequestOptions) => { url: string, options: RequestOptions };
+type IRequestInterceptorAxios = (config: RequestOptions) => RequestOptions;
+type IRequestInterceptorUmiRequest = (url: string, config : RequestOptions) => { url: string, options: RequestOptions };
+type IRequestInterceptor = IRequestInterceptorAxios;
 type IErrorInterceptor = (error: Error) => Promise<Error>;
 type IResponseInterceptor = <T = any>(response : AxiosResponse<T>) => AxiosResponse<T> ;
 type IRequestInterceptorTuple = [IRequestInterceptor , IErrorInterceptor] | [ IRequestInterceptor ] | IRequestInterceptor
@@ -164,14 +166,20 @@ const getRequestInstance = (): AxiosInstance => {
     if(interceptor instanceof Array){
       requestInstance.interceptors.request.use((config) => {
         const { url } = config;
-        const { url: newUrl, options } = interceptor[0](url, config);
-        return { ...options, url: newUrl };
+        if(interceptor[0].length === 2){
+          const { url: newUrl, options } = interceptor[0](url, config);  
+          return { ...options, url: newUrl };
+        }
+        return interceptor[0](config);
       }, interceptor[1]);
     } else {
       requestInstance.interceptors.request.use((config) => {
         const { url } = config;
-        const { url: newUrl, options } = interceptor(url, config);
-        return { ...options, url: newUrl };
+        if(interceptor.length === 2){
+          const { url: newUrl, options } = interceptor(url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor(config);
       })
     }
   });
@@ -201,14 +209,20 @@ const request: IRequest = (url: string, opts: any = { method: 'GET' }) => {
     if(interceptor instanceof Array){
       return requestInstance.interceptors.request.use((config) => {
         const { url } = config;
-        const { url: newUrl, options } = interceptor[0](url, config);
-        return { ...options, url: newUrl };
+        if(interceptor[0].length === 2){
+          const { url: newUrl, options } = interceptor[0](url, config);  
+          return { ...options, url: newUrl };
+        }
+        return interceptor[0](config);
       }, interceptor[1]);
     } else {
       return requestInstance.interceptors.request.use((config) => {
         const { url } = config;
-        const { url: newUrl, options } = interceptor(url, config);
-        return { ...options, url: newUrl };
+        if(interceptor.length === 2){
+          const { url: newUrl, options } = interceptor(url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor(config);
       })
     }
     });
