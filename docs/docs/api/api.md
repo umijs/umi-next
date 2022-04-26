@@ -93,7 +93,100 @@ function IndexPage({ user }) {
 `<Link to>` 支持相对路径跳转；`<Link reloadDocument>` 不做路由跳转，等同于 `<a href>` 的跳转行为。
 
 ### matchPath
+
+`matchPath` 可以将给定的路径以及一个已知的路由格式进行匹配，并且返回匹配结果。
+
+类型定义如下。
+
+```ts
+declare function matchPath<ParamKey extends string = string>(
+  pattern: PathPattern | string,
+  pathname: string
+): PathMatch<ParamKey> | null;
+
+interface PathMatch<ParamKey extends string = string> {
+  params: Params<ParamKey>;
+  pathname: string;
+  pattern: PathPattern;
+}
+
+interface PathPattern {
+  path: string;
+  caseSensitive?: boolean;
+  end?: boolean;
+}
+```
+
+下面的示例展示了如何用 matchPath 来匹配路径。
+
+```ts
+import { matchPath } from 'umi';
+
+const match = matchPath(
+  { path: "/users/:id" },
+  "/users/123",
+);
+
+// {
+//   "params": { "id": "123" },
+//   "pathname": "/users/123",
+//   "pathnameBase": "/users/123",
+//   "pattern": { "path": "/users/:id" }
+// }
+```
+
 ### matchRoutes
+
+`matchRoutes` 可以将给定的路径以及多个可能的路由选择进行匹配，并且返回匹配结果。
+
+类型定义如下。
+
+```ts
+declare function matchRoutes(
+  routes: RouteObject[],
+  location: Partial<Location> | string,
+  basename?: string
+): RouteMatch[] | null;
+
+interface RouteMatch<ParamKey extends string = string> {
+  params: Params<ParamKey>;
+  pathname: string;
+  route: RouteObject;
+}
+```
+
+以下示例展示了如何用 matchRoutes 来匹配路径。
+
+```ts
+import { matchRoutes } from 'umi';
+
+const match = matchRoutes(
+  [
+    {
+      path: "/users/:id",
+    },
+    {
+      path: "/users/:id/posts/:postId",
+    },
+  ],
+  "/users/123/posts/456",
+);
+
+// [
+//  {
+//    "params": {
+//      "id": "123",
+//       "postId": "456"
+//     },
+//     "pathname": "/users/123/posts/456",
+//     "pathnameBase": "/users/123/posts/456",
+//     "route": {
+//       "path": "/users/:id/posts/:postId"
+//     }
+//   }
+// ]
+```
+
 ### NavLink
 
 `<NavLink>` 是 `<Link>` 的特殊形态，他知道当前是否为路由激活状态。通常在导航菜单、面包屑、Tabs 中会使用，用于显示当前的选中状态。
