@@ -30,7 +30,7 @@
 
 ### 启动命令
 
-如果使用了 `@umijs/max` 可以使用 `umimax` 命令来替换 `umi`，`umimax dev`，`umimax build` 等
+如果使用了 `@umijs/max` 可以使用 `max` 命令来替换 `umi`，`max dev`，`max build` 等
 
 `umi@4` 将一些项目前置操作放到了 `setup` 命令中，如 umi@3 中的 `umi g tmp` 等命令，需要使用 `umi setup` 替换
 
@@ -39,11 +39,11 @@
 {
   "scripts": {
 -    "build": "umi build",
-+    "build": "umimax build",
++    "build": "max build",
 -    "postinstall": "umi g tmp",
-+    "postinstall": "umimax setup",
++    "postinstall": "max setup",
 -    "start": "umi dev",
-+    "start": "umimax dev",
++    "start": "max dev",
   }
 }
 ```
@@ -217,7 +217,7 @@ pattern: {path: 'list/search/:type'}
 更多改动和 api 变更，请查阅 [react-router@6](https://reactrouter.com/docs/en/v6/api#uselocation)
 
 
-完成以上操作后，执行下 `umimax dev`，访问 [http://localhost:8000](http://localhost:8000)，请验证所有功能都符合预期。
+完成以上操作后，执行下 `max dev`，访问 [http://localhost:8000](http://localhost:8000)，请验证所有功能都符合预期。
 
 如果你的项目无法正常启动，你可能还需要做如下操作：
 
