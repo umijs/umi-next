@@ -30,7 +30,7 @@ module.exports = {
       jest: {
         version: 26,
       },
-      files: ['*.{test,spec,unit,e2e}.{ts,tsx,js,jsx}'],
+      files: ['**/*.{test,spec,unit,e2e}.{ts,tsx,js,jsx}'],
       plugins: ['eslint-plugin-jest'],
       rules: jestRules,
     },
