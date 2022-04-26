@@ -137,7 +137,7 @@ export default () => {
 ```
 上面代码中 data 并不是你后端返回的数据，而是其内部的 data，（因为构建时配置默认是 'data') 
 
-需要注意的是，ahooks 已经更新到3.0，而我们为了让 umi3 的项目升级起来不那么困难，继续沿用了 ahooks2.0
+需要注意的是，ahooks 已经更新到3.0，而我们为了让 `umi@3` 的项目升级起来不那么困难，继续沿用了 ahooks2.0
 
 
 ### request
@@ -175,11 +175,11 @@ export const request:RequestConfig = {};
 ```
 注意，在导入时要加 type
 
-## Umi@3 到 Umi@4
-在 Umi@3 到 Umi@4 的升级中，我们弃用了 umi-request ，选用了 axios 作为默认的请求方案。在这个更换中，我们的功能也发生了一些变化。
+## umi@3 到 umi@4
+在 `umi@3` 到 `umi@4` 的升级中，我们弃用了 umi-request ，选用了 axios 作为默认的请求方案。在这个更换中，我们的功能也发生了一些变化。
 
 ### 运行时配置的变动
-相比于 Umi@3， Umi@4 的运行时配置发生了较大的变化。
+相比于 `umi@3`， `umi@4` 的运行时配置发生了较大的变化。
 ```diff
     export const request: RequestConfig = {
       errorConfig: {
@@ -199,7 +199,7 @@ export const request:RequestConfig = {};
 - 去除了 middlewares 中间件。你可以使用 axios 的 [拦截器](https://axios-http.com/docs/interceptors) 来实现相同的功能。
 - errorConfig 删除了原来的所有配置，新增了 errorHandler 和 errorThrower 来进行统一错误处理的设定。
 
-中间件的替换方式。对于一个 umi3 的中间件，`next()` 方法之前的需要放在 `requestInterceptors` 中，`next()` 方法之后的内容则需要放在 `responseInterceptors` 中。
+中间件的替换方式。对于一个 `umi@3` 的中间件，`next()` 方法之前的需要放在 `requestInterceptors` 中，`next()` 方法之后的内容则需要放在 `responseInterceptors` 中。
 
 ```ts
 
@@ -267,7 +267,7 @@ export const request: RequestConfig = {
   timeout: 1000,
   headers: {'X-Reqeusted-With': 'XMLHttpRequest'},
   
-  // 错误处理： umi3 的错误处理方案。
+  // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
     // 错误抛出
     errorThrower: (res: ResponseStructure) => {
@@ -350,6 +350,6 @@ export const request: RequestConfig = {
 };
 ```
 
-上面的例子中的错误处理方案来自于 umi3 的内置错误处理。在这个版本中，我们把它删除了，以方便用户更加自由地定制错误处理方案。如果你仍然想要使用它，可以将这段运行时配置粘贴到你的项目中。
+上面的例子中的错误处理方案来自于 `umi@3` 的内置错误处理。在这个版本中，我们把它删除了，以方便用户更加自由地定制错误处理方案。如果你仍然想要使用它，可以将这段运行时配置粘贴到你的项目中。
 
 你也可以通过写响应拦截器的方式来进行自己的错误处理，**不一定局限于 errorConfig**
