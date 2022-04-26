@@ -11,9 +11,6 @@ module.exports = {
     react: {
       version: 'detect',
     },
-    jest: {
-      version: 26,
-    },
   },
   env: {
     browser: true,
@@ -30,7 +27,10 @@ module.exports = {
       rules: tsRules,
     },
     {
-      files: ['*.test.ts'],
+      jest: {
+        version: 26,
+      },
+      files: ['*.{test,spec,unit,e2e}.{ts,tsx,js,jsx}'],
       plugins: ['eslint-plugin-jest'],
       rules: jestRules,
     },
