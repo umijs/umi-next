@@ -6,7 +6,7 @@ import './setup';
 
 module.exports = {
   parser: '@babel/eslint-parser',
-  plugins: ['react', 'react-hooks', 'jest'],
+  plugins: ['react', 'react-hooks'],
   settings: {
     react: {
       version: 'detect',
@@ -33,7 +33,7 @@ module.exports = {
         },
       },
       files: ['**/*.{test,spec,unit,e2e}.{ts,tsx,js,jsx}'],
-      plugins: ['eslint-plugin-jest'],
+      plugins: ['jest'],
       rules: jestRules,
     },
   ],
