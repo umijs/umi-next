@@ -1,7 +1,7 @@
 import type { Program } from '@swc/core';
 import { autoCssModulesHandler, esbuildLoader } from '@umijs/mfsu';
 import { chalk } from '@umijs/utils';
-import path from 'path';
+import { dirname, isAbsolute } from 'path';
 import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
@@ -49,21 +49,26 @@ export async function addJavaScriptRules(opts: IOpts) {
         // support extraBabelIncludes
         ...opts.extraBabelIncludes.map((p) => {
           // handle absolute path
-          if (path.isAbsolute(p)) {
+          if (isAbsolute(p)) {
             return p;
           }
 
           // resolve npm package name
-          if (/^(@[\w-]+\/)?[\w-]+$/.test(p)) {
-            try {
-              return path.dirname(
-                require.resolve(`${p}/package.json`, { paths: [opts.cwd] }),
-              );
-            } catch {}
-          }
+          try {
+            if (p.startsWith('./')) {
+              return require.resolve(p, { paths: [cwd] });
+            }
 
-          // handle relative path
-          return path.join(opts.cwd, p);
+            return dirname(
+              require.resolve(`${p}/package.json`, { paths: [cwd] }),
+            );
+          } catch (e: any) {
+            if (e.code === 'MODULE_NOT_FOUND') {
+              throw new Error('Cannot resolve extraBabelIncludes: ' + p);
+            }
+
+            throw e;
+          }
         }),
         // support es5ImcompatibleVersions
         (path: string) => {
