@@ -7,7 +7,26 @@
 ### createBrowserHistory
 ### createHashHistory
 ### createMemoryHistory
+
+MemoryHistory 不会在地址栏被操作或读取。同时它也非常适合测试和其他的渲染环境。
+
+```js
+const history = createMemoryHistory(location)
+```
+
 ### createSearchParams
+
+包装 new URLSearchParams(init) ，可以支持添加数组和对象
+
+```js
+
+createSearchParams({ foo: 'bar'}).toString()
+// foo=bar
+createSearchParams({ foo: 'bar',a:[1]}).toString()
+// foo = 'bar',a = [1]
+
+```
+
 ### dynamic
 
 TODO: SUPPORT
