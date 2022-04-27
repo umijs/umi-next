@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 
@@ -8,7 +8,6 @@ interface SidebarProps {
 }
 
 export default (props: SidebarProps) => {
-  const selectedRef = useRef<HTMLDivElement>(null);
   const { currentLanguage, isFromPath } = useLanguage();
   const { appData, components, themeConfig, location } = useThemeContext()!;
   const matchedNav = themeConfig.navs.filter((nav) =>
@@ -17,13 +16,6 @@ export default (props: SidebarProps) => {
         nav.path,
     ),
   )[0];
-
-  useEffect(() => {
-    selectedRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
-  }, [selectedRef.current]);
 
   if (!matchedNav) {
     return null;
@@ -57,7 +49,7 @@ export default (props: SidebarProps) => {
                 if (to === window.location.pathname) {
                   return (
                     <div
-                      ref={selectedRef}
+                      id="active-nav-item"
                       key={route.path}
                       className="my-2 hover:text-blue-400 transition-all
                        bg-blue-50 text-blue-400 px-4 py-1
