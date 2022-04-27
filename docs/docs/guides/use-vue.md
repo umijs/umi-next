@@ -243,7 +243,7 @@ export const router: RouterConfig = {
 };
 ```
 
-### onMounted({app, router})
+### onMounted(\{app, router\})
 
 vue app mount 成功, 这里可以拿到app 的实例及 router 的实例, 可以进行 全局组件注册, 路由拦截器等
 
