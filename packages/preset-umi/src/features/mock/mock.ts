@@ -8,16 +8,28 @@ export default function (api: IApi) {
     key: 'mock',
     config: {
       schema(Joi) {
-        return Joi.object().keys({
-          exclude: Joi.array()
-            .items(Joi.string())
-            .description('exclude files not parse mock'),
-          include: Joi.array().items(Joi.string()),
-        });
+        return Joi.alternatives().try(
+          Joi.boolean(),
+          Joi.object().keys({
+            exclude: Joi.array()
+              .items(Joi.string())
+              .description('exclude files not parse mock'),
+            include: Joi.array().items(Joi.string()),
+          }),
+        );
       },
     },
     enableBy() {
-      return api.name === 'dev';
+      // 只有 dev 才默认开启
+      if (api.name !== 'dev') {
+        return false;
+      }
+      // 环境变量关闭 mock
+      if (process.env.MOCK === 'none') {
+        return false;
+      }
+      // 配置关闭 mock
+      return !(api.config.mock !== undefined && api.config.mock === false);
     },
   });
 
