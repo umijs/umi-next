@@ -2,7 +2,7 @@ import { chalk } from '@umijs/utils';
 import { Server as HttpServer } from 'http';
 import { Http2Server } from 'http2';
 import { Server as HttpsServer } from 'https';
-import { Server } from 'spdy';
+import type { Server } from 'spdy';
 import WebSocket from '../../compiled/ws';
 
 export function createWebSocketServer(
