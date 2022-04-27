@@ -1055,15 +1055,15 @@ importers:
     specifiers:
       '@umijs/bundler-utils': 4.0.0-canary.20220427.1
       history: 5.3.0
-      react: 17.0.2
-      react-dom: 17.0.2
+      react: 18.1.0
+      react-dom: 18.1.0
       react-router-dom: 6.3.0
     dependencies:
       '@umijs/bundler-utils': link:../bundler-utils
       history: 5.3.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-router-dom: 6.3.0_react-dom@17.0.2+react@17.0.2
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-router-dom: 6.3.0_react-dom@18.1.0+react@18.1.0
 
   packages/testing:
     specifiers:
