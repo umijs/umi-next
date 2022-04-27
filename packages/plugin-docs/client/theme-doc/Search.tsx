@@ -1,12 +1,12 @@
 import cx from 'classnames';
 import key from 'keymaster';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link } from 'umi';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 import getLinkFromTitle from './utils/getLinkFromTitle';
 
 export default () => {
+  const { components } = useThemeContext()!;
   const { isFromPath, currentLanguage, render } = useLanguage();
   const [isFocused, setIsFocused] = useState(false);
   const [keyword, setKeyword] = useState('');
@@ -99,7 +99,7 @@ export default () => {
           )}
         >
           {result.map((r, i) => (
-            <Link
+            <components.Link
               to={(isFromPath ? currentLanguage?.locale : '') + r.href}
               key={i}
               className="group outline-none search-result"
@@ -112,7 +112,7 @@ export default () => {
               >
                 {r.path}
               </p>
-            </Link>
+            </components.Link>
           ))}
         </div>
       </div>
