@@ -4,10 +4,20 @@ import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 
 function getLinkFromTitle(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/\s/g, '-')
-    .replace(/[（）()\\{},]/g, '');
+  // https://github.com/markedjs/marked/blob/master/src/Slugger.js
+  return (
+    title
+      .toLowerCase()
+      .trim()
+      // remove html tags
+      .replace(/<[!\/a-z].*?>/gi, '')
+      // remove unwanted chars
+      .replace(
+        /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g,
+        '',
+      )
+      .replace(/\s/g, '-')
+  );
 }
 
 export default () => {
