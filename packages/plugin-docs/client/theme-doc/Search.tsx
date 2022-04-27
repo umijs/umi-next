@@ -76,6 +76,7 @@ export default () => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           value={keyword}
+          autoComplete="off"
           onChange={(e) => setKeyword(e.target.value)}
           id="search-input"
           className="w-full bg-transparent outline-none text-sm px-4 py-2"
