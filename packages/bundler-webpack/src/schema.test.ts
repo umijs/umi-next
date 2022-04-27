@@ -7,7 +7,19 @@ const config = {
   alias: {
     umi: 'umi-next',
   },
-  chainWebpack: () => {},
+  chainWebpack: (memo, { webpack }) => {
+    console.log('1111111111111--------');
+
+    if (webpack.version?.startsWith('5')) {
+      const rules = memo.module.rules.entries();
+      Object.keys(rules).forEach((name) => {
+        if (/^(ts|js|tsx|jsx)/.test(name)) {
+          rules[name].resolve.set('fullySpecified', false);
+        }
+      });
+    }
+    return memo;
+  },
   copy: [
     {
       from: '/public',
