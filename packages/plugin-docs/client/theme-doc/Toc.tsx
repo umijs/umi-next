@@ -9,8 +9,8 @@ function getLinkFromTitle(title: string) {
     title
       .toLowerCase()
       .trim()
-      // remove html tags
-      .replace(/<[!\/a-z].*?>/gi, '')
+      // not remove html tags
+      // .replace(/<[!\/a-z].*?>/gi, '')
       // remove unwanted chars
       .replace(
         /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g,
