@@ -1,4 +1,7 @@
-import { AsyncSeriesWaterfallHook, SyncWaterfallHook } from '@umijs/bundler-utils/compiled/tapable';
+import {
+  AsyncSeriesWaterfallHook,
+  SyncWaterfallHook,
+} from '@umijs/bundler-utils/compiled/tapable';
 import { chalk, lodash, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
@@ -30,6 +33,50 @@ interface IOpts {
   presets?: string[];
   frameworkName?: string;
   defaultConfigFiles?: string[];
+}
+
+type ConfigResolverOpts = { mode: 'strict' | 'loose' };
+class ConfigResolver {
+  private mode: ConfigResolverOpts['mode'];
+
+  constructor(opts: ConfigResolverOpts = { mode: 'strict' }) {
+    this.mode = opts.mode;
+  }
+
+  async resolve(service: Service) {
+    const paths = service.paths;
+
+    const config = await service.applyPlugins({
+      key: 'modifyConfig',
+      // why clone deep?
+      // user may change the config in modifyConfig
+      // e.g. memo.alias = xxx
+      initialValue: lodash.cloneDeep(
+        this.mode === 'strict'
+          ? service.configManager!.getConfig({
+              schemas: service.configSchemas,
+            }).config
+          : service.configManager!.getUserConfig().config,
+      ),
+      args: { paths },
+    });
+    const defaultConfig = await service.applyPlugins({
+      key: 'modifyDefaultConfig',
+      initialValue: service.configDefaults,
+    });
+    service.config = lodash.merge(defaultConfig, config) as Record<string, any>;
+
+    return { config, defaultConfig };
+  }
+
+  strict() {
+    this.mode = 'strict';
+    return this;
+  }
+
+  loose() {
+    this.mode = 'loose';
+  }
 }
 
 export class Service {
@@ -82,11 +129,13 @@ export class Service {
     [key: string]: any;
   } = {};
   pkgPath: string = '';
+  configResolver: ConfigResolver;
 
   constructor(opts: IOpts) {
     this.cwd = opts.cwd;
     this.env = opts.env;
     this.opts = opts;
+    this.configResolver = new ConfigResolver();
     assert(existsSync(this.cwd), `Invalid cwd ${this.cwd}, it's not found.`);
   }
 
@@ -283,6 +332,7 @@ export class Service {
       userConfig: this.userConfig,
       prefix,
     });
+
     // register presets and plugins
     this.stage = ServiceStage.initPresets;
     const presetPlugins: Plugin[] = [];
@@ -293,6 +343,7 @@ export class Service {
         plugins: presetPlugins,
       });
     }
+
     plugins.unshift(...presetPlugins);
     this.stage = ServiceStage.initPlugins;
     while (plugins.length) {
@@ -313,24 +364,11 @@ export class Service {
       env: this.env,
       prefix: this.opts.frameworkName || DEFAULT_FRAMEWORK_NAME,
     });
+    this.paths = paths;
+
     this.stage = ServiceStage.resolveConfig;
-    const config = await this.applyPlugins({
-      key: 'modifyConfig',
-      // why clone deep?
-      // user may change the config in modifyConfig
-      // e.g. memo.alias = xxx
-      initialValue: lodash.cloneDeep(
-        configManager.getConfig({
-          schemas: this.configSchemas,
-        }).config,
-      ),
-      args: { paths },
-    });
-    const defaultConfig = await this.applyPlugins({
-      key: 'modifyDefaultConfig',
-      initialValue: this.configDefaults,
-    });
-    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
+    const { config, defaultConfig } = await this.configResolver.resolve(this);
+
     if (this.config.outputPath) {
       paths.absOutputPath = isAbsolute(this.config.outputPath)
         ? this.config.outputPath
@@ -340,6 +378,7 @@ export class Service {
       key: 'modifyPaths',
       initialValue: paths,
     });
+
     // applyPlugin collect app data
     // TODO: some data is mutable
     this.stage = ServiceStage.collectAppData;
@@ -372,16 +411,19 @@ export class Service {
         // env
       },
     });
+
     // applyPlugin onCheck
     this.stage = ServiceStage.onCheck;
     await this.applyPlugins({
       key: 'onCheck',
     });
+
     // applyPlugin onStart
     this.stage = ServiceStage.onStart;
     await this.applyPlugins({
       key: 'onStart',
     });
+
     // run command
     this.stage = ServiceStage.runCommand;
     const command = this.commands[name];
