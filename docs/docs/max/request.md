@@ -23,7 +23,7 @@ export default {
   code: 1,
 }
 ```
-那么 useRequest 就可以直接消费 `data`。其值为 123，而不是 `{ success, data, cdoe }` 
+那么 useRequest 就可以直接消费 `data`。其值为 123，而不是 `{ success, data, code }` 
 
 
 ### 运行时配置
