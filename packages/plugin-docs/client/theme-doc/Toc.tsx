@@ -2,23 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
-
-function getLinkFromTitle(title: string) {
-  // https://github.com/markedjs/marked/blob/master/src/Slugger.js
-  return (
-    title
-      .toLowerCase()
-      .trim()
-      // not remove html tags
-      // .replace(/<[!\/a-z].*?>/gi, '')
-      // remove unwanted chars
-      .replace(
-        /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g,
-        '',
-      )
-      .replace(/\s/g, '-')
-  );
-}
+import getLinkFromTitle from './utils/getLinkFromTitle';
 
 export default () => {
   const { location, appData, themeConfig } = useThemeContext()!;
