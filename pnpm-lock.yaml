@@ -978,8 +978,8 @@ importers:
       multer: 1.4.4
       os-locale: ^6.0.2
       path-to-regexp: 1.7.0
-      react: 17.0.2
-      react-dom: 17.0.2
+      react: 18.1.0
+      react-dom: 18.1.0
       react-router: 6.3.0
       react-router-dom: 6.3.0
       regenerator-runtime: 0.13.9
@@ -1001,10 +1001,10 @@ importers:
       enhanced-resolve: 5.9.2
       magic-string: 0.26.1
       path-to-regexp: 1.7.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-router: 6.3.0_react@17.0.2
-      react-router-dom: 6.3.0_react-dom@17.0.2+react@17.0.2
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-router: 6.3.0_react@18.1.0
+      react-router-dom: 6.3.0_react-dom@18.1.0+react@18.1.0
       regenerator-runtime: 0.13.9
     devDependencies:
       '@manypkg/get-packages': 1.1.3
@@ -21557,7 +21557,6 @@ packages:
       loose-envify: 1.4.0
       react: 18.1.0
       scheduler: 0.22.0
-    dev: true
 
   /react-error-overlay/6.0.9:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
@@ -21933,7 +21932,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-    dev: true
 
   /reactcss/1.2.3:
     resolution: {integrity: sha512-KiwVUcFu1RErkI97ywr8nvx8dNOpT03rbnma0SSalTYjkrPYaEajR4a/MRt6DZ46K6arDRbWMNHF+xH7G7n/8A==}
@@ -22681,7 +22679,6 @@ packages:
     resolution: {integrity: sha512-6QAm1BgQI88NPYymgGQLCZgvep4FyePDWFpXVK+zNSUgHwlqpJy8VEh8Et0KxTACS4VWwMousBElAZOH9nkkoQ==}
     dependencies:
       loose-envify: 1.4.0
-    dev: true
 
   /schema-utils/2.7.1:
     resolution: {integrity: sha512-SHiNtMOUGWBQJwzISiVYKu82GiV4QYGePp3odlY1tuKO7gPtphAT5R/py0fA6xtbgLL/RvtJZnU9b8s0F1q0Xg==}
