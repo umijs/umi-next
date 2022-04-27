@@ -201,7 +201,7 @@ export default (api: IApi) => {
         })),
         Antd: !!antd,
         DefaultLocale: JSON.stringify(defaultLocale),
-        warningPkgPath: winPath(require.resolve('warning/package')),
+        warningPkgPath: winPath(dirname(require.resolve('warning/package'))),
         reactIntlPkgPath,
       }),
     });
@@ -237,7 +237,7 @@ export default (api: IApi) => {
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-export { setLocale, getLocale, useIntl, formatMessage, FormattedMessage } from './localeExports.ts';
+export { setLocale, getLocale, useIntl, injectIntl, formatMessage, FormattedMessage } from './localeExports.ts';
 export { SelectLang } from './SelectLang.tsx';
 `,
     });
