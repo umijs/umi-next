@@ -8,15 +8,12 @@ export default function (api: IApi) {
     key: 'mock',
     config: {
       schema(Joi) {
-        return Joi.alternatives().try(
-          Joi.boolean(),
-          Joi.object().keys({
-            exclude: Joi.array()
-              .items(Joi.string())
-              .description('exclude files not parse mock'),
-            include: Joi.array().items(Joi.string()),
-          }),
-        );
+        return Joi.object().keys({
+          exclude: Joi.array()
+            .items(Joi.string())
+            .description('exclude files not parse mock'),
+          include: Joi.array().items(Joi.string()),
+        });
       },
     },
     enableBy() {
@@ -25,11 +22,7 @@ export default function (api: IApi) {
         return false;
       }
       // 环境变量关闭 mock
-      if (process.env.MOCK === 'none') {
-        return false;
-      }
-      // 配置关闭 mock
-      return !(api.config.mock !== undefined && api.config.mock === false);
+      return process.env.MOCK !== 'none';
     },
   });
 
