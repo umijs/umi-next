@@ -19,6 +19,8 @@ export default (api: IApi) => {
       fs.existsSync(join(api.paths.absSrcPath, `access.${ext}`)),
     );
 
+    const hasInitialStatePlugin = api.config.initialState;
+
     // runtime.tsx
     api.writeTmpFile({
       path: 'runtime.tsx',
@@ -26,23 +28,44 @@ export default (api: IApi) => {
 import React from 'react';${
         hasAccessFile
           ? `
-import accessFactory from '@/access'
-import { useModel } from '@@/plugin-model';
-`
-          : ''
-      }
-import { AccessContext } from './context';
-
-function Provider(props) {${
-        hasAccessFile
-          ? `
-  const { initialState } = useModel('@@initialState');
-  const access = React.useMemo(() => accessFactory(initialState), [initialState]);
+import accessFactory from '@/access';
 `
           : `
-  const access = {};
+import { getPluginManager } from '@@/core/plugin';
 `
       }
+import { AccessContext } from './context';
+${
+  hasInitialStatePlugin
+    ? `
+import { useModel } from '@@/plugin-model';
+`
+    : ''
+}
+
+function Provider(props) {
+    ${
+      hasInitialStatePlugin
+        ? `
+  const { initialState } = useModel('@@initialState');
+`
+        : `
+  const initialState = null;
+`
+    }
+    ${
+      hasAccessFile
+        ? `
+  const access = React.useMemo(() => accessFactory(initialState), [initialState]);
+`
+        : `
+  const access = getPluginManager().applyPlugins({
+    key: 'access',
+    type: 'modify',
+    initialValue: initialState,
+  })
+`
+    }
   return (
     <AccessContext.Provider value={access}>
       { props.children }
@@ -136,6 +159,8 @@ export const AccessContext = React.createContext<any>(null);
       `,
     });
   });
+
+  api.addRuntimePluginKey(() => ['access']);
 
   api.addRuntimePlugin(() => {
     return [withTmpPath({ api, path: 'runtime.tsx' })];
