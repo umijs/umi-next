@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 import getLinkFromTitle from './utils/getLinkFromTitle';
+import getTocTitle from './utils/getTocTitle';
 
 export default () => {
   const { location, appData, themeConfig } = useThemeContext()!;
@@ -24,7 +25,7 @@ export default () => {
   return (
     <div
       className="w-full lg:m-12 mb-12 border
-      border-gray-200 dark:border-neutral-700 py-4 rounded-xl z-20"
+      border-gray-200 dark:border-neutral-700 py-4 rounded-lg z-20"
     >
       {/* @ts-ignore */}
       <Helmet>
@@ -49,7 +50,7 @@ export default () => {
                 } break-all 2xl:break-words`}
                 href={'#' + getLinkFromTitle(item.title)}
               >
-                {item.title.replace(/\\{/g, '{').replace(/\\}/g, '}')}
+                {getTocTitle(item.title)}
               </a>
             </li>
           );
