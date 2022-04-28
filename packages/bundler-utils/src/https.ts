@@ -3,12 +3,15 @@ import { existsSync, readFileSync } from 'fs';
 import { RequestListener } from 'http';
 import { join } from 'path';
 import spdy from 'spdy';
-import { HttpsParams } from './types';
+import { HttpsServerOptions } from './types';
 
-const defaultHttpsHosts: HttpsParams['hosts'] = ['localhost', '127.0.0.1'];
+const defaultHttpsHosts: HttpsServerOptions['hosts'] = [
+  'localhost',
+  '127.0.0.1',
+];
 
 // vite mode requires a key cert
-export async function resolveHttpsConfig(httpsConfig: HttpsParams) {
+export async function resolveHttpsConfig(httpsConfig: HttpsServerOptions) {
   // Check if mkcert is installed
   try {
     await execa.execa('mkcert', ['--version']);
@@ -65,7 +68,7 @@ export async function resolveHttpsConfig(httpsConfig: HttpsParams) {
 
 export async function createHttpsServer(
   app: RequestListener,
-  httpsConfig: HttpsParams,
+  httpsConfig: HttpsServerOptions,
 ) {
   logger.wait('[HTTPS] Starting service in https mode...');
 
