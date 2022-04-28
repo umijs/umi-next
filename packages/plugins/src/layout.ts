@@ -180,11 +180,6 @@ const { formatMessage } = useIntl();
       const { icon } = api.appData.routes[id];
       if (icon) {
         const upperIcon = lodash.upperFirst(lodash.camelCase(icon));
-        assert(
-          // @ts-ignore
-          allIcons[upperIcon] || allIcons[`${upperIcon}Outlined`],
-          `Icon ${upperIcon} is not found`,
-        );
         // @ts-ignore
         if (allIcons[upperIcon]) {
           memo[upperIcon] = true;
@@ -232,6 +227,7 @@ export function patchRoutes({ routes }) {
     const { icon } = routes[key];
     if (icon && typeof icon === 'string') {
       const upperIcon = formatIcon(icon);
+      if(!icons[upperIcon] && !icons[upperIcon + 'Outlined']) return;
       routes[key].icon = React.createElement(icons[upperIcon] || icons[upperIcon + 'Outlined']);
     }
   });
