@@ -23,10 +23,7 @@ export default () => {
 
   const titles = route.titles.filter((t: any) => t.level > 1);
   return (
-    <div
-      className="w-full lg:m-12 mb-12 border
-      border-gray-200 dark:border-neutral-700 py-4 rounded-lg z-20"
-    >
+    <div className="w-full border border-gray-200 dark:border-neutral-700 py-4 rounded-lg z-20">
       {/* @ts-ignore */}
       <Helmet>
         <title>

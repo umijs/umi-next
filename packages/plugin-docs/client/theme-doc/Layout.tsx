@@ -84,24 +84,24 @@ export default (props: any) => {
           justify-center h-screen z-10 pt-20"
               >
                 <div className="container flex flex-row justify-end">
-                  <div className="hidden lg:block">
+                  <div className="hidden lg:block border-r border-gray-200 dark:border-neutral-700">
                     <Sidebar />
                   </div>
                 </div>
               </div>
               {/* 文章内容 */}
-              <div className="container flex flex-row justify-center">
-                <div className="w-full lg:w-1/2 px-4 lg:px-2 m-8 z-20 lg:pb-12 lg:pt-6">
+              <div className="container flex flex-row justify-center lg:justify-end xl:justify-center">
+                <div className="w-full lg:w-3/4 xl:w-1/2 px-4 lg:px-8 my-8 z-20 lg:pb-12 lg:pt-6">
                   <article className="flex-1">{props.children}</article>
                 </div>
               </div>
               {/* 右侧 Toc */}
               <div
-                className="fixed right-0 top-0 w-1/4 hidden lg:block flex-row
+                className="fixed right-0 top-0 w-1/4 hidden xl:block flex-row
 justify-center h-screen z-10 pt-20"
               >
                 <div className="container flex flex-row justify-start">
-                  <div className="w-2/3 top-32">
+                  <div className="w-2/3 top-32 lg:mt-12 mb-12">
                     <Toc />
                   </div>
                 </div>
