@@ -3,6 +3,12 @@ import { winPath } from '@umijs/utils';
 import fs, { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from 'umi';
+import { checkGitRepo } from './checkGitRepo';
+import {
+  getContributors,
+  getCreatedTime,
+  getUpdatedTime,
+} from './getArticleMeta';
 import { parseTitle } from './markdown';
 
 export default (api: IApi) => {
@@ -20,6 +26,8 @@ export default (api: IApi) => {
       }
     });
   }
+
+  const isGitRepo = checkGitRepo(api.cwd);
 
   api.modifyDefaultConfig((memo) => {
     memo.conventionRoutes = {
@@ -42,7 +50,7 @@ export default (api: IApi) => {
     ];
   });
 
-  api.onPatchRoute(({ route }) => {
+  api.onPatchRoute(async ({ route }) => {
     if (route.__content) {
       route.titles = parseTitle({
         content: route.__content,
@@ -56,6 +64,16 @@ export default (api: IApi) => {
       if (route.path.endsWith('README')) {
         route.path = route.path.replace(/README$/, '');
       }
+    }
+    if (isGitRepo) {
+      // 对于 git 仓库，添加文档的相关属性
+      const routeFilePath = route.file;
+      const docsFilePath = `${api.cwd}/docs`;
+      route.git = {
+        createdTime: await getCreatedTime(docsFilePath, routeFilePath),
+        updatedTime: await getUpdatedTime(docsFilePath, routeFilePath),
+        contributors: await getContributors(docsFilePath, routeFilePath),
+      };
     }
   });
 

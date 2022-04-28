@@ -82,7 +82,7 @@ export default (props: any) => {
               <div
                 className=" hidden lg:flex fixed left-0 top-0 w-1/4 flex-row
           justify-center h-screen z-10 pt-20 bg-neutral-50 dark:bg-gray-900
-          border-r border-gray-200 dark:border-gray-700"
+          border-r border-gray-200 dark:border-gray-700 transition"
               >
                 <div className="container flex flex-row justify-end">
                   <Sidebar />
@@ -95,10 +95,7 @@ export default (props: any) => {
                 </div>
               </div>
               {/* 右侧 Toc */}
-              <div
-                className="fixed right-0 top-0 w-1/4 hidden xl:block flex-row
-justify-center h-screen z-10 pt-20"
-              >
+              <div className="fixed right-0 top-0 w-1/4 hidden xl:block flex-row justify-center h-screen z-10 pt-20">
                 <div className="container flex flex-row justify-start">
                   <div className="w-2/3 top-32 lg:mt-12 mb-12">
                     <Toc />
