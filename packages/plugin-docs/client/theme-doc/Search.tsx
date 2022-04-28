@@ -3,9 +3,11 @@ import key from 'keymaster';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
+import getLinkFromTitle from './utils/getLinkFromTitle';
 
 export default () => {
-  const { render } = useLanguage();
+  const { components } = useThemeContext()!;
+  const { isFromPath, currentLanguage, render } = useLanguage();
   const [isFocused, setIsFocused] = useState(false);
   const [keyword, setKeyword] = useState('');
 
@@ -34,6 +36,7 @@ export default () => {
   }
 
   useEffect(() => {
+    if (!themeConfig.searchHotKey) return;
     key.filter = () => true;
 
     // 在页面中按下 ⌘+k 可以打开搜索框
@@ -63,6 +66,7 @@ export default () => {
   return (
     <Fragment>
       <div
+        id="search-input-wrapper"
         className="rounded-lg w-40 lg:w-64 flex items-center pr-2 flex-row hover:bg-gray-50
      transition duration-300 bg-gray-100 border border-white focus-within:border-gray-100
      focus-within:bg-white dark:bg-gray-700 dark:border-gray-700 relative
@@ -72,18 +76,22 @@ export default () => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           value={keyword}
+          autoComplete="off"
           onChange={(e) => setKeyword(e.target.value)}
           id="search-input"
           className="w-full bg-transparent outline-none text-sm px-4 py-2"
           placeholder={render('Search anything ...')}
         />
-        <div
-          className="bg-gray-200 rounded px-2 h-6 flex flex-row text-gray-400
+        {themeConfig.searchHotKey && (
+          <div
+            className="bg-gray-200 rounded px-2 h-6 flex flex-row text-gray-400
          items-center justify-center border border-gray-300 text-xs"
-        >
-          {isMac ? macSearchKey : windowsSearchKey}
-        </div>
+          >
+            {isMac ? macSearchKey : windowsSearchKey}
+          </div>
+        )}
         <div
+          id="search-results-wrapper"
           className={cx(
             'absolute transition-all duration-500 top-12 w-96 rounded-lg',
             'cursor-pointer shadow overflow-hidden',
@@ -91,8 +99,8 @@ export default () => {
           )}
         >
           {result.map((r, i) => (
-            <a
-              href={r.href}
+            <components.Link
+              to={(isFromPath ? currentLanguage?.locale : '') + r.href}
               key={i}
               className="group outline-none search-result"
               onFocus={() => setIsFocused(true)}
@@ -104,7 +112,7 @@ export default () => {
               >
                 {r.path}
               </p>
-            </a>
+            </components.Link>
           ))}
         </div>
       </div>
@@ -122,9 +130,15 @@ function search(routes: any, keyword: string): SearchResultItem[] {
 
   const result: SearchResultItem[] = [];
 
+  function addResult(newResult: { path: string; href: string }) {
+    const { path, href } = newResult;
+    if (result.find((r) => r.path === path)) return;
+    result.push({ path, href });
+  }
+
   Object.keys(routes).map((path) => {
     if (path.toLowerCase().includes(keyword.toLowerCase())) {
-      result.push({
+      addResult({
         path: path.split('/').slice(1).join(' > '),
         href: '/' + path,
       });
@@ -132,16 +146,21 @@ function search(routes: any, keyword: string): SearchResultItem[] {
 
     const route = routes[path];
     if (!route.titles) return;
-    route.titles
-      .filter((t: any) => t.level <= 2)
-      .map((title: any) => {
-        if (title.title.toLowerCase().includes(keyword.toLowerCase())) {
-          result.push({
-            path: path.split('/').slice(1).join(' > ') + ' > ' + title.title,
-            href: '/' + path + '#' + title.title,
-          });
-        }
-      });
+    route.titles.map((title: any) => {
+      if (title.title.toLowerCase().includes(keyword.toLowerCase())) {
+        addResult({
+          path:
+            path
+              .split('/')
+              .map((s) => s.replace(/\.[a-z]{2}-[A-Z]{2}\/?/g, ''))
+              .slice(1)
+              .join(' > ') +
+            ' > ' +
+            title.title,
+          href: '/' + path + '#' + getLinkFromTitle(title.title),
+        });
+      }
+    });
   });
 
   if (result.length > 8) return result.slice(0, 8);

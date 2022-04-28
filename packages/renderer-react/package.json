@@ -1,6 +1,6 @@
 {
   "name": "@umijs/renderer-react",
-  "version": "4.0.0-canary.20220424.1",
+  "version": "4.0.0-rc.14",
   "description": "@umijs/renderer-react",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/renderer-react#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -27,8 +27,8 @@
     "react-router-dom": "6.3.0"
   },
   "devDependencies": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
   },
   "peerDependencies": {
     "react": ">=16.8",
