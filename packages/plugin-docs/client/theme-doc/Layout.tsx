@@ -80,13 +80,12 @@ export default (props: any) => {
             >
               {/* 左侧菜单 */}
               <div
-                className="fixed left-0 top-0 w-1/4 flex flex-row
-          justify-center h-screen z-10 pt-20"
+                className=" hidden lg:flex fixed left-0 top-0 w-1/4 flex-row
+          justify-center h-screen z-10 pt-20 bg-neutral-50 dark:bg-gray-900
+          border-r border-gray-200 dark:border-gray-700"
               >
                 <div className="container flex flex-row justify-end">
-                  <div className="hidden lg:block border-r border-gray-200 dark:border-neutral-700">
-                    <Sidebar />
-                  </div>
+                  <Sidebar />
                 </div>
               </div>
               {/* 文章内容 */}

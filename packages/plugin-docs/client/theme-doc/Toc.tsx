@@ -23,14 +23,14 @@ export default () => {
 
   const titles = route.titles.filter((t: any) => t.level > 1);
   return (
-    <div className="w-full border border-gray-200 dark:border-neutral-700 py-4 rounded-lg z-20">
+    <div className="w-full border border-gray-200 dark:border-gray-700 py-4 rounded-lg z-20">
       {/* @ts-ignore */}
       <Helmet>
         <title>
           {route.titles[0].title} | {themeConfig.title}
         </title>
       </Helmet>
-      <p className="text-lg font-extrabold text-gray-800 dark:text-neutral-50 pb-2 border-b border-gray-200 dark:border-neutral-700">
+      <p className="text-lg font-extrabold text-gray-800 dark:text-neutral-50 pb-2 border-b border-gray-200 dark:border-gray-700">
         <span className="px-4">{route.titles[0].title}</span>
       </p>
       <ul className="max-h-[calc(100vh-360px)] overflow-y-auto px-4">
@@ -38,7 +38,7 @@ export default () => {
           return (
             <li
               style={{ paddingLeft: `${item.level - 2}rem` }}
-              className="mt-3 text-gray-600 cursor-pointer dark:text-neutral-400
+              className="mt-3 text-gray-600 cursor-pointer dark:text-neutral-300
               hover:text-blue-500 transition duration-300 dark:hover:text-blue-500"
             >
               <a
