@@ -10,6 +10,8 @@ const defaultHttpsHosts: HttpsServerOptions['hosts'] = [
   '127.0.0.1',
 ];
 
+export type { Server as SpdyServer } from 'spdy';
+
 // vite mode requires a key cert
 export async function resolveHttpsConfig(httpsConfig: HttpsServerOptions) {
   // Check if mkcert is installed
