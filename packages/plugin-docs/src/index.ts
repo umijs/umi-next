@@ -28,6 +28,7 @@ export default (api: IApi) => {
   }
 
   const isGitRepo = checkGitRepo(api.cwd);
+  const docsFilePath = `${api.cwd}/docs`;
 
   api.modifyDefaultConfig((memo) => {
     memo.conventionRoutes = {
@@ -68,12 +69,16 @@ export default (api: IApi) => {
     if (isGitRepo) {
       // 对于 git 仓库，添加文档的相关属性
       const routeFilePath = route.file;
-      const docsFilePath = `${api.cwd}/docs`;
-      route.git = {
-        createdTime: await getCreatedTime(docsFilePath, routeFilePath),
-        updatedTime: await getUpdatedTime(docsFilePath, routeFilePath),
-        contributors: await getContributors(docsFilePath, routeFilePath),
-      };
+      try {
+        route.git = {
+          createdTime: await getCreatedTime(docsFilePath, routeFilePath),
+          updatedTime: await getUpdatedTime(docsFilePath, routeFilePath),
+          contributors: await getContributors(docsFilePath, routeFilePath),
+        };
+      } catch (err) {
+        // 插件生成的路由取不到 Git 记录
+        console.warn(err);
+      }
     }
   });
 
