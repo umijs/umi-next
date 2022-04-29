@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface IContext {
+export interface IContext {
   appData: any;
   components: any;
   themeConfig: {

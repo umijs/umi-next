@@ -2,7 +2,7 @@
 import { history } from 'umi';
 import { useThemeContext } from './context';
 
-interface useLanguageResult {
+export interface useLanguageResult {
   isFromPath: boolean;
   currentLanguage: { locale: string; text: string } | undefined;
   languages: { locale: string; text: string }[];

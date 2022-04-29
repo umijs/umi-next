@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import ArticleMeta from './ArticleMeta';
 import Announcement from './components/Announcement';
 import { ThemeContext } from './context';
 import Head from './Head';
@@ -88,10 +89,15 @@ export default (props: any) => {
                   <Sidebar />
                 </div>
               </div>
-              {/* 文章内容 */}
+              {/* 文章主体 */}
               <div className="container flex flex-row justify-center lg:justify-end xl:justify-center">
                 <div className="w-full lg:w-3/4 xl:w-1/2 px-4 lg:px-8 my-8 z-20 lg:pb-12 lg:pt-6">
+                  {/* 文章内容 */}
                   <article className="flex-1">{props.children}</article>
+                  {/* 文章页脚 */}
+                  <footer>
+                    <ArticleMeta />
+                  </footer>
                 </div>
               </div>
               {/* 右侧 Toc */}

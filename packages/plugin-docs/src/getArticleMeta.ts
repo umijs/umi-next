@@ -1,11 +1,11 @@
 // @ts-ignore
 import { execa } from '../compiled/execa';
 
-export type ArticleContributor = {
+export interface ArticleContributor {
   username: string;
   email: string;
   commitCount: number;
-};
+}
 
 export async function getCreatedTime(
   cwd: string,

@@ -2,20 +2,14 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
+import getCurrentRoute from './utils/getCurrentRoute';
 import getLinkFromTitle from './utils/getLinkFromTitle';
 import getTocTitle from './utils/getTocTitle';
 
 export default () => {
   const { location, appData, themeConfig } = useThemeContext()!;
   const lang = useLanguage();
-  const route =
-    appData.routes[
-      lang.isFromPath
-        ? location.pathname.split('/').slice(2).join('/') +
-          '.' +
-          lang.currentLanguage?.locale
-        : location.pathname.slice(1)
-    ];
+  const route = getCurrentRoute(appData, lang, location);
 
   if (!route) {
     return null;
