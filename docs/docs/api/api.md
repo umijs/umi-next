@@ -1,7 +1,5 @@
 # API
 
-Record<string, string>
-
 为方便查找，以下内容通过字母排序。
 
 ## umi
