@@ -34,7 +34,7 @@ const getContributorsTitle = (contributors: ArticleContributor[]): string => {
     .join(', ');
 };
 
-const ArticleMeta = ({
+export default ({
   displayUpdatedTime = true,
   displayContributors = true,
 }: ArticleMetaOptions = {}) => {
@@ -79,5 +79,3 @@ const ArticleMeta = ({
     </div>
   );
 };
-
-export default ArticleMeta;
