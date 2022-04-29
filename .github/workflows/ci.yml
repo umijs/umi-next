@@ -52,7 +52,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.1.0
         with:
-          version: latest
+          version: 6.32.11
           run_install: true
 
       # We use week in the turbo cache key to keep the cache from infinitely growing
@@ -69,6 +69,16 @@ jobs:
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
+
+      - name: Jest Cache
+        id: jest-cache
+        uses: actions/cache@v2
+        with:
+          path: .jest-cache
+          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          restore-keys: |
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
 
       - run: pnpm build
       - run: pnpm tsc --noEmit
