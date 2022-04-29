@@ -69,15 +69,12 @@ export default (api: IApi) => {
     if (isGitRepo) {
       // 对于 git 仓库，添加文档的相关属性
       const routeFilePath = route.file;
-      try {
+      if (routeFilePath.endsWith('.md') || routeFilePath.endsWith('.mdx')) {
         route.git = {
           createdTime: await getCreatedTime(docsFilePath, routeFilePath),
           updatedTime: await getUpdatedTime(docsFilePath, routeFilePath),
           contributors: await getContributors(docsFilePath, routeFilePath),
         };
-      } catch (err) {
-        // 插件生成的路由取不到 Git 记录
-        console.warn(err);
       }
     }
   });
