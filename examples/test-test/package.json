@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12",
     "@types/jest": "^27",
-    "jest": "^27",
+    "jest": "^28.0.3",
     "ts-node": "^10",
     "typescript": "^4"
   }
