@@ -10,8 +10,8 @@
   "dependencies": {
     "antd": "^4.19.5",
     "framer-motion": "^6.2.9",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -20,7 +20,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
-    "@umijs/mfsu": "4.0.0-canary.20220418.2",
+    "@umijs/mfsu": "4.0.0-rc.14",
     "babel-loader": "^8.2.4",
     "esbuild": "0.14.35",
     "html-webpack-plugin": "^5.5.0",

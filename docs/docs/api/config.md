@@ -78,7 +78,7 @@ export default {
   	// 添加额外插件
   	memo.plugin('hello').use(Plugin, [...args]);
   	
-  	// 删除 umi 内置插件
+  	// 删除 Umi 内置插件
   	memo.plugins.delete('hmr');
   }
 }
@@ -236,6 +236,25 @@ scripts: ['https://unpkg.com/react@17.0.1/umd/react.production.min.js'],
 ```
 
 注意：不要轻易设置 antd 的 externals，由于依赖教多，使用方式复杂，可能会遇到较多问题，并且一两句话很难解释清楚。
+
+## extraBabelIncludes
+
+* 类型：`string[]`
+* 默认值：`[]`
+
+配置额外需要做 Babel 编译的 NPM 包或目录。比如：
+
+```js
+export default {
+  extraBabelIncludes: [
+    // 支持绝对路径
+    join(__dirname, '../../common'),
+
+    // 支持 npm 包
+    'react-monaco-editor',
+  ],
+};
+```
 
 ## extraBabelPlugins
 
@@ -426,12 +445,12 @@ metas: [
 
 ## mfsu
 
-* 类型：`{ esbuild: boolean; mfName: string; cacheDirectory: string; chainWebpack: (memo, args) => void }`
+* 类型：`{ esbuild: boolean; mfName: string; cacheDirectory: string; chainWebpack: (memo, args) => void; runtimePublicPath: boolean; }`
 * 默认值：`{ mfName: 'mf' }`
 
 配置基于 Module Federation 的提速功能。
 
-关于参数。`esbuild` 配为 `true` 后会让依赖的预编译走 esbuild，从而让首次启动更快，缺点是二次编译不会有 webpack 的物理缓存，稍慢一些；`mfName` 是此方案的 remote 库的全局变量，默认是 mf，通常在微前端中为了让主应用和子应用不冲突才会进行配置；`cacheDirectory` 可以自定义缓存目录，默认是 `node_modules/.cache/mfsu`; `chainWebpack` 用链式编程的方式修改 依赖的 webpack 配置，基于 webpack-chain，具体 API 可参考 [webpack-api 的文档](https://github.com/mozilla-neutrino/webpack-chain)。
+关于参数。`esbuild` 配为 `true` 后会让依赖的预编译走 esbuild，从而让首次启动更快，缺点是二次编译不会有 webpack 的物理缓存，稍慢一些；`mfName` 是此方案的 remote 库的全局变量，默认是 mf，通常在微前端中为了让主应用和子应用不冲突才会进行配置；`cacheDirectory` 可以自定义缓存目录，默认是 `node_modules/.cache/mfsu`; `chainWebpack` 用链式编程的方式修改 依赖的 webpack 配置，基于 webpack-chain，具体 API 可参考 [webpack-api 的文档](https://github.com/mozilla-neutrino/webpack-chain)；`runtimePublicPath` 会让修改 mf 加载文件的 publicPath 为 `window.publicPath`。
 
 示例，
 
@@ -494,7 +513,7 @@ mountElementId: 'container'
 * 类型：`{ srcDir?: string[], exclude?: RegExp[] }`
 * 默认值：`false`
 
-在 monorepo 中使用 umi 时，你可能需要引入其他子包的组件、工具等，通过开启此选项来重定向这些子包的导入到他们的源码位置（默认为 `src` 文件夹），这也可以解决 `MFSU` 场景改动子包不热更新的问题。
+在 monorepo 中使用 Umi 时，你可能需要引入其他子包的组件、工具等，通过开启此选项来重定向这些子包的导入到他们的源码位置（默认为 `src` 文件夹），这也可以解决 `MFSU` 场景改动子包不热更新的问题。
 
 通过配置 `srcDir` 来调整识别源码文件夹的优先位置，通过 `exclude` 来设定不需要重定向的依赖范围。
 
@@ -523,7 +542,7 @@ monorepoRedirect: { exclude: [/^@scope\/.+/] }
 * 类型：`string[]`
 * 默认值：`[]`
 
-配置额外的 umi 插件。
+配置额外的 Umi 插件。
 
 数组项为指向插件的路径，可以是 npm 依赖、相对路径或绝对路径。如果是相对路径，则会从项目根目录开始找。
 
@@ -580,7 +599,7 @@ polyfill: {
 * 类型：`string[]`
 * 默认值：`[]`
 
-配置额外的 umi 插件集。
+配置额外的 Umi 插件集。
 
 数组项为指向插件集的路径，可以是 npm 依赖、相对路径或绝对路径。如果是相对路径，则会从项目根目录开始找。
 
@@ -731,6 +750,13 @@ targets: { ie: 11 }
 ```js
 theme: { '@primary-color': '#1DA57A' }
 ```
+
+## title
+
+* 类型：`string`
+* 默认值：`null`
+
+配置全局页面 title，暂时只支持静态的 Title。
 
 ## verifyCommit
 
