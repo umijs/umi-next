@@ -1,5 +1,4 @@
 import * as allIcons from '@ant-design/icons';
-import assert from 'assert';
 import { dirname } from 'path';
 import { IApi } from 'umi';
 import { lodash, Mustache, winPath } from 'umi/plugin-utils';
