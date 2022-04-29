@@ -1,3 +1,4 @@
+import React from 'react';
 import { useThemeContext } from './context';
 import useLanguage from './useLanguage';
 import getCurrentRoute from './utils/getCurrentRoute';
