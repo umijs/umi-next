@@ -22,6 +22,8 @@
   "globalDependencies": [
     "tsconfig.base.json",
     "tsconfig.json",
-    "jest.config.ts"
+    "jest.config.ts",
+    "jest.e2e.config.ts",
+    "jest.turbo.config.ts"
   ]
 }
