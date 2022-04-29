@@ -44,6 +44,7 @@ export async function build(opts: IOpts): Promise<webpack.Stats> {
       ...(opts.beforeBabelPresets || []),
       ...(opts.extraBabelPresets || []),
     ],
+    extraBabelIncludes: opts.config.extraBabelIncludes,
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     cache: opts.cache,

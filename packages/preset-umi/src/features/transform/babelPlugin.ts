@@ -66,6 +66,7 @@ export default function () {
               const ret: Record<string, any> = {
                 source: node.source.value,
                 loc: node.loc,
+                kind: node.importKind,
               };
               node.specifiers.forEach((specifier) => {
                 if (t.isImportDefaultSpecifier(specifier)) {
@@ -78,7 +79,10 @@ export default function () {
                     t.isIdentifier(specifier.imported)
                       ? specifier.imported.name
                       : specifier.imported.value
-                  ] = specifier.local.name;
+                  ] = {
+                    name: specifier.local.name,
+                    kind: specifier.importKind,
+                  };
                 }
               });
               cache.get(file).imports.push(ret);

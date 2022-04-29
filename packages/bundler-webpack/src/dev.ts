@@ -1,5 +1,6 @@
 import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
-import { logger } from '@umijs/utils';
+import { logger, rimraf } from '@umijs/utils';
+import { existsSync } from 'fs';
 import { join } from 'path';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
@@ -61,7 +62,7 @@ export async function dev(opts: IOpts) {
       getCacheDependency() {
         return stripUndefined({
           version: require('../package.json').version,
-          esbuildMode: !!opts.config.mfsu?.esbuild,
+          mfsu: opts.config.mfsu,
           alias: opts.config.alias,
           externals: opts.config.externals,
           theme: opts.config.theme,
@@ -96,6 +97,7 @@ export async function dev(opts: IOpts) {
       ...(opts.beforeBabelPresets || []),
       ...(opts.extraBabelPresets || []),
     ],
+    extraBabelIncludes: opts.config.extraBabelIncludes,
     extraEsbuildLoaderHandler: mfsu?.getEsbuildLoaderHandler() || [],
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
@@ -138,6 +140,26 @@ export async function dev(opts: IOpts) {
     config: webpackConfig as any,
     depConfig: depConfig as any,
   });
+
+  if (
+    mfsu &&
+    webpackConfig.cache &&
+    typeof webpackConfig.cache === 'object' &&
+    webpackConfig.cache.type === 'filesystem'
+  ) {
+    const webpackCachePath = join(
+      webpackConfig.cache.cacheDirectory!,
+      `default-development`,
+      'index.pack',
+    );
+    const mfsuCacheExists = existsSync(mfsu.depInfo.cacheFilePath);
+    const webpackCacheExists = existsSync(webpackCachePath);
+    if (webpackCacheExists && !mfsuCacheExists) {
+      logger.warn(`Invalidate webpack cache since mfsu cache is missing`);
+      rimraf.sync(webpackConfig.cache.cacheDirectory!);
+    }
+  }
+
   await createServer({
     webpackConfig,
     userConfig: opts.config,

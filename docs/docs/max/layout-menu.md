@@ -3,24 +3,25 @@
 ## 启用方式
 
 配置开启。
+
 ```ts
 // config/config.ts
 export default {
   layout: {
-    title: "your app title", 
+    title: 'your app title',
   },
 };
 ```
 
 ## 介绍
 
-为了进一步降低研发成本，我们将布局通过 umi 插件的方式内置，只需通过简单的配置即可拥有 Ant Design 的 Layout（[ProLayout](https://procomponents.ant.design/components/layout)），包括导航以及侧边栏。从而做到用户无需关心布局。
+为了进一步降低研发成本，我们将布局通过 Umi 插件的方式内置，只需通过简单的配置即可拥有 Ant Design 的 Layout（[ProLayout](https://procomponents.ant.design/components/layout)），包括导航以及侧边栏。从而做到用户无需关心布局。
 
 - 默认为 Ant Design 的 Layout [@ant-design/pro-layout](https://www.npmjs.com/package/@ant-design/pro-layout)，支持它全部配置项。
 - 顶部导航/侧边栏菜单根据路由中的配置自动生成。
 - 默认支持对路由的 403/404 处理和 Error Boundary。
-- 搭配 @umijs/plugin-access 插件一起使用，可以完成对路由权限的控制。
-- 搭配 @umijs/plugin-initial-state 插件和 @umijs/plugin-model 插件一起使用，可以拥有默认用户登陆信息的展示。
+- 搭配 `@umijs/plugin-access` 插件一起使用，可以完成对路由权限的控制。
+- 搭配 `@umijs/plugin-initial-state` 插件和 `@umijs/plugin-model` 插件一起使用，可以拥有默认用户登陆信息的展示。
 
 > 想要动态菜单？查看这里 [菜单的高级用法](https://beta-pro.ant.design/docs/advanced-menu-cn)
 
@@ -60,11 +61,11 @@ export default defineConfig({
 运行时配置写在 `src/app.tsx` 中，key 为 `layout`。
 
 ```tsx
-import React from 'react';
 import {
   BasicLayoutProps,
   Settings as LayoutSettings,
 } from '@ant-design/pro-layout';
+import React from 'react';
 
 export const layout = ({
   initialState,
@@ -76,7 +77,7 @@ export const layout = ({
     // 常用属性
     title: 'Ant Design',
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
- 
+
     // 默认布局调整
     rightContentRender: () => <RightContent />,
     footerRender: () => <Footer />,
@@ -134,7 +135,7 @@ export const layout = ({
 
 ### 扩展的路由配置
 
-Layout 插件会基于 umi 的路由，封装了更多的配置项，支持更多配置式的能力。新增：
+Layout 插件会基于 Umi 的路由，封装了更多的配置项，支持更多配置式的能力。新增：
 
 - 侧边栏菜单配置。
 - 布局路由级别展示/隐藏相关配置。

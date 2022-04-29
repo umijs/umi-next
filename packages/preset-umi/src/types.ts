@@ -1,4 +1,5 @@
 // sort-object-keys
+import type { ImportDeclaration } from '@umijs/bundler-utils/compiled/@babel/types';
 import type { RequestHandler, webpack } from '@umijs/bundler-webpack';
 import type WebpackChain from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import type { IConfig } from '@umijs/bundler-webpack/dist/types';
@@ -13,6 +14,7 @@ import type {
 import { Env } from '@umijs/core';
 import type { CheerioAPI } from '@umijs/utils/compiled/cheerio';
 import type { InlineConfig as ViteInlineConfig } from 'vite';
+import type CodeFrameError from './features/transform/CodeFrameError';
 
 export { UmiApiRequest, UmiApiResponse } from './features/apiRoute';
 export { webpack, IConfig };
@@ -129,14 +131,19 @@ export type IApi = PluginAPI &
     onCheckCode: IEvent<{
       cjsExports: string[];
       code: string;
+      CodeFrameError: typeof CodeFrameError;
       exports: any[];
       file: string;
       imports: {
         default: string;
+        kind: ImportDeclaration['importKind'];
         loc: any;
         namespace: string;
         source: string;
-        specifiers: Record<string, string>;
+        specifiers: Record<
+          string,
+          { kind: ImportDeclaration['importKind']; name: string }
+        >;
       }[];
       isFromTmp: boolean;
     }>;

@@ -1,5 +1,6 @@
 import { History } from 'history';
 import React, { startTransition, useEffect, useState } from 'react';
+// compatible with < react@18 in @umijs/preset-umi/src/features/react
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { AppContext, useAppData } from './appContext';
@@ -33,7 +34,6 @@ function BrowserRoutes(props: {
         },
       });
     }
-
     history.listen(onRouteChange);
     onRouteChange({ location: state.location, action: state.action });
   }, [history, props.routes, props.clientRoutes]);
@@ -69,6 +69,13 @@ export function renderClient(opts: {
     routesById: opts.routes,
     routeComponents: opts.routeComponents,
     loadingComponent: opts.loadingComponent,
+  });
+  opts.pluginManager.applyPlugins({
+    key: 'patchClientRoutes',
+    type: 'event',
+    args: {
+      routes: clientRoutes,
+    },
   });
   let rootContainer = (
     <BrowserRoutes

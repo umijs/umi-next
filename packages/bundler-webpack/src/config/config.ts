@@ -25,7 +25,6 @@ import { addJavaScriptRules } from './javaScriptRules';
 import { addManifestPlugin } from './manifestPlugin';
 import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
-import { addNodePrefixPlugin } from './nodePrefixPlugin';
 import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
 import { addSVGRules } from './svgRules';
@@ -37,6 +36,7 @@ export interface IOpts {
   entry: Record<string, string>;
   extraBabelPresets?: any[];
   extraBabelPlugins?: any[];
+  extraBabelIncludes?: string[];
   extraEsbuildLoaderHandler?: any[];
   babelPreset?: any;
   chainWebpack?: Function;
@@ -71,6 +71,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     babelPreset: opts.babelPreset,
     extraBabelPlugins: opts.extraBabelPlugins || [],
     extraBabelPresets: opts.extraBabelPresets || [],
+    extraBabelIncludes: opts.extraBabelIncludes || [],
     extraEsbuildLoaderHandler: opts.extraEsbuildLoaderHandler || [],
     browsers: getBrowsersList({
       targets: userConfig.targets,
@@ -193,7 +194,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // handle HarmonyLinkingError
   await addHarmonyLinkingErrorPlugin(applyOpts);
   // remove node: prefix
-  await addNodePrefixPlugin(applyOpts);
+  // disable for performance
+  // await addNodePrefixPlugin(applyOpts);
   // runtimePublicPath
   if (userConfig.runtimePublicPath) {
     config.plugin('runtimePublicPath').use(RuntimePublicPathPlugin);

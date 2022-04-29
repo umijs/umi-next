@@ -1,3 +1,4 @@
+import { createHttpsServer } from '@umijs/bundler-utils';
 import express from '@umijs/bundler-utils/compiled/express';
 import { createProxyMiddleware } from '@umijs/bundler-webpack/compiled/http-proxy-middleware';
 import webpack, {
@@ -9,7 +10,6 @@ import http from 'http';
 import { join } from 'path';
 import { MESSAGE_TYPE } from '../constants';
 import { IConfig } from '../types';
-import { createHttpsServer } from './https';
 import { createWebSocketServer } from './ws';
 
 interface IOpts {
@@ -30,21 +30,6 @@ export async function createServer(opts: IOpts) {
   const { webpackConfig, userConfig } = opts;
   const { proxy } = userConfig;
   const app = express();
-
-  // basename middleware
-  app.use((req, _res, next) => {
-    const { url, path } = req;
-    const { basename, history } = userConfig;
-    if (
-      history?.type === 'browser' &&
-      basename !== '/' &&
-      url.startsWith(basename)
-    ) {
-      req.url = url.slice(basename.length);
-      req.path = path.slice(basename.length);
-    }
-    next();
-  });
 
   // cros
   app.use((_req, res, next) => {

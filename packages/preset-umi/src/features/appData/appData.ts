@@ -18,7 +18,7 @@ export default (api: IApi) => {
       api,
     });
     memo.hasSrcDir = api.paths.absSrcPath.endsWith('/src');
-    memo.npmClient = api.userConfig.npmClient || getNpmClient();
+    memo.npmClient = api.userConfig.npmClient || getNpmClient({ cwd: api.cwd });
     memo.umi = {
       version: require('../../../package.json').version,
     };
@@ -32,6 +32,12 @@ export default (api: IApi) => {
     }
     memo.react = {
       version: require(join(api.config.alias.react, 'package.json')).version,
+      path: api.config.alias.react,
+    };
+    memo['react-dom'] = {
+      version: require(join(api.config.alias['react-dom'], 'package.json'))
+        .version,
+      path: api.config.alias['react-dom'],
     };
     memo.appJS = await getAppJsInfo();
     memo.locale = await osLocale();

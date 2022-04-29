@@ -108,6 +108,7 @@ export default function EmptyRoute() {
         api,
       });
     }
+
     const hasSrc = api.appData.hasSrcDir;
     // @/pages/
     const pages = basename(
@@ -175,6 +176,7 @@ export default function EmptyRoute() {
         // TODO: support these methods
         // 'modifyClientRenderOpts',
         'patchRoutes',
+        'patchClientRoutes',
         'rootContainer',
         'innerProvider',
         'i18nProvider',
@@ -341,21 +343,29 @@ export default function EmptyRoute() {
   api.register({
     key: 'onGenerateFiles',
     fn: async () => {
+      const rendererPath = winPath(
+        await api.applyPlugins({
+          key: 'modifyRendererPath',
+          initialValue: dirname(
+            require.resolve('@umijs/renderer-react/package.json'),
+          ),
+        }),
+      );
+
       const exports = [];
       const exportMembers = ['default'];
       // @umijs/renderer-react
-      exports.push('// @umijs/renderer-react');
-      const rendererReactPath = winPath(
-        require.resolve('@umijs/renderer-react'),
-      );
+      exports.push('// @umijs/renderer-*');
+
       exports.push(
         `export { ${(
           await getExportsAndCheck({
-            path: join(rendererReactPath),
+            path: join(rendererPath, 'dist/index.js'),
             exportMembers,
           })
-        ).join(', ')} } from '${rendererReactPath}';`,
+        ).join(', ')} } from '${rendererPath}';`,
       );
+
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
       const umiDir = process.env.UMI_DIR!;

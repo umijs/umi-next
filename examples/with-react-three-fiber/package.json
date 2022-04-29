@@ -7,11 +7,11 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "@react-three/drei": "^9.4.2",
-    "@react-three/fiber": "^8.0.10",
+    "@react-three/drei": "^9.5.0",
+    "@react-three/fiber": "^8.0.12",
     "@types/three": "^0.139.0",
     "three": "^0.139.2",
     "troika-three-text": "^0.46.4",
-    "umi": "4.0.0-canary.20220418.2"
+    "umi": "4.0.0-rc.14"
   }
 }
