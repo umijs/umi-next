@@ -24,4 +24,20 @@ export default (api: IApi) => {
     );
     return config;
   });
+
+  // babel-plugin-import
+  api.addExtraBabelPlugins(() => {
+    return !api.appData.vite
+      ? [
+          [
+            require.resolve('babel-plugin-import'),
+            {
+              libraryName: 'vant',
+              libraryDirectory: 'es',
+              style: true,
+            },
+          ],
+        ]
+      : [];
+  });
 };
