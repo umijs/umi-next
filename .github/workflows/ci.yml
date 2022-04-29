@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - master
-      - jest-28
     paths-ignore:
       - 'examples/**'
       - 'docs/**'
