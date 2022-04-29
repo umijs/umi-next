@@ -29,7 +29,7 @@ export default () => {
     setExpanded((e) => !e);
   }
 
-  if (!currentLanguage || languages.length === 1) return;
+  if (!currentLanguage || languages.length === 1) return null;
 
   return (
     <div>
