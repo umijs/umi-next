@@ -87,7 +87,7 @@
   "packageManager": "pnpm@6.20.0",
   "engines": {
     "node": ">=14",
-    "pnpm": ">=6.20.0"
+    "pnpm": ">=6.20.0 <7"
   },
   "pnpm": {
     "peerDependencyRules": {
