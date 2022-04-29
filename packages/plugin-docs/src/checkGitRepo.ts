@@ -1,5 +1,4 @@
-// @ts-ignore
-import { execaSync } from '../compiled/execa';
+import { execaSync } from '@umijs/utils/compiled/execa';
 
 export function checkGitRepo(cwd: string): boolean {
   try {

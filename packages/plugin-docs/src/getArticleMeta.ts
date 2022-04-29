@@ -1,5 +1,4 @@
-// @ts-ignore
-import { execa } from '../compiled/execa';
+import { execa } from '@umijs/utils/compiled/execa';
 
 export interface ArticleContributor {
   username: string;

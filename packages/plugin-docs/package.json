@@ -26,6 +26,7 @@
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
+    "@umijs/utils": "workspace:4.0.0-canary.20220428.1",
     "keymaster": "1.6.2",
     "react-helmet": "^6.1.0",
     "rehype-pretty-code": "^0.3.0",
@@ -36,7 +37,6 @@
     "@types/keymaster": "^1.6.30",
     "@types/react-helmet": "^6.1.5",
     "classnames": "^2.3.1",
-    "execa": "6.1.0",
     "rehype-slug": "5.0.1",
     "remark-gfm": "^3.0.1",
     "tailwindcss": "^3.0.23",
@@ -51,14 +51,12 @@
   "compiledConfig": {
     "deps": [
       "@mdx-js/mdx",
-      "execa",
       "rehype-slug",
       "remark-gfm"
     ],
     "externals": {},
     "excludeDtsDeps": [
       "@mdx-js/mdx",
-      "execa",
       "rehype-slug",
       "remark-gfm"
     ]
