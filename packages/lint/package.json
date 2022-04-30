@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "5.20.0",
     "@typescript-eslint/parser": "5.20.0",
     "@umijs/babel-preset-umi": "4.0.0-canary.20220429.4",
-    "eslint-plugin-jest": "26.1.4",
+    "eslint-plugin-jest": "26.1.5",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.4.0",
     "postcss": "^8.4.12",
