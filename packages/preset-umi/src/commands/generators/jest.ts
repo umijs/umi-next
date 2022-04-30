@@ -31,17 +31,26 @@ export default (api: IApi) => {
         initial: true,
       });
 
+      const JEST_VERSION = `^28`;
       const basicDeps = {
-        jest: '^27',
+        jest: JEST_VERSION,
         '@types/jest': '^27',
         // we use `jest.config.ts` so jest needs ts and ts-node
         typescript: '^4',
         'ts-node': '^10',
       };
+      const reactTestingDeps = {
+        // As of Jest 28 "jest-environment-jsdom" is no longer shipped by default
+        // make sure to install it separately.
+        'jest-environment-jsdom': JEST_VERSION,
+        // RTL
+        '@testing-library/jest-dom': '^5',
+        '@testing-library/react': '^13',
+      };
       const packageToInstall: Record<string, string> = res.willUseTLR
         ? {
             ...basicDeps,
-            '@testing-library/react': '^12',
+            ...reactTestingDeps,
           }
         : basicDeps;
       h.addDevDeps(packageToInstall);
@@ -59,7 +68,7 @@ export default async () => {
     }),
   })) as Config.InitialOptions;
 };
-`.trimLeft(),
+`.trimStart(),
       );
       logger.info('Write jest.config.ts');
 
