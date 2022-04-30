@@ -49,12 +49,10 @@ module.exports = {
 };
 
 function getJestVersion() {
-  const DEFAULT_JEST_VERSION = 28;
   try {
     const pkg = require.resolve('jest/package.json');
-    const version = pkg ? require(pkg).version : DEFAULT_JEST_VERSION;
-    return version;
+    return require(pkg).version;
   } catch {
-    return DEFAULT_JEST_VERSION;
+    return 28;
   }
 }
