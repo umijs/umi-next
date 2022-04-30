@@ -703,7 +703,6 @@ importers:
       es5-imcompatible-versions: ^0.1.73
       fork-ts-checker-webpack-plugin: 7.2.4
       http-proxy-middleware: 2.0.4
-      jest-worker: 27.5.1
       less-loader: 10.2.0
       mini-css-extract-plugin: 2.6.0
       node-libs-browser: 2.2.1
@@ -742,7 +741,6 @@ importers:
       '@umijs/utils': link:../utils
       css-loader: 6.7.1_webpack@5.72.0
       es5-imcompatible-versions: 0.1.73
-      jest-worker: 27.5.1
       node-libs-browser: 2.2.1
       postcss: 8.4.12
       postcss-preset-env: 7.4.3_postcss@8.4.12
@@ -15985,6 +15983,7 @@ packages:
       '@types/node': 17.0.21
       merge-stream: 2.0.0
       supports-color: 8.1.1
+    dev: true
 
   /jest-worker/28.0.2:
     resolution: {integrity: sha512-pijNxfjxT0tGAx+8+OzZ+eayVPCwy/rsZFhebmC0F4YnXu1EHPEPxg7utL3m5uX3EaFH1/jwDxGa1EbjJCST2g==}
@@ -24016,6 +24015,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       has-flag: 4.0.0
+    dev: true
 
   /supports-color/9.2.1:
     resolution: {integrity: sha512-Obv7ycoCTG51N7y175StI9BlAXrmgZrFhZOb0/PyjHBher/NmsdBgbbQ1Inhq+gIhz6+7Gb+jWF2Vqi7Mf1xnQ==}
