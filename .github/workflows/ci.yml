@@ -28,6 +28,7 @@ jobs:
       matrix:
         node-version: [14.x, 16.x, 18.x]
         os: [ubuntu-latest, macos-latest, windows-latest]
+        shard: ['1/4', '2/4', '3/4', '4/4']
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -69,19 +70,28 @@ jobs:
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
 
-      - name: Jest Cache
+      - name: Jest Cache (${{ matrix.shard }})
         id: jest-cache
         uses: actions/cache@v2
         with:
           path: .jest-cache
-          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
+          key: jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
           restore-keys: |
             jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-
-            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
+            jest-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-shard${{ matrix.shard }}-${{ steps.get-week.outputs.WEEK }}-
 
-      - run: pnpm build
-      - run: pnpm tsc --noEmit
-      - run: pnpm test
+      - name: Build output
+        run: pnpm build
+
+      - name: Type check
+        run: pnpm tsc:check
+
+      - name: Get number of CPU cores
+        id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+
+      - name: Run tests (${{ matrix.shard }})
+        run: pnpm test -- --max-workers ${{ steps.cpu-cores.outputs.count }} --shard ${{ matrix.shard }}
         env:
           CI: true
           NODE_ENV: test
