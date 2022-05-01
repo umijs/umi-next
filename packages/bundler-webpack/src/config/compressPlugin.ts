@@ -18,6 +18,7 @@ export async function addCompressPlugin(opts: IOpts) {
   const { config, userConfig, env } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
+  const { dropConsole = false, dropDebugger = false } = userConfig;
 
   if (
     env === Env.development ||
@@ -31,19 +32,37 @@ export async function addCompressPlugin(opts: IOpts) {
 
   let minify: any;
   let terserOptions: IConfig['jsMinifierOptions'];
+
+  const compress = {
+    drop_console: dropConsole,
+    drop_debugger: dropDebugger,
+  };
+
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
     terserOptions = {
       target: getEsBuildTarget({
         targets: userConfig.targets || {},
       }),
+      drop: [dropConsole && 'console', dropDebugger && 'debugger'].filter(
+        Boolean,
+      ),
     };
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
+    terserOptions = {
+      compress,
+    };
   } else if (jsMinifier === JSMinifier.swc) {
     minify = TerserPlugin.swcMinify;
+    terserOptions = {
+      compress,
+    };
   } else if (jsMinifier === JSMinifier.uglifyJs) {
     minify = TerserPlugin.uglifyJsMinify;
+    terserOptions = {
+      compress,
+    };
   } else if (jsMinifier !== JSMinifier.none) {
     throw new Error(`Unsupported jsMinifier ${userConfig.jsMinifier}.`);
   }

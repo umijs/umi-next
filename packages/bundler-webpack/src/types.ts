@@ -62,6 +62,8 @@ export interface IConfig {
   depTranspiler?: Transpiler;
   devtool?: Config.DevTool;
   deadCode?: DeadCodeParams;
+  dropConsole?: boolean;
+  dropDebugger?: boolean;
   https?: HttpsServerOptions;
   externals?: WebpackConfig['externals'];
   esm?: { [key: string]: any };
