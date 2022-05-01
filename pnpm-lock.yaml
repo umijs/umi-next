@@ -782,8 +782,6 @@ importers:
 
   packages/core:
     specifiers:
-      '@hapi/joi': 17.1.1
-      '@types/hapi__joi': 17.1.8
       '@umijs/bundler-utils': 4.0.0-canary.20220429.4
       '@umijs/utils': 4.0.0-canary.20220429.4
       dotenv: 16.0.0
@@ -792,8 +790,6 @@ importers:
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/utils': link:../utils
     devDependencies:
-      '@hapi/joi': 17.1.1
-      '@types/hapi__joi': 17.1.8
       dotenv: 16.0.0
       just-diff: 5.0.1
 
@@ -1120,9 +1116,11 @@ importers:
 
   packages/utils:
     specifiers:
+      '@hapi/joi': 17.1.1
       '@types/color': 3.0.3
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
+      '@types/hapi__joi': 17.1.8
       '@types/lodash': 4.14.182
       '@types/mustache': 4.1.2
       '@types/prompts': ^2.0.14
@@ -1156,9 +1154,11 @@ importers:
     dependencies:
       chokidar: 3.5.3
     devDependencies:
+      '@hapi/joi': 17.1.1
       '@types/color': 3.0.3
       '@types/cross-spawn': 6.0.2
       '@types/debug': 4.1.7
+      '@types/hapi__joi': 17.1.8
       '@types/lodash': 4.14.182
       '@types/mustache': 4.1.2
       '@types/prompts': 2.0.14
