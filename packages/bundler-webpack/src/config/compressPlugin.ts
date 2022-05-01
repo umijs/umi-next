@@ -18,7 +18,7 @@ export async function addCompressPlugin(opts: IOpts) {
   const { config, userConfig, env } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
-  const { dropConsole = false, dropDebugger = false } = userConfig;
+  const { dropConsole = false, dropDebugger = true } = userConfig;
 
   if (
     env === Env.development ||
