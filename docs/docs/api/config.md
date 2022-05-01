@@ -220,6 +220,18 @@ devtool: false
 devtool: process.env.NODE_ENV === 'development' ? 'eval' : false
 ```
 
+## dropConsole
+* 类型：`boolean`
+* 默认值：false
+
+开启 dropConsole, 删除 build 产物代码中的 console api 调用语句
+
+## dropDebugger
+* 类型：`boolean`
+* 默认值：true
+
+默认删除 build 产物代码中的 debugger 语句。设置为 false, 保留 build 产物代码中的 debugger 语句。
+
 ## externals
 
 * 类型：`Record<string, string> | Function`
