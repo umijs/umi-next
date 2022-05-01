@@ -1,5 +1,7 @@
+import type { CommonOptions as EsbuildOpts } from '@umijs/bundler-utils/compiled/esbuild';
 // @ts-ignore
 import CSSMinimizerWebpackPlugin from '@umijs/bundler-webpack/compiled/css-minimizer-webpack-plugin';
+import type { TerserOptions } from '../../compiled/terser-webpack-plugin';
 import TerserPlugin from '../../compiled/terser-webpack-plugin';
 import Config from '../../compiled/webpack-5-chain';
 import ESBuildCSSMinifyPlugin from '../plugins/ESBuildCSSMinifyPlugin';
@@ -33,21 +35,26 @@ export async function addCompressPlugin(opts: IOpts) {
   let minify: any;
   let terserOptions: IConfig['jsMinifierOptions'];
 
-  const compress = {
+  const compress: TerserOptions['compress'] = {
     drop_console: dropConsole,
     drop_debugger: dropDebugger,
   };
 
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
+    const drop: EsbuildOpts['drop'] = [];
+    if (dropConsole) {
+      drop.push('console');
+    }
+    if (dropDebugger) {
+      drop.push('debugger');
+    }
     terserOptions = {
       target: getEsBuildTarget({
         targets: userConfig.targets || {},
       }),
-      drop: [dropConsole && 'console', dropDebugger && 'debugger'].filter(
-        Boolean,
-      ),
-    };
+      drop: drop,
+    } as EsbuildOpts;
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
     terserOptions = {
