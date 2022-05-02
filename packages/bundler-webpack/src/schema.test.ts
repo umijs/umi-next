@@ -47,6 +47,8 @@ const config = {
   svgo: {},
   targets: {},
   writeToDisk: true,
+  dropDebugger: true,
+  dropConsole: true,
 } as IConfig;
 
 test('normal', () => {

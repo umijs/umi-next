@@ -86,6 +86,8 @@ export interface IConfig {
   svgo?: { [key: string]: any } | false;
   targets?: { [key: string]: any };
   writeToDisk?: boolean;
+  dropDebugger?: boolean;
+  dropConsole?: boolean;
   [key: string]: any;
 }
 

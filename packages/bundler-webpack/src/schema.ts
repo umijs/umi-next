@@ -61,6 +61,8 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
       ),
     devtool: (Joi) =>
       Joi.alternatives().try(Joi.string().regex(DEVTOOL_REGEX), Joi.boolean()),
+    dropConsole: (Joi) => Joi.boolean(),
+    dropDebugger: (Joi) => Joi.boolean(),
     esm: (Joi) => Joi.object(),
     externals: (Joi) =>
       Joi.alternatives().try(Joi.object(), Joi.string(), Joi.func()),

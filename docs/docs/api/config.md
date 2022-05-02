@@ -790,3 +790,19 @@ vite: {
     cacheDir:'node_modules/.bin/.vite'
   }
 ```
+
+
+## dropDebugger
+
+* 类型：`boolean`
+* 默认值：`true`
+
+用于删除产物代码中的debugger语句
+
+
+## dropConsole
+
+* 类型：`boolean`
+* 默认值：`false`
+
+用于删除产物代码中的console.*语句
