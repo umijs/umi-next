@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import pino, { LoggerOptions } from 'pino';
 import dayjs from '../compiled/dayjs';
 import { omit as _omit } from '../compiled/lodash';
+import pino, { LoggerOptions } from '../compiled/pino';
 import type { PrettyOptions } from '../compiled/pino-pretty';
 import type { Options } from '../compiled/rotating-file-stream';
 
