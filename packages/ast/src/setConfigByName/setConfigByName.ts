@@ -54,11 +54,14 @@ export function setConfigByName(ast: t.File, name: string, value: any) {
     },
   });
   if (!isChanged) {
-    // 这里是插入逻辑
-    //@ts-ignore
-    ast.program.body[0].declaration.properties.push(
-      t.objectProperty(t.identifier(name), valueObject),
-    );
+    traverse.default(ast, {
+      ObjectExpression(path: traverse.NodePath<t.ObjectExpression>) {
+        path.node.properties.push(
+          t.objectProperty(t.identifier(name), valueObject),
+        );
+        path.stop();
+      },
+    });
   }
   return ast;
 }
