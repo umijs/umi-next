@@ -3,5 +3,8 @@
   "Docs": "文档",
   "Blog": "博客",
   "Last Updated": "上次更新",
-  "Contributors": "贡献者"
+  "Created At": "创建时间",
+  "Contributors": "贡献者",
+  "commit": "次提交",
+  "commits": "次提交"
 }

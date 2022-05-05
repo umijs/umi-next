@@ -24,17 +24,6 @@ const getDate = (timestamp: number): string => {
   return new Date(timestamp).toLocaleString();
 };
 
-const getContributorsTitle = (contributors: ArticleContributor[]): string => {
-  return contributors
-    .map((contributor) => {
-      const commitCount = contributor.commitCount;
-      return `${contributor.username} [${commitCount} ${
-        commitCount > 1 ? 'commits' : 'commit'
-      }] <${contributor.email}>`;
-    })
-    .join(', ');
-};
-
 export default ({
   displayUpdatedTime = true,
   displayContributors = true,
@@ -47,6 +36,17 @@ export default ({
     return <></>;
   }
 
+  const getContributorsTitle = (contributors: ArticleContributor[]): string => {
+    return contributors
+      .map((contributor) => {
+        const commitCount = contributor.commitCount;
+        return `${contributor.username} [${commitCount} ${
+          commitCount > 1 ? lang.render('commits') : lang.render('commit')
+        }] <${contributor.email}>`;
+      })
+      .join(', ');
+  };
+
   const routeGit: ArticleGitMeta = route.git;
   const createdTime = routeGit.createdTime * 1000;
   const updatedTime = routeGit.updatedTime * 1000;
@@ -56,7 +56,7 @@ export default ({
       {displayUpdatedTime && (
         <div
           className="flex basis-1/2 mr-0 md:mr-4"
-          title={`Created At: ${getDate(createdTime)}`}
+          title={`${lang.render('Created At')}: ${getDate(createdTime)}`}
         >
           <div className="text-sky-600 dark:text-fuchsia-300 font-medium mr-1">
             {lang.render('Last Updated')}:
