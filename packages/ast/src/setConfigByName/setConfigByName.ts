@@ -84,7 +84,7 @@ export function setConfigByName(ast: t.File, name: string, value: any) {
 
     if (!modified) {
       console.error(
-        `export config format can not be analysis, please reference to`,
+        `export config format can not be analysis, please reference to \nhttps://next.umijs.org/zh-CN/docs/guides/config-convention`,
       );
       throw Error(`Can't modify config file, due to file format`);
     }
