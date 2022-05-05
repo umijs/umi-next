@@ -30,26 +30,9 @@ export class Service extends CoreService {
       name = 'help';
     }
 
-    if (canRunWithLooseConfig(name)) {
-      this.configResolver.loose();
-    }
-
     // TODO
     // initWebpack
 
     return await this.run({ ...opts, name });
   }
-}
-
-// prettier-ignore
-const LOOSE_COMMAND_LIST = [
-  'v', 'version',
-  'g', 'generate',
-  'config',
-  'help',
-  'verify-commit'
-];
-
-function canRunWithLooseConfig(name: string) {
-  return LOOSE_COMMAND_LIST.includes(name);
 }
