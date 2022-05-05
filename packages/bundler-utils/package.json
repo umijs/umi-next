@@ -67,14 +67,14 @@
   ],
   "compiledConfig": {
     "deps": [
+      "@babel/plugin-transform-react-jsx-development",
       "cjs-module-lexer",
       "es-module-lexer",
       "esbuild",
       "express",
       "less",
       "tapable",
-      "./bundles/babel/bundle",
-      "@babel/plugin-transform-react-jsx-development"
+      "./bundles/babel/bundle"
     ],
     "externals": {
       "cjs-module-lexer": "$$LOCAL",

@@ -55,19 +55,19 @@
   "compiledConfig": {
     "deps": [
       "@vitejs/plugin-legacy",
+      "@vitejs/plugin-react",
       "caniuse-lite",
       "rollup-plugin-copy",
       "rollup-plugin-visualizer",
-      "vite",
-      "@vitejs/plugin-react"
+      "vite"
     ],
     "externals": {
+      "@babel/core": "@umijs/bundler-utils/compiled/babel/core",
       "esbuild": "@umijs/bundler-utils/compiled/esbuild",
       "express": "@umijs/bundler-utils/compiled/express",
       "fs-extra": "@umijs/utils/compiled/fs-extra",
       "glob": "@umijs/utils/compiled/glob",
       "less": "@umijs/bundler-utils/compiled/less",
-      "@babel/core": "@umijs/bundler-utils/compiled/babel/core",
       "resolve": "@umijs/utils/compiled/resolve",
       "vite": "$$LOCAL"
     },
@@ -75,10 +75,10 @@
       "rollup"
     ],
     "extraDtsExternals": [
+      "@babel/core",
       "esbuild",
       "foo",
-      "fs-extra",
-      "@babel/core"
+      "fs-extra"
     ]
   }
 }

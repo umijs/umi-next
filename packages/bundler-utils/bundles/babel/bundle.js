@@ -20,7 +20,7 @@ module.exports = {
   pluginProposalPipelineOperator: () =>
     require('@babel/plugin-proposal-pipeline-operator'),
   pluginProposalRecordAndTuple: () =>
-  require('@babel/plugin-proposal-record-and-tuple'),
+    require('@babel/plugin-proposal-record-and-tuple'),
 
   pluginTransformRuntime: () => require('@babel/plugin-transform-runtime'),
 
@@ -33,6 +33,6 @@ module.exports = {
   template: () => require('@babel/template'),
   traverse: () => require('@babel/traverse'),
   types: () => require('@babel/types'),
-  pluginTransformReactJsxDevelopment:()=>
+  pluginTransformReactJsxDevelopment: () =>
   require('@babel/plugin-transform-react-jsx-development')
 };
