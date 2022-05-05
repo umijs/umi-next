@@ -103,6 +103,5 @@
         "redux"
       ]
     }
-  },
-  "trigger": true
+  }
 }
