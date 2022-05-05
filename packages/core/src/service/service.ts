@@ -44,6 +44,12 @@ class ConfigResolver {
   }
 
   async resolve(service: Service) {
+    // configManager and paths are not available until the init stage
+    assert(
+      service.stage > ServiceStage.init,
+      `Can't generate final config before init stage`,
+    );
+
     const paths = service.paths;
 
     const config = await service.applyPlugins({
@@ -367,6 +373,7 @@ export class Service {
       }
       this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
+
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
     const { config, defaultConfig } = await this.configResolver.resolve(this);
@@ -433,37 +440,6 @@ export class Service {
     let ret = await command.fn({ args });
     this._baconPlugins();
     return ret;
-  }
-
-  // generate config and defaultConfig, and assign values to this.config
-  async generateFinalConfig() {
-    // configManager and paths are not available until the init stage
-    assert(
-      this.stage > ServiceStage.init,
-      `Can't generate final config before init stage`,
-    );
-    const config = await this.applyPlugins({
-      key: 'modifyConfig',
-      // why clone deep?
-      // user may change the config in modifyConfig
-      // e.g. memo.alias = xxx
-      initialValue: lodash.cloneDeep(
-        this.configManager?.getConfig({
-          schemas: this.configSchemas,
-        }).config,
-      ),
-      args: { paths: this.paths },
-    });
-    const defaultConfig = await this.applyPlugins({
-      key: 'modifyDefaultConfig',
-      initialValue: this.configDefaults,
-    });
-    const finalConfig = lodash.merge(defaultConfig, config) as Record<
-      string,
-      any
-    >;
-    this.config = finalConfig;
-    return { config, defaultConfig, finalConfig };
   }
 
   _baconPlugins() {
