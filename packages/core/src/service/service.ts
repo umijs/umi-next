@@ -35,51 +35,6 @@ interface IOpts {
   defaultConfigFiles?: string[];
 }
 
-type ConfigResolverOpts = { mode: 'strict' | 'loose' };
-
-class ConfigResolver {
-  private mode: ConfigResolverOpts['mode'];
-
-  constructor(opts: ConfigResolverOpts = { mode: 'strict' }) {
-    this.mode = opts.mode;
-  }
-
-  async resolve(service: Service) {
-    const paths = service.paths;
-
-    const config = await service.applyPlugins({
-      key: 'modifyConfig',
-      // why clone deep?
-      // user may change the config in modifyConfig
-      // e.g. memo.alias = xxx
-      initialValue: lodash.cloneDeep(
-        this.mode === 'strict'
-          ? service.configManager!.getConfig({
-              schemas: service.configSchemas,
-            }).config
-          : service.configManager!.getUserConfig().config,
-      ),
-      args: { paths },
-    });
-    const defaultConfig = await service.applyPlugins({
-      key: 'modifyDefaultConfig',
-      initialValue: service.configDefaults,
-    });
-    service.config = lodash.merge(defaultConfig, config) as Record<string, any>;
-
-    return { config, defaultConfig };
-  }
-
-  strict() {
-    this.mode = 'strict';
-    return this;
-  }
-
-  loose() {
-    this.mode = 'loose';
-  }
-}
-
 export class Service {
   private opts: IOpts;
   appData: {
@@ -130,13 +85,12 @@ export class Service {
     [key: string]: any;
   } = {};
   pkgPath: string = '';
-  configResolver: ConfigResolver;
+  configResolveMode: 'strict' | 'loose' = 'strict';
 
   constructor(opts: IOpts) {
     this.cwd = opts.cwd;
     this.env = opts.env;
     this.opts = opts;
-    this.configResolver = new ConfigResolver();
     assert(existsSync(this.cwd), `Invalid cwd ${this.cwd}, it's not found.`);
   }
 
@@ -359,6 +313,10 @@ export class Service {
     while (plugins.length) {
       await this.initPlugin({ plugin: plugins.shift()!, plugins });
     }
+
+    const command = this.commands[name];
+    assert(command, `Invalid command ${name}, it's not registered.`);
+
     // collect configSchemas and configDefaults
     for (const id of Object.keys(this.plugins)) {
       const { config, key } = this.plugins[id];
@@ -371,6 +329,7 @@ export class Service {
 
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
+    this.configResolveMode = command.runtimeConfig.configResolveMode;
     const { config, defaultConfig } = await this.resolveConfig();
 
     if (this.config.outputPath) {
@@ -430,8 +389,6 @@ export class Service {
 
     // run command
     this.stage = ServiceStage.runCommand;
-    const command = this.commands[name];
-    assert(command, `Invalid command ${name}, it's not registered.`);
     let ret = await command.fn({ args });
     this._baconPlugins();
     return ret;
@@ -443,7 +400,28 @@ export class Service {
       this.stage > ServiceStage.init,
       `Can't generate final config before init stage`,
     );
-    return this.configResolver.resolve(this);
+
+    const config = await this.applyPlugins({
+      key: 'modifyConfig',
+      // why clone deep?
+      // user may change the config in modifyConfig
+      // e.g. memo.alias = xxx
+      initialValue: lodash.cloneDeep(
+        this.configResolveMode === 'strict'
+          ? this.configManager!.getConfig({
+              schemas: this.configSchemas,
+            }).config
+          : this.configManager!.getUserConfig().config,
+      ),
+      args: { paths: this.paths },
+    });
+    const defaultConfig = await this.applyPlugins({
+      key: 'modifyDefaultConfig',
+      initialValue: this.configDefaults,
+    });
+    this.config = lodash.merge(defaultConfig, config) as Record<string, any>;
+
+    return { config, defaultConfig };
   }
 
   _baconPlugins() {
