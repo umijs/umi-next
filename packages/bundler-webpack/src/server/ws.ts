@@ -1,9 +1,13 @@
+import type { SpdyServer as Server } from '@umijs/bundler-utils';
 import { chalk } from '@umijs/utils';
 import { Server as HttpServer } from 'http';
+import { Http2Server } from 'http2';
 import { Server as HttpsServer } from 'https';
 import WebSocket from '../../compiled/ws';
 
-export function createWebSocketServer(server: HttpServer | HttpsServer) {
+export function createWebSocketServer(
+  server: HttpServer | HttpsServer | Http2Server | Server,
+) {
   const wss = new WebSocket.Server({
     noServer: true,
   });
