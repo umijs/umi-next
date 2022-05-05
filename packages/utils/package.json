@@ -17,16 +17,18 @@
   "scripts": {
     "build": "pnpm tsc",
     "build:deps": "umi-scripts bundleDeps",
-    "dev": "pnpm build -- --watch",
+    "dev": "pnpm build --watch",
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
     "chokidar": "3.5.3"
   },
   "devDependencies": {
+    "@hapi/joi": "17.1.1",
     "@types/color": "3.0.3",
     "@types/cross-spawn": "6.0.2",
     "@types/debug": "4.1.7",
+    "@types/hapi__joi": "17.1.8",
     "@types/lodash": "4.14.182",
     "@types/mustache": "4.1.2",
     "@types/prompts": "^2.0.14",
@@ -88,7 +90,8 @@
       "semver",
       "strip-ansi",
       "yargs-parser",
-      "pirates"
+      "pirates",
+      "@hapi/joi"
     ],
     "externals": {
       "address": "$$LOCAL",
@@ -109,7 +112,8 @@
       "semver": "$$LOCAL",
       "strip-ansi": "$$LOCAL",
       "yargs-parser": "$$LOCAL",
-      "pirates": "$$LOCAL"
+      "pirates": "$$LOCAL",
+      "@hapi/joi": "$$LOCAL"
     }
   }
 }

@@ -23,7 +23,7 @@ function turbo(opts: {
   cache?: boolean;
   parallel?: boolean;
 }) {
-  const extraCmd = opts.extra ? `-- -- ${opts.extra}` : '';
+  const extraCmd = opts.extra ? `-- ${opts.extra}` : '';
   const cacheCmd = opts.cache === false ? '--no-cache --force' : '';
   const parallelCmd = opts.parallel ? '--parallel' : '';
 
@@ -39,6 +39,7 @@ function turbo(opts: {
     .join(' ');
 
   const command = `turbo run ${options}`;
+  console.log(command);
   spawnSync(command, {
     cwd: PATHS.ROOT,
   });

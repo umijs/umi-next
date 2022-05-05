@@ -84,10 +84,10 @@
     "umi-scripts": "workspace:*",
     "zx": "^4.3.0"
   },
-  "packageManager": "pnpm@6.20.0",
+  "packageManager": "pnpm@7.0.0",
   "engines": {
     "node": ">=14",
-    "pnpm": ">=6.20.0"
+    "pnpm": ">=7.0.0"
   },
   "pnpm": {
     "peerDependencyRules": {

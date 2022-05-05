@@ -69,7 +69,7 @@ jobs:
             turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-
 
       - run: pnpm build
-      - run: pnpm tsc --noEmit
+      - run: pnpm tsc:check
       - run: pnpm test
         env:
           CI: true
