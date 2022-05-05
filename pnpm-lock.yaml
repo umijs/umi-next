@@ -782,8 +782,8 @@ importers:
 
   packages/core:
     specifiers:
-      '@umijs/bundler-utils': 4.0.0-canary.20220429.4
-      '@umijs/utils': 4.0.0-canary.20220429.4
+      '@umijs/bundler-utils': 4.0.0-canary.202200505.1
+      '@umijs/utils': 4.0.0-canary.202200505.1
       dotenv: 16.0.0
       just-diff: 5.0.1
     dependencies:
