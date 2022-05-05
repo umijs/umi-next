@@ -43,7 +43,7 @@ const config = { dva: {} }
 export default defineConfig(config)
 ```
 
-或者这样的方式：
+也不是这样的方式：
 
 ```ts
 // ❌
