@@ -36,6 +36,7 @@ interface IOpts {
 }
 
 type ConfigResolverOpts = { mode: 'strict' | 'loose' };
+
 class ConfigResolver {
   private mode: ConfigResolverOpts['mode'];
 
@@ -44,12 +45,6 @@ class ConfigResolver {
   }
 
   async resolve(service: Service) {
-    // configManager and paths are not available until the init stage
-    assert(
-      service.stage > ServiceStage.init,
-      `Can't generate final config before init stage`,
-    );
-
     const paths = service.paths;
 
     const config = await service.applyPlugins({
@@ -376,7 +371,7 @@ export class Service {
 
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
-    const { config, defaultConfig } = await this.configResolver.resolve(this);
+    const { config, defaultConfig } = await this.resolveConfig();
 
     if (this.config.outputPath) {
       paths.absOutputPath = isAbsolute(this.config.outputPath)
@@ -440,6 +435,15 @@ export class Service {
     let ret = await command.fn({ args });
     this._baconPlugins();
     return ret;
+  }
+
+  async resolveConfig() {
+    // configManager and paths are not available until the init stage
+    assert(
+      this.stage > ServiceStage.init,
+      `Can't generate final config before init stage`,
+    );
+    return this.configResolver.resolve(this);
   }
 
   _baconPlugins() {
