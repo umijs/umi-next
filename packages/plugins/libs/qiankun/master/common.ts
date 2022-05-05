@@ -88,7 +88,7 @@ export function patchMicroAppRoute(
       masterHistoryType,
       routeProps,
     };
-    route.element = React.createElement(getMicroAppRouteComponent(opts));
+    route.element = React.createElement(getMicroAppRouteComponent(opts), null);
   }
 }
 
