@@ -59,7 +59,7 @@ export default ({
           title={`Created At: ${getDate(createdTime)}`}
         >
           <div className="text-sky-600 dark:text-fuchsia-300 font-medium mr-1">
-            Last Updated:
+            {lang.render('Last Updated')}:
           </div>
           <div>{getDate(updatedTime)}</div>
         </div>
@@ -70,7 +70,7 @@ export default ({
           title={getContributorsTitle(contributors)}
         >
           <div className="text-sky-600 dark:text-fuchsia-300 font-medium mr-1">
-            Contributors:
+            {lang.render('Contributors')}:
           </div>
           <div>
             {contributors.map((contributor) => contributor.username).join(', ')}

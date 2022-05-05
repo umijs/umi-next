@@ -9,6 +9,7 @@ import Sidebar from './Sidebar';
 import Toc from './Toc';
 
 export default (props: any) => {
+  const { appData, components, themeConfig, location } = props;
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
   /**
@@ -31,7 +32,7 @@ export default (props: any) => {
     };
   }, []);
 
-  const { title, description } = props.themeConfig;
+  const { title, description, git } = themeConfig;
 
   const isHomePage =
     window.location.pathname === '/' ||
@@ -40,10 +41,10 @@ export default (props: any) => {
   return (
     <ThemeContext.Provider
       value={{
-        appData: props.appData,
-        components: props.components,
-        themeConfig: props.themeConfig,
-        location: props.location,
+        appData,
+        components,
+        themeConfig,
+        location,
       }}
     >
       <div
@@ -97,7 +98,16 @@ export default (props: any) => {
                   <article className="flex-1">{props.children}</article>
                   {/* 文章页脚 */}
                   <footer>
-                    <ArticleMeta />
+                    {git && (
+                      <ArticleMeta
+                        displayUpdatedTime={
+                          git.displayUpdatedTime === false ? false : true
+                        }
+                        displayContributors={
+                          git.displayContributors === false ? false : true
+                        }
+                      />
+                    )}
                   </footer>
                 </div>
               </div>

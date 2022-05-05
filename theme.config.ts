@@ -14,6 +14,10 @@ export default {
     macos: '⌘+k',
     windows: 'ctrl+k',
   },
+  git: {
+    displayUpdatedTime: true,
+    displayContributors: true,
+  },
   navs: [
     {
       path: '/docs',
