@@ -275,7 +275,7 @@ const location  = useLocation();
 // 路由配置 /comp/:id
 // 当前 location /comp/paramId
 
-const parmas  = useParams();
+const params  = useParams();
 // params
 {
   "id": "paramId"
@@ -284,7 +284,7 @@ const parmas  = useParams();
 
 ### query 信息
 
-[usesearchparams](https://reactrouter.com/docs/en/v6/api#usesearchparams)
+[useSearchParams](https://reactrouter.com/docs/en/v6/api#usesearchparams)
 
 ```jsx
 // 当前 location /comp?a=b;
