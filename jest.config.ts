@@ -7,4 +7,5 @@ export default {
     '<rootDir>/packages/.+/compiled',
     '<rootDir>/packages/.+/fixtures',
   ],
+  cacheDirectory: '.jest-cache',
 } as Config.InitialOptions;
