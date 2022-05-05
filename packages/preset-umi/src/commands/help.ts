@@ -9,6 +9,9 @@ export default (api: IApi) => {
 umi help build
 umi help dev
 `,
+    runtimeConfig: {
+      configResolveMode: 'loose',
+    },
     fn() {
       const subCommand = api.args._[0];
       if (subCommand) {

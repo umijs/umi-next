@@ -25,6 +25,9 @@ $ umi config set history "{type:'hash'}"
 $ umi config remove history
 $ umi config r history
     `.trim(),
+    runtimeConfig: {
+      configResolveMode: 'loose',
+    },
     async fn({ args }) {
       const { _, all = false } = args;
       const [command, name, value] = _;
