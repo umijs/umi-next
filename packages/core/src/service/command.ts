@@ -1,10 +1,6 @@
 import { yParser } from '@umijs/utils';
 import { Plugin } from './plugin';
 
-type CommandRuntimeConfig = {
-  configResolveMode: 'strict' | 'loose';
-};
-
 export interface IOpts {
   name: string;
   description?: string;
@@ -14,7 +10,7 @@ export interface IOpts {
     ({ args }: { args: yParser.Arguments }): void;
   };
   plugin: Plugin;
-  runtimeConfig?: CommandRuntimeConfig;
+  configResolveMode?: 'strict' | 'loose';
 }
 
 export class Command {
@@ -22,9 +18,8 @@ export class Command {
   description?: string;
   options?: string;
   details?: string;
-  runtimeConfig: CommandRuntimeConfig = {
-    configResolveMode: 'strict',
-  };
+  configResolveMode: NonNullable<IOpts['configResolveMode']>;
+
   fn: {
     ({ args }: { args: yParser.Arguments }): void;
   };
@@ -37,9 +32,6 @@ export class Command {
     this.details = opts.details;
     this.fn = opts.fn;
     this.plugin = opts.plugin;
-    this.runtimeConfig = {
-      ...this.runtimeConfig,
-      ...opts.runtimeConfig,
-    };
+    this.configResolveMode = opts.configResolveMode || 'strict';
   }
 }

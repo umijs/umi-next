@@ -85,7 +85,6 @@ export class Service {
     [key: string]: any;
   } = {};
   pkgPath: string = '';
-  configResolveMode: 'strict' | 'loose' = 'strict';
 
   constructor(opts: IOpts) {
     this.cwd = opts.cwd;
@@ -296,7 +295,6 @@ export class Service {
       userConfig: this.userConfig,
       prefix,
     });
-
     // register presets and plugins
     this.stage = ServiceStage.initPresets;
     const presetPlugins: Plugin[] = [];
@@ -307,16 +305,13 @@ export class Service {
         plugins: presetPlugins,
       });
     }
-
     plugins.unshift(...presetPlugins);
     this.stage = ServiceStage.initPlugins;
     while (plugins.length) {
       await this.initPlugin({ plugin: plugins.shift()!, plugins });
     }
-
     const command = this.commands[name];
     assert(command, `Invalid command ${name}, it's not registered.`);
-
     // collect configSchemas and configDefaults
     for (const id of Object.keys(this.plugins)) {
       const { config, key } = this.plugins[id];
@@ -326,12 +321,9 @@ export class Service {
       }
       this.configOnChanges[key] = config.onChange || ConfigChangeType.reload;
     }
-
     // setup api.config from modifyConfig and modifyDefaultConfig
     this.stage = ServiceStage.resolveConfig;
-    this.configResolveMode = command.runtimeConfig.configResolveMode;
     const { config, defaultConfig } = await this.resolveConfig();
-
     if (this.config.outputPath) {
       paths.absOutputPath = isAbsolute(this.config.outputPath)
         ? this.config.outputPath
@@ -341,7 +333,6 @@ export class Service {
       key: 'modifyPaths',
       initialValue: paths,
     });
-
     // applyPlugin collect app data
     // TODO: some data is mutable
     this.stage = ServiceStage.collectAppData;
@@ -374,19 +365,16 @@ export class Service {
         // env
       },
     });
-
     // applyPlugin onCheck
     this.stage = ServiceStage.onCheck;
     await this.applyPlugins({
       key: 'onCheck',
     });
-
     // applyPlugin onStart
     this.stage = ServiceStage.onStart;
     await this.applyPlugins({
       key: 'onStart',
     });
-
     // run command
     this.stage = ServiceStage.runCommand;
     let ret = await command.fn({ args });
@@ -401,13 +389,14 @@ export class Service {
       `Can't generate final config before init stage`,
     );
 
+    const resolveMode = this.commands[this.name].configResolveMode;
     const config = await this.applyPlugins({
       key: 'modifyConfig',
       // why clone deep?
       // user may change the config in modifyConfig
       // e.g. memo.alias = xxx
       initialValue: lodash.cloneDeep(
-        this.configResolveMode === 'strict'
+        resolveMode === 'strict'
           ? this.configManager!.getConfig({
               schemas: this.configSchemas,
             }).config

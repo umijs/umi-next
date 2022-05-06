@@ -16,9 +16,7 @@ export default (api: PluginAPI & IServicePluginAPI) => {
 umi generate
 `,
     description: 'generate code snippets quickly',
-    runtimeConfig: {
-      configResolveMode: 'loose',
-    },
+    configResolveMode: 'loose',
     async fn({ args }) {
       const [type] = args._;
       const runGenerator = async (generator: IGeneratorOpts) => {
