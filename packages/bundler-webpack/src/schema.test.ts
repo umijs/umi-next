@@ -1,6 +1,6 @@
 import joi from '@hapi/joi';
 import { getSchemas } from './schema';
-import { IConfig } from './types';
+import { DropConsole, IConfig } from './types';
 
 const schemas = getSchemas();
 const config = {
@@ -48,7 +48,7 @@ const config = {
   targets: {},
   writeToDisk: true,
   dropDebugger: true,
-  dropConsole: true,
+  dropConsole: DropConsole.info,
 } as IConfig;
 
 test('normal', () => {

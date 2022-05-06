@@ -87,10 +87,16 @@ export interface IConfig {
   targets?: { [key: string]: any };
   writeToDisk?: boolean;
   dropDebugger?: boolean;
-  dropConsole?: boolean;
+  dropConsole?: DropConsole;
   [key: string]: any;
 }
 
+export enum DropConsole {
+  none = 0,
+  info = 1,
+  warn = 2,
+  error = 3,
+}
 export interface SwcOptions extends SwcConfig {
   sync?: boolean;
   parseMap?: boolean;
