@@ -20,12 +20,10 @@ export class Command {
   options?: string;
   details?: string;
   configResolveMode: ResolveConfigMode;
-
   fn: {
     ({ args }: { args: yParser.Arguments }): void;
   };
   plugin: Plugin;
-
   constructor(opts: IOpts) {
     this.name = opts.name;
     this.description = opts.description;

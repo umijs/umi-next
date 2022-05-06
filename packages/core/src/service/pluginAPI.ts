@@ -24,7 +24,6 @@ export class PluginAPI {
   service: Service;
   plugin: Plugin;
   logger: Logger;
-
   constructor(opts: { service: Service; plugin: Plugin }) {
     this.service = opts.service;
     this.plugin = opts.plugin;
