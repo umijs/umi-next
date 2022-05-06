@@ -97,18 +97,7 @@ export default (props: any) => {
                   {/* 文章内容 */}
                   <article className="flex-1">{props.children}</article>
                   {/* 文章页脚 */}
-                  <footer>
-                    {git && (
-                      <ArticleMeta
-                        displayUpdatedTime={
-                          git.displayUpdatedTime === false ? false : true
-                        }
-                        displayContributors={
-                          git.displayContributors === false ? false : true
-                        }
-                      />
-                    )}
-                  </footer>
+                  <footer>{git && <ArticleMeta />}</footer>
                 </div>
               </div>
               {/* 右侧 Toc */}

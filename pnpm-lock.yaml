@@ -646,6 +646,7 @@ importers:
     specifiers:
       '@svgr/core': 6.2.1
       '@types/caniuse-lite': 1.0.1
+      '@types/hapi__joi': 17.1.8
       '@types/rollup-plugin-visualizer': 4.2.1
       '@types/svgo': 2.6.3
       '@umijs/bundler-utils': 4.0.0-rc.15
@@ -666,6 +667,7 @@ importers:
       postcss-preset-env: 7.4.3
     devDependencies:
       '@types/caniuse-lite': 1.0.1
+      '@types/hapi__joi': 17.1.8
       '@types/rollup-plugin-visualizer': 4.2.1
       '@types/svgo': 2.6.3
       '@vitejs/plugin-legacy': 1.7.1_vite@2.9.1

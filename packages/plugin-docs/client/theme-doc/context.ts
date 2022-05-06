@@ -19,6 +19,15 @@ export interface IContext {
     extraNavRight?: React.ComponentType;
     // 底部导航栏左侧自定义组件
     extraNavLeft?: React.ComponentType;
+    // 文章页脚处的 Git Meta 信息
+    git?: {
+      repo?: string;
+      branch?: string;
+      displayEditLink?: boolean;
+      displayUpdatedTime?: boolean;
+      displayCreatedTime?: boolean;
+      displayContributors?: boolean;
+    };
     navs: {
       path: string;
       title: string;

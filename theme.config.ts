@@ -15,8 +15,12 @@ export default {
     windows: 'ctrl+k',
   },
   git: {
+    repo: 'https://github.com/umijs/umi-next',
+    branch: 'master',
+    displayEditLink: true,
     displayUpdatedTime: true,
-    displayContributors: true,
+    displayCreatedTime: false,
+    displayContributors: false,
   },
   navs: [
     {
