@@ -1,4 +1,7 @@
-import { AsyncSeriesWaterfallHook, SyncWaterfallHook } from '@umijs/bundler-utils/compiled/tapable';
+import {
+  AsyncSeriesWaterfallHook,
+  SyncWaterfallHook,
+} from '@umijs/bundler-utils/compiled/tapable';
 import { chalk, lodash, yParser } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
@@ -44,6 +47,7 @@ export class Service {
         external?: boolean;
       }
     >;
+    faviconFiles?: string[];
     [key: string]: any;
   } = {};
   args: yParser.Arguments = { _: [], $0: '' };

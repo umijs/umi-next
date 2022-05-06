@@ -13,8 +13,14 @@ const FAVICON_FILES = [
   'favicon.webp',
 ];
 
-function getFaviconFile(p: string): string | undefined {
-  return FAVICON_FILES.find((f) => existsSync(join(p, f)));
+function getFaviconFiles(p: string): string[] | undefined {
+  const iconlist: string[] = [];
+  FAVICON_FILES.forEach((f) => {
+    if (existsSync(join(p, f))) {
+      iconlist.push(f);
+    }
+  });
+  return iconlist;
 }
 
 export default (api: IApi) => {
@@ -26,20 +32,26 @@ export default (api: IApi) => {
 
   api.modifyAppData(async (memo) => {
     if (api.config.favicon) return memo;
-    const faviconFile = getFaviconFile(api.paths.absSrcPath);
-    if (faviconFile) {
-      memo.faviconFile = faviconFile;
+    const faviconFiles = getFaviconFiles(api.paths.absSrcPath);
+    if (faviconFiles) {
+      memo.faviconFiles = faviconFiles;
     }
     return memo;
   });
 
   api.addBeforeMiddlewares(() => [
     (req, res, next) => {
-      if (
-        api.appData.faviconFile &&
-        req.path === `/${api.appData.faviconFile}`
-      ) {
-        res.sendFile(join(api.paths.absSrcPath, api.appData.faviconFile));
+      if (api.appData.faviconFiles) {
+        var send = false;
+        for (const item of api.appData.faviconFiles) {
+          if (req.path === `/${item}`) {
+            send = true;
+            res.sendFile(join(api.paths.absSrcPath, item));
+          }
+        }
+        if (!send) {
+          next();
+        }
       } else {
         next();
       }
@@ -48,17 +60,22 @@ export default (api: IApi) => {
 
   api.onBuildComplete(({ err }) => {
     if (err) return;
-    if (api.appData.faviconFile) {
-      copyFileSync(
-        join(api.paths.absSrcPath, api.appData.faviconFile),
-        join(api.paths.absOutputPath, api.appData.faviconFile),
-      );
+    if (api.appData.faviconFiles) {
+      api.appData.faviconFiles.forEach((e) => {
+        copyFileSync(
+          join(api.paths.absSrcPath, e),
+          join(api.paths.absOutputPath, e),
+        );
+      });
     }
   });
 
   api.modifyHTMLFavicon((memo) => {
-    return api.appData.faviconFile
-      ? `${api.config.publicPath}${api.appData.faviconFile}`
-      : memo;
+    if (!memo.length && api.appData.faviconFiles) {
+      api.appData.faviconFiles.forEach((e) => {
+        memo.push(`${api.config.publicPath}${e}`);
+      });
+    }
+    return memo;
   });
 };
