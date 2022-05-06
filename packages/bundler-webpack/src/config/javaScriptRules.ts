@@ -54,6 +54,10 @@ export async function addJavaScriptRules(opts: IOpts) {
         }
       })
       .end(),
+    config.module
+      .rule('fullySpecified')
+      .test(/\.(ts|js|tsx|jsx)$/)
+      .resolve.set('fullySpecified', false),
   ] as Config.Rule<Config.Module>[];
   if (userConfig.mdx) {
     srcRules.push(config.module.rule('markdown').test(/\.mdx?$/));
