@@ -42,6 +42,7 @@ const config = {
   proxy: {},
   publicPath: 'abc',
   purgeCSS: {},
+  pureFuncs: ['console.log'],
   sassLoader: {},
   srcTranspiler: 'esbuild',
   styleLoader: {},

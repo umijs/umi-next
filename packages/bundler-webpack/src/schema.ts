@@ -109,6 +109,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
     postcssLoader: (Joi) => Joi.object(),
     proxy: (Joi) => Joi.object(),
     publicPath: (Joi) => Joi.string(),
+    pureFuncs: (Joi) => Joi.array().items(Joi.string()),
     purgeCSS: (Joi) => Joi.object(),
     runtimePublicPath: (Joi) => Joi.object(),
     sassLoader: (Joi) => Joi.object(),

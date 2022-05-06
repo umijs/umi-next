@@ -81,6 +81,7 @@ export interface IConfig {
   proxy?: { [key: string]: ProxyOptions };
   publicPath?: string;
   purgeCSS?: { [key: string]: any };
+  pureFuncs?: string[];
   sassLoader?: { [key: string]: any };
   srcTranspiler?: Transpiler;
   styleLoader?: { [key: string]: any };

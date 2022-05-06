@@ -20,7 +20,7 @@ export async function addCompressPlugin(opts: IOpts) {
   const { config, userConfig, env } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
-  const { dropConsole = false, dropDebugger = true } = userConfig;
+  const { dropConsole = false, dropDebugger = true, pureFuncs } = userConfig;
 
   if (
     env === Env.development ||
@@ -38,22 +38,19 @@ export async function addCompressPlugin(opts: IOpts) {
   const compress: TerserOptions['compress'] = {
     drop_console: dropConsole,
     drop_debugger: dropDebugger,
+    pure_funcs: pureFuncs,
   };
 
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
-    const drop: EsbuildOpts['drop'] = [];
-    if (dropConsole) {
-      drop.push('console');
-    }
-    if (dropDebugger) {
-      drop.push('debugger');
-    }
     terserOptions = {
       target: getEsBuildTarget({
         targets: userConfig.targets || {},
       }),
-      drop: drop,
+      drop: [dropConsole && 'console', dropDebugger && 'debugger'].filter(
+        Boolean,
+      ),
+      pure: pureFuncs,
     } as EsbuildOpts;
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
