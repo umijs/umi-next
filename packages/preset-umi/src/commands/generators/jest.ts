@@ -47,7 +47,7 @@ export default (api: IApi) => {
       h.addDevDeps(packageToInstall);
       h.addScript('test', 'jest');
 
-      const importSource = api.appData.umi?.importSource || 'umi';
+      const importSource = api.appData.umi.importSource;
       writeFileSync(
         join(api.cwd, 'jest.config.ts'),
         `
