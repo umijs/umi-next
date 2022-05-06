@@ -1,6 +1,6 @@
 # 使用Vue
 
-本文介绍如何在 Umi.js 使用Vue, Umi Vue大部分配置, 同React 这里只列出一些 Vue 独有的配置
+本文介绍如何在 Umi 使用 Vue , Umi Vue 大部分配置, 同 React 这里只列出一些 Vue 独有的配置
 
 ## 启动方式
 
@@ -270,3 +270,9 @@ export function rootContainer(container) {
   return h(ThemeProvider, null, container);
 }
 ```
+
+## examples
+
+更多详见 demo
+
+* [vue-demo](https://github.com/umijs/umi-next/tree/master/examples/vue-demo)
