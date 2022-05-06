@@ -18,18 +18,8 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
-  api.modifyAppData(async (memo) => {
+  api.onGenerateFiles(async () => {
     const models = await getAllModels(api);
-    memo.pluginModel = {
-      models,
-    };
-    return memo;
-  });
-
-  api.onGenerateFiles(async (args) => {
-    const models = args.isFirstTime
-      ? api.appData.pluginModel.models
-      : await getAllModels(api);
 
     // model.ts
     api.writeTmpFile({
@@ -92,6 +82,7 @@ async function getAllModels(api: IApi) {
       return t.isArrowFunctionExpression(node) || t.isFunctionDeclaration(node);
     },
   }).getAllModels({
+    sort: {},
     extraModels: [...extraModels, ...(api.config.model.extraModels || [])],
   });
 }

@@ -13,7 +13,7 @@ export default (api: IApi) => {
       schema(joi) {
         return joi.object();
       },
-      // onChange: api.ConfigChangeType.regenerateTmpFiles,
+      onChange: api.ConfigChangeType.regenerateTmpFiles,
     },
     enableBy: api.EnableBy.config,
   });
@@ -124,7 +124,8 @@ const { formatMessage } = useIntl();
         }
         if (menuItemProps.path && location.pathname !== menuItemProps.path) {
           return (
-            <Link to={menuItemProps.path} target={menuItemProps.target}>
+            // handle wildcard route path, for example /slave/* from qiankun
+            <Link to={menuItemProps.path.replace('/*', '')} target={menuItemProps.target}>
               {defaultDom}
             </Link>
           );
