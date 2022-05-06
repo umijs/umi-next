@@ -47,10 +47,11 @@ export default (api: IApi) => {
       h.addDevDeps(packageToInstall);
       h.addScript('test', 'jest');
 
+      const importSource = api.appData.umi?.importSource || 'umi';
       writeFileSync(
         join(api.cwd, 'jest.config.ts'),
         `
-import { Config, configUmiAlias, createConfig } from 'umi/test';
+import { Config, configUmiAlias, createConfig } from '${importSource}/test';
 
 export default async () => {
   return (await configUmiAlias({
