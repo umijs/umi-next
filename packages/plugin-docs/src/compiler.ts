@@ -46,8 +46,10 @@ function MDXContent(props = {}) {
 
   useEffect(() => {
     if (window.location.hash.length !== 0) {
-      const hash = window.location.hash;
-      document.getElementById(hash.slice(1))?.scrollIntoView();
+      const hash = decodeURIComponent(window.location.hash);
+      setTimeout(() => {
+        document.getElementById(hash.slice(1))?.scrollIntoView();
+      }, 100);
     } else {
       window.scrollTo(0, 0);
     }
