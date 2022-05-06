@@ -1,5 +1,6 @@
 import { yParser } from '@umijs/utils';
 import { Plugin } from './plugin';
+import { ResolveConfigMode } from './pluginAPI';
 
 export interface IOpts {
   name: string;
@@ -10,7 +11,7 @@ export interface IOpts {
     ({ args }: { args: yParser.Arguments }): void;
   };
   plugin: Plugin;
-  configResolveMode?: 'strict' | 'loose';
+  configResolveMode?: ResolveConfigMode;
 }
 
 export class Command {
@@ -18,7 +19,7 @@ export class Command {
   description?: string;
   options?: string;
   details?: string;
-  configResolveMode: NonNullable<IOpts['configResolveMode']>;
+  configResolveMode: ResolveConfigMode;
 
   fn: {
     ({ args }: { args: yParser.Arguments }): void;
