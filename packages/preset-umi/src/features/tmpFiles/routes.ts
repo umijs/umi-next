@@ -152,7 +152,7 @@ export async function getRouteComponents(opts: {
         return `'${key}': () => Promise.resolve(${route.file}),`;
       }
 
-      let path =
+      const path =
         isAbsolute(route.file) || route.file.startsWith('@/')
           ? route.file
           : `${opts.prefix}${route.file}`;
