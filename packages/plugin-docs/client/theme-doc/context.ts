@@ -1,3 +1,4 @@
+import type { History } from '@umijs/renderer-react';
 import React from 'react';
 
 interface IContext {
@@ -37,6 +38,7 @@ interface IContext {
     hash: string;
     key: string;
   };
+  history: History;
 }
 
 export const ThemeContext = React.createContext<IContext | null>(null);
