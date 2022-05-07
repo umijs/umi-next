@@ -15,8 +15,6 @@ export default (api: IApi) => {
     description: 'Configuration, Dependencies, and Model Files for Dva',
     type: GeneratorType.enable,
     checkEnable: () => {
-      console.log('------>', api.appData.mainConfigFile);
-
       return !api.config.dva;
     },
     disabledDescription: () =>
