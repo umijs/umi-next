@@ -46,6 +46,7 @@ function MDXContent(props = {}) {
 
   useEffect(() => {
     if (window.location.hash.length !== 0) {
+      // 为了右侧内容区能正常跳转
       const hash = decodeURIComponent(window.location.hash);
       setTimeout(() => {
         document.getElementById(hash.slice(1))?.scrollIntoView();
