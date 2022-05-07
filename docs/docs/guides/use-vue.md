@@ -1,3 +1,5 @@
+import { Message } from 'umi';
+
 # 使用Vue
 
 本文介绍如何在 Umi 使用 Vue , Umi Vue 大部分配置, 同 React 这里只列出一些 Vue 独有的配置
@@ -24,65 +26,9 @@ export default {
 
 ### 配置式路由
 
-在配置文件中 通过 `routes` 进行配置, 格式为路由信息的数组。
-比如: 
-
-```ts
-export default {
-  routes: [
-    {
-      path: '/',
-      component: 'index'
-    },
-    {
-      path: '/users',
-      component: 'users',
-      routes: [
-        {
-          path: 'foo',
-          component: 'users/foo'
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### path
-
-路由匹配用法[详见](https://router.vuejs.org/guide/essentials/route-matching-syntax.html)
-
-#### component 
-
-配置 location 和 path 匹配后用于渲染的 Vue 组件路径。可以是绝对路径，也可以是相对路径，如果是相对路径，会从 src/pages 开始找起。
-
-如果指向 src 目录的文件，可以用 @，也可以用 ../。比如 component: '@/layouts/basic'，或者 component: '../layouts/basic'，推荐用前者。
-
-#### routes
-配置子路由，通常在需要为多个路径增加 layout 组件时使用。
-
-比如
-
-```ts
-export default {
-  routes: [
-    {
-      path: '/users',
-      component: 'users',
-      routes: [
-        {
-          path: 'foo',
-          component: 'users/foo'
-        }
-      ]
-    }
-  ]
-}
-```
-
-然后在 `src/pages/users.vue` 中通过 `<router-view></router-view>` 渲染子路由
-
-这样，访问 `/users/foo` 就会带上 `src/pages/users.vue` 这个 layout 组件。
+<Message>
+这里仅列出和 React 路由配置差异部分
+</Message>
 
 #### name
 
@@ -187,12 +133,6 @@ export default {
   ]
 }
 ```
-
-### 约定式路由
-
-除配置式路由外，Umi 也支持约定式路由。约定式路由也叫文件路由，就是不需要手写配置，文件系统即路由，通过目录和文件及其命名分析出路由配置。
-
-如果没有 routes 配置，Umi 会进入约定式路由模式，然后分析 src/pages 目录拿到路由配置。
 
 ### 页面跳转
 
