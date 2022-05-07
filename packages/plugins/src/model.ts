@@ -2,8 +2,8 @@ import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from 'umi';
-import { winPath } from 'umi/plugin-utils';
 import { ModelUtils } from './utils/modelUtils';
+import { replaceDepToAbsPath } from './utils/tplUtils';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
@@ -31,10 +31,14 @@ export default (api: IApi) => {
     const indexContent = readFileSync(
       join(__dirname, '../libs/model.tsx'),
       'utf-8',
-    ).replace('fast-deep-equal', winPath(require.resolve('fast-deep-equal')));
+    );
     api.writeTmpFile({
       path: 'index.tsx',
-      content: indexContent,
+      content: replaceDepToAbsPath(
+        indexContent,
+        ['fast-deep-equal'],
+        api.config.externals,
+      ),
     });
 
     // runtime.tsx

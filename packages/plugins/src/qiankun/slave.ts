@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { readFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import { IApi } from 'umi';
-import { winPath } from 'umi/plugin-utils';
+import { replaceDepToAbsPath } from '../utils/tplUtils';
 import { withTmpPath } from '../utils/withTmpPath';
 import { qiankunStateFromMasterModelNamespace } from './constants';
 
@@ -168,21 +168,16 @@ if (!window.__POWERED_BY_QIANKUN__) {
       ].forEach((file) => {
         api.writeTmpFile({
           path: file.replace(/\.tpl$/, ''),
-          content: getFileContent(file)
-            .replace(
+          content: replaceDepToAbsPath(
+            getFileContent(file).replace(
               '__USE_MODEL__',
               api.isPluginEnable('model')
                 ? `import { useModel } from '@@/plugin-model'`
                 : `const useModel = null;`,
-            )
-            .replace(
-              /from 'qiankun'/g,
-              `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
-            )
-            .replace(
-              /from 'lodash\//g,
-              `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
             ),
+            ['qiankun', 'lodash'],
+            api.config.externals,
+          ),
         });
       });
 
