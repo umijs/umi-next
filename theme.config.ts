@@ -14,6 +14,14 @@ export default {
     macos: '⌘+k',
     windows: 'ctrl+k',
   },
+  git: {
+    repo: 'https://github.com/umijs/umi-next',
+    branch: 'master',
+    displayEditLink: true,
+    displayUpdatedTime: true,
+    displayCreatedTime: false,
+    displayContributors: false,
+  },
   navs: [
     {
       path: '/docs',

@@ -124,10 +124,10 @@ $ pnpm dev:css
 
 现在，当您修改了 `tailwind.css` 文件或在开发时修改了 TailwindCSS 样式类时，会自动编译并生成 `tailwind.out.css` 样式表文件。
 
-Umi 会监听 `docs` 和 `packages/plugin-docs/client` 目录下文件的变化，而不会监听 `packages/plugin-docs/src` 目录。
+执行 `pnpm doc:dev` 命令以后，Umi 会监听 `docs` 和 `packages/plugin-docs/client` 目录下文件的变化，但不会监听 `packages/plugin-docs/src` 目录下文件的修改。
 
 <Message>
-如果您需要编译 `packages/plugin-docs/src` 中的文件，请移动到 `packages/plugin-docs` 目录下执行 `pnpm build` 命令，然后重启开发。
+如果您修改了 `packages/plugin-docs/src` 中的文件，请在 `packages/plugin-docs` 目录下执行 `pnpm build` 命令进行编译，然后重启 Umi 文档的开发。
 </Message>
 
 在根目录执行如下命令可以格式化 Umi 文档插件的代码：
