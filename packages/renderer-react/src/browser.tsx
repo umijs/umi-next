@@ -69,25 +69,6 @@ export function renderClient(opts: {
     routeComponents: opts.routeComponents,
     loadingComponent: opts.loadingComponent,
   });
-  const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
-  useEffect(() => {
-    return opts.history.listen((e) => {
-      const matches =
-        matchRoutes(clientRoutes, e.location.pathname)?.map(
-          // @ts-ignore
-          (route) => route.route.id,
-        ) || [];
-      matches.map((match) => {
-        const clientLoader = opts.routes[match].clientLoader;
-        if (clientLoader)
-          clientLoader().then((data: any) => {
-            startTransition(() => {
-              setClientLoaderData((d: any) => ({ ...d, [match]: data }));
-            });
-          });
-      });
-    });
-  }, []);
   opts.pluginManager.applyPlugins({
     key: 'patchClientRoutes',
     type: 'event',
@@ -122,24 +103,50 @@ export function renderClient(opts: {
       args: {},
     });
   }
-  const browser = (
-    <AppContext.Provider
-      value={{
-        routes: opts.routes,
-        routeComponents: opts.routeComponents,
-        clientRoutes,
-        pluginManager: opts.pluginManager,
-        rootElement: opts.rootElement,
-        basename,
-        clientLoaderData,
-      }}
-    >
-      {rootContainer}
-    </AppContext.Provider>
-  );
+  const Browser = () => {
+    const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
+    useEffect(() => {
+      function executeLoader(p: string) {
+        const matches =
+          matchRoutes(clientRoutes, p)?.map(
+            // @ts-ignore
+            (route) => route.route.id,
+          ) || [];
+        matches.map((match) => {
+          const clientLoader = opts.routes[match].clientLoader;
+          if (clientLoader)
+            clientLoader().then((data: any) => {
+              startTransition(() => {
+                setClientLoaderData((d: any) => ({ ...d, [match]: data }));
+              });
+            });
+        });
+      }
+
+      executeLoader(window.location.pathname);
+      return opts.history.listen((e) => {
+        executeLoader(e.location.pathname);
+      });
+    }, []);
+    return (
+      <AppContext.Provider
+        value={{
+          routes: opts.routes,
+          routeComponents: opts.routeComponents,
+          clientRoutes,
+          pluginManager: opts.pluginManager,
+          rootElement: opts.rootElement,
+          basename,
+          clientLoaderData,
+        }}
+      >
+        {rootContainer}
+      </AppContext.Provider>
+    );
+  };
 
   if (ReactDOM.createRoot) {
-    ReactDOM.createRoot(rootElement).render(browser);
+    ReactDOM.createRoot(rootElement).render(<Browser />);
   } else {
     // @ts-ignore
     ReactDOM.render(browser, rootElement);

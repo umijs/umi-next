@@ -2,7 +2,7 @@ import { parseModule } from '@umijs/bundler-utils';
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, isAbsolute, join } from 'path';
+import { basename, dirname, isAbsolute, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi, IRoute } from '../../types';
 import { importsToStr } from './importsToStr';
@@ -128,7 +128,7 @@ export default function EmptyRoute() {
           });
           clonedRoutes[id].hasLoader = exports.includes('loader');
           if (exports.includes('clientLoader'))
-            clonedRoutes[id].loader = `clientLoaders.${
+            clonedRoutes[id].clientLoader = `clientLoaders.${
               id.replace('/', '_') + '_client_loader'
             }`;
         }
@@ -143,7 +143,7 @@ export default function EmptyRoute() {
           /"(clientLoaders\..*?)"/g,
           '$1',
         ),
-        routeComponents: await getRouteComponents({ routes, prefix }),
+        routeComponents: await getRouteComponents({ routes, prefix, api }),
       },
     });
 
@@ -211,6 +211,65 @@ export default function EmptyRoute() {
       context: {
         rendererPath,
       },
+    });
+  });
+
+  // Pack the route component **without loaders** into tmpDir/pages
+  // These generated route components will be imported by core/route.tsx
+  api.onBeforeCompiler(async () => {
+    const routes = await getRoutes({ api });
+    const entryPoints: { [key: string]: string } = {};
+    Object.keys(routes).map((key) => {
+      if (isAbsolute(routes[key].file)) {
+        entryPoints[routes[key].id.replace(/\//g, '_')] = join(
+          routes[key].file + '?browser',
+        );
+        return;
+      }
+      if (
+        ['.tsx', '.jsx', '.ts', '.js'].some((ext) =>
+          routes[key].file.endsWith(ext),
+        )
+      ) {
+        entryPoints[routes[key].id.replace(/\//g, '_')] =
+          join(api.paths.absPagesPath, routes[key].file) + '?browser';
+        return;
+      }
+      ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
+        const filePath = join(api.paths.absPagesPath, routes[key].file + ext);
+        if (existsSync(filePath)) {
+          entryPoints[routes[key].id.replace(/\//g, '_')] =
+            filePath + '?browser';
+          return;
+        }
+      });
+    });
+    await esbuild.build({
+      entryPoints,
+      format: 'esm',
+      splitting: true,
+      bundle: true,
+      watch: api.env === 'development',
+      jsx: 'preserve',
+      outdir: join(api.paths.absTmpPath, 'pages'),
+      entryNames: '[name]',
+      loader: loaders,
+      chunkNames: '_shared/[name]-[hash]',
+      plugins: [
+        IgnorePathPrefixPlugin(),
+        BrowserRouteModulePlugin(),
+        {
+          name: 'assets',
+          setup(build) {
+            build.onResolve({ filter: /.*/ }, (args) => {
+              let path = args.path;
+              if (args.path.startsWith('./') || args.path.startsWith('../'))
+                path = resolve(args.resolveDir, args.path);
+              return { path, external: !args.importer.endsWith('?browser') };
+            });
+          },
+        },
+      ],
     });
   });
 
@@ -421,3 +480,83 @@ export async function getRouteClientLoaders(api: IApi) {
     };
   });
 }
+
+/**
+ * 在 pre-compile 阶段，我们会使用 esbuild 来将页面代码 (例如 pages/index.tsx) 中，默认
+ * 导出 (export default) 的页面组件及其依赖提取出来，而和页面组件无关的 (export loader,
+ * export clientLoader) 等导出 (及其依赖) 则不需要。
+ *
+ * 这个 BrowserRouteModulesPlugin 能够让 esbuild 在 build 的时候，对于那些后面带有 ?browser 后缀
+ * 的 entryPoints 进行路由组件的提取。
+ * */
+function BrowserRouteModulePlugin(): esbuild.Plugin {
+  return {
+    name: 'browser-route-modules',
+    async setup(build) {
+      build.onResolve({ filter: /\?browser$/ }, (args) => {
+        return {
+          path: args.path,
+          namespace: 'browser-route-module',
+        };
+      });
+
+      build.onLoad(
+        { filter: /\?browser$/, namespace: 'browser-route-module' },
+        async (args) => {
+          let file = args.path.replace(/\?browser$/, '');
+          let contents = `export { default } from ${JSON.stringify(file)};`;
+          return {
+            contents,
+            resolveDir: dirname(file),
+            loader: 'js',
+          };
+        },
+      );
+    },
+  };
+}
+
+// 临时文件中，绝对路径会带有 @fs 前缀，透过这个 esbuild 插件来忽略这个前缀
+function IgnorePathPrefixPlugin(): esbuild.Plugin {
+  return {
+    name: 'ignore-path-prefix',
+    setup(build: any) {
+      build.onResolve({ filter: /^@fs/ }, (args: any) => ({
+        path: args.path.replace(/^@fs/, ''),
+      }));
+    },
+  };
+}
+
+const loaders: { [ext: string]: esbuild.Loader } = {
+  '.aac': 'file',
+  '.css': 'text',
+  '.less': 'text',
+  '.sass': 'text',
+  '.scss': 'text',
+  '.eot': 'file',
+  '.flac': 'file',
+  '.gif': 'file',
+  '.ico': 'file',
+  '.jpeg': 'file',
+  '.jpg': 'file',
+  '.js': 'jsx',
+  '.jsx': 'jsx',
+  '.json': 'json',
+  '.md': 'jsx',
+  '.mdx': 'jsx',
+  '.mp3': 'file',
+  '.mp4': 'file',
+  '.ogg': 'file',
+  '.otf': 'file',
+  '.png': 'file',
+  '.svg': 'file',
+  '.ts': 'ts',
+  '.tsx': 'tsx',
+  '.ttf': 'file',
+  '.wav': 'file',
+  '.webm': 'file',
+  '.webp': 'file',
+  '.woff': 'file',
+  '.woff2': 'file',
+};

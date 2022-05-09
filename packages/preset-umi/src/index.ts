@@ -9,6 +9,7 @@ export default () => {
       // features
       require.resolve('./features/appData/appData'),
       require.resolve('./features/check/check'),
+      require.resolve('./features/clientLoader/clientLoader'),
       require.resolve('./features/configPlugins/configPlugins'),
       require.resolve('./features/crossorigin/crossorigin'),
       require.resolve('./features/depsOnDemand/depsOnDemand'),

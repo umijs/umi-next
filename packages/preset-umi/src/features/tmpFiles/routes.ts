@@ -146,12 +146,20 @@ export async function getRoutes(opts: { api: IApi }) {
 export async function getRouteComponents(opts: {
   routes: Record<string, any>;
   prefix: string;
+  api: IApi;
 }) {
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
         return `'${key}': () => import('./EmptyRoute'),`;
+      }
+      if (route.hasClientLoader) {
+        route.file = join(
+          opts.api.paths.absTmpPath,
+          'pages',
+          route.id.replace(/\//g, '_') + '.js',
+        );
       }
       // e.g.
       // component: () => <h1>foo</h1>
