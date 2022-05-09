@@ -1,5 +1,5 @@
-import type { History } from '@umijs/renderer-react';
 import React from 'react';
+import type { History } from 'umi';
 
 interface IContext {
   appData: any;
