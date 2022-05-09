@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-ignore  this is exported at runtime, ig
 import type { History } from 'umi';
 
 interface IContext {
