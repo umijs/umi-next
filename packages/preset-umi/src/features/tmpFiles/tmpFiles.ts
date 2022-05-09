@@ -1,9 +1,10 @@
 import { parseModule } from '@umijs/bundler-utils';
+import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { lodash, winPath } from '@umijs/utils';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, isAbsolute, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi } from '../../types';
+import { IApi, IRoute } from '../../types';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -115,6 +116,22 @@ export default function EmptyRoute() {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];
         }
+        if (
+          ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
+            clonedRoutes[id].file.endsWith(ext),
+          )
+        ) {
+          const exports = await getExports({
+            path: isAbsolute(clonedRoutes[id].file)
+              ? clonedRoutes[id].file
+              : join(api.paths.absPagesPath, clonedRoutes[id].file),
+          });
+          clonedRoutes[id].hasLoader = exports.includes('loader');
+          if (exports.includes('clientLoader'))
+            clonedRoutes[id].loader = `clientLoaders.${
+              id.replace('/', '_') + '_client_loader'
+            }`;
+        }
       }
     }
     api.writeTmpFile({
@@ -122,8 +139,21 @@ export default function EmptyRoute() {
       path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
-        routes: JSON.stringify(clonedRoutes),
+        routes: JSON.stringify(clonedRoutes).replace(
+          /"(clientLoaders\..*?)"/g,
+          '$1',
+        ),
         routeComponents: await getRouteComponents({ routes, prefix }),
+      },
+    });
+
+    // loaders.ts
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: join('core/loaders.ts'),
+      tplPath: join(TEMPLATES_DIR, 'loaders.tpl'),
+      context: {
+        loaders: await getRouteClientLoaders(api),
       },
     });
 
@@ -322,3 +352,72 @@ export default function EmptyRoute() {
     stage: Infinity,
   });
 };
+
+/**
+ * Get exports of specific route module
+ *
+ * Example:
+ * ```
+ * // pages/index.tsx
+ * export default function () { / * ... * / }
+ * export function loader() { / * ... *  / }
+ * export function clientLoader() { / * ... * / }
+ * ```
+ *
+ * getRouteModuleExports(api, routes[index])
+ * -> [ 'default', 'loader', 'clientLoader' ];
+ * */
+export async function getRouteModuleExports(
+  api: IApi,
+  route: IRoute,
+): Promise<string[]> {
+  try {
+    let result = await esbuild.build({
+      entryPoints: [join(api.paths.absPagesPath, route.file)],
+      platform: 'neutral',
+      format: 'esm',
+      metafile: true,
+      write: false,
+      logLevel: 'silent',
+    });
+    let metafile = result.metafile!;
+    for (let key in metafile.outputs) {
+      let output = metafile.outputs[key];
+      if (output.entryPoint) return output.exports;
+    }
+    return [];
+  } catch (error) {
+    return [];
+  }
+}
+
+/**
+ * Get the client/server loaders of routes (if exists)
+ *
+ * example result is:
+ * ```
+ * [
+ *   { name: 'index_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/index.tsx' },
+ *   { name: 'users_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users.tsx' },
+ *   { name: 'users_user_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users/user.tsx' },
+ * ];
+ * ```
+ * */
+export async function getRouteClientLoaders(api: IApi) {
+  const routesWithClientLoader: string[] = [];
+  await Promise.all(
+    Object.keys(api.appData.routes).map(async (key) => {
+      const route = api.appData.routes[key];
+      const exports = await getRouteModuleExports(api, route);
+      if (exports.includes('clientLoader')) routesWithClientLoader.push(key);
+    }),
+  );
+  return routesWithClientLoader.map((key) => {
+    const route = api.appData.routes[key];
+    const name = key.replace(/\//g, '_') + '_client_loader';
+    return {
+      name,
+      path: join(api.paths.absPagesPath, route.file),
+    };
+  });
+}

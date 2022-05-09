@@ -1,11 +1,11 @@
 import { History } from 'history';
-import React from 'react';
+import React, { startTransition, useEffect, useState } from 'react';
 // compatible with < react@18 in @umijs/preset-umi/src/features/react
 import ReactDOM from 'react-dom/client';
-import { Router, useRoutes } from 'react-router-dom';
+import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { AppContext, useAppData } from './appContext';
 import { createClientRoutes } from './routes';
-import { IRouteComponents, IRoutesById } from './types';
+import { ILoaderData, IRouteComponents, IRoutesById } from './types';
 
 function BrowserRoutes(props: {
   routes: any;
@@ -69,6 +69,25 @@ export function renderClient(opts: {
     routeComponents: opts.routeComponents,
     loadingComponent: opts.loadingComponent,
   });
+  const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
+  useEffect(() => {
+    return opts.history.listen((e) => {
+      const matches =
+        matchRoutes(clientRoutes, e.location.pathname)?.map(
+          // @ts-ignore
+          (route) => route.route.id,
+        ) || [];
+      matches.map((match) => {
+        const clientLoader = opts.routes[match].clientLoader;
+        if (clientLoader)
+          clientLoader().then((data: any) => {
+            startTransition(() => {
+              setClientLoaderData((d: any) => ({ ...d, [match]: data }));
+            });
+          });
+      });
+    });
+  }, []);
   opts.pluginManager.applyPlugins({
     key: 'patchClientRoutes',
     type: 'event',
@@ -112,6 +131,7 @@ export function renderClient(opts: {
         pluginManager: opts.pluginManager,
         rootElement: opts.rootElement,
         basename,
+        clientLoaderData,
       }}
     >
       {rootContainer}
