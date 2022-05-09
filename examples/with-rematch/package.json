@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@rematch/core": "^2.2.0",
-    "react-redux": "^8.0.0",
-    "umi": "4.0.0-canary.20220506.4"
+    "react-redux": "^8.0.1",
+    "umi": "4.0.0-canary.20220507.2"
   }
 }
