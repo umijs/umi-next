@@ -243,15 +243,6 @@ export default function EmptyRoute() {
           })
         ).join(', ')} } from '${rendererPath}';`,
       );
-
-      checkMembers({
-        path: rendererPath,
-        exportMembers: ['History'],
-        members: exports,
-      });
-      exports.push('History');
-      exports.push(`export type { History } from '${rendererPath}';`);
-
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
       const umiDir = process.env.UMI_DIR!;

@@ -1,6 +1,4 @@
 import React from 'react';
-// @ts-ignore  this is exported at runtime, ig
-import type { History } from 'umi';
 
 interface IContext {
   appData: any;
@@ -39,7 +37,9 @@ interface IContext {
     hash: string;
     key: string;
   };
-  history: History;
+  history: {
+    push(to: string, state?: any): void;
+  };
 }
 
 export const ThemeContext = React.createContext<IContext | null>(null);
