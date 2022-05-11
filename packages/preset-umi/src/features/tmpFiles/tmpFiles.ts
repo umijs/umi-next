@@ -220,23 +220,19 @@ export default function EmptyRoute() {
     const routes = api.appData.routes;
     const entryPoints: { [key: string]: string } = {};
     Object.keys(routes).map((key) => {
-      if (isAbsolute(routes[key].file)) {
-        entryPoints[routes[key].id.replace(/\//g, '_')] = join(
-          routes[key].file + '?browser',
-        );
+      let file = routes[key].file;
+      // If route.file is relative path, convert it to absolute path
+      if (!isAbsolute(file)) {
+        file = join(api.paths.absPagesPath, routes[key].file);
+      }
+      // If route.file has extension, test if it's a [ts|tsx|js|jsx] file
+      if (['.tsx', '.jsx', '.ts', '.js'].some((ext) => file.endsWith(ext))) {
+        entryPoints[routes[key].id.replace(/\//g, '_')] = file + '?browser';
         return;
       }
-      if (
-        ['.tsx', '.jsx', '.ts', '.js'].some((ext) =>
-          routes[key].file.endsWith(ext),
-        )
-      ) {
-        entryPoints[routes[key].id.replace(/\//g, '_')] =
-          join(api.paths.absPagesPath, routes[key].file) + '?browser';
-        return;
-      }
+      // If route.file doesn't have extension, test which extension it has
       ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
-        const filePath = join(api.paths.absPagesPath, routes[key].file + ext);
+        const filePath = join(api.paths.absPagesPath, file + ext);
         if (existsSync(filePath)) {
           entryPoints[routes[key].id.replace(/\//g, '_')] =
             filePath + '?browser';
@@ -256,7 +252,6 @@ export default function EmptyRoute() {
       loader: loaders,
       chunkNames: '_shared/[name]-[hash]',
       plugins: [
-        IgnorePathPrefixPlugin(),
         BrowserRouteModulePlugin(),
         {
           name: 'assets',
@@ -512,18 +507,6 @@ function BrowserRouteModulePlugin(): esbuild.Plugin {
           };
         },
       );
-    },
-  };
-}
-
-// 临时文件中，绝对路径会带有 @fs 前缀，透过这个 esbuild 插件来忽略这个前缀
-function IgnorePathPrefixPlugin(): esbuild.Plugin {
-  return {
-    name: 'ignore-path-prefix',
-    setup(build: any) {
-      build.onResolve({ filter: /^@fs/ }, (args: any) => ({
-        path: args.path.replace(/^@fs/, ''),
-      }));
     },
   };
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useClientLoaderData } from 'umi';
+import bigTask from '../../services/bigTask';
 
 export default () => {
   const clientLoaderData = useClientLoaderData();
@@ -18,6 +19,6 @@ export default () => {
 };
 
 export async function clientLoader() {
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
+  await bigTask();
   return { message: 'data from client loader of users.tsx' };
 }

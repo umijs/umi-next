@@ -1,5 +1,5 @@
 import { History } from 'history';
-import React, { startTransition, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // compatible with < react@18 in @umijs/preset-umi/src/features/react
 import ReactDOM from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
@@ -116,9 +116,7 @@ export function renderClient(opts: {
           const clientLoader = opts.routes[match].clientLoader;
           if (clientLoader)
             clientLoader().then((data: any) => {
-              startTransition(() => {
-                setClientLoaderData((d: any) => ({ ...d, [match]: data }));
-              });
+              setClientLoaderData((d: any) => ({ ...d, [match]: data }));
             });
         });
       }

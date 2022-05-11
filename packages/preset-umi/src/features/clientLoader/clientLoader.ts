@@ -1,14 +1,13 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { resolve } from 'path';
 import type { IApi } from '../../types';
-import { esbuildIgnorePathPrefixPlugin, esbuildUmiPlugin } from './utils';
 
 export default (api: IApi) => {
   /* 把 core/loader.ts (在 tmpFile.ts 的 onGenerateFiles 产生的) 编译成 core/loader.js
   core/loader.js 会被 core/route.ts 引用，将每个 route 的 clientLoader 注入进去 */
   api.onBeforeCompiler(async () => {
     await esbuild.build({
-      format: 'cjs',
+      format: 'esm',
       platform: 'browser',
       target: 'esnext',
       loader: loaders,
@@ -24,15 +23,22 @@ export default (api: IApi) => {
       external: ['react'],
       entryPoints: [resolve(api.paths.absTmpPath, 'core/loaders.ts')],
       plugins: [
-        esbuildIgnorePathPrefixPlugin(),
-        esbuildUmiPlugin(api),
         {
-          name: 'assets',
+          name: 'imports',
           setup(build) {
-            build.onResolve({ filter: /.svg$/ }, (args) => {
+            let entry: string | undefined;
+            build.onResolve({ filter: /.*/ }, (args) => {
+              if (args.kind === 'entry-point') entry = args.path;
+              if (args.kind === 'entry-point' || args.importer === entry) {
+                return { path: resolve(args.resolveDir, args.path) };
+              }
               return {
-                path: resolve(args.resolveDir, args.path),
+                path:
+                  !args.path.startsWith('.') && !args.path.startsWith('/')
+                    ? args.path
+                    : resolve(args.resolveDir, args.path),
                 external: true,
+                sideEffects: false,
               };
             });
           },
