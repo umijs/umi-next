@@ -190,6 +190,12 @@ importers:
       react-router-dom: 6.3.0_react-dom@18.1.0+react@18.1.0
       umi: link:../../packages/umi
 
+  examples/client-loader:
+    specifiers:
+      umi: 4.0.0-canary.20220507.2
+    dependencies:
+      umi: link:../../packages/umi
+
   examples/libs:
     specifiers:
       '@codesandbox/sandpack-react': 0.19.6
