@@ -217,7 +217,7 @@ export default function EmptyRoute() {
   // Pack the route component **without loaders** into tmpDir/pages
   // These generated route components will be imported by core/route.tsx
   api.onBeforeCompiler(async () => {
-    const routes = await getRoutes({ api });
+    const routes = api.appData.routes;
     const entryPoints: { [key: string]: string } = {};
     Object.keys(routes).map((key) => {
       if (isAbsolute(routes[key].file)) {
