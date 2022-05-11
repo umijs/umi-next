@@ -1,6 +1,8 @@
 import extraConfig from './extraConfig';
 
 export default {
+  base: '/foo',
+  // history: { type: 'hash' },
   routes: [
     { path: '/', component: 'index' },
     { path: '/users', component: 'users' },
@@ -12,6 +14,10 @@ export default {
     {
       path: '/about',
       component: 'about',
+    },
+    {
+      path: '/class-component',
+      component: 'class-component',
     },
     {
       path: '*',
