@@ -24,9 +24,7 @@ export async function getMarkupArgs(opts: { api: IApi }) {
   });
   const favicons = await opts.api.applyPlugins({
     key: 'modifyHTMLFavicon',
-    initialValue: opts.api.config.favicon
-      ? [].concat(opts.api.config.favicon)
-      : [],
+    initialValue: [].concat(opts.api.config.favicon || []),
   });
   return {
     mountElementId: opts.api.config.mountElementId,

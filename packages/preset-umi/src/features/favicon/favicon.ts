@@ -14,12 +14,9 @@ const FAVICON_FILES = [
 ];
 
 function getFaviconFiles(p: string): string[] | undefined {
-  const iconlist: string[] = [];
-  FAVICON_FILES.forEach((f) => {
-    if (existsSync(join(p, f))) {
-      iconlist.push(f);
-    }
-  });
+  const iconlist: string[] = FAVICON_FILES.filter((f) =>
+    existsSync(join(p, f)),
+  );
   return iconlist;
 }
 
@@ -41,19 +38,13 @@ export default (api: IApi) => {
 
   api.addBeforeMiddlewares(() => [
     (req, res, next) => {
-      if (api.appData.faviconFiles) {
-        var send = false;
-        for (const item of api.appData.faviconFiles) {
-          if (req.path === `/${item}`) {
-            send = true;
-            res.sendFile(join(api.paths.absSrcPath, item));
-          }
-        }
-        if (!send) {
-          next();
-        }
-      } else {
+      const iconFile = (api.appData.faviconFiles || []).find(
+        (file) => req.path === `/${file}`,
+      );
+      if (!iconFile) {
         next();
+      } else {
+        res.sendFile(join(api.paths.absSrcPath, iconFile));
       }
     },
   ]);
@@ -71,6 +62,7 @@ export default (api: IApi) => {
   });
 
   api.modifyHTMLFavicon((memo) => {
+    // respect favicon config from user, and fallback to auto-detecting files
     if (!memo.length && api.appData.faviconFiles) {
       api.appData.faviconFiles.forEach((e) => {
         memo.push(`${api.config.publicPath}${e}`);

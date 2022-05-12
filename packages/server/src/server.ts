@@ -85,7 +85,7 @@ export async function getMarkup(
   }
 
   const favicons: string[] = [];
-  if (opts.favicons instanceof Array) {
+  if (Array.isArray(opts.favicons)) {
     opts.favicons.forEach((e) => {
       favicons.push(`<link rel="shortcut icon" href="${e}">`);
     });
