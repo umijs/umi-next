@@ -54,10 +54,6 @@ export async function addJavaScriptRules(opts: IOpts) {
         }
       })
       .end(),
-    config.module
-      .rule('fullySpecified')
-      .test(/\.(ts|js|tsx|jsx)$/)
-      .resolve.set('fullySpecified', false),
   ] as Config.Rule<Config.Module>[];
   if (userConfig.mdx) {
     srcRules.push(config.module.rule('markdown').test(/\.mdx?$/));
@@ -78,6 +74,18 @@ export async function addJavaScriptRules(opts: IOpts) {
       })
       .end(),
   ];
+  srcRules.forEach((element) => {
+    element
+      .rule('fullySpecified')
+      .test(/\.(ts|js|tsx|jsx)$/)
+      .resolve.set('fullySpecified', false);
+  });
+  depRules.forEach((element) => {
+    element
+      .rule('fullySpecified')
+      .test(/\.(ts|js|tsx|jsx)$/)
+      .resolve.set('fullySpecified', false);
+  });
 
   // const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   const srcTranspiler = userConfig.srcTranspiler || Transpiler.babel;
