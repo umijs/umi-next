@@ -147,10 +147,9 @@ export default function EmptyRoute() {
     const validKeys = await api.applyPlugins({
       key: 'addRuntimePluginKey',
       initialValue: [
-        // TODO: support these methods
-        // 'modifyClientRenderOpts',
         'patchRoutes',
         'patchClientRoutes',
+        'modifyContextOpts',
         'rootContainer',
         'innerProvider',
         'i18nProvider',
@@ -244,7 +243,6 @@ export default function EmptyRoute() {
           })
         ).join(', ')} } from '${rendererPath}';`,
       );
-
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
       const umiDir = process.env.UMI_DIR!;
@@ -264,6 +262,15 @@ export default function EmptyRoute() {
         exportMembers,
         path: '@@/core/history.ts',
       });
+      // @@/core/terminal.ts
+      if (api.service.config.terminal !== false) {
+        exports.push(`export { terminal } from './core/terminal';`);
+        checkMembers({
+          members: ['terminal'],
+          exportMembers,
+          path: '@@/core/terminal.ts',
+        });
+      }
       // plugins
       exports.push('// plugins');
       const plugins = readdirSync(api.paths.absTmpPath).filter((file) => {

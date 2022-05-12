@@ -9,9 +9,13 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "@umijs/preset-vue": "4.0.0-canary.20220424.1",
-    "umi": "4.0.0-canary.20220424.1",
-    "vant": "3.4.8",
-    "vue": "3.2.31"
+    "@umijs/preset-vue": "4.0.0-canary.20220512.1",
+    "umi": "4.0.0-canary.20220512.1",
+    "vant": "3.4.9",
+    "vue": "3.2.33"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.13.3",
+    "vite-plugin-style-import": "2.0.0"
   }
 }

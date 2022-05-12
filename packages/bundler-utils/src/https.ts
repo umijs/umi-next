@@ -1,18 +1,19 @@
 import { chalk, execa, logger } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { RequestListener } from 'http';
-import https from 'https';
 import { join } from 'path';
-import { HttpsParams } from '../types';
+import spdy from 'spdy';
+import { HttpsServerOptions } from './types';
 
-const defaultHttpsHosts: HttpsParams['hosts'] = ['localhost', '127.0.0.1'];
+const defaultHttpsHosts: HttpsServerOptions['hosts'] = [
+  'localhost',
+  '127.0.0.1',
+];
 
-export async function createHttpsServer(
-  app: RequestListener,
-  httpsConfig: HttpsParams,
-) {
-  logger.wait('[HTTPS] Starting service in https mode...');
+export type { Server as SpdyServer } from 'spdy';
 
+// vite mode requires a key cert
+export async function resolveHttpsConfig(httpsConfig: HttpsServerOptions) {
   // Check if mkcert is installed
   try {
     await execa.execa('mkcert', ['--version']);
@@ -61,12 +62,28 @@ export async function createHttpsServer(
     ]);
   }
 
+  return {
+    key,
+    cert,
+  };
+}
+
+export async function createHttpsServer(
+  app: RequestListener,
+  httpsConfig: HttpsServerOptions,
+) {
+  logger.wait('[HTTPS] Starting service in https mode...');
+
+  const { key, cert } = await resolveHttpsConfig(httpsConfig);
+
   // Create server
-  return https.createServer(
+  const http2Service = spdy.createServer(
     {
       key: readFileSync(key, 'utf-8'),
       cert: readFileSync(cert, 'utf-8'),
     },
     app,
   );
+
+  return http2Service;
 }

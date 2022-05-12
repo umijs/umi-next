@@ -1,6 +1,6 @@
 {
   "name": "@umijs/bundler-esbuild",
-  "version": "4.0.0-canary.20220424.1",
+  "version": "4.0.0-canary.20220512.1",
   "description": "@umijs/bundler-esbuild",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/bundler-esbuild#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -24,13 +24,13 @@
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
-    "@umijs/bundler-utils": "4.0.0-canary.20220424.1",
-    "@umijs/utils": "4.0.0-canary.20220424.1",
-    "enhanced-resolve": "5.9.2",
+    "@umijs/bundler-utils": "4.0.0-canary.20220512.1",
+    "@umijs/utils": "4.0.0-canary.20220512.1",
+    "enhanced-resolve": "5.9.3",
     "less-plugin-aliases": "^1.0.3",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.13",
     "postcss-flexbugs-fixes": "5.0.2",
-    "postcss-preset-env": "7.4.3"
+    "postcss-preset-env": "7.5.0"
   },
   "devDependencies": {
     "@alitajs/postcss-plugin-px2rem": "^0.0.1"

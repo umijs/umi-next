@@ -47,7 +47,7 @@ api.isPluginEnable( key：string)
 ```
 判断插件是否启用，传入的参数是插件的 key
 
-### register <span id = 'register'/>
+### register
 ```ts
 api.register({ key: string, fn, before?: string, stage?: number})
 ```
@@ -67,13 +67,13 @@ fn 的写法需要结合即将使用的 applyPlugins 的 type 参数来确定：
 
 e.g.1 add 型
 ```ts
-api.regiser({
+api.register({
   key: 'addFoo',
   // 同步
   fn: (args) => args
 });
 
-api.regiser({
+api.register({
   key: 'addFoo',
   // 异步
   fn: async (args) => args * 2
@@ -113,11 +113,20 @@ api.applyPlugins({
 
 ### registerCommand
 ```ts
-api.registerCommand({ name: string, description?: string, options?: string, details?: string, fn, alias?: string | string[] })
+api.registerCommand({
+  name: string,
+  description? : string,
+  options? : string,
+  details? : string,
+  fn,
+  alias? : string | string[]
+  resolveConfigMode? : 'strict' | 'loose'
+})
 ```
 注册命令。
 - `alias` 为别名，比如 generate 的别名 g
 - `fn` 的参数为 `{ args }`， args 的格式同 [yargs](https://github.com/yargs/yargs) 的解析结果，需要注意的是 `_` 里的 command 本身被去掉了，比如执行`umi generate page foo`，`args._` 为 `['page','foo']`
+- `resolveConfigMode` 参数控制执行命令时配置解析的方式，`strict` 模式下强校验 Umi 项目的配置文件内容，如果有非法内容中断命令执行；`loose` 模式下不执行配置文件的校验检查。
 
 ### registerMethod
 ```ts
@@ -297,7 +306,7 @@ api.addEntryImportsAhead(() => ({
 ### addExtraBabelPresets
 添加额外的 Babel 插件集。传入的 fn 不需要参数，且需要返回一个 Babel 插件集或其数组。
 
-### addHTMLHeadScripts  <span id = 'addHTMLHeadScripts'/>
+### addHTMLHeadScripts
 往 HTML 的 `<head>` 元素里添加 Script。传入的 fn 不需要参数，且需要返回一个 string（想要加入的代码） 或者 `{ async?: boolean, charset?: string, crossOrigin?: string | null, defer?: boolean, src?: string, type?: string, content?: string }` 或者它们的数组。
 ```ts
 api.addHTMLHeadScripts(() => `console.log('I am in HTML-head')`)

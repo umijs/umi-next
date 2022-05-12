@@ -57,7 +57,7 @@ export default (api: IApi) => {
         );
         route.file = `(async () => {
           const { getMicroAppRouteComponent } = await import('@@/plugin-qiankun-master/getMicroAppRouteComponent');
-          return getMicroAppRouteComponent({ appName: '${appName}', base: '${base}', masterHistoryType: '${masterHistoryType}', routeProps: ${normalizedRouteProps} })
+          return getMicroAppRouteComponent({ appName: '${appName}', base: '${base}', routePath: '${route.path}', masterHistoryType: '${masterHistoryType}', routeProps: ${normalizedRouteProps} })
         })()`;
       }
     });
@@ -128,18 +128,23 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
           },
         });
       } else {
+        let content = getFileContent(file);
+
+        if (!api.config.qiankun.externalQiankun) {
+          content = content.replace(
+            /from 'qiankun'/g,
+            `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
+          );
+        }
+
         api.writeTmpFile({
           path: file.replace(/\.tpl$/, ''),
-          content: getFileContent(file)
+          content: content
             .replace(
               '__USE_MODEL__',
               api.isPluginEnable('model')
                 ? `import { useModel } from '@@/plugin-model'`
                 : `const useModel = null;`,
-            )
-            .replace(
-              /from 'qiankun'/g,
-              `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
             )
             .replace(
               /from 'lodash\//g,

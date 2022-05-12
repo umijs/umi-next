@@ -23,6 +23,12 @@ export default {
 }
 ```
 
+Umi 4 默认根据路由来进行 JavaScript 模块按需加载。如果需要在路由组件加载的过程中配置自定义加载组件，在项目 `src` 目录下创建 `loading.tsx` 或者 `loading.jsx` 或者 `loading.js` 文件，默认导出的组件会在组件加载的时候渲染。
+
+<Message emoji="💡">
+你可以在 Chrome 的调试工具的网络 tab 中将网络设置成低速，然后切换路由查看动态加载中组件的展示。
+</Message>
+
 ### path
 
 * Type: `string`
@@ -275,7 +281,7 @@ const location  = useLocation();
 // 路由配置 /comp/:id
 // 当前 location /comp/paramId
 
-const parmas  = useParams();
+const params  = useParams();
 // params
 {
   "id": "paramId"
@@ -284,7 +290,7 @@ const parmas  = useParams();
 
 ### query 信息
 
-[usesearchparams](https://reactrouter.com/docs/en/v6/api#usesearchparams)
+[useSearchParams](https://reactrouter.com/docs/en/v6/api#usesearchparams)
 
 ```jsx
 // 当前 location /comp?a=b;
