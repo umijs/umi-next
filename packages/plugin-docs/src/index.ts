@@ -80,45 +80,48 @@ export default (api: IApi) => {
     return r;
   });
 
-  api.onGenerateFiles(() => {
-    // theme path
-    let theme =
-      api.config.docs?.theme || require.resolve('../client/theme-doc/index.ts');
-    if (theme === 'blog') {
-      theme = require.resolve('../client/theme-blog/index.ts');
-    }
-    theme = winPath(theme);
+  api.onGenerateFiles({
+    stage: -1,
+    fn() {
+      // theme path
+      let theme =
+        api.config.docs?.theme ||
+        require.resolve('../client/theme-doc/index.ts');
+      if (theme === 'blog') {
+        theme = require.resolve('../client/theme-blog/index.ts');
+      }
+      theme = winPath(theme);
 
-    const themeConfigPath = winPath(join(api.cwd, 'theme.config.ts'));
-    const themeExists = existsSync(themeConfigPath);
+      const themeConfigPath = winPath(join(api.cwd, 'theme.config.ts'));
+      const themeExists = existsSync(themeConfigPath);
 
-    // 将 docs/locales 目录下的 json 文件注入到 themeConfig.locales 中
-    let injectLocale = `themeConfig.locales = ${JSON.stringify(locales)};`;
+      // 将 docs/locales 目录下的 json 文件注入到 themeConfig.locales 中
+      let injectLocale = `themeConfig.locales = ${JSON.stringify(locales)};`;
 
-    // exports don't start with $ will be MDX Component
-    const [_, exports] = parseModuleSync({
-      content: readFileSync(theme, 'utf-8'),
-      path: theme,
-    });
-    api.writeTmpFile({
-      path: 'index.ts',
-      content: `
+      // exports don't start with $ will be MDX Component
+      const [_, exports] = parseModuleSync({
+        content: readFileSync(theme, 'utf-8'),
+        path: theme,
+      });
+      api.writeTmpFile({
+        path: 'index.ts',
+        content: `
 export { ${exports
-        .filter((item) => !item.startsWith('$'))
-        .join(', ')} } from '${winPath(
-        require.resolve('../client/theme-doc/index.ts'),
-      )}';
+          .filter((item) => !item.startsWith('$'))
+          .join(', ')} } from '${winPath(
+          require.resolve('../client/theme-doc/index.ts'),
+        )}';
     `,
-    });
+      });
 
-    api.writeTmpFile({
-      path: 'Layout.tsx',
-      content: `
+      api.writeTmpFile({
+        path: 'Layout.tsx',
+        content: `
 import React from 'react';
 import { useOutlet, useAppData, useLocation, Link, history } from 'umi';
 import { $Layout as Layout } from '${winPath(
-        require.resolve('../client/theme-doc/index.ts'),
-      )}';
+          require.resolve('../client/theme-doc/index.ts'),
+        )}';
 ${
   themeExists
     ? `import themeConfig from '${themeConfigPath}'`
@@ -137,8 +140,9 @@ export default () => {
     </Layout>
   );
 };
-    `,
-    });
+`,
+      });
+    },
   });
 };
 

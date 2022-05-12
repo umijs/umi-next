@@ -27,12 +27,23 @@ export default function HomePage() {
       <img src={bigImage} alt="" />
       <img src={umiLogo} alt="umi" />
       <Link to="/users/user">/users/user</Link>
+      <div style={{ backgroundColor: '#eee', padding: 12 }}>
+        <p>
+          点击这个按钮以后，需要加载 users, user2, info 三个路由组件需要的数据
+        </p>
+        <Link to="/users/user2/info">/users/user2/info</Link>
+      </div>
       <p>client loader data: {JSON.stringify(clientLoaderData)}</p>
     </div>
   );
 }
 
 export async function clientLoader() {
+  /** 模拟请求数据很慢的情况（需要用 pnpm start --dir example/client-loader 才能生效） */
+  const res = await fetch('/api/mock?file=index.tsx');
+  if (res.ok) return res.json();
+
+  /** 服务端模拟不可用，改为客户端主动延迟 */
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
   return { message: 'data from client loader of index.tsx' };
 }

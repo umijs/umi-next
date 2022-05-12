@@ -129,7 +129,7 @@ export default function EmptyRoute() {
           clonedRoutes[id].hasLoader = exports.includes('loader');
           if (exports.includes('clientLoader'))
             clonedRoutes[id].clientLoader = `clientLoaders.${
-              id.replace('/', '_') + '_client_loader'
+              id.replace(/\//g, '_') + '_client_loader'
             }`;
         }
       }

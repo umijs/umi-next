@@ -15,6 +15,11 @@ export default () => {
 };
 
 export async function clientLoader() {
+  /** 模拟请求数据很慢的情况（需要用 pnpm start --dir example/client-loader 才能生效） */
+  const res = await fetch('/api/mock?file=users/user.tsx');
+  if (res.ok) return res.json();
+
+  /** 服务端模拟不可用，改为客户端主动延迟 */
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
   return { message: 'data from client loader of users/user.tsx' };
 }
