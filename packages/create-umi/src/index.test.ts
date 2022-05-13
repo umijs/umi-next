@@ -12,7 +12,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  process.chdir(oldCwd);
+  expect(process.cwd()).toEqual(oldCwd);
 });
 
 test('generate app', async () => {

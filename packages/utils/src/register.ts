@@ -14,22 +14,31 @@ function transform(opts: { code: string; filename: string; implementor: any }) {
   const ext = extname(filename);
   return implementor.transformSync(code, {
     loader: ext.slice(1),
-    target: 'es2017',
+    // consistent with `tsconfig.base.json`
+    // https://github.com/umijs/umi-next/pull/729
+    target: 'es2019',
     format: 'cjs',
   }).code;
 }
 
-export function register(opts: { implementor: any; exts?: string[] }) {
+export function register(opts: {
+  implementor: any;
+  exts?: string[];
+  revertible?: boolean;
+}) {
   files = [];
+  const { implementor, exts, revertible = true } = opts;
   if (!registered) {
-    revert = addHook(
-      (code, filename) =>
-        transform({ code, filename, implementor: opts.implementor }),
+    const dispose = addHook(
+      (code, filename) => transform({ code, filename, implementor }),
       {
-        ext: opts.exts || HOOK_EXTS,
+        ext: exts || HOOK_EXTS,
         ignoreNodeModules: true,
       },
     );
+    if (revertible) {
+      revert = dispose;
+    }
     registered = true;
   }
 }
