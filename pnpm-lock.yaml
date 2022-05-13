@@ -671,7 +671,6 @@ importers:
 
   packages/bundler-vite:
     specifiers:
-      '@babel/core': 7.17.9
       '@svgr/core': 6.2.1
       '@types/caniuse-lite': 1.0.1
       '@types/rollup-plugin-visualizer': 4.2.1
@@ -692,7 +691,6 @@ importers:
       '@umijs/utils': link:../utils
       postcss-preset-env: 7.5.0
     devDependencies:
-      '@babel/core': 7.17.9
       '@types/caniuse-lite': 1.0.1
       '@types/rollup-plugin-visualizer': 4.2.1
       '@types/svgo': 2.6.3
