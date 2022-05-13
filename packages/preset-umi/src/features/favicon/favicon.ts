@@ -36,7 +36,7 @@ export default (api: IApi) => {
   api.addBeforeMiddlewares(() => [
     (req, res, next) => {
       const iconFile = (api.appData.faviconFiles || []).find(
-        (file) => req.path === `/${file}`,
+        (file: any) => req.path === `/${file}`,
       );
       if (!iconFile) {
         next();
@@ -49,7 +49,7 @@ export default (api: IApi) => {
   api.onBuildComplete(({ err }) => {
     if (err) return;
     if (api.appData.faviconFiles) {
-      api.appData.faviconFiles.forEach((e) => {
+      api.appData.faviconFiles.forEach((e: any) => {
         copyFileSync(
           join(api.paths.absSrcPath, e),
           join(api.paths.absOutputPath, e),
@@ -61,7 +61,7 @@ export default (api: IApi) => {
   api.modifyHTMLFavicon((memo) => {
     // respect favicon config from user, and fallback to auto-detecting files
     if (!memo.length && api.appData.faviconFiles) {
-      api.appData.faviconFiles.forEach((e) => {
+      api.appData.faviconFiles.forEach((e: any) => {
         memo.push(`${api.config.publicPath}${e}`);
       });
     }
