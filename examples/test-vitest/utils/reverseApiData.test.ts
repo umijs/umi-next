@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import { reverseApiData } from './reverseApiData';
 
 test('reverseApiData use fetcher to request url', async () => {

@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 import Greet from './Greet';
 
 test('renders Greet without name by inline snapshot', () => {
