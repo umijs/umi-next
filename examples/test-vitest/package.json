@@ -1,0 +1,16 @@
+{
+  "name": "@example/test-vitest",
+  "private": true,
+  "scripts": {
+    "start": "npm run dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "umi": "4.0.0-canary.20220512.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
+    "vitest": "^0.12.4"
+  }
+}
