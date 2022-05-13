@@ -20,7 +20,8 @@ export default (props: any) => {
 
     function updateBlur() {
       if (!offset || !blur) return;
-      blur.backgroundPosition = `0px ` + `${-window.scrollY + 100}px`;
+      blur.backgroundPosition =
+        `0px ` + `calc(var(--anchor-offset) + ${-window.scrollY + 64}px)`;
     }
 
     document.addEventListener('scroll', updateBlur, false), updateBlur();
@@ -42,9 +43,13 @@ export default (props: any) => {
         components: props.components,
         themeConfig: props.themeConfig,
         location: props.location,
+        history: props.history,
       }}
     >
-      <div className="flex flex-col dark:bg-gray-900 min-h-screen transition-all">
+      <div
+        className="flex flex-col dark:bg-gray-900 min-h-screen transition-all"
+        id={isHomePage ? 'home-page' : 'doc-page'}
+      >
         <div
           id="head-container"
           className="z-30 sticky top-0 dark:before:bg-gray-800 before:bg-white before:bg-opacity-[.85]

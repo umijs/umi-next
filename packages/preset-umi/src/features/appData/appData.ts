@@ -21,6 +21,8 @@ export default (api: IApi) => {
     memo.npmClient = api.userConfig.npmClient || getNpmClient({ cwd: api.cwd });
     memo.umi = {
       version: require('../../../package.json').version,
+      name: 'Umi',
+      importSource: 'umi',
     };
     memo.bundleStatus = {
       done: false,
@@ -32,6 +34,12 @@ export default (api: IApi) => {
     }
     memo.react = {
       version: require(join(api.config.alias.react, 'package.json')).version,
+      path: api.config.alias.react,
+    };
+    memo['react-dom'] = {
+      version: require(join(api.config.alias['react-dom'], 'package.json'))
+        .version,
+      path: api.config.alias['react-dom'],
     };
     memo.appJS = await getAppJsInfo();
     memo.locale = await osLocale();
@@ -72,6 +80,8 @@ export default (api: IApi) => {
       }
       memo.git = git;
     }
+
+    memo.framework = 'react';
 
     return memo;
   });

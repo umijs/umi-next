@@ -1,5 +1,4 @@
 // @ts-ignore
-import { history } from 'umi';
 import { useThemeContext } from './context';
 
 interface useLanguageResult {
@@ -11,7 +10,7 @@ interface useLanguageResult {
 }
 
 function useLanguage(): useLanguageResult {
-  const { themeConfig, location } = useThemeContext()!;
+  const { themeConfig, location, history } = useThemeContext()!;
 
   const languages = themeConfig.i18n;
   let currentLanguage: { locale: string; text: string } | undefined = undefined;
@@ -57,7 +56,13 @@ function useLanguage(): useLanguageResult {
   }
 
   function render(key: string) {
-    if (!currentLanguage || !themeConfig.locales) return key;
+    if (!themeConfig.locales || Object.keys(themeConfig.locales).length === 0)
+      return key;
+    if (!currentLanguage) {
+      return (
+        themeConfig.locales[Object.keys(themeConfig.locales)[0]].key || key
+      );
+    }
     if (!themeConfig.locales[currentLanguage.locale]) return key;
     return themeConfig.locales[currentLanguage.locale][key] || key;
   }

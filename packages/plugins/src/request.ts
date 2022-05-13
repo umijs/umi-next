@@ -107,6 +107,7 @@ interface IRequestOptions extends AxiosRequestConfig {
   skipErrorHandler?: boolean;
   requestInterceptors?: IRequestInterceptorTuple[];
   responseInterceptors?: IResponseInterceptorTuple[];
+  [key: string]: any;
 }
 
 interface IRequestOptionsWithResponse extends IRequestOptions {
@@ -127,7 +128,9 @@ interface IRequest{
 interface IErrorHandler {
   (error: RequestError, opts: IRequestOptions): void;
 }
-type IRequestInterceptor = (config : AxiosRequestConfig) => AxiosRequestConfig;
+type IRequestInterceptorAxios = (config: RequestOptions) => RequestOptions;
+type IRequestInterceptorUmiRequest = (url: string, config : RequestOptions) => { url: string, options: RequestOptions };
+type IRequestInterceptor = IRequestInterceptorAxios;
 type IErrorInterceptor = (error: Error) => Promise<Error>;
 type IResponseInterceptor = <T = any>(response : AxiosResponse<T>) => AxiosResponse<T> ;
 type IRequestInterceptorTuple = [IRequestInterceptor , IErrorInterceptor] | [ IRequestInterceptor ] | IRequestInterceptor
@@ -159,22 +162,38 @@ const getRequestInstance = (): AxiosInstance => {
   const config = getConfig();
   requestInstance = axios.create(config);
 
-  config?.requestInterceptors?.forEach((interceptor) => { 
-    return interceptor instanceof Array ? 
-      requestInstance.interceptors.request.use(interceptor[0], interceptor[1]):
-       requestInstance.interceptors.request.use(interceptor);
-    });
+  config?.requestInterceptors?.forEach((interceptor) => {
+    if(interceptor instanceof Array){
+      requestInstance.interceptors.request.use((config) => {
+        const { url } = config;
+        if(interceptor[0].length === 2){
+          const { url: newUrl, options } = interceptor[0](url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor[0](config);
+      }, interceptor[1]);
+    } else {
+      requestInstance.interceptors.request.use((config) => {
+        const { url } = config;
+        if(interceptor.length === 2){
+          const { url: newUrl, options } = interceptor(url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor(config);
+      })
+    }
+  });
 
-  config?.responseInterceptors?.forEach((interceptor) => { 
-    return interceptor instanceof Array ? 
+  config?.responseInterceptors?.forEach((interceptor) => {
+    interceptor instanceof Array ?
       requestInstance.interceptors.response.use(interceptor[0], interceptor[1]):
        requestInstance.interceptors.response.use(interceptor);
-    });
+  });
 
   // 当响应的数据 success 是 false 的时候，抛出 error 以供 errorHandler 处理。
-  requestInstance.interceptors.response.use((response)=>{
+  requestInstance.interceptors.response.use((response) => {
     const { data } = response;
-    if(config?.errorConfig?.errorThrower){
+    if(data?.success === false && config?.errorConfig?.errorThrower){
       config.errorConfig.errorThrower(data);
     }
     return response;
@@ -182,17 +201,33 @@ const getRequestInstance = (): AxiosInstance => {
   return requestInstance;
 };
 
-const request: IRequest = (url: string, opts: any = { method: 'GET' }) => {   
+const request: IRequest = (url: string, opts: any = { method: 'GET' }) => {
   const requestInstance = getRequestInstance();
   const config = getConfig();
   const { getResponse = false, requestInterceptors, responseInterceptors } = opts;
-  const requestInterceptorsToEject = requestInterceptors?.map((interceptor) => { 
-    return interceptor instanceof Array ? 
-      requestInstance.interceptors.request.use(interceptor[0], interceptor[1]):
-       requestInstance.interceptors.request.use(interceptor);
+  const requestInterceptorsToEject = requestInterceptors?.map((interceptor) => {
+    if(interceptor instanceof Array){
+      return requestInstance.interceptors.request.use((config) => {
+        const { url } = config;
+        if(interceptor[0].length === 2){
+          const { url: newUrl, options } = interceptor[0](url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor[0](config);
+      }, interceptor[1]);
+    } else {
+      return requestInstance.interceptors.request.use((config) => {
+        const { url } = config;
+        if(interceptor.length === 2){
+          const { url: newUrl, options } = interceptor(url, config);
+          return { ...options, url: newUrl };
+        }
+        return interceptor(config);
+      })
+    }
     });
-  const responseInterceptorsToEject = responseInterceptors?.map((interceptor) => { 
-    return interceptor instanceof Array ? 
+  const responseInterceptorsToEject = responseInterceptors?.map((interceptor) => {
+    return interceptor instanceof Array ?
       requestInstance.interceptors.response.use(interceptor[0], interceptor[1]):
        requestInstance.interceptors.response.use(interceptor);
     });
@@ -261,16 +296,18 @@ export type {
       }),
     });
     api.writeTmpFile({
+      path: 'types.d.ts',
+      content: `
+export type { RequestConfig } from './request';
+`,
+    });
+    api.writeTmpFile({
       path: 'index.ts',
       content: `
 export {
   useRequest,
   UseRequestProvider,
   request,
-} from './request';
-
-export type {
-  RequestConfig
 } from './request';
 `,
     });

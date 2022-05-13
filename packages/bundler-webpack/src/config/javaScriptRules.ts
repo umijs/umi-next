@@ -1,6 +1,7 @@
 import type { Program } from '@swc/core';
 import { autoCssModulesHandler, esbuildLoader } from '@umijs/mfsu';
 import { chalk } from '@umijs/utils';
+import { dirname, isAbsolute } from 'path';
 import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
@@ -14,6 +15,7 @@ interface IOpts {
   env: Env;
   extraBabelPlugins: any[];
   extraBabelPresets: any[];
+  extraBabelIncludes: string[];
   extraEsbuildLoaderHandler: any[];
   babelPreset: any;
   name?: string;
@@ -43,16 +45,43 @@ export async function addJavaScriptRules(opts: IOpts) {
     config.module
       .rule('extra-src')
       .test(/\.(js|mjs)$/)
-      .include.add((path: string) => {
-        try {
-          // do src transform for bundler-webpack/client/client/client.js
-          if (path.includes('client/client/client')) return true;
-          return isMatch({ path, pkgs: depPkgs });
-        } catch (e) {
-          console.error(chalk.red(e));
-          throw e;
-        }
-      })
+      .include.add([
+        // support extraBabelIncludes
+        ...opts.extraBabelIncludes.map((p) => {
+          // handle absolute path
+          if (isAbsolute(p)) {
+            return p;
+          }
+
+          // resolve npm package name
+          try {
+            if (p.startsWith('./')) {
+              return require.resolve(p, { paths: [cwd] });
+            }
+
+            return dirname(
+              require.resolve(`${p}/package.json`, { paths: [cwd] }),
+            );
+          } catch (e: any) {
+            if (e.code === 'MODULE_NOT_FOUND') {
+              throw new Error('Cannot resolve extraBabelIncludes: ' + p);
+            }
+
+            throw e;
+          }
+        }),
+        // support es5ImcompatibleVersions
+        (path: string) => {
+          try {
+            // do src transform for bundler-webpack/client/client/client.js
+            if (path.includes('client/client/client')) return true;
+            return isMatch({ path, pkgs: depPkgs });
+          } catch (e) {
+            console.error(chalk.red(e));
+            throw e;
+          }
+        },
+      ])
       .end(),
   ] as Config.Rule<Config.Module>[];
   if (userConfig.mdx) {
@@ -74,18 +103,9 @@ export async function addJavaScriptRules(opts: IOpts) {
       })
       .end(),
   ];
-  srcRules.forEach((element) => {
-    element
-      .rule('fullySpecified')
-      .test(/\.(ts|js|tsx|jsx)$/)
-      .resolve.set('fullySpecified', false);
-  });
-  depRules.forEach((element) => {
-    element
-      .rule('fullySpecified')
-      .test(/\.(ts|js|tsx|jsx)$/)
-      .resolve.set('fullySpecified', false);
-  });
+  srcRules
+    .concat(depRules)
+    .forEach((rule) => rule.resolve.set('fullySpecified', false));
 
   // const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   const srcTranspiler = userConfig.srcTranspiler || Transpiler.babel;

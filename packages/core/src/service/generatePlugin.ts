@@ -1,10 +1,11 @@
 import {
   generateFile,
   installDeps,
+  logger,
   prompts,
   updatePackageJSON,
 } from '@umijs/utils';
-import { GeneratorType, IGeneratorOpts } from './generator';
+import { Generator, GeneratorType } from './generator';
 import { PluginAPI } from './pluginAPI';
 import { IServicePluginAPI } from './service';
 
@@ -16,9 +17,10 @@ export default (api: PluginAPI & IServicePluginAPI) => {
 umi generate
 `,
     description: 'generate code snippets quickly',
+    configResolveMode: 'loose',
     async fn({ args }) {
       const [type] = args._;
-      const runGenerator = async (generator: IGeneratorOpts) => {
+      const runGenerator = async (generator: Generator) => {
         await generator?.fn({
           args,
           generateFile,
@@ -37,9 +39,12 @@ umi generate
             args,
           });
           if (!enable) {
-            throw new Error(
-              `Generator ${type} is unable.The corresponding function has been turned on or is not available.`,
-            );
+            if (typeof generator.disabledDescription === 'function') {
+              logger.warn(generator.disabledDescription());
+            } else {
+              logger.warn(generator.disabledDescription);
+            }
+            return;
           }
         }
         await runGenerator(generator);
@@ -49,23 +54,20 @@ umi generate
         ) => {
           const questions = [] as { title: string; value: string }[];
           for (const key of Object.keys(generators)) {
-            if (generators[key].type === GeneratorType.generate) {
+            const g = generators[key];
+            if (g.type === GeneratorType.generate) {
               questions.push({
-                title:
-                  `${generators[key].name} -- ${generators[key].description}` ||
-                  '',
-                value: generators[key].key,
+                title: `${g.name} -- ${g.description}` || '',
+                value: g.key,
               });
             } else {
-              const enable = await generators[key]?.checkEnable?.({
+              const enable = await g?.checkEnable?.({
                 args,
               });
               if (enable) {
                 questions.push({
-                  title:
-                    `${generators[key].name} -- ${generators[key].description}` ||
-                    '',
-                  value: generators[key].key,
+                  title: `${g.name} -- ${g.description}` || '',
+                  value: g.key,
                 });
               }
             }

@@ -46,6 +46,9 @@ const expects: Record<string, Function> = {
   'css-side-effects'({ files }: IOpts) {
     expect(files['index.css']).toContain(`color: red;`);
   },
+  'fully-specified'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("a")`);
+  },
   define({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("1");`);
     expect(files['index.js']).toContain(`console.log("2");`);
@@ -56,6 +59,18 @@ const expects: Record<string, Function> = {
     expect(files['index.js']).toContain(
       `var external_React_namespaceObject = React;`,
     );
+  },
+  'extra-babel-includes'({ files }: IOpts) {
+    const dist = files['index.js'];
+
+    // jsx
+    expect(dist).toContain('children: "JSX"');
+
+    // unicode regex
+    expect(dist).not.toContain('p{Punctuation}/ug');
+
+    // class decorator
+    expect(dist).toContain('_createClass(Person');
   },
   json({ files }: IOpts) {
     expect(files['index.js']).toContain(
@@ -95,6 +110,7 @@ const expects: Record<string, Function> = {
   svgr({ files }: IOpts) {
     expect(files['static']).toContain(EXISTS);
     expect(files['index.js']).toContain(`.svg`);
+    expect(files['index.js']).toContain(`antd_svg`);
   },
   targets({ files }: IOpts) {
     expect(files['index.js']).toContain(`var foo = 'foo';`);

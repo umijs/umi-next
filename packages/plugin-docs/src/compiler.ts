@@ -1,4 +1,5 @@
 import rehypePrettyCode from 'rehype-pretty-code';
+import { logger } from 'umi/plugin-utils';
 // @ts-ignore
 import { createProcessor } from '../compiled/@mdx-js/mdx';
 // @ts-ignore
@@ -28,30 +29,50 @@ const rehypePrettyCodeOptions = {
   },
 };
 
-export async function compile(opts: { content: string }) {
+export async function compile(opts: { content: string; fileName: string }) {
   const compiler = createProcessor({
     jsx: true,
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeSlug, [rehypePrettyCode, rehypePrettyCodeOptions]],
   });
-  let result = String(await compiler.process(opts.content));
-  result = result.replace(
-    'function MDXContent(props = {}) {',
-    `
+  try {
+    let result = String(await compiler.process(opts.content));
+    result = result.replace(
+      'function MDXContent(props = {}) {',
+      `
 import { useEffect } from 'react';
 
 function MDXContent(props = {}) {
 
   useEffect(() => {
     if (window.location.hash.length !== 0) {
-      const hash = window.location.hash;
-      document.getElementById(hash.slice(1))?.scrollIntoView();
+      // 为了右侧内容区能正常跳转
+      const hash = decodeURIComponent(window.location.hash);
+      setTimeout(() => {
+        document.getElementById(hash.slice(1))?.scrollIntoView();
+      }, 100);
     } else {
       window.scrollTo(0, 0);
     }
+    document.getElementById('active-nav-item')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
   }, []);
 
 `,
-  );
-  return { result };
+    );
+    return { result };
+  } catch (e: any) {
+    logger.error(e.reason);
+    logger.error(`Above error occurred in ${opts.fileName} at line ${e.line}`);
+    logger.error(
+      opts.content
+        .split('\n')
+        .filter((_, i) => i == e.line - 1)
+        .join('\n'),
+    );
+    logger.error(' '.repeat(e.column - 1) + '^');
+    return { result: '' };
+  }
 }

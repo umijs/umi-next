@@ -51,7 +51,7 @@ export default defineConfig({
     include: ['pages/**/_mock.ts'],
   },
   layout: {
-    name: 'Ant Design Pro',
+    title: 'Ant Design Pro',
   },
   mfsu: {
     esbuild: true,
@@ -66,6 +66,9 @@ export default defineConfig({
         {
           name: 'app1',
           entry: '//localhost:8001/app1',
+          props: {
+            autoSetLoading: true,
+          },
         },
       ],
     },

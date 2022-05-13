@@ -1,7 +1,4 @@
-import { IApi } from 'umi';
-
-export default (api: IApi) => {
-  api;
+export default () => {
   return {
     plugins: [
       require.resolve('@umijs/plugins/dist/access'),
@@ -15,7 +12,9 @@ export default (api: IApi) => {
       require.resolve('@umijs/plugins/dist/request'),
       require.resolve('@umijs/plugins/dist/locale'),
       require.resolve('@umijs/plugins/dist/qiankun'),
-      require.resolve('./plugins/alias'),
+      require.resolve('@umijs/plugins/dist/tailwindcss'),
+      require.resolve('./plugins/maxAlias'),
+      require.resolve('./plugins/maxAppData'),
     ],
   };
 };
