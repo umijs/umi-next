@@ -33,7 +33,6 @@
     "postcss-preset-env": "7.5.0"
   },
   "devDependencies": {
-    "@babel/core": "7.17.9",
     "@types/caniuse-lite": "1.0.1",
     "@types/rollup-plugin-visualizer": "4.2.1",
     "@types/svgo": "2.6.3",

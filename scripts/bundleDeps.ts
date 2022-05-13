@@ -317,7 +317,11 @@ Object.keys(exported).forEach(function (key) {
         if (opts.pkgName === '@vitejs/plugin-react') {
           const dtsPath = path.join(
             opts.base,
-            'compiled/@vitejs/plugin-react/index.d.ts',
+            'compiled/@vitejs/plugin-react/dist/index.d.ts',
+          );
+          const indexPath = path.join(
+            opts.base,
+            'compiled/@vitejs/plugin-react/index.js',
           );
 
           fs.writeFileSync(
@@ -326,7 +330,17 @@ Object.keys(exported).forEach(function (key) {
               .readFileSync(dtsPath, 'utf-8')
               .replace(
                 'declare module "@vitejs/plugin-react"',
-                'declare module "@umijs/bundler-vite/compiled/@vitejs/plugin-react"',
+                'declare module "@umijs/bundler-vite/compiled/@vitejs/plugin-react/dist"',
+              ),
+            'utf-8',
+          );
+          fs.writeFileSync(
+            indexPath,
+            fs
+              .readFileSync(indexPath, 'utf-8')
+              .replace(
+                'loadPlugin("@babel/plugin-transform-react-jsx',
+                'loadPlugin("@umijs/bundler-utils/compiled/@babel/plugin-transform-react-jsx',
               ),
             'utf-8',
           );
