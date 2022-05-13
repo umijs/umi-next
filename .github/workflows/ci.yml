@@ -72,7 +72,7 @@ jobs:
       - run: pnpm tsc --noEmit
 
       - name: Run Tests
-        run: pnpm test:vi
+        run: pnpm test
         env:
           CI: true
           NODE_ENV: test
