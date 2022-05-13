@@ -19,12 +19,15 @@ const configDefaults: UserConfig = {
   },
 };
 
+const timeout = (process.env.CI ? 50 : 20) * 1e3;
+
 export function createVitestConfig(opts?: IVitestOpts) {
   const baseConfig: UserConfig = {
     test: {
       globals: true,
       root: process.cwd(),
-      testTimeout: (process.env.CI ? 50 : 20) * 1e3,
+      testTimeout: timeout,
+      hookTimeout: timeout,
       setupFiles: [
         require.resolve('../setupFiles/shim'),
         require.resolve('../setupFiles/vitest-compatible-jest'),
