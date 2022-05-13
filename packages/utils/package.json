@@ -40,6 +40,7 @@
     "cross-spawn": "7.0.3",
     "debug": "4.3.4",
     "deepmerge": "4.2.2",
+    "defu": "6.0.0",
     "execa": "6.1.0",
     "fs-extra": "10.0.1",
     "glob": "8.0.1",
@@ -88,7 +89,8 @@
       "semver",
       "strip-ansi",
       "yargs-parser",
-      "pirates"
+      "pirates",
+      "defu"
     ],
     "externals": {
       "address": "$$LOCAL",
@@ -109,7 +111,8 @@
       "semver": "$$LOCAL",
       "strip-ansi": "$$LOCAL",
       "yargs-parser": "$$LOCAL",
-      "pirates": "$$LOCAL"
+      "pirates": "$$LOCAL",
+      "defu": "$$LOCAL"
     }
   }
 }
