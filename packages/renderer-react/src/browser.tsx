@@ -106,13 +106,32 @@ export function renderClient(opts: {
   const Browser = () => {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
     useEffect(() => {
-      function executeLoader(p: string) {
+      function handleRouteChange(p: string) {
         const matches =
           matchRoutes(clientRoutes, p)?.map(
             // @ts-ignore
             (route) => route.route.id,
           ) || [];
         matches.map((match) => {
+          // @ts-ignore
+          const manifest = window.__umi_manifest__;
+          if (manifest) {
+            const id = 'preload-' + match.replace(/\//g, '_');
+            if (!document.getElementById(id)) {
+              const key = Object.keys(manifest).find((k) =>
+                k.startsWith(match.replace(/\//g, '_') + '.'),
+              );
+              if (!key) return;
+              const file = manifest[key];
+              const link = document.createElement('link');
+              link.id = id;
+              link.rel = 'preload';
+              link.as = 'script';
+              // TODO: public path may not be root
+              link.href = file;
+              document.head.appendChild(link);
+            }
+          }
           const clientLoader = opts.routes[match].clientLoader;
           if (clientLoader)
             clientLoader().then((data: any) => {
@@ -121,9 +140,9 @@ export function renderClient(opts: {
         });
       }
 
-      executeLoader(window.location.pathname);
+      handleRouteChange(window.location.pathname);
       return opts.history.listen((e) => {
-        executeLoader(e.location.pathname);
+        handleRouteChange(e.location.pathname);
       });
     }, []);
     return (

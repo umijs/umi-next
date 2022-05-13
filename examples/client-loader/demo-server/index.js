@@ -18,7 +18,7 @@ app.use(async (req, res, next) => {
     return;
   }
 
-  if (req.path.match(/([0-9]+)\.js/)) {
+  if (req.path.match(/\.js/)) {
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
 

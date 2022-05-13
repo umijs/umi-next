@@ -200,6 +200,12 @@ importers:
       express: 4.17.3
       umi: link:../../packages/umi
 
+  examples/diff-client-loader:
+    specifiers:
+      umi: 4.0.0-rc.17
+    dependencies:
+      umi: link:../../packages/umi
+
   examples/libs:
     specifiers:
       '@codesandbox/sandpack-react': 0.19.6

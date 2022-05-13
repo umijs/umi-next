@@ -152,7 +152,7 @@ export async function getRouteComponents(opts: {
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
-        return `'${key}': () => import('./EmptyRoute'),`;
+        return `'${key}': () => import( './EmptyRoute'),`;
       }
       if (route.hasClientLoader) {
         route.file = join(
@@ -173,7 +173,10 @@ export async function getRouteComponents(opts: {
           ? route.file
           : `${opts.prefix}${route.file}`;
 
-      return `'${key}': () => import('${winPath(path)}'),`;
+      return `'${key}': () => import(/* webpackChunkName: "${key.replace(
+        /[\/-]/g,
+        '_',
+      )}" */'${winPath(path)}'),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;

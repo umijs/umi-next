@@ -116,21 +116,23 @@ export default function EmptyRoute() {
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete clonedRoutes[id][key];
         }
-        if (
-          ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
-            clonedRoutes[id].file.endsWith(ext),
-          )
-        ) {
-          const exports = await getExports({
-            path: isAbsolute(clonedRoutes[id].file)
-              ? clonedRoutes[id].file
-              : join(api.paths.absPagesPath, clonedRoutes[id].file),
-          });
-          clonedRoutes[id].hasLoader = exports.includes('loader');
-          if (exports.includes('clientLoader'))
-            clonedRoutes[id].clientLoader = `clientLoaders.${
-              id.replace(/\//g, '_') + '_client_loader'
-            }`;
+        if (api.config.clientLoader) {
+          if (
+            ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
+              clonedRoutes[id].file.endsWith(ext),
+            )
+          ) {
+            const exports = await getExports({
+              path: isAbsolute(clonedRoutes[id].file)
+                ? clonedRoutes[id].file
+                : join(api.paths.absPagesPath, clonedRoutes[id].file),
+            });
+            clonedRoutes[id].hasLoader = exports.includes('loader');
+            if (exports.includes('clientLoader'))
+              clonedRoutes[id].clientLoader = `clientLoaders.${
+                id.replace(/\//g, '_') + '_client_loader'
+              }`;
+          }
         }
       }
     }
@@ -139,6 +141,7 @@ export default function EmptyRoute() {
       path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
+        isClientLoaderEnabled: !!api.config.clientLoader,
         routes: JSON.stringify(clonedRoutes).replace(
           /"(clientLoaders\..*?)"/g,
           '$1',
@@ -214,59 +217,61 @@ export default function EmptyRoute() {
     });
   });
 
-  // Pack the route component **without loaders** into tmpDir/pages
-  // These generated route components will be imported by core/route.tsx
-  api.onBeforeCompiler(async () => {
-    const routes = api.appData.routes;
-    const entryPoints: { [key: string]: string } = {};
-    Object.keys(routes).map((key) => {
-      let file = routes[key].file;
-      // If route.file is relative path, convert it to absolute path
-      if (!isAbsolute(file)) {
-        file = join(api.paths.absPagesPath, routes[key].file);
-      }
-      // If route.file has extension, test if it's a [ts|tsx|js|jsx] file
-      if (['.tsx', '.jsx', '.ts', '.js'].some((ext) => file.endsWith(ext))) {
-        entryPoints[routes[key].id.replace(/\//g, '_')] = file + '?browser';
-        return;
-      }
-      // If route.file doesn't have extension, test which extension it has
-      ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
-        const filePath = join(api.paths.absPagesPath, file + ext);
-        if (existsSync(filePath)) {
-          entryPoints[routes[key].id.replace(/\//g, '_')] =
-            filePath + '?browser';
+  if (api.config.clientLoader) {
+    // Pack the route component **without loaders** into tmpDir/pages
+    // These generated route components will be imported by core/route.tsx
+    api.onBeforeCompiler(async () => {
+      const routes = api.appData.routes;
+      const entryPoints: { [key: string]: string } = {};
+      Object.keys(routes).map((key) => {
+        let file = routes[key].file;
+        // If route.file is relative path, convert it to absolute path
+        if (!isAbsolute(file)) {
+          file = join(api.paths.absPagesPath, routes[key].file);
+        }
+        // If route.file has extension, test if it's a [ts|tsx|js|jsx] file
+        if (['.tsx', '.jsx', '.ts', '.js'].some((ext) => file.endsWith(ext))) {
+          entryPoints[routes[key].id.replace(/\//g, '_')] = file + '?browser';
           return;
         }
+        // If route.file doesn't have extension, test which extension it has
+        ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
+          const filePath = join(api.paths.absPagesPath, file + ext);
+          if (existsSync(filePath)) {
+            entryPoints[routes[key].id.replace(/\//g, '_')] =
+              filePath + '?browser';
+            return;
+          }
+        });
+      });
+      await esbuild.build({
+        entryPoints,
+        format: 'esm',
+        splitting: true,
+        bundle: true,
+        watch: api.env === 'development',
+        jsx: 'preserve',
+        outdir: join(api.paths.absTmpPath, 'pages'),
+        entryNames: '[name]',
+        loader: loaders,
+        chunkNames: '_shared/[name]-[hash]',
+        plugins: [
+          BrowserRouteModulePlugin(),
+          {
+            name: 'assets',
+            setup(build) {
+              build.onResolve({ filter: /.*/ }, (args) => {
+                let path = args.path;
+                if (args.path.startsWith('./') || args.path.startsWith('../'))
+                  path = resolve(args.resolveDir, args.path);
+                return { path, external: !args.importer.endsWith('?browser') };
+              });
+            },
+          },
+        ],
       });
     });
-    await esbuild.build({
-      entryPoints,
-      format: 'esm',
-      splitting: true,
-      bundle: true,
-      watch: api.env === 'development',
-      jsx: 'preserve',
-      outdir: join(api.paths.absTmpPath, 'pages'),
-      entryNames: '[name]',
-      loader: loaders,
-      chunkNames: '_shared/[name]-[hash]',
-      plugins: [
-        BrowserRouteModulePlugin(),
-        {
-          name: 'assets',
-          setup(build) {
-            build.onResolve({ filter: /.*/ }, (args) => {
-              let path = args.path;
-              if (args.path.startsWith('./') || args.path.startsWith('../'))
-                path = resolve(args.resolveDir, args.path);
-              return { path, external: !args.importer.endsWith('?browser') };
-            });
-          },
-        },
-      ],
-    });
-  });
+  }
 
   async function getExports(opts: { path: string }) {
     const content = readFileSync(opts.path, 'utf-8');

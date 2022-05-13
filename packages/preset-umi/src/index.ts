@@ -23,6 +23,7 @@ export default () => {
       require.resolve('./features/tmpFiles/tmpFiles'),
       require.resolve('./features/tmpFiles/configTypes'),
       require.resolve('./features/transform/transform'),
+      require.resolve('./features/routePrefetch/routePrefetch'),
       require.resolve('./features/lowImport/lowImport'),
       require.resolve('./features/vite/vite'),
       require.resolve('./features/apiRoute/apiRoute'),
