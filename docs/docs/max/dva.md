@@ -54,10 +54,10 @@ export default {
     },
   },
 
-	test(state) {
-	  console.log('test');
-	  return state;
-	},
+  test(state) {
+    console.log('test');
+    return state;
+  },
 };
 ```
 
@@ -171,13 +171,13 @@ export default UserInfo;
 render () {
   return <div onClick={() => {
     this.dispacth({
-	  type: 'modelnamespace/actionname',
-	  sometestdata: 'xxx',
-	  othertestata: {},
-	}).then(() => {
-	  // it will return a promise
-	  // action success
-	});
+    type: 'modelnamespace/actionname',
+    sometestdata: 'xxx',
+    othertestata: {},
+  }).then(() => {
+    // it will return a promise
+    // action success
+  });
   }}>test</div>
 }
 ```
