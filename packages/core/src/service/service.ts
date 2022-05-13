@@ -47,7 +47,6 @@ export class Service {
         external?: boolean;
       }
     >;
-    faviconFiles?: string[];
     [key: string]: any;
   } = {};
   args: yParser.Arguments = { _: [], $0: '' };
