@@ -14,10 +14,7 @@ const FAVICON_FILES = [
 ];
 
 function getFaviconFiles(p: string): string[] | undefined {
-  const iconlist: string[] = FAVICON_FILES.filter((f) =>
-    existsSync(join(p, f)),
-  );
-  return iconlist;
+  return FAVICON_FILES.filter((f) => existsSync(join(p, f)));
 }
 
 export default (api: IApi) => {
