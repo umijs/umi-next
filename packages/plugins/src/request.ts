@@ -157,14 +157,29 @@ const getConfig = (): RequestConfig => {
   return config;
 };
 
-const getRequestInstance = (): AxiosInstance => {
-  if (requestInstance) return requestInstance;
-  const config = getConfig();
-  requestInstance = axios.create(config);
+const gbkRequestInterceptor = (config) => {
+  return {
+    ...config,
+    responseType: 'blob',
+    transformResponse: (blob) => {
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsText(blob, 'GBK'); // setup GBK decoding
+      })
+    }
+  }
+}
 
+const createRequestInstance = (): AxiosInstance => {
+  const config = getConfig();
+  const instance = axios.create(config);
   config?.requestInterceptors?.forEach((interceptor) => {
     if(interceptor instanceof Array){
-      requestInstance.interceptors.request.use((config) => {
+      instance.interceptors.request.use((config) => {
         const { url } = config;
         if(interceptor[0].length === 2){
           const { url: newUrl, options } = interceptor[0](url, config);
@@ -173,7 +188,7 @@ const getRequestInstance = (): AxiosInstance => {
         return interceptor[0](config);
       }, interceptor[1]);
     } else {
-      requestInstance.interceptors.request.use((config) => {
+      instance.interceptors.request.use((config) => {
         const { url } = config;
         if(interceptor.length === 2){
           const { url: newUrl, options } = interceptor(url, config);
@@ -183,73 +198,80 @@ const getRequestInstance = (): AxiosInstance => {
       })
     }
   });
-
+  if(config?.charset === 'gbk'){
+    instance.interceptors.request.use(gbkRequestInterceptor);
+  }
   config?.responseInterceptors?.forEach((interceptor) => {
     interceptor instanceof Array ?
-      requestInstance.interceptors.response.use(interceptor[0], interceptor[1]):
-       requestInstance.interceptors.response.use(interceptor);
+      instance.interceptors.response.use(interceptor[0], interceptor[1]) :
+      instance.interceptors.response.use(interceptor);
   });
-
   // 当响应的数据 success 是 false 的时候，抛出 error 以供 errorHandler 处理。
-  requestInstance.interceptors.response.use((response) => {
+  instance.interceptors.response.use((response) => {
     const { data } = response;
     if(data?.success === false && config?.errorConfig?.errorThrower){
       config.errorConfig.errorThrower(data);
     }
     return response;
   })
-  return requestInstance;
+  return instance;
+};
+
+const getRequestInstance = () => {
+  if (requestInstance) return requestInstance;
+  const instance = createRequestInstance();
+  requestInstance = instance;
+  return instance;
 };
 
 const request: IRequest = (url: string, opts: any = { method: 'GET' }) => {
-  const requestInstance = getRequestInstance();
+  const { getResponse = false, requestInterceptors=[], responseInterceptors=[], charset } = opts;
+  let instance;
+  const neecHandleGBK = charset === 'gbk';
+  const needNewInstance: boolean = requestInterceptors.length || responseInterceptors.length || neecHandleGBK;
+
+  if (needNewInstance) {
+    instance = createRequestInstance()
+    requestInterceptors?.map((interceptor) => {
+      if (interceptor instanceof Array) {
+        return instance.interceptors.request.use((config) => {
+          const { url } = config;
+          if (interceptor[0].length === 2) {
+            const { url: newUrl, options } = interceptor[0](url, config);
+            return { ...options, url: newUrl };
+          }
+          return interceptor[0](config);
+        }, interceptor[1]);
+      } else {
+        return instance.interceptors.request.use((config) => {
+          const { url } = config;
+          if (interceptor.length === 2) {
+            const { url: newUrl, options } = interceptor(url, config);
+            return { ...options, url: newUrl };
+          }
+          return interceptor(config);
+        })
+      }
+    });
+    responseInterceptors?.map((interceptor) => {
+      return interceptor instanceof Array ?
+        instance.interceptors.response.use(interceptor[0], interceptor[1]) :
+        instance.interceptors.response.use(interceptor);
+    });
+    neecHandleGBK
+      ? instance.interceptors.request.use(gbkRequestInterceptor)
+      : instance.interceptors.request.eject(gbkRequestInterceptor);
+  } else {
+    instance = getRequestInstance()
+  }
   const config = getConfig();
-  const { getResponse = false, requestInterceptors, responseInterceptors } = opts;
-  const requestInterceptorsToEject = requestInterceptors?.map((interceptor) => {
-    if(interceptor instanceof Array){
-      return requestInstance.interceptors.request.use((config) => {
-        const { url } = config;
-        if(interceptor[0].length === 2){
-          const { url: newUrl, options } = interceptor[0](url, config);
-          return { ...options, url: newUrl };
-        }
-        return interceptor[0](config);
-      }, interceptor[1]);
-    } else {
-      return requestInstance.interceptors.request.use((config) => {
-        const { url } = config;
-        if(interceptor.length === 2){
-          const { url: newUrl, options } = interceptor(url, config);
-          return { ...options, url: newUrl };
-        }
-        return interceptor(config);
-      })
-    }
-    });
-  const responseInterceptorsToEject = responseInterceptors?.map((interceptor) => {
-    return interceptor instanceof Array ?
-      requestInstance.interceptors.response.use(interceptor[0], interceptor[1]):
-       requestInstance.interceptors.response.use(interceptor);
-    });
-  return new Promise((resolve, reject)=>{
-    requestInstance
-      .request({...opts, url})
-      .then((res)=>{
-        requestInterceptorsToEject?.forEach((interceptor) => {
-          requestInstance.interceptors.request.eject(interceptor);
-        });
-        responseInterceptorsToEject?.forEach((interceptor) => {
-          requestInstance.interceptors.response.eject(interceptor);
-        });
+  return new Promise((resolve, reject) => {
+    instance
+      .request({ ...opts, url })
+      .then((res) => {
         resolve(getResponse ? res : res.data);
       })
-      .catch((error)=>{
-        requestInterceptorsToEject?.forEach((interceptor) => {
-          requestInstance.interceptors.request.eject(interceptor);
-        });
-        responseInterceptorsToEject?.forEach((interceptor) => {
-          requestInstance.interceptors.response.eject(interceptor);
-        });
+      .catch((error) => {
         try {
           const handler =
             config.errorConfig?.errorHandler;
