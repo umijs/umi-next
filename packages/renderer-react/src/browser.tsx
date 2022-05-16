@@ -1,5 +1,5 @@
 import { History } from 'history';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 // compatible with < react@18 in @umijs/preset-umi/src/features/react
 import ReactDOM from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
@@ -105,8 +105,9 @@ export function renderClient(opts: {
   }
   const Browser = () => {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
-    useEffect(() => {
-      function handleRouteChange(p: string) {
+
+    const handleRouteChange = useCallback(
+      (p: string) => {
         const matches =
           matchRoutes(clientRoutes, p)?.map(
             // @ts-ignore
@@ -134,13 +135,16 @@ export function renderClient(opts: {
             }
           }
           const clientLoader = opts.routes[match].clientLoader;
-          if (clientLoader)
+          if (clientLoader && !clientLoaderData[match])
             clientLoader().then((data: any) => {
               setClientLoaderData((d: any) => ({ ...d, [match]: data }));
             });
         });
-      }
+      },
+      [clientLoaderData],
+    );
 
+    useEffect(() => {
       handleRouteChange(window.location.pathname);
       return opts.history.listen((e) => {
         handleRouteChange(e.location.pathname);
@@ -156,6 +160,7 @@ export function renderClient(opts: {
           rootElement: opts.rootElement,
           basename,
           clientLoaderData,
+          preloadRoute: handleRouteChange,
         }}
       >
         {rootContainer}
