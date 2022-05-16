@@ -158,7 +158,7 @@ export async function getRouteComponents(opts: {
         route.file = join(
           opts.api.paths.absTmpPath,
           'pages',
-          route.id.replace(/\//g, '_') + '.js',
+          route.id.replace(/[\/\-]/g, '_') + '.js',
         );
       }
       // e.g.

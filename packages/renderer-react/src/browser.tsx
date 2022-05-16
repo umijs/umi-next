@@ -115,11 +115,12 @@ export function renderClient(opts: {
         matches.map((match) => {
           // @ts-ignore
           const manifest = window.__umi_manifest__;
+          const routeIdReplaced = match.replace(/[\/\-]/g, '_');
           if (manifest) {
-            const id = 'preload-' + match.replace(/\//g, '_');
+            const id = 'preload-' + routeIdReplaced;
             if (!document.getElementById(id)) {
               const key = Object.keys(manifest).find((k) =>
-                k.startsWith(match.replace(/\//g, '_') + '.'),
+                k.startsWith(routeIdReplaced + '.'),
               );
               if (!key) return;
               const file = manifest[key];

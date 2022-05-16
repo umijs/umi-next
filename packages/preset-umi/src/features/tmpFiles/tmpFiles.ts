@@ -130,7 +130,7 @@ export default function EmptyRoute() {
             clonedRoutes[id].hasLoader = exports.includes('loader');
             if (exports.includes('clientLoader'))
               clonedRoutes[id].clientLoader = `clientLoaders.${
-                id.replace(/\//g, '_') + '_client_loader'
+                id.replace(/[\/\-]/g, '_') + '_client_loader'
               }`;
           }
         }
@@ -231,14 +231,15 @@ export default function EmptyRoute() {
         }
         // If route.file has extension, test if it's a [ts|tsx|js|jsx] file
         if (['.tsx', '.jsx', '.ts', '.js'].some((ext) => file.endsWith(ext))) {
-          entryPoints[routes[key].id.replace(/\//g, '_')] = file + '?browser';
+          entryPoints[routes[key].id.replace(/[\/\-]/g, '_')] =
+            file + '?browser';
           return;
         }
         // If route.file doesn't have extension, test which extension it has
         ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
           const filePath = join(api.paths.absPagesPath, file + ext);
           if (existsSync(filePath)) {
-            entryPoints[routes[key].id.replace(/\//g, '_')] =
+            entryPoints[routes[key].id.replace(/[\/\-]/g, '_')] =
               filePath + '?browser';
             return;
           }
@@ -472,7 +473,7 @@ export async function getRouteClientLoaders(api: IApi) {
   );
   return routesWithClientLoader.map((key) => {
     const route = api.appData.routes[key];
-    const name = key.replace(/\//g, '_') + '_client_loader';
+    const name = key.replace(/[\/\-]/g, '_') + '_client_loader';
     return {
       name,
       path: join(api.paths.absPagesPath, route.file),
