@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -12,25 +12,46 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
-  /* 把 core/loader.ts (在 tmpFile.ts 的 onGenerateFiles 产生的) 编译成 core/loader.js
-  core/loader.js 会被 core/route.ts 引用，将每个 route 的 clientLoader 注入进去 */
+  api.onGenerateFiles(() => {
+    const clientLoaderImports: string[] = [];
+    const clientLoaderDefines: string[] = [];
+    const routeIds = Object.keys(api.appData.routes);
+    let index = 0;
+    for (const id of routeIds) {
+      const route = api.appData.routes[id];
+      if (route.__hasClientLoader) {
+        index += 1;
+        clientLoaderImports.push(
+          `import { clientLoader as loader_${index} } from '${route.__absFile}';`,
+        );
+        clientLoaderDefines.push(`  '${id}': loader_${index},`);
+      }
+    }
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: join('core/loaders.ts'),
+      content: `
+${clientLoaderImports.join('\n')}
+export default {
+${clientLoaderDefines.join('\n')}
+};
+      `,
+    });
+  });
+
+  // 把 core/loader.ts (在 tmpFile.ts 的 onGenerateFiles 产生的) 编译成 core/loader.js
+  // core/loader.js 会被 core/route.ts 引用，将每个 route 的 clientLoader 注入进去
   api.onBeforeCompiler(async () => {
     await esbuild.build({
       format: 'esm',
       platform: 'browser',
       target: 'esnext',
-      loader: loaders,
-      watch: api.env === 'development' && {
-        onRebuild() {
-          delete require.cache[
-            resolve(api.paths.absTmpPath, 'core/loaders.js')
-          ];
-        },
-      },
+      loader,
+      watch: api.env === 'development' && {},
       bundle: true,
       logLevel: 'error',
-      external: ['react'],
-      entryPoints: [resolve(api.paths.absTmpPath, 'core/loaders.ts')],
+      entryPoints: [join(api.paths.absTmpPath, 'core/loaders.ts')],
+      outfile: join(api.paths.absTmpPath, 'core/loaders.js'),
       plugins: [
         {
           name: 'imports',
@@ -53,12 +74,11 @@ export default (api: IApi) => {
           },
         },
       ],
-      outfile: resolve(api.paths.absTmpPath, 'core/loaders.js'),
     });
   });
 };
 
-const loaders: { [ext: string]: esbuild.Loader } = {
+const loader: { [ext: string]: esbuild.Loader } = {
   '.aac': 'file',
   '.css': 'text',
   '.less': 'text',

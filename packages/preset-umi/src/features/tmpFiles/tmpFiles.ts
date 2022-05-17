@@ -1,10 +1,9 @@
-import { parseModule } from '@umijs/bundler-utils';
-import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { lodash, winPath } from '@umijs/utils';
-import { existsSync, readdirSync, readFileSync } from 'fs';
-import { basename, dirname, isAbsolute, join, resolve } from 'path';
+import { existsSync, readdirSync } from 'fs';
+import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi, IRoute } from '../../types';
+import { IApi } from '../../types';
+import { getModuleExports } from './getModuleExports';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -114,20 +113,6 @@ export default function EmptyRoute() {
     for (const id of Object.keys(clonedRoutes)) {
       for (const key of Object.keys(clonedRoutes[id])) {
         const route = clonedRoutes[id];
-        // Add clientLoader prop to route
-        if (api.config.clientLoader) {
-          // Route file could be .md or .mdx
-          const isJSRoute =
-            route.__absFile && /\.([jt])sx?/.test(route.__absFile);
-          if (isJSRoute) {
-            const exports = await getExports({
-              path: route.__absFile,
-            });
-            if (exports.includes('clientLoader')) {
-              route.clientLoader = `clientLoaders['${id}']`;
-            }
-          }
-        }
         // Remove __ prefix props and absPath props
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete route[key];
@@ -145,31 +130,6 @@ export default function EmptyRoute() {
           .replace(/"(clientLoaders\[.*?)"/g, '$1'),
         routeComponents: await getRouteComponents({ routes, prefix, api }),
       },
-    });
-
-    // loaders.ts
-    const clientLoaders = await getRouteClientLoaders(api);
-    const clientLoaderImports: string[] = [];
-    const clientLoaderDefines: string[] = [];
-    clientLoaders.forEach((clientLoader, index) => {
-      clientLoaderImports.push(
-        `import { clientLoader as loader_${index} } from '${clientLoader.path}';`,
-      );
-      clientLoaderDefines.push(`  '${clientLoader.id}': loader_${index},`);
-    });
-    api.writeTmpFile({
-      noPluginDir: true,
-      path: join('core/loaders.ts'),
-      tplPath: join(TEMPLATES_DIR, 'loaders.tpl'),
-      context: {
-        loaders: await getRouteClientLoaders(api),
-      },
-      content: `
-${clientLoaderImports.join('\n')}
-export default {
-${clientLoaderDefines.join('\n')}
-};
-      `,
     });
 
     // plugin.ts
@@ -229,69 +189,6 @@ ${clientLoaderDefines.join('\n')}
     });
   });
 
-  if (api.config.clientLoader) {
-    // Pack the route component **without loaders** into tmpDir/pages
-    // These generated route components will be imported by core/route.tsx
-    api.onBeforeCompiler(async () => {
-      const routes = api.appData.routes;
-      const entryPoints: { [key: string]: string } = {};
-      Object.keys(routes).map((key) => {
-        let file = routes[key].file;
-        // If route.file is relative path, convert it to absolute path
-        if (!isAbsolute(file)) {
-          file = join(api.paths.absPagesPath, routes[key].file);
-        }
-        // If route.file has extension, test if it's a [ts|tsx|js|jsx] file
-        if (['.tsx', '.jsx', '.ts', '.js'].some((ext) => file.endsWith(ext))) {
-          entryPoints[routes[key].id.replace(/[\/\-]/g, '_')] =
-            file + '?browser';
-          return;
-        }
-        // If route.file doesn't have extension, test which extension it has
-        ['.tsx', '.jsx', '.ts', '.js'].forEach((ext) => {
-          const filePath = join(api.paths.absPagesPath, file + ext);
-          if (existsSync(filePath)) {
-            entryPoints[routes[key].id.replace(/[\/\-]/g, '_')] =
-              filePath + '?browser';
-            return;
-          }
-        });
-      });
-      await esbuild.build({
-        entryPoints,
-        format: 'esm',
-        splitting: true,
-        bundle: true,
-        watch: api.env === 'development',
-        jsx: 'preserve',
-        outdir: join(api.paths.absTmpPath, 'pages'),
-        entryNames: '[name]',
-        loader: loaders,
-        chunkNames: '_shared/[name]-[hash]',
-        plugins: [
-          BrowserRouteModulePlugin(),
-          {
-            name: 'assets',
-            setup(build) {
-              build.onResolve({ filter: /.*/ }, (args) => {
-                let path = args.path;
-                if (args.path.startsWith('./') || args.path.startsWith('../'))
-                  path = resolve(args.resolveDir, args.path);
-                return { path, external: !args.importer.endsWith('?browser') };
-              });
-            },
-          },
-        ],
-      });
-    });
-  }
-
-  async function getExports(opts: { path: string }) {
-    const content = readFileSync(opts.path, 'utf-8');
-    const [_, exports] = await parseModule({ content, path: opts.path });
-    return exports || [];
-  }
-
   function checkMembers(opts: {
     path: string;
     members: string[];
@@ -309,7 +206,7 @@ ${clientLoaderDefines.join('\n')}
     path: string;
     exportMembers: string[];
   }) {
-    const members = (await getExports(opts)) as string[];
+    const members = (await getModuleExports({ file: opts.path })) as string[];
     checkMembers({
       members,
       exportMembers: opts.exportMembers,
@@ -422,140 +319,4 @@ ${clientLoaderDefines.join('\n')}
     },
     stage: Infinity,
   });
-};
-
-/**
- * Get exports of specific route module
- *
- * Example:
- * ```
- * // pages/index.tsx
- * export default function () { / * ... * / }
- * export function loader() { / * ... *  / }
- * export function clientLoader() { / * ... * / }
- * ```
- *
- * getRouteModuleExports(api, routes[index])
- * -> [ 'default', 'loader', 'clientLoader' ];
- * */
-export async function getRouteModuleExports(
-  api: IApi,
-  route: IRoute,
-): Promise<string[]> {
-  try {
-    let result = await esbuild.build({
-      entryPoints: [join(api.paths.absPagesPath, route.file)],
-      platform: 'neutral',
-      format: 'esm',
-      metafile: true,
-      write: false,
-      logLevel: 'silent',
-    });
-    let metafile = result.metafile!;
-    for (let key in metafile.outputs) {
-      let output = metafile.outputs[key];
-      if (output.entryPoint) return output.exports;
-    }
-    return [];
-  } catch (error) {
-    return [];
-  }
-}
-
-/**
- * Get the client/server loaders of routes (if exists)
- *
- * example result is:
- * ```
- * [
- *   { name: 'index_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/index.tsx' },
- *   { name: 'users_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users.tsx' },
- *   { name: 'users_user_client_loader', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/users/user.tsx' },
- * ];
- * ```
- * */
-export async function getRouteClientLoaders(api: IApi) {
-  const routesWithClientLoader: string[] = [];
-  await Promise.all(
-    Object.keys(api.appData.routes).map(async (key) => {
-      const route = api.appData.routes[key];
-      const exports = await getRouteModuleExports(api, route);
-      if (exports.includes('clientLoader')) routesWithClientLoader.push(key);
-    }),
-  );
-  return routesWithClientLoader.map((id) => {
-    const route = api.appData.routes[id];
-    return {
-      id,
-      path: join(api.paths.absPagesPath, route.file),
-    };
-  });
-}
-
-/**
- * 在 pre-compile 阶段，我们会使用 esbuild 来将页面代码 (例如 pages/index.tsx) 中，默认
- * 导出 (export default) 的页面组件及其依赖提取出来，而和页面组件无关的 (export loader,
- * export clientLoader) 等导出 (及其依赖) 则不需要。
- *
- * 这个 BrowserRouteModulesPlugin 能够让 esbuild 在 build 的时候，对于那些后面带有 ?browser 后缀
- * 的 entryPoints 进行路由组件的提取。
- * */
-function BrowserRouteModulePlugin(): esbuild.Plugin {
-  return {
-    name: 'browser-route-modules',
-    async setup(build) {
-      build.onResolve({ filter: /\?browser$/ }, (args) => {
-        return {
-          path: args.path,
-          namespace: 'browser-route-module',
-        };
-      });
-
-      build.onLoad(
-        { filter: /\?browser$/, namespace: 'browser-route-module' },
-        async (args) => {
-          let file = args.path.replace(/\?browser$/, '');
-          let contents = `export { default } from ${JSON.stringify(file)};`;
-          return {
-            contents,
-            resolveDir: dirname(file),
-            loader: 'js',
-          };
-        },
-      );
-    },
-  };
-}
-
-const loaders: { [ext: string]: esbuild.Loader } = {
-  '.aac': 'file',
-  '.css': 'text',
-  '.less': 'text',
-  '.sass': 'text',
-  '.scss': 'text',
-  '.eot': 'file',
-  '.flac': 'file',
-  '.gif': 'file',
-  '.ico': 'file',
-  '.jpeg': 'file',
-  '.jpg': 'file',
-  '.js': 'jsx',
-  '.jsx': 'jsx',
-  '.json': 'json',
-  '.md': 'jsx',
-  '.mdx': 'jsx',
-  '.mp3': 'file',
-  '.mp4': 'file',
-  '.ogg': 'file',
-  '.otf': 'file',
-  '.png': 'file',
-  '.svg': 'file',
-  '.ts': 'ts',
-  '.tsx': 'tsx',
-  '.ttf': 'file',
-  '.wav': 'file',
-  '.webm': 'file',
-  '.webp': 'file',
-  '.woff': 'file',
-  '.woff2': 'file',
 };

@@ -7,6 +7,7 @@ import { resolve, winPath } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { IApi } from '../../types';
+import { getModuleExports } from './getModuleExports';
 
 // get api routes
 export async function getApiRoutes(opts: { api: IApi }) {
@@ -94,9 +95,20 @@ export async function getRoutes(opts: { api: IApi }) {
         });
       }
 
-      // TODO: REMOVE ME
+      const isJSFile = /.[jt]sx?/.test(file);
       routes[id].__content = readFileSync(file, 'utf-8');
       routes[id].__absFile = file;
+      routes[id].__isJSFile = isJSFile;
+      if (opts.api.config.clientLoader) {
+        routes[id].__exports = isJSFile
+          ? await getModuleExports({
+              file,
+            })
+          : [];
+        routes[id].__hasClientLoader =
+          routes[id].__exports.includes('clientLoader');
+        routes[id].clientLoader = `clientLoaders['${id}']`;
+      }
     }
   }
 
