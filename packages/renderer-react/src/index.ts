@@ -22,5 +22,5 @@ export {
 } from 'react-router-dom';
 export { useAppData, useClientLoaderData } from './appContext';
 export { renderClient } from './browser';
-export { default as Link } from './link';
+export { PrefetchLink as Link } from './link';
 export { useRouteData } from './routeContext';
