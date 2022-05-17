@@ -103,30 +103,32 @@ export function renderClient(opts: {
       args: {},
     });
   }
+
   const Browser = () => {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
 
     const handleRouteChange = useCallback(
       (p: string) => {
-        const matches =
+        const matchedRouteIds =
           matchRoutes(clientRoutes, p)?.map(
             // @ts-ignore
             (route) => route.route.id,
           ) || [];
-        matches.map((match) => {
+        matchedRouteIds.forEach((id) => {
+          // preload
           // @ts-ignore
           const manifest = window.__umi_manifest__;
-          const routeIdReplaced = match.replace(/[\/\-]/g, '_');
           if (manifest) {
-            const id = 'preload-' + routeIdReplaced;
-            if (!document.getElementById(id)) {
+            const routeIdReplaced = id.replace(/[\/\-]/g, '_');
+            const preloadId = 'preload-' + routeIdReplaced;
+            if (!document.getElementById(preloadId)) {
               const key = Object.keys(manifest).find((k) =>
                 k.startsWith(routeIdReplaced + '.'),
               );
               if (!key) return;
               const file = manifest[key];
               const link = document.createElement('link');
-              link.id = id;
+              link.id = preloadId;
               link.rel = 'preload';
               link.as = 'script';
               // TODO: public path may not be root
@@ -134,11 +136,13 @@ export function renderClient(opts: {
               document.head.appendChild(link);
             }
           }
-          const clientLoader = opts.routes[match].clientLoader;
-          if (clientLoader && !clientLoaderData[match])
+          // client loader
+          const clientLoader = opts.routes[id].clientLoader;
+          if (clientLoader && !clientLoaderData[id]) {
             clientLoader().then((data: any) => {
-              setClientLoaderData((d: any) => ({ ...d, [match]: data }));
+              setClientLoaderData((d: any) => ({ ...d, [id]: data }));
             });
+          }
         });
       },
       [clientLoaderData],
@@ -150,6 +154,7 @@ export function renderClient(opts: {
         handleRouteChange(e.location.pathname);
       });
     }, []);
+
     return (
       <AppContext.Provider
         value={{
