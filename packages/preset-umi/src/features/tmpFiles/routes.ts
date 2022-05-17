@@ -100,11 +100,12 @@ export async function getRoutes(opts: { api: IApi }) {
       routes[id].__absFile = file;
       routes[id].__isJSFile = isJSFile;
       if (opts.api.config.clientLoader) {
-        routes[id].__exports = isJSFile
-          ? await getModuleExports({
-              file,
-            })
-          : [];
+        routes[id].__exports =
+          isJSFile && existsSync(file)
+            ? await getModuleExports({
+                file,
+              })
+            : [];
         routes[id].__hasClientLoader =
           routes[id].__exports.includes('clientLoader');
         routes[id].clientLoader = `clientLoaders['${id}']`;
