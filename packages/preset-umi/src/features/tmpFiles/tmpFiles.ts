@@ -82,7 +82,7 @@ export default (api: IApi) => {
       },
     });
 
-    // EmptyRoutes.tsx
+    // EmptyRoute.tsx
     api.writeTmpFile({
       noPluginDir: true,
       path: 'core/EmptyRoute.tsx',
@@ -113,25 +113,25 @@ export default function EmptyRoute() {
     const clonedRoutes = lodash.cloneDeep(routes);
     for (const id of Object.keys(clonedRoutes)) {
       for (const key of Object.keys(clonedRoutes[id])) {
+        const route = clonedRoutes[id];
+        // Remove __ prefix props and absPath props
         if (key.startsWith('__') || key.startsWith('absPath')) {
-          delete clonedRoutes[id][key];
+          delete route[key];
         }
         if (api.config.clientLoader) {
           if (
             ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
-              clonedRoutes[id].file.endsWith(ext),
+              route.file.endsWith(ext),
             )
           ) {
             const exports = await getExports({
-              path: isAbsolute(clonedRoutes[id].file)
-                ? clonedRoutes[id].file
-                : join(api.paths.absPagesPath, clonedRoutes[id].file),
+              path: isAbsolute(route.file)
+                ? route.file
+                : join(api.paths.absPagesPath, route.file),
             });
-            clonedRoutes[id].hasLoader = exports.includes('loader');
+            route.hasLoader = exports.includes('loader');
             if (exports.includes('clientLoader'))
-              clonedRoutes[id].clientLoader = `clientLoaders.${
-                id.replace(/[\/\-]/g, '_') + '_client_loader'
-              }`;
+              route.clientLoader = `clientLoaders['${id}']`;
           }
         }
       }
@@ -143,7 +143,7 @@ export default function EmptyRoute() {
       context: {
         isClientLoaderEnabled: !!api.config.clientLoader,
         routes: JSON.stringify(clonedRoutes).replace(
-          /"(clientLoaders\..*?)"/g,
+          /"(clientLoaders\[.*?)"/g,
           '$1',
         ),
         routeComponents: await getRouteComponents({ routes, prefix, api }),
@@ -151,6 +151,15 @@ export default function EmptyRoute() {
     });
 
     // loaders.ts
+    const clientLoaders = await getRouteClientLoaders(api);
+    const clientLoaderImports: string[] = [];
+    const clientLoaderDefines: string[] = [];
+    clientLoaders.forEach((clientLoader, index) => {
+      clientLoaderImports.push(
+        `import { clientLoader as loader_${index} } from '${clientLoader.path}';`,
+      );
+      clientLoaderDefines.push(`  '${clientLoader.id}': loader_${index},`);
+    });
     api.writeTmpFile({
       noPluginDir: true,
       path: join('core/loaders.ts'),
@@ -158,6 +167,12 @@ export default function EmptyRoute() {
       context: {
         loaders: await getRouteClientLoaders(api),
       },
+      content: `
+${clientLoaderImports.join('\n')}
+export default {
+${clientLoaderDefines.join('\n')}
+};
+      `,
     });
 
     // plugin.ts
@@ -202,7 +217,7 @@ export default function EmptyRoute() {
           index,
           path: winPath(plugin),
         })),
-        validKeys: validKeys,
+        validKeys,
       },
     });
 
@@ -471,11 +486,10 @@ export async function getRouteClientLoaders(api: IApi) {
       if (exports.includes('clientLoader')) routesWithClientLoader.push(key);
     }),
   );
-  return routesWithClientLoader.map((key) => {
-    const route = api.appData.routes[key];
-    const name = key.replace(/[\/\-]/g, '_') + '_client_loader';
+  return routesWithClientLoader.map((id) => {
+    const route = api.appData.routes[id];
     return {
-      name,
+      id,
       path: join(api.paths.absPagesPath, route.file),
     };
   });
