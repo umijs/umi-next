@@ -114,25 +114,23 @@ export default function EmptyRoute() {
     for (const id of Object.keys(clonedRoutes)) {
       for (const key of Object.keys(clonedRoutes[id])) {
         const route = clonedRoutes[id];
+        // Add clientLoader prop to route
+        if (api.config.clientLoader) {
+          // Route file could be .md or .mdx
+          const isJSRoute =
+            route.__absFile && /\.([jt])sx?/.test(route.__absFile);
+          if (isJSRoute) {
+            const exports = await getExports({
+              path: route.__absFile,
+            });
+            if (exports.includes('clientLoader')) {
+              route.clientLoader = `clientLoaders['${id}']`;
+            }
+          }
+        }
         // Remove __ prefix props and absPath props
         if (key.startsWith('__') || key.startsWith('absPath')) {
           delete route[key];
-        }
-        if (api.config.clientLoader) {
-          if (
-            ['.js', '.jsx', '.ts', '.tsx'].some((ext) =>
-              route.file.endsWith(ext),
-            )
-          ) {
-            const exports = await getExports({
-              path: isAbsolute(route.file)
-                ? route.file
-                : join(api.paths.absPagesPath, route.file),
-            });
-            route.hasLoader = exports.includes('loader');
-            if (exports.includes('clientLoader'))
-              route.clientLoader = `clientLoaders['${id}']`;
-          }
         }
       }
     }
@@ -142,10 +140,9 @@ export default function EmptyRoute() {
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
         isClientLoaderEnabled: !!api.config.clientLoader,
-        routes: JSON.stringify(clonedRoutes).replace(
-          /"(clientLoaders\[.*?)"/g,
-          '$1',
-        ),
+        routes: JSON.stringify(clonedRoutes)
+          // "clientLoaders['foo']" > clientLoaders['foo']
+          .replace(/"(clientLoaders\[.*?)"/g, '$1'),
         routeComponents: await getRouteComponents({ routes, prefix, api }),
       },
     });

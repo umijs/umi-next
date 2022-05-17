@@ -96,6 +96,7 @@ export async function getRoutes(opts: { api: IApi }) {
 
       // TODO: REMOVE ME
       routes[id].__content = readFileSync(file, 'utf-8');
+      routes[id].__absFile = file;
     }
   }
 
