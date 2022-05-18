@@ -227,8 +227,9 @@ export function patchRoutes({ routes }) {
     const { icon } = routes[key];
     if (icon && typeof icon === 'string') {
       const upperIcon = formatIcon(icon);
-      if(!icons[upperIcon] && !icons[upperIcon + 'Outlined']) return;
-      routes[key].icon = React.createElement(icons[upperIcon] || icons[upperIcon + 'Outlined']);
+      if (icons[upperIcon] || icons[upperIcon + 'Outlined']) {
+        routes[key].icon = React.createElement(icons[upperIcon] || icons[upperIcon + 'Outlined']);
+      }
     }
   });
 }
