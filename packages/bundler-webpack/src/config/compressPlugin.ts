@@ -1,6 +1,9 @@
 // @ts-ignore
+import type { TransformOptions as EsbuildOpts } from '@umijs/bundler-utils/compiled/esbuild';
 import CSSMinimizerWebpackPlugin from '@umijs/bundler-webpack/compiled/css-minimizer-webpack-plugin';
-import TerserPlugin from '../../compiled/terser-webpack-plugin';
+import TerserPlugin, {
+  type TerserOptions,
+} from '../../compiled/terser-webpack-plugin';
 import Config from '../../compiled/webpack-5-chain';
 import { CSSMinifier, Env, IConfig, JSMinifier } from '../types';
 import { getEsBuildTarget } from '../utils/getEsBuildTarget';
@@ -38,13 +41,25 @@ export async function addCompressPlugin(opts: IOpts) {
     minify = TerserPlugin.esbuildMinify;
     terserOptions = {
       target: esbuildTarget,
-    };
+      // remove all comments
+      legalComments: 'none',
+    } as EsbuildOpts;
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
+    terserOptions = {
+      format: {
+        comments: false,
+      },
+    } as TerserOptions;
   } else if (jsMinifier === JSMinifier.swc) {
     minify = TerserPlugin.swcMinify;
   } else if (jsMinifier === JSMinifier.uglifyJs) {
     minify = TerserPlugin.uglifyJsMinify;
+    terserOptions = {
+      output: {
+        comments: false,
+      },
+    };
   } else if (jsMinifier !== JSMinifier.none) {
     throw new Error(`Unsupported jsMinifier ${userConfig.jsMinifier}.`);
   }
@@ -55,6 +70,7 @@ export async function addCompressPlugin(opts: IOpts) {
   if (jsMinifier !== JSMinifier.none) {
     config.optimization.minimizer(`js-${jsMinifier}`).use(TerserPlugin, [
       {
+        extractComments: false,
         minify,
         terserOptions,
       },
@@ -67,7 +83,7 @@ export async function addCompressPlugin(opts: IOpts) {
     cssMinify = CSSMinimizerWebpackPlugin.esbuildMinify;
     minimizerOptions = {
       target: esbuildTarget,
-    };
+    } as EsbuildOpts;
   } else if (cssMinifier === CSSMinifier.cssnano) {
     cssMinify = CSSMinimizerWebpackPlugin.cssnanoMinify;
   } else if (cssMinifier === CSSMinifier.parcelCSS) {
