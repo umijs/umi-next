@@ -114,15 +114,22 @@ export async function getRoutes(opts: { api: IApi }) {
   }
 
   // layout routes
-  const absLayoutPath = join(opts.api.paths.absSrcPath, 'layouts/index.tsx');
-  const layouts = await opts.api.applyPlugins({
-    key: 'addLayouts',
-    initialValue: [
-      existsSync(absLayoutPath) && {
-        id: '@@/global-layout',
-        file: absLayoutPath,
-      },
-    ].filter(Boolean),
+  const absSrcPath = opts.api.paths.absSrcPath;
+  const absLayoutPath = join(absSrcPath, 'layouts/index.tsx');
+  const layouts = (
+    await opts.api.applyPlugins({
+      key: 'addLayouts',
+      initialValue: [
+        existsSync(absLayoutPath) && {
+          id: '@@/global-layout',
+          file: absLayoutPath,
+        },
+      ].filter(Boolean),
+    })
+  ).map((layout: { file: string }) => {
+    // prune local path prefix, avoid mix in outputs
+    layout.file = layout.file.replace(new RegExp(`^${absSrcPath}`), '@');
+    return layout;
   });
   for (const layout of layouts) {
     addParentRoute({
@@ -182,18 +189,10 @@ export async function getRouteComponents(opts: {
         return `'${key}': () => Promise.resolve(${route.file}),`;
       }
 
-      let path: string;
-      if (isAbsolute(route.file)) {
-        // prune local path prefix, avoid mix in outputs
-        path = route.file.replace(
-          new RegExp(`^${opts.api.paths.absSrcPath}`),
-          '@',
-        );
-      } else if (route.file.startsWith('@/')) {
-        path = route.file;
-      } else {
-        path = `${opts.prefix}${route.file}`;
-      }
+      const path =
+        isAbsolute(route.file) || route.file.startsWith('@/')
+          ? route.file
+          : `${opts.prefix}${route.file}`;
 
       return `'${key}': () => import(/* webpackChunkName: "${key.replace(
         /[\/-]/g,
