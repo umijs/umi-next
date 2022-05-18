@@ -195,10 +195,10 @@ importers:
   examples/client-loader:
     specifiers:
       express: 4.17.3
-      umi: 4.0.0-rc.17
+      umi: 4.0.0-canary.20220517.1
     dependencies:
       express: 4.17.3
-      umi: 4.0.0-rc.17_73ef0f7440095af8fd8f18171da41351
+      umi: link:../../packages/umi
 
   examples/diff-client-loader:
     specifiers:
@@ -1034,6 +1034,7 @@ importers:
       regenerator-runtime: 0.13.9
       sirv: 2.0.2
       vite: 2.9.1
+      webpack-sources: 3.2.3
     dependencies:
       '@types/multer': 1.4.7
       '@umijs/ast': link:../ast
@@ -1055,6 +1056,7 @@ importers:
       react-router: 6.3.0_react@18.1.0
       react-router-dom: 6.3.0_react-dom@18.1.0+react@18.1.0
       regenerator-runtime: 0.13.9
+      webpack-sources: 3.2.3
     devDependencies:
       '@manypkg/get-packages': 1.1.3
       '@types/body-parser': 1.19.2
@@ -26316,7 +26318,6 @@ packages:
   /webpack-sources/3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
     engines: {node: '>=10.13.0'}
-    dev: true
 
   /webpack-virtual-modules/0.4.3:
     resolution: {integrity: sha512-5NUqC2JquIL2pBAAo/VfBP6KuGkHIZQXW/lNKupLPfhViwh8wNsu0BObtl09yuKZszeEUfbXz8xhrHvSG16Nqw==}
