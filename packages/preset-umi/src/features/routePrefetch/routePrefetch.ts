@@ -28,7 +28,7 @@ export default (api: IApi) => {
     );
     const manifestObj = JSON.parse(manifest);
     const umiJsFileKey = Object.keys(manifestObj).find((key) =>
-      key.startsWith('umi.'),
+      key.match(/^umi(.*)\.js$/),
     );
     if (!umiJsFileKey) {
       throw new Error('Cannot find umi.js in manifest.json');
