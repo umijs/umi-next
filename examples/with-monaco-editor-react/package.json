@@ -1,5 +1,5 @@
 {
-  "name": "@example/with-sass",
+  "name": "@example/with-monaco-editor-react",
   "private": true,
   "scripts": {
     "build": "umi build",
