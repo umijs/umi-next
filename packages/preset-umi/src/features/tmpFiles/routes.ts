@@ -120,7 +120,7 @@ export async function getRoutes(opts: { api: IApi }) {
     initialValue: [
       existsSync(absLayoutPath) && {
         id: '@@/global-layout',
-        file: absLayoutPath,
+        file: `@/layouts/index.tsx`,
       },
     ].filter(Boolean),
   });
