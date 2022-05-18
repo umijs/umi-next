@@ -4,7 +4,7 @@ import TerserPlugin from '../../compiled/terser-webpack-plugin';
 import Config from '../../compiled/webpack-5-chain';
 import ESBuildCSSMinifyPlugin from '../plugins/ESBuildCSSMinifyPlugin';
 import { ParcelCSSMinifyPlugin } from '../plugins/ParcelCSSMinifyPlugin';
-import { CSSMinifier, Env, IConfig, JSMinifier } from '../types';
+import { CSSMinifier, DropConsole, Env, IConfig, JSMinifier } from '../types';
 import { getEsBuildTarget } from '../utils/getEsBuildTarget';
 
 interface IOpts {
@@ -13,12 +13,22 @@ interface IOpts {
   cwd: string;
   env: Env;
 }
-
+const consoleFnName = Object.getOwnPropertyNames(console).map(
+  (name) => `console.${name}`,
+);
+const consoleDropLevel = {
+  [DropConsole.none]: [],
+  [DropConsole.info]: consoleFnName.filter(
+    (name) => name !== 'console.warn' && name !== 'console.error',
+  ),
+  [DropConsole.warn]: consoleFnName.filter((name) => name !== 'console.error'),
+  [DropConsole.error]: consoleFnName,
+};
 export async function addCompressPlugin(opts: IOpts) {
   const { config, userConfig, env } = opts;
   const jsMinifier = userConfig.jsMinifier || JSMinifier.esbuild;
   const cssMinifier = userConfig.cssMinifier || CSSMinifier.esbuild;
-
+  const { dropDebugger = true, dropConsole = DropConsole.none } = userConfig;
   if (
     env === Env.development ||
     process.env.COMPRESS === 'none' ||
@@ -28,20 +38,33 @@ export async function addCompressPlugin(opts: IOpts) {
     return;
   }
   config.optimization.minimize(true);
-
+  const pure_console = consoleDropLevel[dropConsole] ?? [];
   let minify: any;
-  let terserOptions: IConfig['jsMinifierOptions'];
+  let terserOptions: IConfig['jsMinifierOptions'] = {
+    compress: {
+      drop_debugger: dropDebugger,
+      pure_funcs: [...pure_console],
+    },
+  };
   if (jsMinifier === JSMinifier.esbuild) {
     minify = TerserPlugin.esbuildMinify;
     terserOptions = {
       target: getEsBuildTarget({
         targets: userConfig.targets || {},
       }),
+      drop: dropDebugger ? ['debugger'] : [],
+      pure: [...pure_console],
     };
   } else if (jsMinifier === JSMinifier.terser) {
     minify = TerserPlugin.terserMinify;
   } else if (jsMinifier === JSMinifier.swc) {
     minify = TerserPlugin.swcMinify;
+    if (dropConsole === DropConsole.info || dropConsole === DropConsole.warn) {
+      throw new Error(
+        `dropConsole not supported with 1 or 2 when using ${userConfig.jsMinifier}.`,
+      );
+    }
+    terserOptions.compress.drop_console = pure_console.length > 0;
   } else if (jsMinifier === JSMinifier.uglifyJs) {
     minify = TerserPlugin.uglifyJsMinify;
   } else if (jsMinifier !== JSMinifier.none) {

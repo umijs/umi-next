@@ -1,6 +1,6 @@
 // sort-object-keys
 import type { Root } from '@hapi/joi';
-import { CSSMinifier, JSMinifier, Transpiler } from './types';
+import { CSSMinifier, DropConsole, JSMinifier, Transpiler } from './types';
 
 const options = [
   'cheap-source-map',
@@ -73,6 +73,14 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
       ),
     devtool: (Joi) =>
       Joi.alternatives().try(Joi.string().regex(DEVTOOL_REGEX), Joi.boolean()),
+    dropConsole: (Joi) =>
+      Joi.number().valid(
+        DropConsole.none,
+        DropConsole.info,
+        DropConsole.warn,
+        DropConsole.error,
+      ),
+    dropDebugger: (Joi) => Joi.boolean(),
     esm: (Joi) => Joi.object(),
     externals: (Joi) =>
       Joi.alternatives().try(Joi.object(), Joi.string(), Joi.func()),

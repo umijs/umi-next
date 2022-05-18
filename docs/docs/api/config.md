@@ -937,3 +937,29 @@ vite: {
   cacheDir: 'node_modules/.bin/.vite';
 }
 ```
+
+
+## dropDebugger
+
+* 类型：`boolean`
+* 默认值：`true`
+
+用于删除产物代码中的debugger语句
+
+
+## dropConsole
+
+* 类型：`0 | 1 | 2 | 3`
+* 默认值：`0`
+
+用于删除产物代码中的console.*语句
+
+0: 不删除console.*语句
+
+1: 删除非warn、非error的普通级别日志
+
+2: 删除非error的警告级别日志
+
+3: 删除全部级别日志
+
+注意：swc暂时只支持0和3，不支持分级删除
