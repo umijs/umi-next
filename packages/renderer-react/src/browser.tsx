@@ -136,9 +136,9 @@ export function renderClient(opts: {
               // publicPath already in the manifest,
               // but if runtimePublicPath is true, we need to replace it
               if (opts.runtimePublicPath) {
-                // @ts-ignore
                 file = file.replace(
                   new RegExp(`^${opts.publicPath}`),
+                  // @ts-ignore
                   window.publicPath,
                 );
               }
