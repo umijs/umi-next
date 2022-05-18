@@ -313,6 +313,24 @@ devtool: false;
 devtool: process.env.NODE_ENV === 'development' ? 'eval' : false;
 ```
 
+## dropConsole
+* 类型：`boolean`
+* 默认值：false
+
+开启 dropConsole, 删除 build 产物代码中的所有 console api 调用语句。
+
+注意：此配置会删除所有 console.* 函数的调用, 并且连带着参数中的函数调用都会被删除。
+
+比如，当开启这个配置后，这段代码`console.log(Math.floor());`将完全消失在 build 产物代码中。
+
+如果你想要删除指定的函数调用，比如 `console.log` 或者在删除函数后保留参数内的函数调用，请使用 pureFuncs 配置。
+
+## dropDebugger
+* 类型：`boolean`
+* 默认值：true
+
+默认删除 build 产物代码中的 debugger 语句。设置为 false, 保留 build 产物代码中的 debugger 语句。
+
 ## externals
 
 - 类型：`Record<string, string> | Function`
@@ -792,6 +810,19 @@ proxy: {
 
 配置 webpack 的 publicPath。
 
+## pureFuncs
+* 类型：`string[]`
+* 默认值：`null`
+
+指定哪些函数是没有 side effects (副作用)。
+
+例如，`var q = Math.floor(a/b)`，如果变量 q 是 unused (未使用的)，在 build 产物代码中，
+这个变量 q 将会被删除，但是仍然会保留 `Math.floor(a/b)`。你可以传递 `pureFuncs:['Math.floor']`,
+让 umi 在 build 时，可以明确知道这个函数调用不会产生副作用。那么，在这个例子中，`Math.floor(a/b)` 也
+会被删除在 build 产物代码中。
+
+你可以传递 `pureFuncs:['console.log']` , 告诉 umi 删除 build 产物代码中所有 `console.log` 的相关代码。
+但是，不会删除 `console.log` 函数参数中的函数调用。如要删除，请在 pureFuncs 中指定。
 ## routes
 
 - 类型：`Route[]`

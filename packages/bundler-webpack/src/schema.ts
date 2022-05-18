@@ -73,6 +73,8 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
       ),
     devtool: (Joi) =>
       Joi.alternatives().try(Joi.string().regex(DEVTOOL_REGEX), Joi.boolean()),
+    dropConsole: (Joi) => Joi.boolean(),
+    dropDebugger: (Joi) => Joi.boolean(),
     esm: (Joi) => Joi.object(),
     externals: (Joi) =>
       Joi.alternatives().try(Joi.object(), Joi.string(), Joi.func()),
@@ -119,6 +121,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
     postcssLoader: (Joi) => Joi.object(),
     proxy: (Joi) => Joi.object(),
     publicPath: (Joi) => Joi.string(),
+    pureFuncs: (Joi) => Joi.array().items(Joi.string()),
     purgeCSS: (Joi) => Joi.object(),
     runtimePublicPath: (Joi) => Joi.object(),
     sassLoader: (Joi) => Joi.object(),

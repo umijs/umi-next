@@ -23,6 +23,8 @@ const config = {
   https: {},
   depTranspiler: 'esbuild',
   devtool: 'cheap-module-source-map',
+  dropConsole: true,
+  dropDebugger: true,
   externals: {
     react: 'React',
     'react-dom': 'ReactDOM',
@@ -40,6 +42,7 @@ const config = {
   proxy: {},
   publicPath: 'abc',
   purgeCSS: {},
+  pureFuncs: ['console.log'],
   sassLoader: {},
   srcTranspiler: 'esbuild',
   styleLoader: {},
