@@ -1,5 +1,8 @@
+import { loadEnv } from '@umijs/core';
 import { logger, yParser } from '@umijs/utils';
+import { printHelp } from '../client/utils';
 import { DEV_COMMAND } from '../constants';
+import { getCwd } from '../service/cwd';
 import { Service } from '../service/service';
 import { dev } from './dev';
 import {
@@ -14,6 +17,7 @@ interface IOpts {
 }
 
 export async function run(opts?: IOpts) {
+  loadEnv({ cwd: getCwd(), envFile: '.env' });
   checkNodeVersion();
   checkLocal();
   setNodeTitle();
@@ -44,7 +48,8 @@ export async function run(opts?: IOpts) {
         args,
       });
     } catch (e: any) {
-      logger.error(e);
+      logger.fatal(e);
+      printHelp();
       process.exit(1);
     }
   }

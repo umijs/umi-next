@@ -242,7 +242,6 @@ export class Service {
     this.args = args;
     this.name = name;
 
-    // loadEnv
     this.stage = ServiceStage.init;
     loadEnv({ cwd: this.cwd, envFile: '.env' });
     // get pkg from package.json
