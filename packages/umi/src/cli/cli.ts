@@ -1,8 +1,5 @@
-import { loadEnv } from '@umijs/core';
 import { logger, yParser } from '@umijs/utils';
-import { printHelp } from '../client/utils';
 import { DEV_COMMAND } from '../constants';
-import { getCwd } from '../service/cwd';
 import { Service } from '../service/service';
 import { dev } from './dev';
 import {
@@ -11,13 +8,13 @@ import {
   setNoDeprecation,
   setNodeTitle,
 } from './node';
+import { printHelp } from './printHelp';
 
 interface IOpts {
   presets?: string[];
 }
 
 export async function run(opts?: IOpts) {
-  loadEnv({ cwd: getCwd(), envFile: '.env' });
   checkNodeVersion();
   checkLocal();
   setNodeTitle();
