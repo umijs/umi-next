@@ -1,5 +1,5 @@
 import { webpack } from '@umijs/bundler-webpack';
-import { RawSource } from 'webpack-sources';
+import { RawSource } from '@umijs/bundler-webpack/compiled/webpack-sources';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {

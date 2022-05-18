@@ -44,8 +44,7 @@
     "react-dom": "18.1.0",
     "react-router": "6.3.0",
     "react-router-dom": "6.3.0",
-    "regenerator-runtime": "0.13.9",
-    "webpack-sources": "3.2.3"
+    "regenerator-runtime": "0.13.9"
   },
   "devDependencies": {
     "@manypkg/get-packages": "1.1.3",
