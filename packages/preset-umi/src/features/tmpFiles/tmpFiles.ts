@@ -1,9 +1,9 @@
-import { parseModule } from '@umijs/bundler-utils';
 import { lodash, winPath } from '@umijs/utils';
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
+import { getModuleExports } from './getModuleExports';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
 
@@ -81,7 +81,7 @@ export default (api: IApi) => {
       },
     });
 
-    // EmptyRoutes.tsx
+    // EmptyRoute.tsx
     api.writeTmpFile({
       noPluginDir: true,
       path: 'core/EmptyRoute.tsx',
@@ -112,8 +112,10 @@ export default function EmptyRoute() {
     const clonedRoutes = lodash.cloneDeep(routes);
     for (const id of Object.keys(clonedRoutes)) {
       for (const key of Object.keys(clonedRoutes[id])) {
+        const route = clonedRoutes[id];
+        // Remove __ prefix props and absPath props
         if (key.startsWith('__') || key.startsWith('absPath')) {
-          delete clonedRoutes[id][key];
+          delete route[key];
         }
       }
     }
@@ -122,8 +124,11 @@ export default function EmptyRoute() {
       path: 'core/route.tsx',
       tplPath: join(TEMPLATES_DIR, 'route.tpl'),
       context: {
-        routes: JSON.stringify(clonedRoutes),
-        routeComponents: await getRouteComponents({ routes, prefix }),
+        isClientLoaderEnabled: !!api.config.clientLoader,
+        routes: JSON.stringify(clonedRoutes)
+          // "clientLoaders['foo']" > clientLoaders['foo']
+          .replace(/"(clientLoaders\[.*?)"/g, '$1'),
+        routeComponents: await getRouteComponents({ routes, prefix, api }),
       },
     });
 
@@ -147,10 +152,9 @@ export default function EmptyRoute() {
     const validKeys = await api.applyPlugins({
       key: 'addRuntimePluginKey',
       initialValue: [
-        // TODO: support these methods
-        // 'modifyClientRenderOpts',
         'patchRoutes',
         'patchClientRoutes',
+        'modifyContextOpts',
         'rootContainer',
         'innerProvider',
         'i18nProvider',
@@ -170,7 +174,7 @@ export default function EmptyRoute() {
           index,
           path: winPath(plugin),
         })),
-        validKeys: validKeys,
+        validKeys,
       },
     });
 
@@ -184,12 +188,6 @@ export default function EmptyRoute() {
       },
     });
   });
-
-  async function getExports(opts: { path: string }) {
-    const content = readFileSync(opts.path, 'utf-8');
-    const [_, exports] = await parseModule({ content, path: opts.path });
-    return exports || [];
-  }
 
   function checkMembers(opts: {
     path: string;
@@ -208,7 +206,7 @@ export default function EmptyRoute() {
     path: string;
     exportMembers: string[];
   }) {
-    const members = (await getExports(opts)) as string[];
+    const members = (await getModuleExports({ file: opts.path })) as string[];
     checkMembers({
       members,
       exportMembers: opts.exportMembers,
@@ -244,7 +242,6 @@ export default function EmptyRoute() {
           })
         ).join(', ')} } from '${rendererPath}';`,
       );
-
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
       const umiDir = process.env.UMI_DIR!;
@@ -264,6 +261,15 @@ export default function EmptyRoute() {
         exportMembers,
         path: '@@/core/history.ts',
       });
+      // @@/core/terminal.ts
+      if (api.service.config.terminal !== false) {
+        exports.push(`export { terminal } from './core/terminal';`);
+        checkMembers({
+          members: ['terminal'],
+          exportMembers,
+          path: '@@/core/terminal.ts',
+        });
+      }
       // plugins
       exports.push('// plugins');
       const plugins = readdirSync(api.paths.absTmpPath).filter((file) => {

@@ -20,7 +20,8 @@ export default (props: any) => {
 
     function updateBlur() {
       if (!offset || !blur) return;
-      blur.backgroundPosition = `0px ` + `${-window.scrollY + 100}px`;
+      blur.backgroundPosition =
+        `0px ` + `calc(var(--anchor-offset) + ${-window.scrollY + 64}px)`;
     }
 
     document.addEventListener('scroll', updateBlur, false), updateBlur();
@@ -42,6 +43,7 @@ export default (props: any) => {
         components: props.components,
         themeConfig: props.themeConfig,
         location: props.location,
+        history: props.history,
       }}
     >
       <div

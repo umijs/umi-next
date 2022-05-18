@@ -1,6 +1,6 @@
 {
   "name": "@umijs/test",
-  "version": "4.0.0-rc.14",
+  "version": "4.0.0-canary.20220517.1",
   "description": "@umijs/test",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/testing#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
@@ -28,7 +28,7 @@
     "isomorphic-unfetch": "3.1.0"
   },
   "devDependencies": {
-    "jest": "27.5.1"
+    "jest": "^27.5.1"
   },
   "publishConfig": {
     "access": "public"

@@ -67,6 +67,7 @@ export type IEntryImport = {
   specifier?: string;
 };
 export type IRoute = ICoreRoute;
+
 export type IApi = PluginAPI &
   IServicePluginAPI & {
     addApiMiddlewares: IAdd<null, IApiMiddleware>;
@@ -102,7 +103,7 @@ export type IApi = PluginAPI &
       }): void;
     };
     modifyHTML: IModify<CheerioAPI, { path: string }>;
-    modifyHTMLFavicon: IModify<string, {}>;
+    modifyHTMLFavicon: IModify<string[], {}>;
     modifyRendererPath: IModify<string, {}>;
     modifyRoutes: IModify<Record<string, IRoute>, {}>;
     modifyViteConfig: IModify<
