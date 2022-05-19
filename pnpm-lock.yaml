@@ -1176,12 +1176,10 @@ importers:
       chokidar: 3.5.3
       color: 4.2.3
       cross-spawn: 7.0.3
-      dayjs: 1.11.0
       debug: 4.3.4
       deepmerge: 4.2.2
       execa: 6.1.0
       fs-extra: 10.0.1
-      get-caller-file: ^2.0.5
       glob: 8.0.1
       import-lazy: 4.0.0
       lodash: 4.17.21
@@ -1194,7 +1192,6 @@ importers:
       prompts: 2.4.2
       resolve: 1.22.0
       rimraf: 3.0.2
-      rotating-file-stream: 3.0.3
       semver: 7.3.6
       strip-ansi: 7.0.1
       yargs-parser: 21.0.1
@@ -1216,12 +1213,10 @@ importers:
       cheerio: 1.0.0-rc.10
       color: 4.2.3
       cross-spawn: 7.0.3
-      dayjs: 1.11.0
       debug: 4.3.4
       deepmerge: 4.2.2
       execa: 6.1.0
       fs-extra: 10.0.1
-      get-caller-file: 2.0.5
       glob: 8.0.1
       import-lazy: 4.0.0
       lodash: 4.17.21
@@ -1233,7 +1228,6 @@ importers:
       prompts: 2.4.2
       resolve: 1.22.0
       rimraf: 3.0.2
-      rotating-file-stream: 3.0.3
       semver: 7.3.6
       strip-ansi: 7.0.1
       yargs-parser: 21.0.1
@@ -12006,10 +12000,6 @@ packages:
 
   /dateformat/3.0.3:
     resolution: {integrity: sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==}
-    dev: true
-
-  /dayjs/1.11.0:
-    resolution: {integrity: sha512-JLC809s6Y948/FuCZPm5IX8rRhQwOiyMb2TfVVQEixG7P8Lm/gt5S7yoQZmC8x1UehI9Pb7sksEt4xx14m+7Ug==}
     dev: true
 
   /dayjs/1.11.2:
@@ -23390,11 +23380,6 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
-
-  /rotating-file-stream/3.0.3:
-    resolution: {integrity: sha512-lN4tljs2Pv8OkVCw34Fa+jYn9vn98ZxWgBoavKjlT7az25F+oEZT6kKXmzpqovBVz+fW7Mb862tc34rpxKVZFw==}
-    engines: {node: '>=14.0'}
     dev: true
 
   /rsvp/4.8.5:
