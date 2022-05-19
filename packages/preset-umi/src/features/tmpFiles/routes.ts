@@ -122,7 +122,7 @@ export async function getRoutes(opts: { api: IApi }) {
       initialValue: [
         existsSync(absLayoutPath) && {
           id: '@@/global-layout',
-          file: absLayoutPath,
+          file: winPath(absLayoutPath),
         },
       ].filter(Boolean),
     })
