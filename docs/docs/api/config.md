@@ -332,7 +332,7 @@ scripts: ['https://unpkg.com/react@17.0.1/umd/react.production.min.js'],
 
 ## extraBabelIncludes
 
-* 类型：`string[]`
+* 类型：`(string | RegExp)[]`
 * 默认值：`[]`
 
 配置额外需要做 Babel 编译的 NPM 包或目录。比如：
@@ -344,6 +344,8 @@ export default {
     join(__dirname, '../../common'),
     // 支持 npm 包
     'react-monaco-editor',
+    // 转译全部 node_modules
+    /node_modules/
   ],
 };
 ```
