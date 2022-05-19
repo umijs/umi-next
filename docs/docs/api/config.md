@@ -332,7 +332,7 @@ scripts: ['https://unpkg.com/react@17.0.1/umd/react.production.min.js'],
 
 ## extraBabelIncludes
 
-* 类型：`(string | RegExp)[]`
+* 类型：`Array<string | RegExp>`
 * 默认值：`[]`
 
 配置额外需要做 Babel 编译的 NPM 包或目录。比如：
@@ -532,6 +532,29 @@ https: {
 
 */
 }
+
+## legacyBundle
+
+- 类型：`boolean | { transformAllDeps?: boolean }`
+- 默认值：`false`
+
+当你需要兼容低版本浏览器时，可能需要该选项，开启后将默认使用如下 **非现代** 的打包工具做构建，这会显著增加你的构建时间成本：
+
+- 使用 `babel` 来转译 ts / js 源码
+- 使用 `terser` 来压缩 js 产物
+- 使用 `cssnano` 来压缩 css 产物
+
+```ts
+legacyBundle: {}
+```
+
+当你需要转译更多第三方依赖时，可以将其配置至 [`extraBabelIncludes`](#extrababelincludes) ，或使用 `transformAllDeps` 默认转译全部 `node_modules` 的源码，这会需要更长的时间：
+
+```ts
+legacyBundle: {
+  transformAllDeps: true
+}
+```
 
 ## lessLoader
 
