@@ -39,6 +39,10 @@
     "@babel/plugin-proposal-partial-application": "7.16.7",
     "@babel/plugin-proposal-pipeline-operator": "7.17.6",
     "@babel/plugin-proposal-record-and-tuple": "7.16.7",
+    "@babel/plugin-transform-react-jsx": "7.17.12",
+    "@babel/plugin-transform-react-jsx-development": "7.16.7",
+    "@babel/plugin-transform-react-jsx-self": "^7.16.7",
+    "@babel/plugin-transform-react-jsx-source": "^7.16.7",
     "@babel/plugin-transform-runtime": "7.17.0",
     "@babel/preset-env": "7.16.11",
     "@babel/preset-react": "7.16.7",
@@ -68,6 +72,10 @@
   ],
   "compiledConfig": {
     "deps": [
+      "@babel/plugin-transform-react-jsx-development",
+      "@babel/plugin-transform-react-jsx",
+      "@babel/plugin-transform-react-jsx-self",
+      "@babel/plugin-transform-react-jsx-source",
       "cjs-module-lexer",
       "es-module-lexer",
       "esbuild",
@@ -85,6 +93,12 @@
       "less": "$$LOCAL",
       "tapable": "$$LOCAL"
     },
+    "excludeDtsDeps": [
+      "@babel/plugin-transform-react-jsx-development",
+      "@babel/plugin-transform-react-jsx",
+      "@babel/plugin-transform-react-jsx-self",
+      "@babel/plugin-transform-react-jsx-source"
+    ],
     "noMinify": [
       "./bundles/babel/bundle"
     ],

@@ -132,7 +132,11 @@ Object.keys(exported).forEach(function (key) {
         code.includes('"node:') &&
         opts.pkgName && // skip local file bundle like babel/bundle.js
         opts.pkgName !== 'stylelint-declaration-block-no-ignored-properties' &&
-        opts.pkgName !== 'vite'
+        opts.pkgName !== 'vite' &&
+        opts.pkgName !== '@babel/plugin-transform-react-jsx-development' &&
+        opts.pkgName !== '@babel/plugin-transform-react-jsx' &&
+        opts.pkgName !== '@babel/plugin-transform-react-jsx-self' &&
+        opts.pkgName !== '@babel/plugin-transform-react-jsx-source'
       ) {
         throw new Error(`${opts.pkgName} has "node:"`);
       }
@@ -309,6 +313,49 @@ Object.keys(exported).forEach(function (key) {
               .replace(
                 'declare module "less"',
                 'declare module "@umijs/bundler-utils/compiled/less"',
+              ),
+            'utf-8',
+          );
+        }
+        if (opts.pkgName === '@vitejs/plugin-react') {
+          const dtsPath = path.join(
+            opts.base,
+            'compiled/@vitejs/plugin-react/dist/index.d.ts',
+          );
+          const indexPath = path.join(
+            opts.base,
+            'compiled/@vitejs/plugin-react/index.js',
+          );
+
+          fs.writeFileSync(
+            dtsPath,
+            fs
+              .readFileSync(dtsPath, 'utf-8')
+              .replace(
+                'declare module "@vitejs/plugin-react"',
+                'declare module "@umijs/bundler-vite/compiled/@vitejs/plugin-react/dist"',
+              ),
+            'utf-8',
+          );
+          fs.writeFileSync(
+            indexPath,
+            fs
+              .readFileSync(indexPath, 'utf-8')
+              .replace(
+                'loadPlugin("@babel/plugin-transform-react-jsx',
+                'loadPlugin("@umijs/bundler-utils/compiled/@babel/plugin-transform-react-jsx',
+              )
+              .replace(
+                'loadPlugin("@babel/plugin-transform-react-jsx-development',
+                'loadPlugin("@umijs/bundler-utils/compiled/@babel/plugin-transform-react-jsx-development',
+              )
+              .replace(
+                'loadPlugin("@babel/plugin-transform-react-jsx-self',
+                'loadPlugin("@umijs/bundler-utils/compiled/@babel/plugin-transform-react-jsx-self',
+              )
+              .replace(
+                'loadPlugin("@babel/plugin-transform-react-jsx-source',
+                'loadPlugin("@umijs/bundler-utils/compiled/@babel/plugin-transform-react-jsx-source',
               ),
             'utf-8',
           );

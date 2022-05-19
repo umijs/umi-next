@@ -28,9 +28,8 @@
   },
   "dependencies": {
     "@svgr/core": "6.2.1",
-    "@umijs/bundler-utils": "4.0.0-canary.20220517.1",
-    "@umijs/utils": "4.0.0-canary.20220517.1",
-    "@vitejs/plugin-react": "1.2.0",
+    "@umijs/bundler-utils": "4.0.0-canary.20220512.1",
+    "@umijs/utils": "4.0.0-canary.20220512.1",
     "postcss-preset-env": "7.5.0"
   },
   "devDependencies": {
@@ -38,6 +37,7 @@
     "@types/rollup-plugin-visualizer": "4.2.1",
     "@types/svgo": "2.6.3",
     "@vitejs/plugin-legacy": "1.7.1",
+    "@vitejs/plugin-react": "1.2.0",
     "caniuse-lite": "1.0.30001327",
     "rollup": "2.70.1",
     "rollup-plugin-copy": "3.4.0",
@@ -53,12 +53,14 @@
   "compiledConfig": {
     "deps": [
       "@vitejs/plugin-legacy",
+      "@vitejs/plugin-react",
       "caniuse-lite",
       "rollup-plugin-copy",
       "rollup-plugin-visualizer",
       "vite"
     ],
     "externals": {
+      "@babel/core": "@umijs/bundler-utils/compiled/babel/core",
       "esbuild": "@umijs/bundler-utils/compiled/esbuild",
       "express": "@umijs/bundler-utils/compiled/express",
       "fs-extra": "@umijs/utils/compiled/fs-extra",
@@ -71,6 +73,7 @@
       "rollup"
     ],
     "extraDtsExternals": [
+      "@babel/core",
       "esbuild",
       "foo",
       "fs-extra"

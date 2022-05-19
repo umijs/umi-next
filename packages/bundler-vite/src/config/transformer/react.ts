@@ -1,4 +1,4 @@
-import reactPlugin from '@vitejs/plugin-react';
+import reactPlugin from '@umijs/bundler-vite/compiled/@vitejs/plugin-react';
 import type { IConfigProcessor } from '.';
 
 /**
