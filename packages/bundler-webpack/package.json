@@ -29,7 +29,6 @@
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
-    "@parcel/css": "1.8.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.5",
     "@svgr/core": "6.2.1",
     "@svgr/plugin-jsx": "^6.2.1",
@@ -48,6 +47,7 @@
     "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
+    "@parcel/css": "1.8.3",
     "@swc/core": "1.2.165",
     "@types/webpack-sources": "3.2.0",
     "@types/ws": "8.5.3",
@@ -73,6 +73,7 @@
     "svgo-loader": "3.0.0",
     "terser": "5.12.1",
     "terser-webpack-plugin": "5.3.1",
+    "uglify-js": "3.15.5",
     "url-loader": "4.1.1",
     "webpack": "5.72.0",
     "webpack-5-chain": "8.0.0",
@@ -136,7 +137,6 @@
       "terser": "$$LOCAL",
       "terser-webpack-plugin": "$$LOCAL",
       "typescript": "typescript",
-      "uglify-js": "uglify-js",
       "url-loader": "$$LOCAL",
       "webpack": "$$LOCAL",
       "webpack/lib/NormalModule": "../webpack/NormalModule",
@@ -156,7 +156,6 @@
     "extraDtsExternals": [
       "@swc/core",
       "esbuild",
-      "uglify-js",
       "webpack"
     ],
     "excludeDtsDeps": [
