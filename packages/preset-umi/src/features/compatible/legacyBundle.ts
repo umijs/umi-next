@@ -8,13 +8,13 @@ import { chalk, lodash } from '@umijs/utils';
 import assert from 'assert';
 import type { IApi } from '../../types';
 
-interface IDegradeBundleOpts {
+interface ILegacyBundleOpts {
   transformAllDeps?: boolean;
 }
 
 export default (api: IApi) => {
   api.describe({
-    key: 'degradeBundle',
+    key: 'legacyBundle',
     config: {
       schema(Joi) {
         return Joi.alternatives(
@@ -26,7 +26,7 @@ export default (api: IApi) => {
       },
     },
     enableBy: ({ env, userConfig }) => {
-      return userConfig.degradeBundle && env === Env.production;
+      return userConfig.legacyBundle && env === Env.production;
     },
   });
 
@@ -34,10 +34,10 @@ export default (api: IApi) => {
     stage: Number.MAX_SAFE_INTEGER,
     fn: (memo) => {
       const { userConfig } = api;
-      const { degradeBundle } = userConfig;
-      const opts: IDegradeBundleOpts = lodash.isBoolean(degradeBundle)
+      const { legacyBundle } = userConfig;
+      const opts: ILegacyBundleOpts = lodash.isBoolean(legacyBundle)
         ? {}
-        : degradeBundle;
+        : legacyBundle;
 
       assert(
         !userConfig.srcTranspiler &&
@@ -45,7 +45,7 @@ export default (api: IApi) => {
           !userConfig.cssMinifier,
         `Manual configuration ${['srcTranspiler', 'jsMinifier', 'cssMinifier']
           .map((i) => chalk.yellow(i))
-          .join(', ')} is not supported in ${chalk.cyan('degradeBundle')} mode`,
+          .join(', ')} is not supported in ${chalk.cyan('legacyBundle')} mode`,
       );
 
       /**
