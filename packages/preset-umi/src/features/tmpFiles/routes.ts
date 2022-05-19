@@ -186,7 +186,7 @@ export async function getRouteComponents(opts: {
       // component: () => <h1>foo</h1>
       // component: (() => () => <h1>foo</h1>)()
       if (route.file.startsWith('(')) {
-        return `'${key}': () => Promise.resolve(${route.file}),`;
+        return `'${key}': React.lazy(() => Promise.resolve(${route.file})),`;
       }
 
       const path =
@@ -194,10 +194,10 @@ export async function getRouteComponents(opts: {
           ? route.file
           : `${opts.prefix}${route.file}`;
 
-      return `'${key}': () => import(/* webpackChunkName: "${key.replace(
+      return `'${key}': React.lazy(() => import(/* webpackChunkName: "${key.replace(
         /[\/-]/g,
         '_',
-      )}" */'${winPath(path)}'),`;
+      )}" */'${winPath(path)}')),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;

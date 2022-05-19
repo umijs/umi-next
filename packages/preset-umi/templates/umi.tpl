@@ -38,6 +38,9 @@ async function render() {
       });
       const basename = contextOpts.basename || '{{{ basename }}}';
       const context = {
+{{#hydrate}}
+    hydrate: '{{{ hydrate }}}',
+{{/hydrate}}
         routes,
         routeComponents,
         pluginManager,

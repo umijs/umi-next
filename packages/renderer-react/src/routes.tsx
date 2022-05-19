@@ -1,6 +1,5 @@
 // @ts-ignore
-import loadable from '@loadable/component';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { RouteContext } from './routeContext';
 import { IRoute, IRoutesById } from './types';
@@ -72,8 +71,10 @@ function DefaultLoading() {
 }
 
 function RemoteComponent(props: any) {
-  const Component = loadable(props.loader, {
-    fallback: <props.loadingComponent />,
-  });
-  return <Component />;
+  const Component = props.loader;
+  return (
+    <Suspense fallback={<props.loadingComponent />}>
+      <Component />
+    </Suspense>
+  );
 }

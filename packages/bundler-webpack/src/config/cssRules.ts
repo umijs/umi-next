@@ -1,4 +1,5 @@
 import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
+import type { LoaderContext } from 'mini-css-extract-plugin/types/utils';
 import { Env, IConfig } from '../types';
 
 interface IOpts {
@@ -7,6 +8,8 @@ interface IOpts {
   cwd: string;
   env: Env;
   browsers: any;
+  cssManifest?: Map<string, string>;
+  assetsManifest?: Map<string, string>;
 }
 
 export async function addCSSRules(opts: IOpts) {
@@ -87,6 +90,32 @@ export async function addCSSRules(opts: IOpts) {
                 modules: {
                   localIdentName: '[local]___[hash:base64:5]',
                   ...userConfig.cssLoaderModules,
+                  // If SSR is enabled, we need to handling the css modules name hashing
+                  // and save the class names mapping into opts.cssModulesMapping
+                  // so the esbuild can use it to generate the correct name for the server side
+                  getLocalIdent: !userConfig.ssr
+                    ? undefined
+                    : (
+                        context: LoaderContext,
+                        localIdentName: string,
+                        localName: string,
+                        opt: any,
+                      ) => {
+                        const classIdent =
+                          context.resourcePath.replace(opt.context, '') +
+                          '@' +
+                          localName;
+                        let hash = Buffer.from(classIdent)
+                          .toString('base64')
+                          .replace(/=/g, '');
+                        hash = hash.substring(hash.length - 5);
+                        const result = localIdentName
+                          .replace(/\[local]/g, localName)
+                          .replace(/\[hash[^\[]*?]/g, hash);
+                        if (opts.cssManifest !== undefined)
+                          opts.cssManifest.set(classIdent.trim(), result);
+                        return result;
+                      },
                 },
               }
             : {}),

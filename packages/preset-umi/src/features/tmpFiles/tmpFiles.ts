@@ -1,8 +1,9 @@
 import { lodash, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readdirSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
+import { getRouteLoaders } from '../ssr/utils';
 import { getModuleExports } from './getModuleExports';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
@@ -21,9 +22,7 @@ export default (api: IApi) => {
     const rendererPath = winPath(
       await api.applyPlugins({
         key: 'modifyRendererPath',
-        initialValue: dirname(
-          require.resolve('@umijs/renderer-react/package.json'),
-        ),
+        initialValue: require.resolve('@umijs/renderer-react'),
       }),
     );
 
@@ -76,6 +75,7 @@ export default (api: IApi) => {
         ).join('\n'),
         basename: api.config.base,
         historyType: api.config.history.type,
+        hydrate: !!api.config.ssr,
         loadingComponent:
           existsSync(join(api.paths.absSrcPath, 'loading.tsx')) ||
           existsSync(join(api.paths.absSrcPath, 'loading.jsx')) ||
@@ -174,6 +174,27 @@ export default function EmptyRoute() {
         validKeys,
       },
     });
+
+    // server.ts
+    if (api.config.ssr) {
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: join('server.ts'),
+        tplPath: join(TEMPLATES_DIR, 'server.tpl'),
+        context: {
+          umiPath: resolve(require.resolve('umi'), '..'),
+          routes: JSON.stringify(clonedRoutes, null, 2).replace(
+            /"component": "await import\((.*)\)"/g,
+            '"component": await import("$1")',
+          ),
+          routeLoaders: await getRouteLoaders(api, 'loader'),
+          pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
+          rendererPath: join(dirname(rendererPath), 'server.js'),
+          umiServerPath: resolve(require.resolve('@umijs/server'), '../ssr.js'),
+          validKeys,
+        },
+      });
+    }
 
     // history.ts
     api.writeTmpFile({

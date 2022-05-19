@@ -1,7 +1,7 @@
 import { History } from 'history';
 import React, { useCallback, useEffect, useState } from 'react';
 // compatible with < react@18 in @umijs/preset-umi/src/features/react
-import ReactDOM from 'react-dom/client';
+import ReactDOM, { hydrateRoot } from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { AppContext, useAppData } from './appContext';
 import { createClientRoutes } from './routes';
@@ -48,7 +48,7 @@ function BrowserRoutes(props: {
   );
 }
 
-function Routes() {
+export function Routes() {
   const { clientRoutes } = useAppData();
   return useRoutes(clientRoutes);
 }
@@ -63,6 +63,7 @@ export function renderClient(opts: {
   basename?: string;
   loadingComponent?: React.ReactNode;
   history: History;
+  hydrate?: boolean;
 }) {
   const basename = opts.basename || '/';
   const rootElement = opts.rootElement || document.getElementById('root')!;
@@ -183,10 +184,14 @@ export function renderClient(opts: {
     );
   };
 
-  if (ReactDOM.createRoot) {
-    ReactDOM.createRoot(rootElement).render(<Browser />);
+  if (opts.hydrate) {
+    hydrateRoot(rootElement, <Browser />);
   } else {
-    // @ts-ignore
-    ReactDOM.render(browser, rootElement);
+    if (ReactDOM.createRoot) {
+      ReactDOM.createRoot(rootElement).render(<Browser />);
+    } else {
+      // @ts-ignore
+      ReactDOM.render(browser, rootElement);
+    }
   }
 }
