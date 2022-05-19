@@ -1,7 +1,12 @@
+import {
+  CSSMinifier,
+  JSMinifier,
+  Transpiler,
+} from '@umijs/bundler-webpack/dist/types';
 import { chalk, fsExtra, installWithNpmClient } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { IApi } from '../../types';
+import type { IApi } from '../../types';
 
 interface ICheckDep {
   name: string;
@@ -41,11 +46,13 @@ export default (api: IApi) => {
   api.onStart(() => {
     // swc
     const hasSwcConfig =
-      api.config.srcTranspiler === 'swc' || api.config.depTranspiler === 'swc';
+      api.config.srcTranspiler === Transpiler.swc ||
+      api.config.depTranspiler === Transpiler.swc ||
+      api.config.jsMinifier === JSMinifier.swc;
     // uglify-js
-    const hasUglifyJsConfig = api.config.jsMinifier === 'uglifyJs';
+    const hasUglifyJsConfig = api.config.jsMinifier === JSMinifier.uglifyJs;
     // parcel-css
-    const hasParcelCSSConfig = api.config.cssMinifier === 'parcelCSS';
+    const hasParcelCSSConfig = api.config.cssMinifier === CSSMinifier.parcelCSS;
 
     checkDeps([
       {
