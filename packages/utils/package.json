@@ -21,7 +21,8 @@
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
-    "chokidar": "3.5.3"
+    "chokidar": "3.5.3",
+    "pino": "7.10.0"
   },
   "devDependencies": {
     "@types/color": "3.0.3",
@@ -48,8 +49,6 @@
     "import-lazy": "4.0.0",
     "lodash": "4.17.21",
     "mustache": "4.2.0",
-    "pino": "7.10.0",
-    "pino-pretty": "7.6.1",
     "pirates": "4.0.5",
     "pkg-up": "4.0.0",
     "portfinder": "1.0.28",
@@ -93,15 +92,9 @@
       "semver",
       "strip-ansi",
       "yargs-parser",
-      "pirates",
-      "pino-pretty",
-      "rotating-file-stream",
-      "dayjs"
+      "pirates"
     ],
     "externals": {
-      "dayjs": "$$LOCAL",
-      "pino-pretty": "$$LOCAL",
-      "rotating-file-stream": "$$LOCAL",
       "address": "$$LOCAL",
       "axios": "$$LOCAL",
       "chalk": "$$LOCAL",

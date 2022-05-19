@@ -1,171 +1,89 @@
-import fs from 'fs';
-import path from 'path';
-import dayjs from '../compiled/dayjs';
-import { omit as _omit } from '../compiled/lodash';
-import pino, { LoggerOptions } from '../compiled/pino';
-import type { PrettyOptions } from '../compiled/pino-pretty';
-import type { Options } from '../compiled/rotating-file-stream';
+import { join } from 'path';
+import pino from 'pino';
+import chalk from '../compiled/chalk';
+import fsExtra from '../compiled/fs-extra';
 
-interface RotationFileConfig extends Options {
-  level: string;
-}
-
-enum CustomLevels {
-  ready = 'ready',
-  event = 'event',
-  wait = 'wait',
-}
-
-interface PinoCustomLevelParams {
-  customLevels: string;
-  customColors: string;
-  pinoCustomLevels: {
-    [key in string]: number;
-  };
-}
-
-interface CustomLevelConfig {
-  level: CustomLevels;
-  value: number;
-  color: string;
-}
-
-// { fatal: 60, error: 50, warn: 40, info: 30, debug: 20, trace: 10 } }
-const CUSTOM_LEVELS_CONFIG: CustomLevelConfig[] = [
-  {
-    level: CustomLevels.ready,
-    value: 11,
-    color: 'green',
-  },
-  {
-    level: CustomLevels.event,
-    value: 12,
-    color: 'magenta',
-  },
-  {
-    level: CustomLevels.wait,
-    value: 13,
-    color: 'cyan',
-  },
-];
-
-const { customLevels, customColors, pinoCustomLevels } =
-  CUSTOM_LEVELS_CONFIG.reduce<PinoCustomLevelParams>((pre, current) => {
-    const { customLevels = '', customColors = '', pinoCustomLevels = {} } = pre;
-    return {
-      customLevels: `${customLevels}${current.level}:${current.value},`,
-      customColors: `${customColors}${current.level}:${current.color},`,
-      pinoCustomLevels: {
-        ...pinoCustomLevels,
-        [current.level]: current.value,
-      },
-    };
-  }, Object.create(null));
-
-const DEFAULT_CONFIG: RotationFileConfig = {
-  path: path.resolve(process.cwd(), 'node_modules/.cache/umi/logger'),
-  size: '4MB',
-  interval: '12h',
-  maxFiles: 20,
-  level: 'trace',
+const loggerDir = join(process.cwd(), 'node_modules/.cache/logger');
+const loggerPath = join(loggerDir, 'umi.log');
+fsExtra.mkdirpSync(loggerDir);
+const customLevels = {
+  ready: 31,
+  event: 32,
+  wait: 55,
+  // 虽然这里设置了 debug 为 30，但日志中还是 20，符合预期
+  // 这里不加会不生成到 umi.log，transport 的 level 配置没有生效，原因不明
+  debug: 30,
 };
-
-const config: RotationFileConfig = {
-  path: process.env.UMI_LOG_PATH || DEFAULT_CONFIG.path,
-  size: process.env.UMI_LOG_FILE_SIZE || DEFAULT_CONFIG.size,
-  interval: process.env.UMI_LOG_INTERVAL || DEFAULT_CONFIG.interval,
-  maxFiles: Number(process.env.UMI_LOG_MAX_FILES) || DEFAULT_CONFIG.maxFiles,
-  level: process.env.UMI_LOG_LEVEL || DEFAULT_CONFIG.level,
-  history: 'history',
-};
-
-type TransportOptions = PrettyOptions &
-  Omit<RotationFileConfig, 'level'> &
-  Omit<LoggerOptions, 'customLevels'> & {
-    useOnlyCustomProps?: boolean;
-    customColors?: string;
-    customLevels?: string;
-  };
-
-const transport = pino.transport<TransportOptions>({
-  targets: [
-    {
-      level: config.level,
-      target: require.resolve('../compiled/pino-pretty'),
-      options: {
-        useOnlyCustomProps: false,
-        ignore: 'hostname,pid',
-        translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
-        colorize: true,
-        customLevels,
-        customColors,
-      },
-    },
-    {
-      level: config.level,
-      target: path.join(__dirname, '..', 'dist/logger.transport.js'),
-      options: _omit(config, 'level'),
-    },
-  ],
-});
 const logger = pino(
   {
-    customLevels: pinoCustomLevels,
-    timestamp: () => {
-      return `,"time":"${dayjs().format('YYYY-MM-DD HH:mm:ss')}"`;
-    },
-    level: config.level,
+    customLevels,
   },
-  transport,
+  pino.transport({
+    targets: [
+      {
+        target: require.resolve('pino/file'),
+        options: {
+          destination: loggerPath,
+        },
+        level: 'trace',
+      },
+    ],
+  }),
 );
 
-export function getLatestLogFilePath() {
-  const files = fs
-    .readdirSync(config.path!)
-    .filter((f) => f.endsWith('.txt') && !f.includes('history'));
-  const res = files.sort((a, b) => {
-    return (
-      fs.statSync(path.resolve(config.path!, a)).mtime.getTime() -
-      fs.statSync(path.resolve(config.path!, b)).mtime.getTime()
-    );
-  })[0];
-  return path.resolve(config.path!, res);
+export const prefixes = {
+  wait: chalk.cyan('wait') + '  -',
+  error: chalk.red('error') + ' -',
+  fatal: chalk.red('fatal') + ' -',
+  warn: chalk.yellow('warn') + '  -',
+  ready: chalk.green('ready') + ' -',
+  info: chalk.cyan('info') + '  -',
+  event: chalk.magenta('event') + ' -',
+  debug: chalk.gray('debug') + ' -',
+};
+
+export function wait(...message: any[]) {
+  console.log(prefixes.wait, ...message);
+  logger.wait(message[0]);
 }
 
-export function flush() {
-  logger.flush();
+export function error(...message: any[]) {
+  console.error(prefixes.error, ...message);
+  logger.error(message[0]);
 }
 
-export function fatal(...args: any[]) {
-  logger.fatal(args);
+export function warn(...message: any[]) {
+  console.warn(prefixes.warn, ...message);
+  logger.warn(message[0]);
 }
 
-export function wait(o: any, ...args: any[]) {
-  logger.wait(o, ...args);
+export function ready(...message: any[]) {
+  console.log(prefixes.ready, ...message);
+  logger.ready(message[0]);
 }
 
-export function error(o: any, ...args: any[]) {
-  logger.error(o, ...args);
+export function info(...message: any[]) {
+  console.log(prefixes.info, ...message);
+  logger.info(message[0]);
 }
 
-export function warn(o: any, ...args: any[]) {
-  logger.warn(o, ...args);
+export function event(...message: any[]) {
+  console.log(prefixes.event, ...message);
+  logger.event(message[0]);
 }
 
-export function ready(o: any, ...args: any[]) {
-  logger.ready(o, ...args);
-}
-
-export function info(o: any, ...args: any[]) {
-  logger.info(o, ...args);
-}
-
-export function event(o: any, ...args: any[]) {
-  logger.event(o, ...args);
-}
-
-export function debug(o: any, ...args: any[]) {
+export function debug(...message: any[]) {
   if (process.env.DEBUG) {
-    logger.debug(o, ...args);
+    console.log(prefixes.debug, ...message);
   }
+  logger.debug(message[0]);
+}
+
+export function fatal(...message: any[]) {
+  console.error(prefixes.fatal, ...message);
+  logger.fatal(message[0]);
+}
+
+export function getLatestLogFilePath() {
+  return loggerPath;
 }
