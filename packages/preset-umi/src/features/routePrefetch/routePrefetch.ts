@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { webpack } from '@umijs/bundler-webpack';
+import { RawSource } from '@umijs/bundler-webpack/compiled/webpack-sources';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {
@@ -18,37 +18,43 @@ export default (api: IApi) => {
     }
   });
 
-  api.onBuildComplete(() => {
-    const manifest = readFileSync(
-      join(
-        api.paths.absOutputPath,
-        api.config.manifest.fileName || 'asset-manifest.json',
-      ),
-      'utf-8',
-    );
-    const manifestObj = JSON.parse(manifest);
-    const umiJsFileKey = Object.keys(manifestObj).find((key) =>
-      key.match(/^umi(.*)\.js$/),
-    );
-    if (!umiJsFileKey) {
-      throw new Error('Cannot find umi.js in manifest.json');
-    }
-
-    // manifest has publicPath, but we don't need it in the absOutputPath
-    const umiJsFileName = manifestObj[umiJsFileKey].replace(
-      new RegExp('^' + api.config.publicPath),
-      '',
-    );
-    const umiJsFile = readFileSync(
-      join(api.paths.absOutputPath, umiJsFileName),
-      'utf-8',
-    );
-
-    // TODO: source map will break if we append to the beginning of the file, use https://github.com/Rich-Harris/magic-string to fix this
-    const prependJS = `window.__umi_manifest__ = ` + manifest + ';';
-    writeFileSync(
-      join(api.paths.absOutputPath, umiJsFileName),
-      prependJS + umiJsFile,
-    );
+  api.chainWebpack((memo) => {
+    memo.plugin('manifest-inject-plugin').use(WebpackAssetsInjectPlugin, [api]);
   });
 };
+
+class WebpackAssetsInjectPlugin {
+  api: IApi;
+
+  constructor(api: IApi) {
+    this.api = api;
+  }
+
+  apply(compiler: webpack.Compiler) {
+    compiler.hooks.compilation.tap(
+      'WebpackAssetsInjectPlugin',
+      (compilation) => {
+        compilation.hooks.afterProcessAssets.tap(
+          'WebpackAssetsInjectPlugin',
+          (a) => {
+            const manifestKey = Object.keys(a).find(
+              (key) =>
+                key === this.api.config.manifest.fileName ||
+                key === 'asset-manifest.json',
+            );
+            const umiJsKey = Object.keys(a).find((key) =>
+              key.match(/^umi(.*).js$/),
+            );
+            if (!manifestKey || !umiJsKey) return;
+            const newUmiJsString =
+              `window.__umi_manifest__ = ${a[manifestKey].source()};` +
+              a[umiJsKey].source();
+            compilation.deleteAsset(umiJsKey);
+            // @ts-ignore
+            compilation.emitAsset(umiJsKey, new RawSource(newUmiJsString));
+          },
+        );
+      },
+    );
+  }
+}

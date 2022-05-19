@@ -195,10 +195,10 @@ importers:
   examples/client-loader:
     specifiers:
       express: 4.17.3
-      umi: 4.0.0-rc.17
+      umi: 4.0.0-canary.20220517.1
     dependencies:
       express: 4.17.3
-      umi: 4.0.0-rc.17_73ef0f7440095af8fd8f18171da41351
+      umi: link:../../packages/umi
 
   examples/diff-client-loader:
     specifiers:
