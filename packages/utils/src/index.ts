@@ -29,6 +29,7 @@ import updatePackageJSON from './updatePackageJSON';
 export * from './getCorejsVersion';
 export * from './importLazy';
 export * from './isStyleFile';
+export * from './isUmiLocal';
 export * from './npmClient';
 export * from './randomColor/randomColor';
 export * as register from './register';
