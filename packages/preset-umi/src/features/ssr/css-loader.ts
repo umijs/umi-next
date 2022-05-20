@@ -10,7 +10,6 @@ function cssLoader(
   return {
     name: 'css-loader',
     setup(build) {
-      console.log(manifest);
       if (!manifest) return;
 
       build.onLoad({ filter: /\.css$/ }, (args) => {
