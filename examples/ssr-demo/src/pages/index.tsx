@@ -9,8 +9,6 @@ import './index.less';
 // @ts-ignore
 import styles from './index.less';
 // @ts-ignore
-import SmileUrl, { ReactComponent as SVGSmile } from './smile.svg';
-// @ts-ignore
 import umiLogo from './umi.png';
 
 export default function HomePage() {
@@ -20,10 +18,8 @@ export default function HomePage() {
     <div>
       <h1 className="title">Hello~</h1>
       <p className={styles.blue}>This is index.tsx</p>
-      <img src={SmileUrl} alt="smile" />
       <p className={cssStyle.title}>I should be pink</p>
       <p className={cssStyle.blue}>I should be cyan</p>
-      <SVGSmile />
       <Button />
       <img src={bigImage} alt="" />
       <img src={umiLogo} alt="umi" />
