@@ -1,5 +1,10 @@
 import { History } from 'history';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 // compatible with < react@18 in @umijs/preset-umi/src/features/react
 import ReactDOM, { hydrateRoot } from 'react-dom/client';
 import { matchRoutes, Router, useRoutes } from 'react-router-dom';
@@ -151,7 +156,11 @@ export function renderClient(opts: {
           const clientLoader = opts.routes[id].clientLoader;
           if (clientLoader && !clientLoaderData[id]) {
             clientLoader().then((data: any) => {
-              setClientLoaderData((d: any) => ({ ...d, [id]: data }));
+              // setClientLoaderData when startTransition because if ssr is enabled,
+              // the component may being hydrated and setLoaderData will break the hydration
+              startTransition(() => {
+                setClientLoaderData((d: any) => ({ ...d, [id]: data }));
+              });
             });
           }
         });
