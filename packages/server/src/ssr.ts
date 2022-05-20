@@ -43,7 +43,7 @@ export default function createRequestHandler(
     const loaderData: { [key: string]: any } = {};
     await Promise.all(
       matches
-        .filter((m: string) => routes[m].hasLoader)
+        .filter((m: string) => routes[m].hasServerLoader)
         .map(
           (match: string) =>
             new Promise<void>(async (resolve) => {
@@ -118,8 +118,8 @@ function createClientRoute(route: any) {
 
 async function executeLoader(routeKey: string, routeLoaders: RouteLoaders) {
   const mod = await routeLoaders[routeKey]();
-  if (!mod.loader) {
+  if (!mod.serverLoader || typeof mod.serverLoader !== 'function') {
     return;
   }
-  return await mod.loader();
+  return await mod.serverLoader();
 }

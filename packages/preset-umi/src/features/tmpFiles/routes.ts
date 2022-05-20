@@ -99,13 +99,19 @@ export async function getRoutes(opts: { api: IApi }) {
       routes[id].__content = readFileSync(file, 'utf-8');
       routes[id].__absFile = file;
       routes[id].__isJSFile = isJSFile;
-      if (opts.api.config.clientLoader) {
+      if (opts.api.config.ssr || opts.api.config.clientLoader) {
         routes[id].__exports =
           isJSFile && existsSync(file)
             ? await getModuleExports({
                 file,
               })
             : [];
+      }
+      if (opts.api.config.ssr) {
+        routes[id].hasServerLoader =
+          routes[id].__exports.includes('serverLoader');
+      }
+      if (opts.api.config.clientLoader) {
         routes[id].__hasClientLoader =
           routes[id].__exports.includes('clientLoader');
         routes[id].clientLoader = `clientLoaders['${id}']`;

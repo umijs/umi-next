@@ -64,7 +64,7 @@ export async function getRouteModuleExports(
  * */
 export async function getRouteLoaders(
   api: IApi,
-  type: 'loader' | 'clientLoader',
+  type: 'serverLoader' | 'clientLoader',
 ) {
   const routesWithClientLoader: string[] = [];
   await Promise.all(

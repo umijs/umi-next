@@ -51,6 +51,7 @@ export async function getClientRootComponent(opts: {
           pluginManager: opts.pluginManager,
           basename,
           clientLoaderData: {},
+          serverLoaderData: opts.loaderData,
           loaderData: opts.loaderData,
         }}
       >

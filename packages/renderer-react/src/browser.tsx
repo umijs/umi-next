@@ -114,6 +114,10 @@ export function renderClient(opts: {
 
   const Browser = () => {
     const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
+    const [serverLoaderData, setServerLoaderData] = useState<ILoaderData>(
+      // @ts-ignore
+      window.__UMI_LOADER_DATA__ || {},
+    );
 
     const handleRouteChange = useCallback(
       (p: string) => {
@@ -152,15 +156,36 @@ export function renderClient(opts: {
               document.head.appendChild(link);
             }
           }
+          // server loader
+          if (opts.routes[id].hasServerLoader) {
+            fetch('/__umi?route=' + id)
+              .then((d) => d.json())
+              .then((data) => {
+                if (typeof startTransition === 'function') {
+                  // setServerLoaderData when startTransition because if ssr is enabled,
+                  // the component may being hydrated and setLoaderData will break the hydration
+                  startTransition(() => {
+                    setServerLoaderData((d) => ({ ...d, [id]: data }));
+                  });
+                } else {
+                  setServerLoaderData((d) => ({ ...d, [id]: data }));
+                }
+              })
+              .catch(console.error);
+          }
           // client loader
           const clientLoader = opts.routes[id].clientLoader;
           if (clientLoader && !clientLoaderData[id]) {
             clientLoader().then((data: any) => {
-              // setClientLoaderData when startTransition because if ssr is enabled,
-              // the component may being hydrated and setLoaderData will break the hydration
-              startTransition(() => {
+              if (typeof startTransition === 'function') {
+                // setClientLoaderData when startTransition because if ssr is enabled,
+                // the component may being hydrated and setLoaderData will break the hydration
+                startTransition(() => {
+                  setClientLoaderData((d: any) => ({ ...d, [id]: data }));
+                });
+              } else {
                 setClientLoaderData((d: any) => ({ ...d, [id]: data }));
-              });
+              }
             });
           }
         });
@@ -185,6 +210,7 @@ export function renderClient(opts: {
           rootElement: opts.rootElement,
           basename,
           clientLoaderData,
+          serverLoaderData,
           preloadRoute: handleRouteChange,
         }}
       >

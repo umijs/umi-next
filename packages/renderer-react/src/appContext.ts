@@ -7,6 +7,12 @@ export function useAppData(): any {
   return React.useContext(AppContext);
 }
 
+export function useServerLoaderData() {
+  const route = useRouteData();
+  const appData = useAppData();
+  return appData.serverLoaderData[route.route.id];
+}
+
 export function useClientLoaderData() {
   const route = useRouteData();
   const appData = useAppData();

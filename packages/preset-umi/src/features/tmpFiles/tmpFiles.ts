@@ -187,7 +187,7 @@ export default function EmptyRoute() {
             /"component": "await import\((.*)\)"/g,
             '"component": await import("$1")',
           ),
-          routeLoaders: await getRouteLoaders(api, 'loader'),
+          routeLoaders: await getRouteLoaders(api, 'serverLoader'),
           pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
           rendererPath: join(dirname(rendererPath), 'server.js'),
           umiServerPath: resolve(require.resolve('@umijs/server'), '../ssr.js'),
