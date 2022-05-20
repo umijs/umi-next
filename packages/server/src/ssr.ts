@@ -1,5 +1,5 @@
 import { renderToPipeableStream } from 'react-dom/server';
-import { matchRoutes } from 'react-router';
+import { matchRoutes } from 'react-router-dom';
 import type { IRoutesById } from './types';
 
 interface RouteLoaders {
