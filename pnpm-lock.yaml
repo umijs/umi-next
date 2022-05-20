@@ -321,6 +321,14 @@ importers:
     dependencies:
       umi: link:../../packages/umi
 
+  examples/ssr-demo:
+    specifiers:
+      express: 4.17.3
+      umi: workspace:^
+    dependencies:
+      express: 4.17.3
+      umi: link:../../packages/umi
+
   examples/test-test:
     specifiers:
       '@testing-library/jest-dom': ^5.16.4
