@@ -13,6 +13,7 @@ export async function getClientRootComponent(opts: {
   location: string;
   loaderData: { [routeKey: string]: any };
   matches: string[];
+  manifest: any;
 }) {
   const basename = '/';
   const components = { ...opts.routeComponents };
@@ -42,7 +43,11 @@ export async function getClientRootComponent(opts: {
     });
   }
   return (
-    <Html loaderData={opts.loaderData} matches={opts.matches}>
+    <Html
+      loaderData={opts.loaderData}
+      matches={opts.matches}
+      manifest={opts.manifest}
+    >
       <AppContext.Provider
         value={{
           routes: opts.routes,
@@ -61,14 +66,19 @@ export async function getClientRootComponent(opts: {
   );
 }
 
-function Html({ children, loaderData, matches }: any) {
+function Html({ children, loaderData, matches, manifest }: any) {
+  const cssFilePath: string =
+    (Object.values(manifest).find((file) =>
+      (file as string).match(/umi(.*)\.css$/),
+    ) as string) || '/umi.css';
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="favicon.ico" />
-        <link rel="stylesheet" href="/umi.css" />
+        <link rel="stylesheet" href={cssFilePath} />
       </head>
       <body>
         <noscript

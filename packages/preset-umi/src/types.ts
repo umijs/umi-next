@@ -127,6 +127,7 @@ export type IApi = PluginAPI &
       isFirstCompile: boolean;
       stats: webpack.Stats;
       time: number;
+      webpackManifest?: Map<string, string>;
     }>;
     onBuildHtmlComplete: IEvent<{}>;
     onCheckCode: IEvent<{

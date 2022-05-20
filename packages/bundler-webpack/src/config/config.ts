@@ -54,6 +54,7 @@ export interface IOpts {
   };
   cssManifest?: Map<string, string>;
   assetsManifest?: Map<string, string>;
+  webpackManifest?: Map<string, string>;
 }
 
 export async function getConfig(opts: IOpts): Promise<Configuration> {
@@ -81,6 +82,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
     cssManifest: opts.cssManifest,
     assetsManifest: opts.assetsManifest,
+    webpackManifest: opts.webpackManifest,
   };
 
   // mode

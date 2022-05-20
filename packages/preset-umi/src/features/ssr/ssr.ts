@@ -1,7 +1,7 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { EnableBy } from '@umijs/core/dist/types';
-import { existsSync } from 'fs';
-import { resolve } from 'path';
+import { existsSync, writeFileSync } from 'fs';
+import { join, resolve } from 'path';
 import type { IApi } from '../../types';
 import assetsLoader from './assets-loader';
 import cssLoader from './css-loader';
@@ -52,6 +52,14 @@ export { React };
     });
   });
 
+  // webpack-manifest.js is for esbuild to build umi.server.js
+  api.onGenerateFiles(() => {
+    api.writeTmpFile({
+      path: 'webpack-manifest.js',
+      content: `export let __WEBPACK_MANIFEST__ = {}`,
+    });
+  });
+
   let isFirstDevCompileDone = true;
   api.onDevCompileDone(async ({ cssManifest, assetsManifest }) => {
     if (isFirstDevCompileDone) {
@@ -63,7 +71,10 @@ export { React };
         platform: 'node',
         target: 'esnext',
         bundle: true,
-        inject: [resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js')],
+        inject: [
+          resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js'),
+          resolve(api.paths.absTmpPath, 'plugin-ssr/webpack-manifest.js'),
+        ],
         watch: {
           onRebuild() {
             saveCssManifestToCache(api, cssManifest);
@@ -89,30 +100,49 @@ export { React };
   });
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
-  api.onBuildComplete(async ({ err, cssManifest, assetsManifest }) => {
-    if (err) return;
+  api.onBuildComplete(
+    async ({ err, cssManifest, assetsManifest, webpackManifest }) => {
+      if (err) return;
 
-    await esbuild.build({
-      format: 'cjs',
-      platform: 'node',
-      target: 'esnext',
-      bundle: true,
-      logLevel: 'silent',
-      inject: [resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js')],
-      loader,
-      external: ['umi'],
-      entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
-      plugins: [
-        esbuildIgnorePathPrefixPlugin(),
-        esbuildUmiPlugin(api),
-        lessLoader(api, cssManifest),
-        cssLoader(api, cssManifest),
-        svgLoader(assetsManifest),
-        assetsLoader(assetsManifest),
-      ],
-      outfile: absServerBuildPath(api),
-    });
-  });
+      const webpackManifestObject: { [key: string]: string } = {};
+      if (webpackManifest) {
+        webpackManifest.forEach((value, key) => {
+          webpackManifestObject[key] = value;
+        });
+      }
+      // webpack-manifest.js is for esbuild to build umi.server.js
+      writeFileSync(
+        join(api.paths.absTmpPath, 'plugin-ssr/webpack-manifest.js'),
+        `export let __WEBPACK_MANIFEST__ = ${JSON.stringify(
+          webpackManifestObject,
+        )}`,
+      );
+
+      await esbuild.build({
+        format: 'cjs',
+        platform: 'node',
+        target: 'esnext',
+        bundle: true,
+        logLevel: 'silent',
+        inject: [
+          resolve(api.paths.absTmpPath, 'plugin-ssr/react-shim.js'),
+          resolve(api.paths.absTmpPath, 'plugin-ssr/webpack-manifest.js'),
+        ],
+        loader,
+        external: ['umi'],
+        entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
+        plugins: [
+          esbuildIgnorePathPrefixPlugin(),
+          esbuildUmiPlugin(api),
+          lessLoader(api, cssManifest),
+          cssLoader(api, cssManifest),
+          svgLoader(assetsManifest),
+          assetsLoader(assetsManifest),
+        ],
+        outfile: absServerBuildPath(api),
+      });
+    },
+  );
 };
 
 const loader: { [ext: string]: esbuild.Loader } = {

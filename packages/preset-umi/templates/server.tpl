@@ -24,6 +24,7 @@ const requestHandler = createRequestHandler({
   getPlugins,
   getValidKeys,
   getRoutes,
+  manifest: __WEBPACK_MANIFEST__,
   getClientRootComponent
 });
 
