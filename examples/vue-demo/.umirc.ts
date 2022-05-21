@@ -1,4 +1,5 @@
 export default {
+  base: '/foo',
   deadCode: {},
   https: {},
   headScripts: [`console.log('head script')`],
@@ -6,5 +7,5 @@ export default {
   crossorigin: {},
   presets: [require.resolve('@umijs/preset-vue')],
   polyfill: false,
-  // vite: {},
+  vite: {},
 };

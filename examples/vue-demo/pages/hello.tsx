@@ -3,7 +3,6 @@ import { Cell, CellGroup, ContactCard, Field, Toast } from 'vant';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: 'Hello',
   setup() {
     const value = ref('');
 
@@ -13,7 +12,7 @@ export default defineComponent({
 
     return () => (
       <div>
-        <h1>hello page</h1>
+        <h1>HelloPage</h1>
         <ContactCard type="add" onClick={onAdd} />
         <CellGroup inset>
           <Field
@@ -21,7 +20,7 @@ export default defineComponent({
             label="输入框"
             placeholder="请输入用户名"
           />
-          <Cell title="输入的内容" value={value.value} />
+          <Cell title={value.value} value="title 随着输入框改变" />
         </CellGroup>
       </div>
     );

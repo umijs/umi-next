@@ -1,14 +1,8 @@
 <template>
   <div>
-    <h1>umi & vue</h1>
-    <h2>{{ hello }}</h2>
-    <h3>{{ umiHello }}</h3>
-    <p>
-       <router-link to="/users">Go to Users</router-link>
-    </p>
-    <p>
-       <router-link to="/users/foo">Go to Users Foo</router-link>
-    </p>
+    <h1>Home Page</h1>
+    <h2>ref: {{ hello }}</h2>
+    <h3>inject data: {{ umiHello }}</h3>
     <Button type="primary" @click="onTo">to hello</Button>
     <VantDemo/>
     <div>
