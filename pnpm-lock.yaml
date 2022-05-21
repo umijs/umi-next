@@ -1086,6 +1086,8 @@ importers:
 
   packages/preset-vue:
     specifiers:
+      '@umijs/babel-preset-umi': 4.0.0-rc.19
+      '@umijs/bundler-utils': 4.0.0-rc.19
       '@umijs/renderer-vue': 4.0.0-rc.19
       '@vitejs/plugin-vue': 2.3.1
       umi: 4.0.0-rc.19
@@ -1093,6 +1095,8 @@ importers:
       vue-loader: 17.0.0
       vue-router: 4.0.15
     dependencies:
+      '@umijs/babel-preset-umi': link:../babel-preset-umi
+      '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/renderer-vue': link:../renderer-vue
       vue: 3.2.33
       vue-loader: 17.0.0

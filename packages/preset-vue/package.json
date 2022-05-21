@@ -22,6 +22,7 @@
     "dev": "pnpm build -- --watch"
   },
   "dependencies": {
+    "@umijs/babel-preset-umi": "4.0.0-rc.19",
     "@umijs/bundler-utils": "4.0.0-rc.19",
     "@umijs/renderer-vue": "4.0.0-rc.19",
     "vue": "3.2.33",
