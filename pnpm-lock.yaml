@@ -418,18 +418,6 @@ importers:
       '@types/react-dom': 18.0.3
       typescript: 4.6.4
 
-  examples/with-pinia:
-    specifiers:
-      '@umijs/preset-vue': 4.0.0-rc.19
-      pinia: ^2.0.14
-      umi: 4.0.0-rc.19
-      vue: 3.2.33
-    dependencies:
-      '@umijs/preset-vue': link:../../packages/preset-vue
-      pinia: 2.0.14_typescript@4.6.4+vue@3.2.33
-      umi: link:../../packages/umi
-      vue: 3.2.33
-
   examples/with-react-17:
     specifiers:
       react: ^17.0.0
@@ -587,6 +575,18 @@ importers:
       '@vanilla-extract/css': 1.7.0
       '@vanilla-extract/webpack-plugin': 2.1.9
       umi: link:../../packages/umi
+
+  examples/with-vue-pinia:
+    specifiers:
+      '@umijs/preset-vue': 4.0.0-rc.19
+      pinia: ^2.0.14
+      umi: 4.0.0-rc.19
+      vue: 3.2.33
+    dependencies:
+      '@umijs/preset-vue': link:../../packages/preset-vue
+      pinia: 2.0.14_typescript@4.6.4+vue@3.2.33
+      umi: link:../../packages/umi
+      vue: 3.2.33
 
   packages/ast:
     specifiers:
