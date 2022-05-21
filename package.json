@@ -10,6 +10,7 @@
     "check:packageFiles": "umi-scripts checkPackageFiles",
     "dep:update": "pnpm up --interactive --latest --recursive",
     "dev": "umi-scripts turbo --cmd dev",
+    "dev:p": "pnpm -r --filter=./packages/ --parallel run dev",
     "doc:build": "pnpm doc:deps && umi build",
     "doc:deps": "pnpm doc:deps-ts && pnpm doc:deps-extra",
     "doc:deps-extra": "umi-scripts turbo --cmd build:extra --filter @umijs/plugin-docs...",

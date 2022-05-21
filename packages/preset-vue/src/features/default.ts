@@ -65,4 +65,10 @@ export default (api: IApi) => {
     'onAppCreated',
     'onMounted',
   ]);
+
+  api.addExtraBabelPlugins(() => {
+    return [
+      require.resolve('@umijs/bundler-utils/compiled/babel/plugin-vue-jsx'),
+    ];
+  });
 };

@@ -3,13 +3,13 @@
     <h1>umi & vue</h1>
     <h2>{{ hello }}</h2>
     <h3>{{ umiHello }}</h3>
-
-    <div>
+    <p>
        <router-link to="/users">Go to Users</router-link>
-    </div>
-    <div>
+    </p>
+    <p>
        <router-link to="/users/foo">Go to Users Foo</router-link>
-    </div>
+    </p>
+    <Button type="primary" @click="onTo">to hello</Button>
     <VantDemo/>
     <div>
       <h4>useAppData</h4>
@@ -19,13 +19,20 @@
 </template>
 <script lang="ts" setup>
 import { ref, inject } from 'vue';
-import { useAppData } from 'umi';
+import { useAppData, useRouter } from 'umi';
 import VantDemo from '@/components/VantDemo.vue'
+import { Button } from 'vant'
 
 const hello = ref<string>('hello vue');
 const app = useAppData();
 
 const umiHello = inject('umi-hello')
+
+const routes = useRouter()
+
+const onTo = () => {
+  routes.push('/hello')
+}
 
 </script>
 <style lang="less" scoped>

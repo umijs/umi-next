@@ -8,11 +8,15 @@ export async function getBabelOpts(opts: { api: IApi }) {
     require.resolve('@umijs/babel-preset-umi'),
     {
       presetEnv: {},
-      presetReact: {
-        runtime: isGTEReact17 ? 'automatic' : 'classic',
-        // importSource cannot be set when runtime is classic
-        ...(isGTEReact17 ? {} : { importSource: undefined }),
-      },
+      // vue 需要禁用 presetReact
+      presetReact:
+        opts.api.appData.framework === 'vue'
+          ? false
+          : {
+              runtime: isGTEReact17 ? 'automatic' : 'classic',
+              // importSource cannot be set when runtime is classic
+              ...(isGTEReact17 ? {} : { importSource: undefined }),
+            },
       presetTypeScript: {},
       pluginTransformRuntime: {},
       pluginLockCoreJS: {},
