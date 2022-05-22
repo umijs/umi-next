@@ -6,9 +6,8 @@ import { readFileSync } from 'fs';
 import { extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
-import { resolve } from '../dep/dep';
 import { MFSU } from '../mfsu';
-import { parse as parseImport } from './importParser.js';
+import parseImport from './importParser';
 
 interface IOpts {
   mfsu: MFSU;
@@ -187,8 +186,9 @@ export class StaticDepInfo {
   }
 
   async allRuntimeHelpers() {
-    const umipack = await resolve(process.cwd(), 'umi');
-    return umipack;
+    // todo mfsu4
+    // const umipack = await resolve(process.cwd(), 'umi');
+    // return umipack;
   }
 }
 

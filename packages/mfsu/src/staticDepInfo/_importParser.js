@@ -72,7 +72,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var importParser = (function(){
+var _importParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,6],$V2=[1,14],$V3=[1,13],$V4=[1,8],$V5=[1,23],$V6=[13,17];
 var parser = {trace: function trace () { },
 yy: {},
@@ -653,9 +653,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = importParser;
-exports.Parser = importParser.Parser;
-exports.parse = function () { return importParser.parse.apply(importParser, arguments); };
+exports.parser = _importParser;
+exports.Parser = _importParser.Parser;
+exports.parse = function () { return _importParser.parse.apply(_importParser, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
