@@ -30,7 +30,7 @@ export function checkMatch({
   depth?: number;
   cache?: Map<string, any>;
   filename?: string;
-}): { isMatch: boolean; replaceValue: string } {
+}): { isMatch: boolean; replaceValue: string; value: string } {
   let isMatch;
   let replaceValue = '';
   depth = depth || 1;
@@ -135,6 +135,7 @@ export function checkMatch({
   return {
     isMatch,
     replaceValue,
+    value,
   };
 }
 
