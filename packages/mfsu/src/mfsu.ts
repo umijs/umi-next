@@ -27,6 +27,7 @@ import { Dep } from './dep/dep';
 import { DepBuilder } from './depBuilder/depBuilder';
 import { DepInfo } from './depInfo';
 import getAwaitImportHandler from './esbuildHandlers/awaitImport';
+import { StaticDepInfo } from './staticDepInfo/staticDepInfo';
 import { Mode } from './types';
 import { makeArray } from './utils/makeArray';
 import { BuildDepPlugin } from './webpackPlugins/buildDepPlugin';
@@ -45,6 +46,7 @@ interface IOpts {
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
+  absSrcPath: string;
 }
 
 export class MFSU {
@@ -58,6 +60,7 @@ export class MFSU {
   public progress: any = { done: false };
   public onProgress: Function;
   public publicPath: string = '/';
+  public staticDepInfo: StaticDepInfo;
 
   constructor(opts: IOpts) {
     this.opts = opts;
@@ -77,6 +80,12 @@ export class MFSU {
     this.depInfo = new DepInfo({ mfsu: this });
     this.depBuilder = new DepBuilder({ mfsu: this });
     this.depInfo.loadCache();
+
+    this.staticDepInfo = new StaticDepInfo({
+      mfsu: this,
+      cachePath: join(this.opts.tmpBase, 'v4'),
+      absSrcPath: opts.absSrcPath,
+    });
   }
 
   // swc don't support top-level await
