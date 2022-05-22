@@ -232,6 +232,8 @@ PORT=8888 umi dev
       const opts = {
         config: api.config,
         cwd: api.cwd,
+        // fixme mfsu4  use current directory as default?
+        absSrcPath: api.paths.absSrcPath,
         rootDir: process.cwd(),
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),

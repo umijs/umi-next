@@ -2,6 +2,7 @@ import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
 import { logger, rimraf } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import * as process from 'process';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
 import { MFSU_NAME } from './constants';
@@ -27,6 +28,7 @@ type IOpts = {
   rootDir?: string;
   config: IConfig;
   entry: Record<string, string>;
+  absSrcPath: string;
 } & Pick<IConfigOpts, 'cache'>;
 
 export function stripUndefined(obj: any) {
@@ -55,6 +57,7 @@ export async function dev(opts: IOpts) {
       },
       mfName: opts.config.mfsu?.mfName,
       runtimePublicPath: opts.config.runtimePublicPath,
+      absSrcPath: opts.absSrcPath,
       tmpBase:
         opts.config.mfsu?.cacheDirectory ||
         join(opts.rootDir || opts.cwd, 'node_modules/.cache/mfsu'),
@@ -128,6 +131,8 @@ export async function dev(opts: IOpts) {
     config: webpackConfig as any,
     depConfig: depConfig as any,
   });
+
+  await mfsu?.staticDepInfo.init();
 
   if (
     mfsu &&

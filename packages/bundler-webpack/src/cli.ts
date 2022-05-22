@@ -51,6 +51,8 @@ if (command === 'build') {
     try {
       assert(entry, `Build failed: entry not found.`);
       await dev({
+        // fixme mfsu4 from
+        absSrcPath: join(cwd, 'src'),
         config,
         cwd,
         port: process.env.PORT as number | undefined,
