@@ -26,6 +26,7 @@
     "@umijs/bundler-utils": "4.0.0-rc.19",
     "@umijs/utils": "4.0.0-rc.19",
     "enhanced-resolve": "5.9.3"
+    "fast-glob": "^3.2.11"
   },
   "devDependencies": {
     "mrmime": "1.0.0",
