@@ -7,4 +7,13 @@ export default {
     '<rootDir>/packages/.+/compiled',
     '<rootDir>/packages/.+/fixtures',
   ],
+
+  transformIgnorePatterns: [
+    // default values
+    '/node_modules/',
+    '\\.pnp\\.[^\\/]+$',
+
+    // for umi-next self
+    '/compiled/',
+  ],
 } as Config.InitialOptions;
