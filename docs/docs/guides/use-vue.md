@@ -215,4 +215,6 @@ export function rootContainer(container) {
 
 更多详见 demo
 
-* [vue-demo](https://github.com/umijs/umi-next/tree/master/examples/vue-demo)
+* [boilerplate-vue](https://github.com/umijs/umi-next/tree/master/examples/boilerplate-vue)
+* [with-vue-pinia](https://github.com/umijs/umi-next/tree/master/examples/with-vue-pinia)
+* [with-vue-element-plus](https://github.com/umijs/umi-next/tree/master/examples/with-vue-element-plus)
