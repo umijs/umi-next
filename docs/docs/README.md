@@ -1,1 +1,1 @@
-# Docs Home
+[redirect]:- "./tutorials/getting-started"
