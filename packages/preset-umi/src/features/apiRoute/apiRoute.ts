@@ -2,32 +2,17 @@ import { IRoute } from '@umijs/core';
 import { logger, winPath } from '@umijs/utils';
 import fs from 'fs';
 import { basename, join, resolve } from 'path';
-import { matchApiRoute } from './utils';
-import { TEMPLATES_DIR } from '../../constants';
-import { OUTPUT_PATH } from './constants';
-import type { IApi, IApiMiddleware } from '../../types';
-import DevServerAdapterBuild from './dev-server/esbuild';
-import VercelAdapterBuild from './vercel/esbuild';
 import { watch } from '../../commands/dev/watch';
-
-enum ServerlessPlatform {
-  Vercel = 'vercel',
-  Netlify = 'netlify',
-  Worker = 'worker',
-}
-
-function getPlatform(p: string) {
-  switch (p) {
-    case 'vercel':
-      return ServerlessPlatform.Vercel;
-    case 'netlify':
-      return ServerlessPlatform.Netlify;
-    case 'worker':
-      return ServerlessPlatform.Worker;
-    default:
-      return undefined;
-  }
-}
+import { TEMPLATES_DIR } from '../../constants';
+import type { IApi, IApiMiddleware } from '../../types';
+import {
+  getApiRouteBuildPath,
+  getPlatform,
+  ServerlessPlatform,
+} from './constants';
+import DevServerAdapterBuild from './dev-server/esbuild';
+import { matchApiRoute } from './utils';
+import VercelAdapterBuild from './vercel/esbuild';
 
 export default (api: IApi) => {
   let platform: ServerlessPlatform | undefined;
@@ -152,8 +137,7 @@ export default (api: IApi) => {
         }
 
         await require(join(
-          api.paths.cwd,
-          OUTPUT_PATH,
+          getApiRouteBuildPath(api, ServerlessPlatform.UmiDevServer),
           matchedApiRoute.route.file,
         ).replace('.ts', '.js')).default(req, res);
 
@@ -201,8 +185,12 @@ export default (api: IApi) => {
       return;
     }
 
-    if (fs.existsSync(join(api.paths.cwd, OUTPUT_PATH))) {
-      await fs.rmdirSync(join(api.paths.cwd, OUTPUT_PATH), {
+    const apiRouteDir = getApiRouteBuildPath(
+      api,
+      ServerlessPlatform.UmiDevServer,
+    );
+    if (fs.existsSync(apiRouteDir)) {
+      await fs.rmdirSync(apiRouteDir, {
         recursive: true,
       });
     }

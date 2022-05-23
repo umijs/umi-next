@@ -2,7 +2,7 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { logger } from '@umijs/utils';
 import { join, resolve } from 'path';
 import type { IApi, IRoute } from '../../../types';
-import { OUTPUT_PATH } from '../constants';
+import { getApiRouteBuildPath, ServerlessPlatform } from '../constants';
 import { esbuildIgnorePathPrefixPlugin } from '../utils';
 
 // 将 API 路由的临时文件打包为 Umi Dev Server 可以使用的格式
@@ -11,6 +11,7 @@ export default async function (api: IApi, apiRoutes: IRoute[]) {
     join(api.paths.absTmpPath, 'api', r.file),
   );
 
+  const outdir = getApiRouteBuildPath(api, ServerlessPlatform.UmiDevServer);
   await esbuild.build({
     format: 'cjs',
     platform: 'node',
@@ -19,7 +20,7 @@ export default async function (api: IApi, apiRoutes: IRoute[]) {
       ...apiRoutePaths,
       resolve(api.paths.absTmpPath, 'api/_middlewares.ts'),
     ],
-    outdir: resolve(api.paths.cwd, OUTPUT_PATH),
+    outdir,
     plugins: [esbuildIgnorePathPrefixPlugin()],
     watch: {
       onRebuild(error) {
@@ -27,8 +28,7 @@ export default async function (api: IApi, apiRoutes: IRoute[]) {
 
         // Reload API route modules
         Object.keys(require.cache).forEach((modulePath) => {
-          if (modulePath.startsWith(join(api.paths.cwd, OUTPUT_PATH)))
-            delete require.cache[modulePath];
+          if (modulePath.startsWith(outdir)) delete require.cache[modulePath];
         });
       },
     },
