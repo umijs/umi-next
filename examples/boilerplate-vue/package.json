@@ -1,5 +1,5 @@
 {
-  "name": "@example/with-vue-element-plus",
+  "name": "@example/boilerplate-vue",
   "private": true,
   "scripts": {
     "build": "umi build",
@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@umijs/preset-vue": "4.0.0-rc.19",
-    "element-plus": "^2.2.1",
     "umi": "4.0.0-rc.19",
     "vue": "3.2.33"
   }
