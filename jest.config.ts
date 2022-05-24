@@ -7,6 +7,5 @@ export default {
     '<rootDir>/packages/.+/compiled',
     '<rootDir>/packages/.+/fixtures',
   ],
-
   transformIgnorePatterns: ['/node_modules/', '/compiled/'],
 } as Config.InitialOptions;
