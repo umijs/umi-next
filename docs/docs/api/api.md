@@ -512,7 +512,7 @@ const params = useParams()
 declare function useResolvedPath(to: To): Path;
 ```
 
-示例：a
+示例：
 
 ```ts
 import { useResolvedPath } from 'umi';
