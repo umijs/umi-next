@@ -17,7 +17,7 @@ type SVGOOption = { [key: string]: any } | false;
  * @param transformOptions include transform options to translate svg ReactComponent
  */
 export default function svgrPlugin(
-  svgr: SVGROption = {},
+  svgr: SVGROption | false,
   svgo: SVGOOption = {},
   transformOptions?: TransformOptions,
 ): Plugin {
@@ -26,7 +26,7 @@ export default function svgrPlugin(
     async transform(code, id) {
       if (id.endsWith('.svg')) {
         let componentCode = code;
-        if (svgr) {
+        if (svgr !== false) {
           const svgFile = fs.readFileSync(id, 'utf8');
           const svgrCode = await SVGTransform(
             svgFile,
