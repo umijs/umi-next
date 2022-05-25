@@ -130,7 +130,7 @@ export function renderClient(opts: {
                 k.startsWith(routeIdReplaced + '.'),
               );
               if (!keys) return;
-              keys.map((key) => {
+              keys.forEach((key) => {
                 let file = manifest[key];
                 let as = 'script';
                 if (file.endsWith('.css')) as = 'style';
