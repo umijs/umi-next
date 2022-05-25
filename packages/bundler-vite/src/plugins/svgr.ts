@@ -7,7 +7,7 @@ import {
 import fs from 'fs';
 import type { Plugin } from '../../compiled/vite';
 
-type SVGROption = { [key: string]: any };
+type SVGROption = { [key: string]: any } | false;
 type SVGOOption = { [key: string]: any } | false;
 
 /**
@@ -17,7 +17,7 @@ type SVGOOption = { [key: string]: any } | false;
  * @param transformOptions include transform options to translate svg ReactComponent
  */
 export default function svgrPlugin(
-  svgr: SVGROption | false,
+  svgr: SVGROption = {},
   svgo: SVGOOption = {},
   transformOptions?: TransformOptions,
 ): Plugin {
