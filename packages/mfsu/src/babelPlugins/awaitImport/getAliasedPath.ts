@@ -31,18 +31,18 @@ function addLastSlash(path: string) {
   return path.endsWith('/') ? path : `${path}/`;
 }
 
-export function getAliasedPathWithLoopDetect({ value, alias }: Opts) {
+export function getAliasedPathWithLoopDetect({ value, alias }: Opts): string {
   let needUnAlias = value;
   for (let i = 0; i < 10; i++) {
     let unAliased = getAliasedPath({ value: needUnAlias, alias });
     if (unAliased) {
-      needUnAlias = unAliased!;
+      needUnAlias = unAliased;
     } else {
       return needUnAlias;
     }
   }
 
   throw Error(
-    'endless loop detected in resolve alias, please check your alias config.',
+    `endless loop detected in resolve alias for '${value}', please check your alias config.`,
   );
 }
