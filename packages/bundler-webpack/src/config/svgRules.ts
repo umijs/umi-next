@@ -13,7 +13,7 @@ interface IOpts {
 export async function addSVGRules(opts: IOpts) {
   const { config, userConfig } = opts;
   const { svgr, svgo = {} } = userConfig;
-  if (svgr) {
+  if (svgr !== false) {
     const svgrRule = config.module.rule('svgr');
     svgrRule
       .test(/\.svg$/)
