@@ -153,14 +153,14 @@ export default function RouteComponent(props) {
   );
 }
 ```
-组件改成从 `useoutletcontext` 取值
+组件改成从 `useOutletContext` 取值
 ```diff
 import React from 'react';
-+ import { useoutletcontext } from 'umi';
++ import { useOutletContext } from 'umi';
 
 - export function Comp(props){
 + export function Comp(){
-+   const props = useoutletcontext()
++   const props = useOutletContext()
 
   return props.someProp;
 }
