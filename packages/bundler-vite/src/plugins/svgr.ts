@@ -7,7 +7,7 @@ import {
 import fs from 'fs';
 import type { Plugin } from '../../compiled/vite';
 
-type SVGROption = { [key: string]: any } | false;
+type SVGROption = { [key: string]: any };
 type SVGOOption = { [key: string]: any } | false;
 
 /**
@@ -26,7 +26,7 @@ export default function svgrPlugin(
     async transform(code, id) {
       if (id.endsWith('.svg')) {
         let componentCode = code;
-        if (svgr !== false) {
+        if (svgr) {
           const svgFile = fs.readFileSync(id, 'utf8');
           const svgrCode = await SVGTransform(
             svgFile,
