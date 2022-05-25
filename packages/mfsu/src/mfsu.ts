@@ -12,8 +12,9 @@ import webpack, { Configuration } from 'webpack';
 import { lookup } from '../compiled/mrmime';
 // @ts-ignore
 import WebpackVirtualModules from '../compiled/webpack-virtual-modules';
-import awaitImport from './babelPlugins/awaitImport/awaitImport';
+import { getAliasedPathWithLoopDetect } from './babelPlugins/awaitImport/getAliasedPath';
 import { getRealPath } from './babelPlugins/awaitImport/getRealPath';
+import mfImport from './babelPlugins/awaitImport/MFImport';
 import {
   DEFAULT_MF_NAME,
   DEFAULT_TMP_DIR_NAME,
@@ -213,6 +214,8 @@ promise new Promise(resolve => {
         }),
         new BuildDepPlugin({
           onCompileDone: () => {
+            console.log('new mfsu dep is building');
+
             if (this.depBuilder.isBuilding) {
               this.buildDepsAgain = true;
             } else {
@@ -255,8 +258,21 @@ promise new Promise(resolve => {
       return;
     }
     this.depInfo.snapshot();
+
+    const map = this.staticDepInfo.getDependencies();
+
+    const staticDeps: Record<string, { file: string; version: string }> = {};
+    for (const p of map.entries()) {
+      const [k] = p;
+      staticDeps[k] = {
+        file: k,
+        //fixme
+        version: 'fixme',
+      };
+    }
+
     const deps = Dep.buildDeps({
-      deps: this.depInfo.moduleGraph.depSnapshotModules,
+      deps: staticDeps,
       cwd: this.opts.cwd!,
       mfsu: this,
     });
@@ -355,7 +371,32 @@ promise new Promise(resolve => {
   }
 
   getBabelPlugins() {
-    return [[awaitImport, this.getAwaitImportCollectOpts()]];
+    return [[mfImport, this.getMfImportOpts()]];
+  }
+
+  private getMfImportOpts() {
+    return {
+      resolveImportSource: (source: string) => {
+        const depMat = this.staticDepInfo.getDependencies();
+
+        const r = getAliasedPathWithLoopDetect({
+          value: source,
+          alias: this.alias,
+        });
+        const m = depMat.get(r);
+
+        if (m) {
+          return m.replaceValue;
+        }
+
+        return r;
+      },
+      exportAllMembers: this.opts.exportAllMembers,
+      unMatchLibs: this.opts.unMatchLibs,
+      remoteName: this.opts.mfName,
+      alias: this.alias,
+      externals: this.externals,
+    };
   }
 
   getEsbuildLoaderHandler() {

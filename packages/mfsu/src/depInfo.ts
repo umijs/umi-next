@@ -13,6 +13,7 @@ export class DepInfo {
   public cacheFilePath: string;
   public moduleGraph: ModuleGraph = new ModuleGraph();
   public cacheDependency: object = {};
+
   constructor(opts: IOpts) {
     this.opts = opts;
     this.cacheFilePath = join(this.opts.mfsu.opts.tmpBase!, 'MFSU_CACHE.json');
@@ -31,8 +32,8 @@ export class DepInfo {
     if (this.moduleGraph.hasDepChanged()) {
       return 'moduleGraph has changed';
     }
-
-    return false;
+    // fixme always rebuild in dev
+    return true;
   }
 
   snapshot() {

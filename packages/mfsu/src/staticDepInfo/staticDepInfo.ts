@@ -1,6 +1,9 @@
-import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
+import {
+  ImportSpecifier,
+  init,
+  parse,
+} from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
-import { uniq, uniqBy } from '@umijs/utils/compiled/lodash';
 import fg from 'fast-glob';
 import { readFileSync } from 'fs';
 import { extname, join, relative } from 'path';
@@ -13,7 +16,10 @@ interface IOpts {
   mfsu: MFSU;
   absSrcPath: string;
   cachePath: string;
+  predeps?: string[];
 }
+
+type Match = ReturnType<typeof checkMatch>;
 
 export class StaticDepInfo {
   private opts: IOpts;
@@ -24,12 +30,8 @@ export class StaticDepInfo {
 
   private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
-  private presetDep = [
-    'react',
-    'react-error-overlay',
-    'react/jsx-dev-runtime',
-    '@umijs/utils/compiled/strip-ansi',
-  ];
+  private presetDep: string[];
+  private currentDep: Map<string, Match> = new Map();
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -37,6 +39,13 @@ export class StaticDepInfo {
     this.mfsu = opts.mfsu;
 
     console.log('caching at ', opts.cachePath);
+    this.presetDep = opts.predeps || [
+      'react',
+      'react-error-overlay',
+      'react/jsx-dev-runtime',
+      '@umijs/utils/compiled/strip-ansi',
+    ];
+
     this.opts = opts;
     this.cacheFilePath = join(this.opts.mfsu.opts.tmpBase!, 'MFSU_CACHE.json');
   }
@@ -47,7 +56,7 @@ export class StaticDepInfo {
       ignore: [
         '**/*.d.ts',
         '**/*.test.{js,ts,jsx,tsx}',
-        // fixme respect to enviroment
+        // fixme respect to environment
         '**/.umi-production/**',
         '**/node_modules/**',
       ],
@@ -70,9 +79,15 @@ export class StaticDepInfo {
       const c = readFileSync(newFile, 'utf-8');
       this.fileContentCache[f] = c;
     }
+
+    this.currentDep = await this._getDependencies();
   }
 
-  async getDependencies(): Promise<string[]> {
+  public getDependencies() {
+    return this.currentDep;
+  }
+
+  private async _getDependencies(): Promise<Map<string, Match>> {
     const bigCodeString = Object.keys(this.fileContentCache)
       .map((k) => this.fileContentCache[k])
       .join('\n');
@@ -87,32 +102,38 @@ export class StaticDepInfo {
       externals: this.mfsu.externals,
     };
 
-    console.log('------>', this.mfsu.alias);
+    const matched = new Map<string, Match>();
+    const unMatched = new Set<string>();
 
-    const cache = new Map<string, any>();
-    const matchedImports = imports
-      .map((imp) => {
-        const { isMatch, replaceValue, value } = checkMatch({
-          cache,
-          value: imp.n as string,
-          depth: 1,
-          filename: '_.js',
-          opts,
-        });
-        return {
-          ...imp,
-          isMatch,
-          replaceName: replaceValue,
-          value,
-        };
-      })
-      .filter(({ isMatch }) => isMatch);
+    const antdImports: ImportSpecifier[] = [];
+    for (const imp of imports) {
+      if (imp.n === 'antd') {
+        antdImports.push(imp);
+        continue;
+      }
 
-    const antdImports = matchedImports.filter(({ n }) => {
-      return n === 'antd';
-    });
+      if (unMatched.has(imp.n!)) {
+        continue;
+      }
 
-    const dep: string[] = [];
+      if (matched.has(imp.n!)) {
+        continue;
+      }
+
+      const match = checkMatch({
+        value: imp.n as string,
+        depth: 1,
+        filename: '_.js',
+        opts,
+      });
+
+      if (match.isMatch) {
+        matched.set(match.value, match);
+      } else {
+        unMatched.add(imp.n!);
+      }
+    }
+
     if (antdImports.length > 0) {
       const importSnippets = antdImports
         .map(({ ss, se }) => {
@@ -120,10 +141,7 @@ export class StaticDepInfo {
         })
         .join('\n');
 
-      const parsedImports = parseImport(importSnippets) as {
-        from: string;
-        imports: string[];
-      }[];
+      const parsedImports = parseImport(importSnippets);
 
       const importedVariable = new Set<string>();
 
@@ -133,36 +151,45 @@ export class StaticDepInfo {
         });
       }
 
+      const mfName = this.mfsu.opts.mfName;
+      const base = antdImports[0].n!;
       for (const v of importedVariable.entries()) {
         const dashed = toDash(v[0]);
-        // @ts-ignore
-        const base = antdImports[0].value;
-        const componentPath = join(base, 'es', dashed);
-        // fixme respect to config#antd
-        const stylePath = join(componentPath, 'style');
 
-        dep.push(componentPath);
-        dep.push(stylePath);
+        // fixme respect to config#antd
+        const importBase = join(base, 'es', dashed);
+        const componentPath = getAliasedPathWithLoopDetect({
+          value: importBase,
+          alias: this.mfsu.alias,
+        });
+        const styleImportPath = join(componentPath, 'style');
+
+        matched.set(componentPath, {
+          isMatch: true,
+          value: componentPath,
+          replaceValue: `${mfName}/${componentPath}`,
+        });
+        matched.set(styleImportPath, {
+          isMatch: true,
+          value: styleImportPath,
+          replaceValue: `${mfName}/${styleImportPath}`,
+        });
       }
     }
 
-    const uniqDeps = uniqBy(matchedImports, 'n');
+    for (const p of this.presetDep) {
+      const match = checkMatch({
+        value: p,
+        depth: 1,
+        filename: '_.js',
+        opts,
+      });
+      if (match.isMatch) {
+        matched.set(match.value, match);
+      }
+    }
 
-    const preset = this.presetDep.map(
-      (d) =>
-        getAliasedPathWithLoopDetect({
-          value: d,
-          alias: this.mfsu.alias,
-        }) || d,
-    );
-
-    return uniq(
-      uniqDeps
-        // @ts-ignore
-        .map(({ n, value }) => value || n)
-        .concat(dep)
-        .concat(preset),
-    ) as string[];
+    return matched;
   }
 
   async processFile(p: string) {
