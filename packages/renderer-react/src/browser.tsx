@@ -126,26 +126,30 @@ export function renderClient(opts: {
             const routeIdReplaced = id.replace(/[\/\-]/g, '_');
             const preloadId = 'preload-' + routeIdReplaced;
             if (!document.getElementById(preloadId)) {
-              const key = Object.keys(manifest).find((k) =>
+              const keys = Object.keys(manifest).filter((k) =>
                 k.startsWith(routeIdReplaced + '.'),
               );
-              if (!key) return;
-              let file = manifest[key];
-              const link = document.createElement('link');
-              link.id = preloadId;
-              link.rel = 'preload';
-              link.as = 'script';
-              // publicPath already in the manifest,
-              // but if runtimePublicPath is true, we need to replace it
-              if (opts.runtimePublicPath) {
-                file = file.replace(
-                  new RegExp(`^${opts.publicPath}`),
-                  // @ts-ignore
-                  window.publicPath,
-                );
-              }
-              link.href = file;
-              document.head.appendChild(link);
+              if (!keys) return;
+              keys.map((key) => {
+                let file = manifest[key];
+                let as = 'script';
+                if (file.endsWith('.css')) as = 'style';
+                const link = document.createElement('link');
+                link.id = preloadId;
+                link.rel = 'preload';
+                link.as = as;
+                // publicPath already in the manifest,
+                // but if runtimePublicPath is true, we need to replace it
+                if (opts.runtimePublicPath) {
+                  file = file.replace(
+                    new RegExp(`^${opts.publicPath}`),
+                    // @ts-ignore
+                    window.publicPath,
+                  );
+                }
+                link.href = file;
+                document.head.appendChild(link);
+              });
             }
           }
           // client loader
