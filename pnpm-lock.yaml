@@ -609,7 +609,7 @@ importers:
       vue: 3.2.33
     dependencies:
       '@umijs/preset-vue': link:../../packages/preset-vue
-      element-plus: 2.2.1_vue@3.2.33
+      element-plus: 2.2.2_vue@3.2.33
       umi: link:../../packages/umi
       vue: 3.2.33
 
@@ -1579,11 +1579,6 @@ packages:
     peerDependencies:
       antd: '>=4.20.0'
       react: '>=16.9.0'
-    peerDependenciesMeta:
-      antd:
-        optional: true
-      react:
-        optional: true
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@18.1.0+react@18.1.0
       '@ant-design/pro-provider': 1.7.1_e02fb82764744a0894e4f82d87654741
@@ -1645,11 +1640,6 @@ packages:
     peerDependencies:
       antd: '>=4.20.0'
       react: '>=16.9.0'
-    peerDependenciesMeta:
-      antd:
-        optional: true
-      react:
-        optional: true
     dependencies:
       '@babel/runtime': 7.17.9
       antd: 4.20.2_react-dom@18.1.0+react@18.1.0
@@ -1745,13 +1735,6 @@ packages:
       antd: '>=4.20.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
-    peerDependenciesMeta:
-      antd:
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@18.1.0+react@18.1.0
       '@ant-design/pro-provider': 1.7.1_e02fb82764744a0894e4f82d87654741
@@ -6565,15 +6548,6 @@ packages:
       '@octokit/openapi-types': 11.2.0
     dev: true
 
-  /@parcel/css-darwin-arm64/1.8.2:
-    resolution: {integrity: sha512-p5etxX3kPCuEQcipjqH9yc5j0x5/Yc++uB4MvG/sFbRgL2gI2zUuRo9sIgqA21boOP8lE4bQgz1ovPD/W1hj+Q==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
   /@parcel/css-darwin-arm64/1.8.3:
     resolution: {integrity: sha512-qh/Ig6GfVjGoiGSWjIYDo6Ghwmyy/9BXvYS1l3R+Bp50F300cq84Czfl6wxaL+aFmghdHzhjJuGfWmZlcYliPA==}
     engines: {node: '>= 12.0.0'}
@@ -6581,15 +6555,6 @@ packages:
     os: [darwin]
     requiresBuild: true
     dev: true
-    optional: true
-
-  /@parcel/css-darwin-x64/1.8.2:
-    resolution: {integrity: sha512-c3xi5DXRZYec5db4KPTxp69eHbomOuasgZNiuPPOi80k7jlOwfzCFQs0h6/KwWvTcJrKEFsLl8BKJU/aX7mETw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
     optional: true
 
   /@parcel/css-darwin-x64/1.8.3:
@@ -6601,15 +6566,6 @@ packages:
     dev: true
     optional: true
 
-  /@parcel/css-linux-arm-gnueabihf/1.8.2:
-    resolution: {integrity: sha512-+ih3+mMpwbwtOjr/XW5pP0frsV1PMN+Qz7jCAM84h8xX+8UE/1IR0UVi3EPa8wQiIlcVcEwszQ1MV2UHacvo/A==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
   /@parcel/css-linux-arm-gnueabihf/1.8.3:
     resolution: {integrity: sha512-4P1r0BvL9dPz70py2xLg/jEvWJmKNyokPgafyrDP+GbpPTfH5NYJJkVRGo/TkKsp3Rv8SJhV9fdlpFKC6BI92A==}
     engines: {node: '>= 12.0.0'}
@@ -6617,15 +6573,6 @@ packages:
     os: [linux]
     requiresBuild: true
     dev: true
-    optional: true
-
-  /@parcel/css-linux-arm64-gnu/1.8.2:
-    resolution: {integrity: sha512-jIoyXbjJ1trUHXtyJhi3hlF1ck6xM4CDyaY5N6eN+3+ovkdw6wxog9IiheYJ1jf9ellYevLvTF5kiYE9MiP04A==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
     optional: true
 
   /@parcel/css-linux-arm64-gnu/1.8.3:
@@ -6637,15 +6584,6 @@ packages:
     dev: true
     optional: true
 
-  /@parcel/css-linux-arm64-musl/1.8.2:
-    resolution: {integrity: sha512-QVTc5a+HatoywIei3djKYmp3s5dbI2Q3QaYZf3gqhyjOkeC7bm6j5eeNzFO+wa5xtga5jdHkIuTRrJ/wCojKKw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
   /@parcel/css-linux-arm64-musl/1.8.3:
     resolution: {integrity: sha512-ct1QRK5gAP8sO22NZ7RULZQB7dbHpou+WMa4z0LJb+Fho13a1JNw931vNHbeI5cRr1fCTDq76pz/+Valgetzcw==}
     engines: {node: '>= 12.0.0'}
@@ -6653,15 +6591,6 @@ packages:
     os: [linux]
     requiresBuild: true
     dev: true
-    optional: true
-
-  /@parcel/css-linux-x64-gnu/1.8.2:
-    resolution: {integrity: sha512-9r2tSfa6i3ZQ3a6C9XufJWuTv3LB7JYzxzEqsI35SSA8D/DrfAHMaIhqog5wSxKZRWmQxckh2wdT96eIIGHSGA==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
     optional: true
 
   /@parcel/css-linux-x64-gnu/1.8.3:
@@ -6673,15 +6602,6 @@ packages:
     dev: true
     optional: true
 
-  /@parcel/css-linux-x64-musl/1.8.2:
-    resolution: {integrity: sha512-5SetLWkxXRQ3NU6QwwbGf9tOmGW2m1cGt07Moybbe4RCXOY6R5wAYUtauZUp7pD/fJlE9mHge4jnNHKpVO9pvw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
   /@parcel/css-linux-x64-musl/1.8.3:
     resolution: {integrity: sha512-4Iwawy28HQ2yAgbuyR60bgO+8oE+OiWpE02eNjbgqnDpTsfmXFMt4l5OYgZwJJ7DlaZqm+/yO8RPMd+EzwtNzg==}
     engines: {node: '>= 12.0.0'}
@@ -6689,15 +6609,6 @@ packages:
     os: [linux]
     requiresBuild: true
     dev: true
-    optional: true
-
-  /@parcel/css-win32-x64-msvc/1.8.2:
-    resolution: {integrity: sha512-/EdW5Ejlnkvc/AYrAi/FmLNvM6a6eAx+A4Y7oW+8JSMvk6bYa2zmXi7XLU/QOQuH2VQa/3gIIMA+sYjPndvDpw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: false
     optional: true
 
   /@parcel/css-win32-x64-msvc/1.8.3:
@@ -6709,21 +6620,21 @@ packages:
     dev: true
     optional: true
 
-  /@parcel/css/1.8.2:
-    resolution: {integrity: sha512-3vTyKHy2LnZ3YJEut+UQPVIxsaY/mdGk7cDXtmvH4xR48Pd6rYzChHCMl4Ru2DUkCBpr0KCQRPZTdYcsJhUmIA==}
+  /@parcel/css/1.8.3:
+    resolution: {integrity: sha512-6qUN4iicr8f9Q6UUZttwwHMzrb65BRX46PHWq0icA4KEmvmfR9cSYlp/hJH8F4stg3Wncx12Bnw+EuPf5OAEPQ==}
     engines: {node: '>= 12.0.0'}
     dependencies:
       detect-libc: 1.0.3
     optionalDependencies:
-      '@parcel/css-darwin-arm64': 1.8.2
-      '@parcel/css-darwin-x64': 1.8.2
-      '@parcel/css-linux-arm-gnueabihf': 1.8.2
-      '@parcel/css-linux-arm64-gnu': 1.8.2
-      '@parcel/css-linux-arm64-musl': 1.8.2
-      '@parcel/css-linux-x64-gnu': 1.8.2
-      '@parcel/css-linux-x64-musl': 1.8.2
-      '@parcel/css-win32-x64-msvc': 1.8.2
-    dev: false
+      '@parcel/css-darwin-arm64': 1.8.3
+      '@parcel/css-darwin-x64': 1.8.3
+      '@parcel/css-linux-arm-gnueabihf': 1.8.3
+      '@parcel/css-linux-arm64-gnu': 1.8.3
+      '@parcel/css-linux-arm64-musl': 1.8.3
+      '@parcel/css-linux-x64-gnu': 1.8.3
+      '@parcel/css-linux-x64-musl': 1.8.3
+      '@parcel/css-win32-x64-msvc': 1.8.3
+    dev: true
 
   /@pmmmwh/react-refresh-webpack-plugin/0.5.5_4029b931217d08c7bbf9a21bb093788b:
     resolution: {integrity: sha512-RbG7h6TuP6nFFYKJwbcToA1rjC1FyPg25NR2noAZ0vKI+la01KTSRPkuVPE+U88jXv7javx2JHglUcL1MHcshQ==}
@@ -11998,6 +11909,7 @@ packages:
     resolution: {integrity: sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=}
     engines: {node: '>=0.10'}
     hasBin: true
+    dev: true
 
   /detect-newline/3.1.0:
     resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
