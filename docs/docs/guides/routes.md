@@ -195,8 +195,8 @@ history.push('/list');
 history.push('/list?a=b&c=d#anchor');
 history.push({
   pathname: '/list',
-  query: '?a=b&c=d',
-  anchor: 'anchor'
+  search: '?a=b&c=d',
+  hash: 'anchor',
 });
 
 // 跳转到上一个路由
