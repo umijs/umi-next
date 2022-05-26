@@ -27,6 +27,39 @@ export default (api: IApi) => {
       }),
     );
 
+    // tsconfig.json
+    const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
+    api.writeTmpFile({
+      noPluginDir: true,
+      path: 'tsconfig.json',
+      // 1、basic config
+      // 2、alias
+      // 3、language service platform
+      // 4、typing
+      content: JSON.stringify(
+        {
+          compilerOptions: {
+            target: 'esnext',
+            module: 'esnext',
+            moduleResolution: 'node',
+            importHelpers: true,
+            jsx: 'react',
+            esModuleInterop: true,
+            sourceMap: true,
+            // baseUrl: '.',
+            strict: true,
+            paths: {
+              '@/*': [`${srcPrefix}*`],
+              '@@/*': [`${srcPrefix}.umi/*`],
+            },
+            allowSyntheticDefaultImports: true,
+          },
+        },
+        null,
+        2,
+      ),
+    });
+
     // umi.ts
     api.writeTmpFile({
       noPluginDir: true,
