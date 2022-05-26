@@ -33,7 +33,7 @@ export class DepInfo {
       return 'moduleGraph has changed';
     }
     // fixme always rebuild in dev
-    return true;
+    return false;
   }
 
   snapshot() {
