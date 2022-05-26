@@ -192,16 +192,16 @@ import { history } from 'umi';
 history.push('/list');
 
 // 带参数跳转到指定路由
-history.push('/list?a=b');
+history.push('/list?a=b&c=d#anchor');
 history.push({
   pathname: '/list',
-  query: {
-    a: 'b',
-  },
+  query: '?a=b&c=d',
+  anchor: 'anchor'
 });
 
 // 跳转到上一个路由
-history.goBack();
+history.back();
+history.go(-1);
 ```
 
 组件内还可以使用 `useNavigate` hook
