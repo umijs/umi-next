@@ -32,8 +32,8 @@ export class StaticDepInfo {
   private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
   private presetDep: string[];
-  private currentDep: Map<string, Match> = new Map();
-  private _snapshot: Map<string, Match> = new Map();
+  private currentDep: Record<string, Match> = {};
+  private _snapshot: Record<string, Match> = {};
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -101,7 +101,7 @@ export class StaticDepInfo {
     return this.currentDep;
   }
 
-  private _getDependencies(): Map<string, Match> {
+  private _getDependencies(): Record<string, Match> {
     console.time('_getDependencies');
 
     const cwd = this.mfsu.opts.cwd!;
@@ -120,7 +120,7 @@ export class StaticDepInfo {
       externals: this.mfsu.externals,
     };
 
-    const matched = new Map<string, Match>();
+    const matched: Record<string, Match> = {};
     const unMatched = new Set<string>();
 
     const antdImports: ImportSpecifier[] = [];
@@ -134,7 +134,7 @@ export class StaticDepInfo {
         continue;
       }
 
-      if (matched.has(imp.n!)) {
+      if (matched[imp.n!]) {
         continue;
       }
 
@@ -146,13 +146,13 @@ export class StaticDepInfo {
       });
 
       if (match.isMatch) {
-        matched.set(match.value, {
+        matched[match.value] = {
           ...match,
           version: Dep.getDepVersion({
             dep: match.value,
             cwd,
           }),
-        });
+        };
       } else {
         unMatched.add(imp.n!);
       }
@@ -193,18 +193,18 @@ export class StaticDepInfo {
           cwd,
         });
 
-        matched.set(componentPath, {
+        matched[componentPath] = {
           isMatch: true,
           value: componentPath,
           replaceValue: `${mfName}/${componentPath}`,
           version,
-        });
-        matched.set(styleImportPath, {
+        };
+        matched[styleImportPath] = {
           isMatch: true,
           value: styleImportPath,
           replaceValue: `${mfName}/${styleImportPath}`,
           version,
-        });
+        };
       }
     }
 
@@ -216,13 +216,13 @@ export class StaticDepInfo {
         opts,
       });
       if (match.isMatch) {
-        matched.set(match.value, {
+        matched[match.value] = {
           ...match,
           version: Dep.getDepVersion({
             dep: match.value,
             cwd,
           }),
-        });
+        };
       }
     }
     console.timeEnd('_getDependencies');

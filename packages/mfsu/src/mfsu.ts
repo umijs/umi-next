@@ -265,12 +265,11 @@ promise new Promise(resolve => {
     const map = this.staticDepInfo.getDependencies();
 
     const staticDeps: Record<string, { file: string; version: string }> = {};
-    for (const p of map.entries()) {
-      const [k] = p;
+    const keys = Object.keys(map);
+    for (const k of keys) {
       staticDeps[k] = {
         file: k,
-        //fixme
-        version: 'fixme',
+        version: map[k].version,
       };
     }
 
@@ -386,7 +385,7 @@ promise new Promise(resolve => {
           value: source,
           alias: this.alias,
         });
-        const m = depMat.get(r);
+        const m = depMat[r];
 
         if (m) {
           return m.replaceValue;
