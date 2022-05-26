@@ -87,6 +87,7 @@ export class MFSU {
       cachePath: join(this.opts.tmpBase, 'v4'),
       absSrcPath: opts.absSrcPath,
     });
+    this.staticDepInfo.loadCache();
   }
 
   // swc don't support top-level await
@@ -213,6 +214,8 @@ promise new Promise(resolve => {
           },
         }),
         new BuildDepPlugin({
+          onFileChange: async () => {},
+          beforeCompile: async () => {},
           onCompileDone: () => {
             console.log('new mfsu dep is building');
 
