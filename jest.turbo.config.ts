@@ -12,4 +12,5 @@ export default {
     '<rootDir>/bundles',
   ],
   cacheDirectory: `${cwd}/.jest-cache`,
+  transformIgnorePatterns: ['/node_modules/', '/compiled/'],
 } as Config.InitialOptions;
