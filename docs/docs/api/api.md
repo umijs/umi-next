@@ -312,7 +312,7 @@ function DashboardWithContext() {
 }
 ```
 
-`Outlet` 组件的 `context` 可以使用 API [`useOutletContext`]('./#useOutletContext') 在子组件中获取。
+`Outlet` 组件的 `context` 可以使用 API `useOutletContext` 在子组件中获取。
 
 ### resolvePath
 
