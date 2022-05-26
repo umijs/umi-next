@@ -298,17 +298,21 @@ declare function Outlet(
 import { Outlet } from 'umi';
 
 function Dashboard() {
-  return <div>
-    <h1>Dashboard</h1>
-    <Outlet />
-  </div>;
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Outlet />
+    </div>
+  );
 }
 
 function DashboardWithContext() {
-  return <div>
-    <h1>Dashboard</h1>
-    <Outlet context={{ prop: 'a' }}/>
-  </div>;
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Outlet context={{ prop: 'a' }}/>
+    </div>
+  );
 }
 ```
 
@@ -514,13 +518,13 @@ declare function useOutlet(): React.ReactElement | null;
 ```ts
 import { useOutletContext, Outlet } from 'umi';
 
-const Layout = ()=>{
+const Layout = () => {
   return <div className="fancyLayout">
     <Outlet context={{ prop: 'from Layout'}} />
   </div>
 }
 
-const SomeRouteComponentUnderLayout = ()=>{
+const SomeRouteComponentUnderLayout = () => {
   const layoutContext = useOutletContext();
 
   return JSON.stringify(layoutContext)   // {"prop":"from Layout"} 

@@ -159,8 +159,8 @@ import React from 'react';
 + import { useOutletContext } from 'umi';
 
 - export function Comp(props){
-+ export function Comp(){
-+   const props = useOutletContext()
++ export function Comp() {
++   const props = useOutletContext();
 
   return props.someProp;
 }
