@@ -9,6 +9,7 @@ import { readFileSync } from 'fs';
 import { extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
+import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu';
 import parseImport from './importParser';
 
@@ -19,7 +20,7 @@ interface IOpts {
   predeps?: string[];
 }
 
-type Match = ReturnType<typeof checkMatch>;
+type Match = ReturnType<typeof checkMatch> & { version: string };
 
 export class StaticDepInfo {
   private opts: IOpts;
@@ -32,6 +33,7 @@ export class StaticDepInfo {
   private mfsu: MFSU;
   private presetDep: string[];
   private currentDep: Map<string, Match> = new Map();
+  private _snapshot: Map<string, Match> = new Map();
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -66,6 +68,8 @@ export class StaticDepInfo {
 
     this.fileList = files;
 
+    console.log(files, this._snapshot);
+
     const res = await this.batchProcess(this.fileList);
 
     console.log(res);
@@ -83,11 +87,25 @@ export class StaticDepInfo {
     this.currentDep = await this._getDependencies();
   }
 
+  shouldBuild() {
+    return 'stupid always build!';
+  }
+
+  snapshot() {
+    this._snapshot = this.currentDep = this._getDependencies();
+  }
+
+  loadCache() {}
+
   public getDependencies() {
     return this.currentDep;
   }
 
-  private async _getDependencies(): Promise<Map<string, Match>> {
+  private _getDependencies(): Map<string, Match> {
+    console.time('_getDependencies');
+
+    const cwd = this.mfsu.opts.cwd!;
+
     const bigCodeString = Object.keys(this.fileContentCache)
       .map((k) => this.fileContentCache[k])
       .join('\n');
@@ -128,7 +146,13 @@ export class StaticDepInfo {
       });
 
       if (match.isMatch) {
-        matched.set(match.value, match);
+        matched.set(match.value, {
+          ...match,
+          version: Dep.getDepVersion({
+            dep: match.value,
+            cwd,
+          }),
+        });
       } else {
         unMatched.add(imp.n!);
       }
@@ -164,15 +188,22 @@ export class StaticDepInfo {
         });
         const styleImportPath = join(componentPath, 'style');
 
+        const version = Dep.getDepVersion({
+          dep: componentPath,
+          cwd,
+        });
+
         matched.set(componentPath, {
           isMatch: true,
           value: componentPath,
           replaceValue: `${mfName}/${componentPath}`,
+          version,
         });
         matched.set(styleImportPath, {
           isMatch: true,
           value: styleImportPath,
           replaceValue: `${mfName}/${styleImportPath}`,
+          version,
         });
       }
     }
@@ -185,10 +216,16 @@ export class StaticDepInfo {
         opts,
       });
       if (match.isMatch) {
-        matched.set(match.value, match);
+        matched.set(match.value, {
+          ...match,
+          version: Dep.getDepVersion({
+            dep: match.value,
+            cwd,
+          }),
+        });
       }
     }
-
+    console.timeEnd('_getDependencies');
     return matched;
   }
 
