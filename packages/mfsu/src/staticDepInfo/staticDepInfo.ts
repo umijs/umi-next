@@ -4,13 +4,15 @@ import {
   parse,
 } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
+import { fsExtra, lodash, logger } from '@umijs/utils';
 import fg from 'fast-glob';
-import { readFileSync } from 'fs';
-import { extname, join, relative } from 'path';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu';
+import { ModuleGraph } from '../moduleGraph';
 import parseImport from './importParser';
 
 interface IOpts {
@@ -24,10 +26,12 @@ type Match = ReturnType<typeof checkMatch> & { version: string };
 
 export class StaticDepInfo {
   private opts: IOpts;
-  public cacheFilePath: string;
+  private cacheFilePath: string;
   private fileList: string[] = [];
   private srcPath: string;
   private cachePath: string;
+
+  public moduleGraph: ModuleGraph = new ModuleGraph();
 
   private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
@@ -49,7 +53,10 @@ export class StaticDepInfo {
     ];
 
     this.opts = opts;
-    this.cacheFilePath = join(this.opts.mfsu.opts.tmpBase!, 'MFSU_CACHE.json');
+    this.cacheFilePath = join(
+      this.opts.mfsu.opts.tmpBase!,
+      'MFSU_CACHE_v4.json',
+    );
   }
 
   async init() {
@@ -88,14 +95,37 @@ export class StaticDepInfo {
   }
 
   shouldBuild() {
-    return 'stupid always build!';
+    if (lodash.isEqual(this._snapshot, this.currentDep)) {
+      return false;
+    } else {
+      return 'dependencies changed';
+    }
   }
 
   snapshot() {
     this._snapshot = this.currentDep = this._getDependencies();
   }
 
-  loadCache() {}
+  loadCache() {
+    if (existsSync(this.cacheFilePath)) {
+      this._snapshot = JSON.parse(readFileSync(this.cacheFilePath, 'utf-8'));
+      logger.info('MFSU v4 restored cache');
+    }
+  }
+
+  writeCache() {
+    fsExtra.mkdirpSync(dirname(this.cacheFilePath));
+    const newContent = JSON.stringify(this._snapshot, null, 2);
+    if (
+      existsSync(this.cacheFilePath) &&
+      readFileSync(this.cacheFilePath, 'utf-8') === newContent
+    ) {
+      return;
+    }
+
+    logger.info('MFSU v4 write cache');
+    writeFileSync(this.cacheFilePath, newContent, 'utf-8');
+  }
 
   public getDependencies() {
     return this.currentDep;
@@ -227,6 +257,39 @@ export class StaticDepInfo {
     }
     console.timeEnd('_getDependencies');
     return matched;
+  }
+
+  async handleFileChanges(change: {
+    mfiles?: ReadonlySet<string>;
+    rfiles?: ReadonlySet<string>;
+  }) {
+    let changed = false;
+
+    if (change.rfiles?.size) {
+      for (const r of change.rfiles!) {
+        delete this.fileContentCache[r];
+      }
+      changed = true;
+    }
+
+    if (change.mfiles?.size) {
+      await this.batchProcess(Array.from(change.mfiles!));
+      for (const f of change.mfiles!) {
+        let newFile = join(this.cachePath, relative(this.srcPath, f));
+
+        // fixme ensure the last one
+        newFile = newFile.replace(extname(newFile), '.js');
+
+        const c = readFileSync(newFile, 'utf-8');
+        console.log('------> cc ', c);
+        this.fileContentCache[f] = c;
+      }
+      changed = true;
+    }
+
+    if (changed) {
+      this.currentDep = this._getDependencies();
+    }
   }
 
   async processFile(p: string) {

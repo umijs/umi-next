@@ -55,13 +55,16 @@ export class MFSU {
   public alias: Record<string, string> = {};
   public externals: (Record<string, string> | Function)[] = [];
   public depInfo: DepInfo;
+
+  public staticDepInfo: StaticDepInfo;
+  public dynDepInfo: DepInfo;
+
   public depBuilder: DepBuilder;
   public depConfig: Configuration | null = null;
   public buildDepsAgain: boolean = false;
   public progress: any = { done: false };
   public onProgress: Function;
   public publicPath: string = '/';
-  public staticDepInfo: StaticDepInfo;
 
   constructor(opts: IOpts) {
     this.opts = opts;
@@ -78,9 +81,9 @@ export class MFSU {
       this.opts.onMFSUProgress?.(this.progress);
     };
     this.opts.cwd = this.opts.cwd || process.cwd();
-    this.depInfo = new DepInfo({ mfsu: this });
-    this.depBuilder = new DepBuilder({ mfsu: this });
-    this.depInfo.loadCache();
+
+    this.dynDepInfo = new DepInfo({ mfsu: this });
+    this.dynDepInfo.loadCache();
 
     this.staticDepInfo = new StaticDepInfo({
       mfsu: this,
@@ -88,6 +91,10 @@ export class MFSU {
       absSrcPath: opts.absSrcPath,
     });
     this.staticDepInfo.loadCache();
+
+    this.depInfo = this.dynDepInfo;
+
+    this.depBuilder = new DepBuilder({ mfsu: this });
   }
 
   // swc don't support top-level await
@@ -214,11 +221,15 @@ promise new Promise(resolve => {
           },
         }),
         new BuildDepPlugin({
-          onFileChange: async () => {},
-          beforeCompile: async () => {},
-          onCompileDone: () => {
-            console.log('new mfsu dep is building');
+          onFileChange: async (c) => {
+            const mfiles = c.modifiedFiles; // abs paths
+            const rfiles = c.removedFiles; // abs paths
 
+            console.log({ mfiles, rfiles });
+            await this.staticDepInfo.handleFileChanges({ mfiles, rfiles });
+          },
+          beforeCompile: async () => {
+            console.log('new mfsu dep is building');
             if (this.depBuilder.isBuilding) {
               this.buildDepsAgain = true;
             } else {
@@ -235,6 +246,25 @@ promise new Promise(resolve => {
                   });
                 });
             }
+          },
+          onCompileDone: () => {
+            // fixme if mf module finished earlier
+            // if (this.depBuilder.isBuilding) {
+            //   this.buildDepsAgain = true;
+            // } else {
+            //   this.buildDeps()
+            //     .then(() => {
+            //       this.onProgress({
+            //         done: true,
+            //       });
+            //     })
+            //     .catch((e: Error) => {
+            //       logger.error(e);
+            //       this.onProgress({
+            //         done: true,
+            //       });
+            //     });
+            // }
           },
         }),
         // new WriteCachePlugin({
@@ -255,12 +285,11 @@ promise new Promise(resolve => {
   }
 
   async buildDeps() {
-    const shouldBuild = this.depInfo.shouldBuild();
+    const shouldBuild = this.staticDepInfo.shouldBuild();
     if (!shouldBuild) {
       logger.info('MFSU skip buildDeps');
       return;
     }
-    this.depInfo.snapshot();
 
     const map = this.staticDepInfo.getDependencies();
 
@@ -284,8 +313,11 @@ promise new Promise(resolve => {
       deps,
     });
 
+    // snapshot after compiled success
+    this.staticDepInfo.snapshot();
+
     // Write cache
-    this.depInfo.writeCache();
+    this.staticDepInfo.writeCache();
 
     if (this.buildDepsAgain) {
       logger.info('MFSU buildDepsAgain');

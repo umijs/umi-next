@@ -10,9 +10,9 @@ interface IOpts {
 
 export class DepInfo {
   private opts: IOpts;
-  public cacheFilePath: string;
+  private readonly cacheFilePath: string;
   public moduleGraph: ModuleGraph = new ModuleGraph();
-  public cacheDependency: object = {};
+  private cacheDependency: object = {};
 
   constructor(opts: IOpts) {
     this.opts = opts;
