@@ -145,7 +145,7 @@ export async function dev(opts: IOpts) {
       `default-development`,
       'index.pack',
     );
-    const mfsuCacheExists = existsSync(mfsu.depInfo.cacheFilePath);
+    const mfsuCacheExists = existsSync(mfsu.getCacheFilePath());
     const webpackCacheExists = existsSync(webpackCachePath);
     if (webpackCacheExists && !mfsuCacheExists) {
       logger.warn(`Invalidate webpack cache since mfsu cache is missing`);

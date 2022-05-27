@@ -77,9 +77,7 @@ export class StaticDepInfo {
 
     console.log(files, this._snapshot);
 
-    const res = await this.batchProcess(this.fileList);
-
-    console.log(res);
+    await this.batchProcess(this.fileList);
 
     for (const f of this.fileList) {
       let newFile = join(this.cachePath, relative(this.srcPath, f));
@@ -100,6 +98,21 @@ export class StaticDepInfo {
     } else {
       return 'dependencies changed';
     }
+  }
+
+  getDepModules() {
+    const map = this.getDependencies();
+
+    const staticDeps: Record<string, { file: string; version: string }> = {};
+    const keys = Object.keys(map);
+    for (const k of keys) {
+      staticDeps[k] = {
+        file: k,
+        version: map[k].version,
+      };
+    }
+
+    return staticDeps;
   }
 
   snapshot() {

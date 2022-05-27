@@ -8,7 +8,26 @@ interface IOpts {
   mfsu: MFSU;
 }
 
-export class DepInfo {
+export type DepModule = {
+  file: string;
+  version: string;
+};
+
+export interface IDepInfo {
+  shouldBuild(): string | boolean;
+
+  snapshot(): void;
+
+  loadCache(): void;
+
+  writeCache(): void;
+
+  getCacheFilePath(): string;
+
+  getDepModules(): Record<string, DepModule>;
+}
+
+export class DepInfo implements IDepInfo {
   private opts: IOpts;
   private readonly cacheFilePath: string;
   public moduleGraph: ModuleGraph = new ModuleGraph();
@@ -71,5 +90,13 @@ export class DepInfo {
 
     logger.info('MFSU write cache');
     writeFileSync(this.cacheFilePath, newContent, 'utf-8');
+  }
+
+  getDepModules() {
+    return this.moduleGraph.depSnapshotModules;
+  }
+
+  getCacheFilePath() {
+    return this.cacheFilePath;
   }
 }

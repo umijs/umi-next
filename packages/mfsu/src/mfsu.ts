@@ -291,16 +291,8 @@ promise new Promise(resolve => {
       return;
     }
 
-    const map = this.staticDepInfo.getDependencies();
-
-    const staticDeps: Record<string, { file: string; version: string }> = {};
-    const keys = Object.keys(map);
-    for (const k of keys) {
-      staticDeps[k] = {
-        file: k,
-        version: map[k].version,
-      };
-    }
+    const staticDeps = this.staticDepInfo.getDepModules();
+    // const dynamDepss = this.depInfo.getDepModules();
 
     const deps = Dep.buildDeps({
       deps: staticDeps,
@@ -309,6 +301,7 @@ promise new Promise(resolve => {
     });
     logger.info(`MFSU buildDeps since ${shouldBuild}`);
     logger.debug(deps.map((dep) => dep.file).join(', '));
+
     await this.depBuilder.build({
       deps,
     });
@@ -443,5 +436,9 @@ promise new Promise(resolve => {
         opts: checkOpts,
       }),
     ] as any[];
+  }
+
+  getCacheFilePath() {
+    return this.depInfo.getCacheFilePath();
   }
 }
