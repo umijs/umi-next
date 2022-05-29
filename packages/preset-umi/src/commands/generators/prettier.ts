@@ -5,6 +5,8 @@ import { join } from 'path';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
 
+const PRETTIER_CONFIG_FILE = `.prettierrc.js`;
+
 export default (api: IApi) => {
   api.describe({
     key: 'generator:prettier',
@@ -16,11 +18,10 @@ export default (api: IApi) => {
     description: 'Setup Prettier Configurations',
     type: GeneratorType.enable,
     checkEnable: () => {
-      // 存在 .prettierrc，不开启
-      return !existsSync(join(api.cwd, '.prettierrc'));
+      // Not enable when prettier config file exist
+      return !existsSync(join(api.cwd, PRETTIER_CONFIG_FILE));
     },
-    disabledDescription:
-      'prettier has been enabled; You can remove `.prettierrc` to run this again to re-setup.',
+    disabledDescription: `prettier has been enabled; You can remove "${PRETTIER_CONFIG_FILE}" to run this again to re-setup.`,
     fn: async () => {
       const h = new GeneratorHelper(api);
 
@@ -30,21 +31,26 @@ export default (api: IApi) => {
         'prettier-plugin-packagejson': '^2',
       });
 
-      // 2、添加 .prettierrc 和 .prettierignore
+      // Generate prettier config file and .prettierignore
       writeFileSync(
-        join(api.cwd, '.prettierrc'),
+        join(api.cwd, PRETTIER_CONFIG_FILE),
+        // Use `require.resolve(plugin)` to resolve prettier
+        //  cannot correctly find plugin entry in pnpm `node_modules/.pnpm`
+        // https://github.com/umijs/umi-next/issues/820
         `
-{
-  "printWidth": 80,
-  "singleQuote": true,
-  "trailingComma": "all",
-  "proseWrap": "never",
-  "overrides": [{ "files": ".prettierrc", "options": { "parser": "json" } }],
-  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-packagejson"]
-}
-`.trimLeft(),
+module.exports = {
+  printWidth: 80,
+  singleQuote: true,
+  trailingComma: 'all',
+  proseWrap: 'never',
+  plugins: [
+    require.resolve('prettier-plugin-packagejson'),
+    require.resolve('prettier-plugin-organize-imports'),
+  ],
+};
+`.trimStart(),
       );
-      logger.info('Write .prettierrc');
+      logger.info(`Write ${PRETTIER_CONFIG_FILE}`);
       writeFileSync(
         join(api.cwd, '.prettierignore'),
         `
