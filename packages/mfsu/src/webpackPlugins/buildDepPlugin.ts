@@ -1,6 +1,6 @@
 import type { Compiler } from 'webpack';
 
-interface IOpts {
+export interface IBuildDepPluginOpts {
   onCompileDone: Function;
   onFileChange?: (c: Compiler) => Promise<any>;
   beforeCompile?: () => Promise<any>;
@@ -9,9 +9,9 @@ interface IOpts {
 const PLUGIN_NAME = 'MFSUBuildDeps';
 
 export class BuildDepPlugin {
-  private opts: IOpts;
+  private opts: IBuildDepPluginOpts;
 
-  constructor(opts: IOpts) {
+  constructor(opts: IBuildDepPluginOpts) {
     this.opts = opts;
   }
 
