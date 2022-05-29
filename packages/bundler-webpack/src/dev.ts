@@ -2,7 +2,6 @@ import { MFSU, MF_DEP_PREFIX } from '@umijs/mfsu';
 import { logger, rimraf } from '@umijs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import * as process from 'process';
 import webpack from '../compiled/webpack';
 import { getConfig, IOpts as IConfigOpts } from './config/config';
 import { MFSU_NAME } from './constants';
@@ -132,7 +131,7 @@ export async function dev(opts: IOpts) {
     depConfig: depConfig as any,
   });
 
-  await mfsu?.staticDepInfo.init();
+  await mfsu?.init();
 
   if (
     mfsu &&

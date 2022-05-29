@@ -12,9 +12,11 @@ import webpack, { Configuration } from 'webpack';
 import { lookup } from '../compiled/mrmime';
 // @ts-ignore
 import WebpackVirtualModules from '../compiled/webpack-virtual-modules';
+import awaitImport from './babelPlugins/awaitImport/awaitImport';
 import { getAliasedPathWithLoopDetect } from './babelPlugins/awaitImport/getAliasedPath';
 import { getRealPath } from './babelPlugins/awaitImport/getRealPath';
 import mfImport from './babelPlugins/awaitImport/MFImport';
+
 import {
   DEFAULT_MF_NAME,
   DEFAULT_TMP_DIR_NAME,
@@ -26,12 +28,15 @@ import {
 } from './constants';
 import { Dep } from './dep/dep';
 import { DepBuilder } from './depBuilder/depBuilder';
-import { DepInfo } from './depInfo';
+import { DepInfo, DepModule } from './depInfo';
 import getAwaitImportHandler from './esbuildHandlers/awaitImport';
 import { StaticDepInfo } from './staticDepInfo/staticDepInfo';
 import { Mode } from './types';
 import { makeArray } from './utils/makeArray';
-import { BuildDepPlugin } from './webpackPlugins/buildDepPlugin';
+import {
+  BuildDepPlugin,
+  IBuildDepPluginOpts,
+} from './webpackPlugins/buildDepPlugin';
 
 interface IOpts {
   cwd?: string;
@@ -48,23 +53,20 @@ interface IOpts {
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
   absSrcPath: string;
+  version?: 'v4' | 'v3';
 }
 
 export class MFSU {
   public opts: IOpts;
   public alias: Record<string, string> = {};
   public externals: (Record<string, string> | Function)[] = [];
-  public depInfo: DepInfo;
-
-  public staticDepInfo: StaticDepInfo;
-  public dynDepInfo: DepInfo;
-
   public depBuilder: DepBuilder;
   public depConfig: Configuration | null = null;
   public buildDepsAgain: boolean = false;
   public progress: any = { done: false };
   public onProgress: Function;
   public publicPath: string = '/';
+  private strategy: IMFSUStrategy;
 
   constructor(opts: IOpts) {
     this.opts = opts;
@@ -82,19 +84,19 @@ export class MFSU {
     };
     this.opts.cwd = this.opts.cwd || process.cwd();
 
-    this.dynDepInfo = new DepInfo({ mfsu: this });
-    this.dynDepInfo.loadCache();
+    if (this.opts.version === 'v4') {
+      this.strategy = new StaticAnalyzeStrategy({ mfsu: this });
+    } else {
+      this.strategy = new RuntimeStrategy({ mfsu: this });
+    }
 
-    this.staticDepInfo = new StaticDepInfo({
-      mfsu: this,
-      cachePath: join(this.opts.tmpBase, 'v4'),
-      absSrcPath: opts.absSrcPath,
-    });
-    this.staticDepInfo.loadCache();
-
-    this.depInfo = this.dynDepInfo;
+    this.strategy.loadCache();
 
     this.depBuilder = new DepBuilder({ mfsu: this });
+  }
+
+  async init() {
+    await this.strategy.init();
   }
 
   // swc don't support top-level await
@@ -220,53 +222,7 @@ promise new Promise(resolve => {
               : `${mfName}@${publicPath}${REMOTE_FILE_FULL}`,
           },
         }),
-        new BuildDepPlugin({
-          onFileChange: async (c) => {
-            const mfiles = c.modifiedFiles; // abs paths
-            const rfiles = c.removedFiles; // abs paths
-
-            console.log({ mfiles, rfiles });
-            await this.staticDepInfo.handleFileChanges({ mfiles, rfiles });
-          },
-          beforeCompile: async () => {
-            console.log('new mfsu dep is building');
-            if (this.depBuilder.isBuilding) {
-              this.buildDepsAgain = true;
-            } else {
-              this.buildDeps()
-                .then(() => {
-                  this.onProgress({
-                    done: true,
-                  });
-                })
-                .catch((e: Error) => {
-                  logger.error(e);
-                  this.onProgress({
-                    done: true,
-                  });
-                });
-            }
-          },
-          onCompileDone: () => {
-            // fixme if mf module finished earlier
-            // if (this.depBuilder.isBuilding) {
-            //   this.buildDepsAgain = true;
-            // } else {
-            //   this.buildDeps()
-            //     .then(() => {
-            //       this.onProgress({
-            //         done: true,
-            //       });
-            //     })
-            //     .catch((e: Error) => {
-            //       logger.error(e);
-            //       this.onProgress({
-            //         done: true,
-            //       });
-            //     });
-            // }
-          },
-        }),
+        new BuildDepPlugin(this.strategy.getBuildDepPlugConfig()),
         // new WriteCachePlugin({
         //   onWriteCache: lodash.debounce(() => {
         //     this.depInfo.writeCache();
@@ -285,14 +241,13 @@ promise new Promise(resolve => {
   }
 
   async buildDeps() {
-    const shouldBuild = this.staticDepInfo.shouldBuild();
+    const shouldBuild = this.strategy.shouldBuild();
     if (!shouldBuild) {
       logger.info('MFSU skip buildDeps');
       return;
     }
 
-    const staticDeps = this.staticDepInfo.getDepModules();
-    // const dynamDepss = this.depInfo.getDepModules();
+    const staticDeps = this.strategy.getDepModules();
 
     const deps = Dep.buildDeps({
       deps: staticDeps,
@@ -306,11 +261,11 @@ promise new Promise(resolve => {
       deps,
     });
 
-    // snapshot after compiled success
-    this.staticDepInfo.snapshot();
+    // Snapshot after compiled success
+    this.strategy.snapshot();
 
     // Write cache
-    this.staticDepInfo.writeCache();
+    this.strategy.writeCache();
 
     if (this.buildDepsAgain) {
       logger.info('MFSU buildDepsAgain');
@@ -354,7 +309,232 @@ promise new Promise(resolve => {
     ];
   }
 
+  getBabelPlugins() {
+    return [this.strategy.getBabelPlugin()];
+  }
+
+  getEsbuildLoaderHandler() {
+    if (this.opts.version === 'v4') {
+      console.log('MFSU v4 not supported esbuild');
+      throw Error('MFSU v4 not supported esbuild');
+    }
+
+    const cache = new Map<string, any>();
+    const checkOpts = this.strategy.getBabelPlugin()[1];
+
+    return [
+      getAwaitImportHandler({
+        cache,
+        opts: checkOpts,
+      }),
+    ] as any[];
+  }
+
+  public getCacheFilePath() {
+    return this.strategy.getCacheFilePath();
+  }
+}
+
+interface IMFSUStrategy {
+  init(): Promise<void>;
+
+  shouldBuild(): string | boolean;
+
+  getBabelPlugin(): any[];
+
+  getBuildDepPlugConfig(): IBuildDepPluginOpts;
+
+  loadCache(): void;
+
+  getCacheFilePath(): string;
+
+  getDepModules(): Record<string, DepModule>;
+
+  snapshot(): void;
+
+  writeCache(): void;
+}
+
+class StaticAnalyzeStrategy implements IMFSUStrategy {
+  private readonly mfsu: MFSU;
+  private staticDepInfo: StaticDepInfo;
+
+  constructor({ mfsu }: { mfsu: MFSU }) {
+    this.mfsu = mfsu;
+    const opts = mfsu.opts;
+
+    this.staticDepInfo = new StaticDepInfo({
+      mfsu,
+      cachePath: join(opts.tmpBase!, 'v4'),
+      absSrcPath: opts.absSrcPath,
+    });
+  }
+
+  getDepModules() {
+    return this.staticDepInfo.getDepModules();
+  }
+
+  getCacheFilePath(): string {
+    return this.staticDepInfo.getCacheFilePath();
+  }
+
+  shouldBuild() {
+    return this.staticDepInfo.shouldBuild();
+  }
+
+  writeCache() {
+    this.staticDepInfo.writeCache();
+  }
+
+  getBabelPlugin(): any[] {
+    return [mfImport, this.getMfImportOpts()];
+  }
+
+  private getMfImportOpts() {
+    const mfsu = this.mfsu;
+    const mfsuOpts = this.mfsu.opts;
+    return {
+      resolveImportSource: (source: string) => {
+        const depMat = this.staticDepInfo.getDependencies();
+
+        const r = getAliasedPathWithLoopDetect({
+          value: source,
+          alias: mfsu.alias,
+        });
+        const m = depMat[r];
+
+        if (m) {
+          return m.replaceValue;
+        }
+
+        return r;
+      },
+      exportAllMembers: mfsuOpts.exportAllMembers,
+      unMatchLibs: mfsuOpts.unMatchLibs,
+      remoteName: mfsuOpts.mfName,
+      alias: mfsu.alias,
+      externals: mfsu.externals,
+    };
+  }
+
+  getBuildDepPlugConfig(): IBuildDepPluginOpts {
+    const mfsu = this.mfsu;
+    return {
+      onFileChange: async (c) => {
+        const mfiles = c.modifiedFiles; // abs paths
+        const rfiles = c.removedFiles; // abs paths
+
+        console.log({ mfiles, rfiles });
+        await this.staticDepInfo.handleFileChanges({ mfiles, rfiles });
+      },
+      beforeCompile: async () => {
+        console.log('new mfsu dep is building');
+        if (mfsu.depBuilder.isBuilding) {
+          mfsu.buildDepsAgain = true;
+        } else {
+          mfsu
+            .buildDeps()
+            .then(() => {
+              mfsu.onProgress({
+                done: true,
+              });
+            })
+            .catch((e: Error) => {
+              logger.error(e);
+              mfsu.onProgress({
+                done: true,
+              });
+            });
+        }
+      },
+      onCompileDone: () => {
+        // fixme if mf module finished earlier
+      },
+    };
+  }
+
+  init(): Promise<void> {
+    return this.staticDepInfo.init();
+  }
+
+  loadCache() {
+    this.staticDepInfo.loadCache();
+  }
+
+  snapshot() {
+    this.staticDepInfo.snapshot();
+  }
+}
+
+class RuntimeStrategy implements IMFSUStrategy {
+  private readonly mfsu: MFSU;
+  private depInfo: DepInfo;
+
+  constructor({ mfsu }: { mfsu: MFSU }) {
+    this.mfsu = mfsu;
+    this.depInfo = new DepInfo({ mfsu });
+  }
+
+  getDepModules(): Record<string, DepModule> {
+    return this.depInfo.getDepModules();
+  }
+
+  getCacheFilePath(): string {
+    return this.depInfo.getCacheFilePath();
+  }
+
+  async init(): Promise<void> {}
+
+  shouldBuild() {
+    return this.depInfo.shouldBuild();
+  }
+
+  loadCache() {
+    this.depInfo.loadCache();
+  }
+
+  writeCache() {
+    this.depInfo.writeCache();
+  }
+
+  snapshot() {
+    this.depInfo.snapshot();
+  }
+
+  getBabelPlugin(): any[] {
+    return [awaitImport, this.getAwaitImportCollectOpts()];
+  }
+
+  getBuildDepPlugConfig(): IBuildDepPluginOpts {
+    const mfsu = this.mfsu;
+
+    return {
+      onCompileDone: () => {
+        if (mfsu.depBuilder.isBuilding) {
+          mfsu.buildDepsAgain = true;
+        } else {
+          mfsu
+            .buildDeps()
+            .then(() => {
+              mfsu.onProgress({
+                done: true,
+              });
+            })
+            .catch((e: Error) => {
+              logger.error(e);
+              mfsu.onProgress({
+                done: true,
+              });
+            });
+        }
+      },
+    };
+  }
+
   private getAwaitImportCollectOpts() {
+    const mfsuOpts = this.mfsu.opts;
+    const mfsu = this.mfsu;
+
     return {
       onTransformDeps: () => {},
       onCollect: ({
@@ -376,7 +556,7 @@ promise new Promise(resolve => {
               isDependency: true,
               version: Dep.getDepVersion({
                 dep: item.sourceValue,
-                cwd: this.opts.cwd!,
+                cwd: mfsuOpts.cwd!,
               }),
             })),
             ...Array.from(data.unMatched).map((item: any) => ({
@@ -389,56 +569,11 @@ promise new Promise(resolve => {
           ],
         });
       },
-      exportAllMembers: this.opts.exportAllMembers,
-      unMatchLibs: this.opts.unMatchLibs,
-      remoteName: this.opts.mfName,
-      alias: this.alias,
-      externals: this.externals,
+      exportAllMembers: mfsuOpts.exportAllMembers,
+      unMatchLibs: mfsuOpts.unMatchLibs,
+      remoteName: mfsuOpts.mfName,
+      alias: mfsu.alias,
+      externals: mfsu.externals,
     };
-  }
-
-  getBabelPlugins() {
-    return [[mfImport, this.getMfImportOpts()]];
-  }
-
-  private getMfImportOpts() {
-    return {
-      resolveImportSource: (source: string) => {
-        const depMat = this.staticDepInfo.getDependencies();
-
-        const r = getAliasedPathWithLoopDetect({
-          value: source,
-          alias: this.alias,
-        });
-        const m = depMat[r];
-
-        if (m) {
-          return m.replaceValue;
-        }
-
-        return r;
-      },
-      exportAllMembers: this.opts.exportAllMembers,
-      unMatchLibs: this.opts.unMatchLibs,
-      remoteName: this.opts.mfName,
-      alias: this.alias,
-      externals: this.externals,
-    };
-  }
-
-  getEsbuildLoaderHandler() {
-    const cache = new Map<string, any>();
-    const checkOpts = this.getAwaitImportCollectOpts();
-
-    return [
-      getAwaitImportHandler({
-        cache,
-        opts: checkOpts,
-      }),
-    ] as any[];
-  }
-
-  getCacheFilePath() {
-    return this.depInfo.getCacheFilePath();
   }
 }
