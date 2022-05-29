@@ -140,6 +140,10 @@ export class StaticDepInfo {
     writeFileSync(this.cacheFilePath, newContent, 'utf-8');
   }
 
+  public getCacheFilePath() {
+    return this.cacheFilePath;
+  }
+
   public getDependencies() {
     return this.currentDep;
   }
