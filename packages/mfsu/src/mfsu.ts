@@ -247,6 +247,9 @@ promise new Promise(resolve => {
       return;
     }
 
+    // Snapshot after compiled success
+    this.strategy.refresh();
+
     const staticDeps = this.strategy.getDepModules();
 
     const deps = Dep.buildDeps({
@@ -260,9 +263,6 @@ promise new Promise(resolve => {
     await this.depBuilder.build({
       deps,
     });
-
-    // Snapshot after compiled success
-    this.strategy.snapshot();
 
     // Write cache
     this.strategy.writeCache();
@@ -350,7 +350,7 @@ interface IMFSUStrategy {
 
   getDepModules(): Record<string, DepModule>;
 
-  snapshot(): void;
+  refresh(): void;
 
   writeCache(): void;
 }
@@ -461,7 +461,7 @@ class StaticAnalyzeStrategy implements IMFSUStrategy {
     this.staticDepInfo.loadCache();
   }
 
-  snapshot() {
+  refresh() {
     this.staticDepInfo.snapshot();
   }
 }
@@ -497,7 +497,7 @@ class RuntimeStrategy implements IMFSUStrategy {
     this.depInfo.writeCache();
   }
 
-  snapshot() {
+  refresh() {
     this.depInfo.snapshot();
   }
 
