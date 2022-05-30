@@ -1,4 +1,5 @@
 // @ts-ignore
+import { models as rawModels } from '@@/plugin-model/model';
 import isEqual from 'fast-deep-equal';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -87,7 +88,42 @@ export function Provider(props: {
   );
 }
 
-export function useModel(namespace: string, selector?: any) {
+type Models = typeof rawModels;
+type GetNamespaces<M> = {
+  [K in keyof M]: M[K] extends { namespace: string }
+    ? M[K]['namespace']
+    : never;
+}[keyof M];
+
+type GetModelByNamespace<M, N> = {
+  [K in keyof M]: M[K] extends { namespace: string; model: infer S }
+    ? M[K]['namespace'] extends N
+      ? M[K]['model'] extends (...args: any) => any
+        ? ReturnType<M[K]['model']>
+        : never
+      : never
+    : never;
+}[keyof M];
+
+type Namespaces = GetNamespaces<Models>;
+type Model<N> = GetModelByNamespace<Models, N>;
+type Selector<N, S> = (model: Model<N>) => S;
+
+type SelectedModel<N, T> = T extends (...args: any) => any
+  ? ReturnType<NonNullable<T>>
+  : Model<N>;
+
+export function useModel<N extends Namespaces>(namespace: N): Model<N>;
+
+export function useModel<N extends Namespaces, S>(
+  namespace: N,
+  selector: Selector<N, S>,
+): SelectedModel<N, typeof selector>;
+
+export function useModel<N extends Namespaces, S>(
+  namespace: N,
+  selector?: Selector<N, S>,
+): SelectedModel<N, typeof selector> {
   const { dispatcher } = useContext<{ dispatcher: Dispatcher }>(Context);
   const selectorRef = useRef(selector);
   selectorRef.current = selector;
