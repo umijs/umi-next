@@ -165,8 +165,8 @@ export function useModel<N extends Namespaces, S>(
       }
     };
 
-    const cb = dispatcher.callbacks[namespace] || new Set();
-    cb.add(handler);
+    dispatcher.callbacks[namespace] ||= new Set() as any; // rawModels 是 umi 动态生成的文件，导致前面 callback[namespace] 的类型无法推导出来，所以用 as any 来忽略掉
+    dispatcher.callbacks[namespace].add(handler);
     dispatcher.update(namespace);
 
     return () => {
