@@ -1,21 +1,21 @@
 import { parseModule } from '@umijs/bundler-utils';
-import type {
-  NextFunction,
-  Request,
-  Response,
-} from '@umijs/bundler-utils/compiled/express';
 import { lodash, logger, tryPaths, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { readFileSync, statSync } from 'fs';
 import { extname, join } from 'path';
 import webpack, { Configuration } from 'webpack';
-import { lookup } from '../compiled/mrmime';
+import { lookup } from '../../compiled/mrmime';
+import type {
+  NextFunction,
+  Request,
+  Response,
+} from '../bundler-utils/compiled/express';
 // @ts-ignore
-import WebpackVirtualModules from '../compiled/webpack-virtual-modules';
-import awaitImport from './babelPlugins/awaitImport/awaitImport';
-import { getAliasedPathWithLoopDetect } from './babelPlugins/awaitImport/getAliasedPath';
-import { getRealPath } from './babelPlugins/awaitImport/getRealPath';
-import mfImport from './babelPlugins/awaitImport/MFImport';
+import WebpackVirtualModules from '../../compiled/webpack-virtual-modules';
+import awaitImport from '../babelPlugins/awaitImport/awaitImport';
+import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
+import { getRealPath } from '../babelPlugins/awaitImport/getRealPath';
+import mfImport from '../babelPlugins/awaitImport/MFImport';
 
 import {
   DEFAULT_MF_NAME,
@@ -25,18 +25,18 @@ import {
   MF_VA_PREFIX,
   REMOTE_FILE,
   REMOTE_FILE_FULL,
-} from './constants';
-import { Dep } from './dep/dep';
-import { DepBuilder } from './depBuilder/depBuilder';
-import { DepInfo, DepModule } from './depInfo';
-import getAwaitImportHandler from './esbuildHandlers/awaitImport';
-import { StaticDepInfo } from './staticDepInfo/staticDepInfo';
-import { Mode } from './types';
-import { makeArray } from './utils/makeArray';
+} from '../constants';
+import { Dep } from '../dep/dep';
+import { DepBuilder } from '../depBuilder/depBuilder';
+import { DepInfo, DepModule } from '../depInfo';
+import getAwaitImportHandler from '../esbuildHandlers/awaitImport';
+import { StaticDepInfo } from '../staticDepInfo/staticDepInfo';
+import { Mode } from '../types';
+import { makeArray } from '../utils/makeArray';
 import {
   BuildDepPlugin,
   IBuildDepPluginOpts,
-} from './webpackPlugins/buildDepPlugin';
+} from '../webpackPlugins/buildDepPlugin';
 
 interface IOpts {
   cwd?: string;
@@ -84,10 +84,11 @@ export class MFSU {
     };
     this.opts.cwd = this.opts.cwd || process.cwd();
 
+    this.opts.version = 'v4';
     if (this.opts.version === 'v4') {
       this.strategy = new StaticAnalyzeStrategy({ mfsu: this });
     } else {
-      this.strategy = new RuntimeStrategy({ mfsu: this });
+      this.strategy = new CompileStrategy({ mfsu: this });
     }
 
     this.strategy.loadCache();
@@ -315,8 +316,8 @@ promise new Promise(resolve => {
 
   getEsbuildLoaderHandler() {
     if (this.opts.version === 'v4') {
-      console.log('MFSU v4 not supported esbuild');
-      throw Error('MFSU v4 not supported esbuild');
+      console.warn('MFSU v4 not supported esbuild');
+      return [];
     }
 
     const cache = new Map<string, any>();
@@ -421,17 +422,31 @@ class StaticAnalyzeStrategy implements IMFSUStrategy {
     const mfsu = this.mfsu;
     return {
       onFileChange: async (c) => {
-        const mfiles = c.modifiedFiles; // abs paths
-        const rfiles = c.removedFiles; // abs paths
+        console.log('webpack found', c.modifiedFiles, c.removedFiles);
 
-        console.log({ mfiles, rfiles });
-        await this.staticDepInfo.handleFileChanges({ mfiles, rfiles });
+        // webpack start
+        if (!c.modifiedFiles || c.modifiedFiles.size === 0) {
+          return;
+        }
+
+        const start = Date.now();
+        let event = this.staticDepInfo.getProducedEvent();
+        while (event.length === 0) {
+          await sleep(200);
+          console.log('.');
+          event = this.staticDepInfo.getProducedEvent();
+          if (Date.now() - start > 5000) {
+            console.log('waiting too long');
+            break;
+          }
+        }
       },
       beforeCompile: async () => {
         console.log('new mfsu dep is building');
         if (mfsu.depBuilder.isBuilding) {
           mfsu.buildDepsAgain = true;
         } else {
+          this.staticDepInfo.consumeAllProducedEvents();
           mfsu
             .buildDeps()
             .then(() => {
@@ -448,7 +463,7 @@ class StaticAnalyzeStrategy implements IMFSUStrategy {
         }
       },
       onCompileDone: () => {
-        // fixme if mf module finished earlier
+        // fixme if mf module finished earlier than src compile
       },
     };
   }
@@ -466,7 +481,7 @@ class StaticAnalyzeStrategy implements IMFSUStrategy {
   }
 }
 
-class RuntimeStrategy implements IMFSUStrategy {
+class CompileStrategy implements IMFSUStrategy {
   private readonly mfsu: MFSU;
   private depInfo: DepInfo;
 
@@ -576,4 +591,12 @@ class RuntimeStrategy implements IMFSUStrategy {
       externals: mfsu.externals,
     };
   }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
 }

@@ -1,7 +1,7 @@
 import { fsExtra, lodash, logger } from '@umijs/utils';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
-import { MFSU } from './mfsu';
+import { MFSU } from './mfsu/mfsu';
 import { ModuleGraph } from './moduleGraph';
 
 interface IOpts {
