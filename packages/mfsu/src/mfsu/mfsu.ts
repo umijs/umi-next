@@ -12,10 +12,6 @@ import webpack, { Configuration } from 'webpack';
 import { lookup } from '../../compiled/mrmime';
 // @ts-ignore
 import WebpackVirtualModules from '../../compiled/webpack-virtual-modules';
-import awaitImport from '../babelPlugins/awaitImport/awaitImport';
-import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
-import { getRealPath } from '../babelPlugins/awaitImport/getRealPath';
-import mfImport from '../babelPlugins/awaitImport/MFImport';
 
 import {
   DEFAULT_MF_NAME,
@@ -28,15 +24,16 @@ import {
 } from '../constants';
 import { Dep } from '../dep/dep';
 import { DepBuilder } from '../depBuilder/depBuilder';
-import { DepInfo, DepModule } from '../depInfo';
+import { DepModule } from '../depInfo';
 import getAwaitImportHandler from '../esbuildHandlers/awaitImport';
-import { StaticDepInfo } from '../staticDepInfo/staticDepInfo';
 import { Mode } from '../types';
 import { makeArray } from '../utils/makeArray';
 import {
   BuildDepPlugin,
   IBuildDepPluginOpts,
 } from '../webpackPlugins/buildDepPlugin';
+import { StrategyCompileTime } from './strategyCompileTime';
+import { StaticAnalyzeStrategy } from './strategyStaticAnalyze';
 
 interface IOpts {
   cwd?: string;
@@ -88,7 +85,7 @@ export class MFSU {
     if (this.opts.version === 'v4') {
       this.strategy = new StaticAnalyzeStrategy({ mfsu: this });
     } else {
-      this.strategy = new CompileStrategy({ mfsu: this });
+      this.strategy = new StrategyCompileTime({ mfsu: this });
     }
 
     this.strategy.loadCache();
@@ -336,7 +333,7 @@ promise new Promise(resolve => {
   }
 }
 
-interface IMFSUStrategy {
+export interface IMFSUStrategy {
   init(): Promise<void>;
 
   shouldBuild(): string | boolean;
@@ -354,249 +351,4 @@ interface IMFSUStrategy {
   refresh(): void;
 
   writeCache(): void;
-}
-
-class StaticAnalyzeStrategy implements IMFSUStrategy {
-  private readonly mfsu: MFSU;
-  private staticDepInfo: StaticDepInfo;
-
-  constructor({ mfsu }: { mfsu: MFSU }) {
-    this.mfsu = mfsu;
-    const opts = mfsu.opts;
-
-    this.staticDepInfo = new StaticDepInfo({
-      mfsu,
-      cachePath: join(opts.tmpBase!, 'v4'),
-      absSrcPath: opts.absSrcPath,
-    });
-  }
-
-  getDepModules() {
-    return this.staticDepInfo.getDepModules();
-  }
-
-  getCacheFilePath(): string {
-    return this.staticDepInfo.getCacheFilePath();
-  }
-
-  shouldBuild() {
-    return this.staticDepInfo.shouldBuild();
-  }
-
-  writeCache() {
-    this.staticDepInfo.writeCache();
-  }
-
-  getBabelPlugin(): any[] {
-    return [mfImport, this.getMfImportOpts()];
-  }
-
-  private getMfImportOpts() {
-    const mfsu = this.mfsu;
-    const mfsuOpts = this.mfsu.opts;
-    return {
-      resolveImportSource: (source: string) => {
-        const depMat = this.staticDepInfo.getDependencies();
-
-        const r = getAliasedPathWithLoopDetect({
-          value: source,
-          alias: mfsu.alias,
-        });
-        const m = depMat[r];
-
-        if (m) {
-          return m.replaceValue;
-        }
-
-        return r;
-      },
-      exportAllMembers: mfsuOpts.exportAllMembers,
-      unMatchLibs: mfsuOpts.unMatchLibs,
-      remoteName: mfsuOpts.mfName,
-      alias: mfsu.alias,
-      externals: mfsu.externals,
-    };
-  }
-
-  getBuildDepPlugConfig(): IBuildDepPluginOpts {
-    const mfsu = this.mfsu;
-    return {
-      onFileChange: async (c) => {
-        console.log('webpack found', c.modifiedFiles, c.removedFiles);
-
-        // webpack start
-        if (!c.modifiedFiles || c.modifiedFiles.size === 0) {
-          return;
-        }
-
-        const start = Date.now();
-        let event = this.staticDepInfo.getProducedEvent();
-        while (event.length === 0) {
-          await sleep(200);
-          console.log('.');
-          event = this.staticDepInfo.getProducedEvent();
-          if (Date.now() - start > 5000) {
-            console.log('waiting too long');
-            break;
-          }
-        }
-      },
-      beforeCompile: async () => {
-        console.log('new mfsu dep is building');
-        if (mfsu.depBuilder.isBuilding) {
-          mfsu.buildDepsAgain = true;
-        } else {
-          this.staticDepInfo.consumeAllProducedEvents();
-          mfsu
-            .buildDeps()
-            .then(() => {
-              mfsu.onProgress({
-                done: true,
-              });
-            })
-            .catch((e: Error) => {
-              logger.error(e);
-              mfsu.onProgress({
-                done: true,
-              });
-            });
-        }
-      },
-      onCompileDone: () => {
-        // fixme if mf module finished earlier than src compile
-      },
-    };
-  }
-
-  init(): Promise<void> {
-    return this.staticDepInfo.init();
-  }
-
-  loadCache() {
-    this.staticDepInfo.loadCache();
-  }
-
-  refresh() {
-    this.staticDepInfo.snapshot();
-  }
-}
-
-class CompileStrategy implements IMFSUStrategy {
-  private readonly mfsu: MFSU;
-  private depInfo: DepInfo;
-
-  constructor({ mfsu }: { mfsu: MFSU }) {
-    this.mfsu = mfsu;
-    this.depInfo = new DepInfo({ mfsu });
-  }
-
-  getDepModules(): Record<string, DepModule> {
-    return this.depInfo.getDepModules();
-  }
-
-  getCacheFilePath(): string {
-    return this.depInfo.getCacheFilePath();
-  }
-
-  async init(): Promise<void> {}
-
-  shouldBuild() {
-    return this.depInfo.shouldBuild();
-  }
-
-  loadCache() {
-    this.depInfo.loadCache();
-  }
-
-  writeCache() {
-    this.depInfo.writeCache();
-  }
-
-  refresh() {
-    this.depInfo.snapshot();
-  }
-
-  getBabelPlugin(): any[] {
-    return [awaitImport, this.getAwaitImportCollectOpts()];
-  }
-
-  getBuildDepPlugConfig(): IBuildDepPluginOpts {
-    const mfsu = this.mfsu;
-
-    return {
-      onCompileDone: () => {
-        if (mfsu.depBuilder.isBuilding) {
-          mfsu.buildDepsAgain = true;
-        } else {
-          mfsu
-            .buildDeps()
-            .then(() => {
-              mfsu.onProgress({
-                done: true,
-              });
-            })
-            .catch((e: Error) => {
-              logger.error(e);
-              mfsu.onProgress({
-                done: true,
-              });
-            });
-        }
-      },
-    };
-  }
-
-  private getAwaitImportCollectOpts() {
-    const mfsuOpts = this.mfsu.opts;
-    const mfsu = this.mfsu;
-
-    return {
-      onTransformDeps: () => {},
-      onCollect: ({
-        file,
-        data,
-      }: {
-        file: string;
-        data: {
-          unMatched: Set<{ sourceValue: string }>;
-          matched: Set<{ sourceValue: string }>;
-        };
-      }) => {
-        this.depInfo.moduleGraph.onFileChange({
-          file,
-          // @ts-ignore
-          deps: [
-            ...Array.from(data.matched).map((item: any) => ({
-              file: item.sourceValue,
-              isDependency: true,
-              version: Dep.getDepVersion({
-                dep: item.sourceValue,
-                cwd: mfsuOpts.cwd!,
-              }),
-            })),
-            ...Array.from(data.unMatched).map((item: any) => ({
-              file: getRealPath({
-                file,
-                dep: item.sourceValue,
-              }),
-              isDependency: false,
-            })),
-          ],
-        });
-      },
-      exportAllMembers: mfsuOpts.exportAllMembers,
-      unMatchLibs: mfsuOpts.unMatchLibs,
-      remoteName: mfsuOpts.mfName,
-      alias: mfsu.alias,
-      externals: mfsu.externals,
-    };
-  }
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, ms);
-  });
 }
