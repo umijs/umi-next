@@ -5,39 +5,44 @@ import {
 } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
 import { fsExtra, lodash, logger } from '@umijs/utils';
+import { watch } from 'chokidar';
 import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
 import { Dep } from '../dep/dep';
-import { MFSU } from '../mfsu';
-import { ModuleGraph } from '../moduleGraph';
+import { MFSU } from '../mfsu/mfsu';
 import parseImport from './importParser';
 
 interface IOpts {
   mfsu: MFSU;
   absSrcPath: string;
   cachePath: string;
-  predeps?: string[];
+  preDeps?: string[];
 }
 
 type Match = ReturnType<typeof checkMatch> & { version: string };
 
+type FileChangeEvent = { event: 'unlink' | 'change'; path: string };
+
 export class StaticDepInfo {
   private opts: IOpts;
-  private cacheFilePath: string;
+  private readonly cacheFilePath: string;
   private fileList: string[] = [];
-  private srcPath: string;
-  private cachePath: string;
-
-  public moduleGraph: ModuleGraph = new ModuleGraph();
+  private readonly srcPath: string;
+  private readonly cachePath: string;
 
   private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
-  private presetDep: string[];
+  private readonly presetDep: string[];
   private currentDep: Record<string, Match> = {};
   private _snapshot: Record<string, Match> = {};
+
+  public readonly debouchedHandleChanges: () => Promise<void> | undefined;
+
+  pendingChanges: FileChangeEvent[] = [];
+  private produced: { changes: FileChangeEvent[] }[] = [];
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -45,7 +50,7 @@ export class StaticDepInfo {
     this.mfsu = opts.mfsu;
 
     console.log('caching at ', opts.cachePath);
-    this.presetDep = opts.predeps || [
+    this.presetDep = opts.preDeps || [
       'react',
       'react-error-overlay',
       'react/jsx-dev-runtime',
@@ -57,9 +62,56 @@ export class StaticDepInfo {
       this.opts.mfsu.opts.tmpBase!,
       'MFSU_CACHE_v4.json',
     );
+
+    this.debouchedHandleChanges = lodash.debounce(this.handleEvents, 500);
   }
 
+  getProducedEvent() {
+    return this.produced;
+  }
+
+  consumeAllProducedEvents() {
+    this.produced = [];
+  }
+
+  private handleEvents = async () => {
+    const modifiedFiles = [];
+    const handledEvents = [];
+
+    while (this.pendingChanges.length > 0) {
+      const c = this.pendingChanges.pop()!;
+      handledEvents.push(c);
+
+      if (c.event === 'unlink') {
+        console.log('unlink ', c.path);
+        delete this.fileContentCache[c.path];
+      }
+      if (c.event === 'change') {
+        modifiedFiles.push(c.path);
+      }
+    }
+
+    await this.batchProcess(modifiedFiles);
+    for (const f of modifiedFiles) {
+      let newFile = join(this.cachePath, relative(this.srcPath, f));
+
+      // fixme ensure the last one
+      newFile = newFile.replace(extname(newFile), '.js');
+
+      const c = readFileSync(newFile, 'utf-8');
+      console.log(f);
+      this.fileContentCache[f] = c;
+    }
+
+    this.currentDep = this._getDependencies();
+
+    this.produced.push({
+      changes: handledEvents,
+    });
+  };
+
   async init() {
+    console.time('fast-glob');
     const files = await fg(join(this.srcPath, '**', '*.{ts,js,jsx,tsx}'), {
       dot: true,
       ignore: [
@@ -70,12 +122,55 @@ export class StaticDepInfo {
         '**/node_modules/**',
       ],
     });
+    console.timeEnd('fast-glob');
+
+    console.time('chodidar');
+    const dirWatcher = watch('./**/*.{ts,js,jsx,tsx}', {
+      ignored: [
+        '**/*.d.ts',
+        '**/*.test.{js,ts,jsx,tsx}',
+        // fixme respect to environment
+        '**/.umi-production/**',
+        '**/node_modules/**',
+      ],
+      cwd: this.srcPath,
+    });
+
+    const p = new Promise<void>((resolve) => {
+      dirWatcher.on('ready', () => {
+        resolve();
+      });
+    });
+    await p;
+    console.timeEnd('chodidar'); // it seems chodidar is faster than fast-glob
+
+    dirWatcher.on('all', (event, path) => {
+      console.log('event', event, '-->', path);
+
+      switch (event) {
+        case 'change':
+        case 'add':
+          this.pendingChanges.push({
+            event: 'change',
+            path: join(this.srcPath, path),
+          });
+          this.debouchedHandleChanges();
+          break;
+        case 'unlink':
+          this.pendingChanges.push({
+            event: 'unlink',
+            path: join(this.srcPath, path),
+          });
+          this.debouchedHandleChanges();
+          break;
+        default:
+        // ignore all others;
+      }
+    });
 
     await init;
 
     this.fileList = files;
-
-    console.log(files, this._snapshot);
 
     await this.batchProcess(this.fileList);
 
@@ -276,63 +371,22 @@ export class StaticDepInfo {
     return matched;
   }
 
-  async handleFileChanges(change: {
-    mfiles?: ReadonlySet<string>;
-    rfiles?: ReadonlySet<string>;
-  }) {
-    let changed = false;
-
-    if (change.rfiles?.size) {
-      for (const r of change.rfiles!) {
-        delete this.fileContentCache[r];
-      }
-      changed = true;
-    }
-
-    if (change.mfiles?.size) {
-      await this.batchProcess(Array.from(change.mfiles!));
-      for (const f of change.mfiles!) {
-        let newFile = join(this.cachePath, relative(this.srcPath, f));
-
-        // fixme ensure the last one
-        newFile = newFile.replace(extname(newFile), '.js');
-
-        const c = readFileSync(newFile, 'utf-8');
-        console.log('------> cc ', c);
-        this.fileContentCache[f] = c;
-      }
-      changed = true;
-    }
-
-    if (changed) {
-      this.currentDep = this._getDependencies();
-    }
-  }
-
-  async processFile(p: string) {
-    try {
-      await esBuild({
-        entryPoints: [p],
-        outdir: this.cachePath,
-      });
-    } catch (e) {}
-  }
-
   async batchProcess(files: string[]) {
     try {
       await esBuild({
         entryPoints: files,
+        bundle: false,
         outdir: this.cachePath,
+        outbase: this.srcPath,
       });
     } catch (e) {
+      // error ignored due to user have to update code to fix then trigger another batchProcess;
       console.error(e);
     }
   }
 
   async allRuntimeHelpers() {
     // todo mfsu4
-    // const umipack = await resolve(process.cwd(), 'umi');
-    // return umipack;
   }
 }
 
