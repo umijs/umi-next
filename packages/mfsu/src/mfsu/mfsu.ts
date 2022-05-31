@@ -1,15 +1,15 @@
 import { parseModule } from '@umijs/bundler-utils';
+import type {
+  NextFunction,
+  Request,
+  Response,
+} from '@umijs/bundler-utils/compiled/express';
 import { lodash, logger, tryPaths, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { readFileSync, statSync } from 'fs';
 import { extname, join } from 'path';
 import webpack, { Configuration } from 'webpack';
 import { lookup } from '../../compiled/mrmime';
-import type {
-  NextFunction,
-  Request,
-  Response,
-} from '../bundler-utils/compiled/express';
 // @ts-ignore
 import WebpackVirtualModules from '../../compiled/webpack-virtual-modules';
 import awaitImport from '../babelPlugins/awaitImport/awaitImport';
