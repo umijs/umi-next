@@ -347,6 +347,9 @@ export default defineConfig({
   mfsu: {
     esbuild: true,
   },
+  // 测试 lazyCompilation 已知跟mfsu 冲突
+  // mfsu: false,
+  // lazyCompilation: {},
   chainWebpack(memo: any) {
     memo.plugin('monaco-editor').use(MonacoEditorWebpackPlugin, []);
     return memo;
