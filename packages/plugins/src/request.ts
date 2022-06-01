@@ -149,7 +149,7 @@ let requestInstance: AxiosInstance;
 let config: RequestConfig;
 const getConfig = (): RequestConfig => {
   if (config) return config;
-  config = getPluginManager()?.applyPlugins({
+  config = getPluginManager().applyPlugins({
     key: 'request',
     type: ApplyPluginsType.modify,
     initialValue: {},
