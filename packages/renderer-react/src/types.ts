@@ -8,6 +8,18 @@ export interface IRoute {
   hasServerLoader?: boolean;
 }
 
+export interface IClientRoute {
+  id: string;
+  element: React.ReactNode;
+  children: IClientRoute[];
+  // compatible with @ant-design/pro-layout
+  routes: IClientRoute[];
+  path?: string;
+  index?: boolean;
+  parentId?: string;
+  clientLoader?: () => Promise<any>;
+}
+
 export interface IRoutesById {
   [id: string]: IRoute;
 }

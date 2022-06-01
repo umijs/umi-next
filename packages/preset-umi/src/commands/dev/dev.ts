@@ -4,7 +4,6 @@ import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
-import { clearTmp } from '../../utils/clearTmp';
 import { lazyImportFromCurrentPkg } from '../../utils/lazyImportFromCurrentPkg';
 import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
@@ -13,6 +12,7 @@ import { printMemoryUsage } from './printMemoryUsage';
 import {
   addUnWatch,
   createDebouncedHandler,
+  expandCSSPaths,
   expandJSPaths,
   unwatch,
   watch,
@@ -42,9 +42,6 @@ PORT=8888 umi dev
     async fn() {
       logger.info(chalk.cyan.bold(`Umi v${api.appData.umi.version}`));
       const enableVite = !!api.config.vite;
-
-      // clear tmp except cache
-      clearTmp(api.paths.absTmpPath);
 
       // check package.json
       await api.applyPlugins({
@@ -91,6 +88,8 @@ PORT=8888 umi dev
           join(absSrcPath, 'layouts'),
           ...expandJSPaths(join(absSrcPath, 'loading')),
           ...expandJSPaths(join(absSrcPath, 'app')),
+          ...expandJSPaths(join(absSrcPath, 'global')),
+          ...expandCSSPaths(join(absSrcPath, 'global')),
         ].filter(Boolean),
       });
       lodash.uniq<string>(watcherPaths.map(winPath)).forEach((p: string) => {

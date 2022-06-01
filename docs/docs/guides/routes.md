@@ -33,7 +33,26 @@ Umi 4 默认根据路由来进行 JavaScript 模块按需加载。如果需要�
 
 * Type: `string`
 
-配置可以被 [path-to-regexp@^1.7.0](https://github.com/pillarjs/path-to-regexp/tree/v1.7.0) 理解的路径通配符。
+`path` 只支持两种占位符配置，第一种是动态参数 `:id` 的形式，第二种是 `*` 通配符，通配符只能出现路由字符串的最后。
+
+✅ 以下是目前***支持***的路由路径配置形式：
+
+```txt
+/groups
+/groups/admin
+/users/:id
+/users/:id/messages
+/files/*
+/files/:id/*
+```
+
+❌ 以下是目前***不支持***的路由路径配置形式：
+```txt
+/users/:id?
+/tweets/:id(\d+)
+/files/*/cat.jpg
+/files-*
+```
 
 ### component
 
@@ -166,51 +185,9 @@ export default (props) => {
 
 ## 页面跳转
 
-```js
-import { history } from 'umi';
+命令式跳转请使用 [`history`](../api/api#history) API
 
-// 跳转到指定路由
-history.push('/list');
-
-// 带参数跳转到指定路由
-history.push('/list?a=b');
-history.push({
-  pathname: '/list',
-  query: {
-    a: 'b',
-  },
-});
-
-// 跳转到上一个路由
-history.goBack();
-```
-
-组件内还可以使用 `useNavigate` hook
-
-```tsx
-import { useNavigate } from 'umi';
-
-export default ()=>{
-  const navigate = useNavigate()
-
-  return <button onClick={
-    () => {
-    //跳转到指定路由
-    navigate('/list');
-
-    // 带参数跳转到指定路由
-    navigate('/list?a=b')
-
-    // 替换为指定路由
-    navigate('/list', {replace: true})
-
-    // 跳转到上一个路由
-    navigate(-1);
-    // 跳转到上 n 个路由
-    navigate(-n);
-  }> navigate </button>
-}
-```
+组件内还可以使用 [`useNavigate`](../api/api#usenavigate) hook
 
 ## Link 组件
 

@@ -2,7 +2,7 @@
 import React, { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { RouteContext } from './routeContext';
-import { IRoute, IRoutesById } from './types';
+import { IClientRoute, IRoute, IRoutesById } from './types';
 
 export function createClientRoutes(opts: {
   routesById: IRoutesById;
@@ -26,28 +26,25 @@ export function createClientRoutes(opts: {
         loadingComponent: opts.loadingComponent,
       });
       if (children.length > 0) {
-        // @ts-ignore
         route.children = children;
         // TODO: remove me
         // compatible with @ant-design/pro-layout
-        // @ts-ignore
         route.routes = children;
       }
       return route;
     });
 }
 
-export function createClientRoute(opts: {
+function createClientRoute(opts: {
   route: IRoute;
   routeComponent: any;
   loadingComponent?: React.ReactNode;
-}) {
+}): IClientRoute {
   const { route } = opts;
-  const { id, path, index, redirect, ...props } = route;
+  const { redirect, ...props } = route;
   return {
-    id: id,
-    path: path,
-    index: index,
+    children: [],
+    routes: [],
     element: redirect ? (
       <Navigate to={redirect} />
     ) : (
