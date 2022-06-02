@@ -1,7 +1,7 @@
 import path from 'path';
+import visualizer from 'rollup-plugin-visualizer';
 import type { IConfigProcessor } from '.';
 import copy from '../../../compiled/rollup-plugin-copy';
-import visualizer from '../../../compiled/rollup-plugin-visualizer';
 
 /**
  * transform umi configs to vite rollup options
@@ -21,7 +21,7 @@ export default (function rollup(userConfig) {
     config.build!.rollupOptions!.plugins!.push(
       visualizer({
         open: true,
-        json: userConfig.analyze.generateStatsFile,
+        json: userConfig.analyze?.generateStatsFile,
         // TODO: other options transform, refer: https://umijs.org/config#analyze
       }),
     );
@@ -56,7 +56,7 @@ export default (function rollup(userConfig) {
   if (userConfig.hash !== true) {
     // disable vite default hash filename
     // refer: https://github.com/vitejs/vite/blob/deb84c0b053b5c1e6a4162a224108d1d853dbb04/packages/vite/src/node/build.ts#L452
-    Object.assign(config.build!.rollupOptions!.output, {
+    Object.assign(config.build!.rollupOptions!.output!, {
       entryFileNames: '[name].js',
       chunkFileNames: '[name].js',
       assetFileNames: '[name].[ext]',

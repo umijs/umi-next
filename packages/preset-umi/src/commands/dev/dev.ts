@@ -4,11 +4,11 @@ import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
-import { clearTmp } from '../../utils/clearTmp';
 import { lazyImportFromCurrentPkg } from '../../utils/lazyImportFromCurrentPkg';
 import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
 import { getBabelOpts } from './getBabelOpts';
+import ViteHtmlPlugin from './plugins/ViteHtmlPlugin';
 import { printMemoryUsage } from './printMemoryUsage';
 import {
   addUnWatch,
@@ -43,9 +43,6 @@ PORT=8888 umi dev
     async fn() {
       logger.info(chalk.cyan.bold(`Umi v${api.appData.umi.version}`));
       const enableVite = !!api.config.vite;
-
-      // clear tmp except cache
-      clearTmp(api.paths.absTmpPath);
 
       // check package.json
       await api.applyPlugins({
@@ -252,7 +249,10 @@ PORT=8888 umi dev
           ...beforeMiddlewares,
           faviconMiddleware,
         ]),
-        afterMiddlewares: middlewares.concat(createRouteMiddleware({ api })),
+        // vite 模式使用 ./plugins/ViteHtmlPlugin.ts 处理
+        afterMiddlewares: enableVite
+          ? []
+          : [createRouteMiddleware({ api })].concat(middlewares),
         onDevCompileDone(opts: any) {
           debouncedPrintMemoryUsage();
           api.appData.bundleStatus.done = true;
@@ -306,5 +306,10 @@ PORT=8888 umi dev
         },
       });
     },
+  });
+
+  api.modifyViteConfig((viteConfig) => {
+    viteConfig.plugins?.push(ViteHtmlPlugin(api));
+    return viteConfig;
   });
 };
