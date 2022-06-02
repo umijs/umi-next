@@ -16,12 +16,13 @@ $ npx create-umi
 新建的项目默认安装以下插件, 可以按需开启：
 
 - [权限](./access)
+- [站点统计](./analytics)
 - [Antd](./antd)
 - [dva](./dva)
 - [initial-state](../api/runtime-config#getinitialstate)
 - [布局和菜单](./layout-menu)
 - [多语言](./locale)
-- [model ](./data-flow)
+- [model](./data-flow)
 - [乾坤微前端](./micro-frontend)
 - [请求库](./request)
 - [tailwindCSS支持](./tailwindcss)
