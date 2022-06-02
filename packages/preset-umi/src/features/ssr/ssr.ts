@@ -9,7 +9,6 @@ import { lessLoader } from './esbuild-less-plugin';
 import svgLoader from './svg-loader';
 import {
   absServerBuildPath,
-  esbuildIgnorePathPrefixPlugin,
   esbuildUmiPlugin,
   readAssetsManifestFromCache,
   readCssManifestFromCache,
@@ -30,12 +29,19 @@ export default (api: IApi) => {
     enableBy: EnableBy.config,
   });
 
+  api.onCheck(() => {
+    if (api.appData.react.version.split('.')[0] < 18) {
+      throw new Error('SSR requires React version >= 18.0.0');
+    }
+  });
+
   api.addBeforeMiddlewares(() => [
     async (req, res, next) => {
       const modulePath = absServerBuildPath(api);
       if (existsSync(modulePath)) {
         (await require(modulePath)).default(req, res, next);
       } else {
+        // TODO: IMPROVEMENT: use Umi Animation
         res.end('umi.server.js is compiling ...');
       }
     },
@@ -56,16 +62,22 @@ export { React };
   api.onGenerateFiles(() => {
     api.writeTmpFile({
       path: 'webpack-manifest.js',
+      // 开发阶段 __WEBPACK_MANIFEST__ 为空
       content: `export let __WEBPACK_MANIFEST__ = {}`,
     });
   });
 
-  let isFirstDevCompileDone = true;
-  api.onDevCompileDone(async ({ cssManifest, assetsManifest }) => {
-    if (isFirstDevCompileDone) {
-      isFirstDevCompileDone = false;
+  api.onDevCompileDone(
+    async ({ isFirstCompile, cssManifest, assetsManifest }) => {
+      if (!isFirstCompile) return;
+
+      // 如果有 webpack fs cache，manifest 会数据不全
       await readCssManifestFromCache(api, cssManifest);
       await readAssetsManifestFromCache(api, assetsManifest);
+
+      saveCssManifestToCache(api, cssManifest);
+      saveAssetsManifestToCache(api, assetsManifest);
+
       await esbuild.build({
         format: 'cjs',
         platform: 'node',
@@ -84,10 +96,9 @@ export { React };
         },
         logLevel: 'silent',
         loader,
-        external: ['umi'],
+        // TODO: 支持通用的 alias
         entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
         plugins: [
-          esbuildIgnorePathPrefixPlugin(),
           esbuildUmiPlugin(api),
           lessLoader(api, cssManifest),
           cssLoader(api, cssManifest),
@@ -96,8 +107,8 @@ export { React };
         ],
         outfile: absServerBuildPath(api),
       });
-    }
-  });
+    },
+  );
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
   api.onBuildComplete(
@@ -111,6 +122,7 @@ export { React };
         });
       }
       // webpack-manifest.js is for esbuild to build umi.server.js
+      // TODO: 改成 api.writeTmpFile
       writeFileSync(
         join(api.paths.absTmpPath, 'plugin-ssr/webpack-manifest.js'),
         `export let __WEBPACK_MANIFEST__ = ${JSON.stringify(
@@ -129,10 +141,8 @@ export { React };
           resolve(api.paths.absTmpPath, 'plugin-ssr/webpack-manifest.js'),
         ],
         loader,
-        external: ['umi'],
         entryPoints: [resolve(api.paths.absTmpPath, 'server.ts')],
         plugins: [
-          esbuildIgnorePathPrefixPlugin(),
           esbuildUmiPlugin(api),
           lessLoader(api, cssManifest),
           cssLoader(api, cssManifest),

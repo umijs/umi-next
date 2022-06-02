@@ -160,18 +160,14 @@ export function renderClient(opts: {
           }
           // server loader
           if (opts.routes[id].hasServerLoader) {
-            fetch('/__umi?route=' + id)
+            fetch('/__serverLoader?route=' + id)
               .then((d) => d.json())
               .then((data) => {
-                if (typeof startTransition === 'function') {
-                  // setServerLoaderData when startTransition because if ssr is enabled,
-                  // the component may being hydrated and setLoaderData will break the hydration
-                  startTransition(() => {
-                    setServerLoaderData((d) => ({ ...d, [id]: data }));
-                  });
-                } else {
+                // setServerLoaderData when startTransition because if ssr is enabled,
+                // the component may being hydrated and setLoaderData will break the hydration
+                startTransition(() => {
                   setServerLoaderData((d) => ({ ...d, [id]: data }));
-                }
+                });
               })
               .catch(console.error);
           }
@@ -179,15 +175,7 @@ export function renderClient(opts: {
           const clientLoader = opts.routes[id].clientLoader;
           if (clientLoader && !clientLoaderData[id]) {
             clientLoader().then((data: any) => {
-              if (typeof startTransition === 'function') {
-                // setClientLoaderData when startTransition because if ssr is enabled,
-                // the component may being hydrated and setLoaderData will break the hydration
-                startTransition(() => {
-                  setClientLoaderData((d: any) => ({ ...d, [id]: data }));
-                });
-              } else {
-                setClientLoaderData((d: any) => ({ ...d, [id]: data }));
-              }
+              setClientLoaderData((d: any) => ({ ...d, [id]: data }));
             });
           }
         });

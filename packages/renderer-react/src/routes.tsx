@@ -69,6 +69,12 @@ function DefaultLoading() {
 
 function RemoteComponent(props: any) {
   const Component = props.loader;
+  // TODO: 兼容 react 18 以下的场景
+  // import loadable from '@loadable/component';
+  // const Component = loadable(props.loader, {
+  //   fallback: <props.loadingComponent />,
+  // });
+  // return <Component />;
   return (
     <Suspense fallback={<props.loadingComponent />}>
       <Component />

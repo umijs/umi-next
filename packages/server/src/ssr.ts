@@ -23,7 +23,8 @@ export default function createRequestHandler(
     const { routeLoaders, PluginManager, getPlugins, getValidKeys, getRoutes } =
       opts;
 
-    if (req.url.startsWith('/__umi') && req.query.route) {
+    // 切换路由场景下，会通过此 API 执行 server loader
+    if (req.url.startsWith('/__serverLoader') && req.query.route) {
       const data = await executeLoader(req.query.route, routeLoaders);
       res.status(200).json(data);
       return;
@@ -37,8 +38,7 @@ export default function createRequestHandler(
 
     const matches = matchRoutesForSSR(req.url, routes);
     if (matches.length === 0) {
-      next();
-      return;
+      return next();
     }
 
     const loaderData: { [key: string]: any } = {};
@@ -60,7 +60,6 @@ export default function createRequestHandler(
       pluginManager,
       location: req.url,
       loaderData,
-      matches,
       manifest: opts.manifest,
     };
 
@@ -123,5 +122,6 @@ async function executeLoader(routeKey: string, routeLoaders: RouteLoaders) {
   if (!mod.serverLoader || typeof mod.serverLoader !== 'function') {
     return;
   }
+  // TODO: 处理错误场景
   return await mod.serverLoader();
 }

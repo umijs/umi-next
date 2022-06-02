@@ -22,7 +22,9 @@ export default (api: IApi) => {
     const rendererPath = winPath(
       await api.applyPlugins({
         key: 'modifyRendererPath',
-        initialValue: require.resolve('@umijs/renderer-react'),
+        initialValue: dirname(
+          require.resolve('@umijs/renderer-react/package.json'),
+        ),
       }),
     );
 
@@ -182,14 +184,13 @@ export default function EmptyRoute() {
         path: join('server.ts'),
         tplPath: join(TEMPLATES_DIR, 'server.tpl'),
         context: {
-          umiPath: resolve(require.resolve('umi'), '..'),
           routes: JSON.stringify(clonedRoutes, null, 2).replace(
             /"component": "await import\((.*)\)"/g,
             '"component": await import("$1")',
           ),
           routeLoaders: await getRouteLoaders(api, 'serverLoader'),
           pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
-          rendererPath: join(dirname(rendererPath), 'server.js'),
+          serverRendererPath: join(rendererPath, 'dist/server.js'),
           umiServerPath: resolve(require.resolve('@umijs/server'), '../ssr.js'),
           validKeys,
         },

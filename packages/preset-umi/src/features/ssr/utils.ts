@@ -44,7 +44,7 @@ export async function getRouteModuleExports(
 /**
  * Get the client/server loaders of routes (if exists)
  *
- * If type is 'loader', example result is:
+ * If type is 'serverLoader', example result is:
  * ```
  * [
  *   { name: 'index', path: '/Users/yuanlin/Developer/github.com/umijs/umi-next/examples/ssr-demo/src/pages/index.tsx' },
@@ -66,37 +66,27 @@ export async function getRouteLoaders(
   api: IApi,
   type: 'serverLoader' | 'clientLoader',
 ) {
-  const routesWithClientLoader: string[] = [];
+  const routesWithLoader: string[] = [];
   await Promise.all(
-    Object.keys(api.appData.routes).map(async (key) => {
-      const route = api.appData.routes[key];
+    Object.keys(api.appData.routes).map(async (id) => {
+      const route = api.appData.routes[id];
       const exports = await getRouteModuleExports(api, route);
-      if (exports.includes(type)) routesWithClientLoader.push(key);
+      if (exports.includes(type)) routesWithLoader.push(id);
     }),
   );
-  return routesWithClientLoader.map((key) => {
-    const route = api.appData.routes[key];
+  return routesWithLoader.map((id) => {
+    const route = api.appData.routes[id];
     const name =
       type === 'clientLoader'
-        ? key.replace(/\//g, '_') + '_client_loader'
-        : key;
+        ? // TODO: replace more
+          id.replace(/\//g, '_') + '_client_loader'
+        : id;
     return {
       name,
+      // TODO: 使用路由的绝对路径
       path: join(api.paths.absPagesPath, route.file),
     };
   });
-}
-
-/** esbuild plugin for ignore @fs prefix */
-export function esbuildIgnorePathPrefixPlugin() {
-  return {
-    name: 'ignore-path-prefix',
-    setup(build: any) {
-      build.onResolve({ filter: /^@fs/ }, (args: any) => ({
-        path: args.path.replace(/^@fs/, ''),
-      }));
-    },
-  };
 }
 
 /** esbuild plugin for resolving umi imports */
@@ -104,12 +94,16 @@ export function esbuildUmiPlugin(api: IApi) {
   return {
     name: 'umi',
     setup(build: any) {
+      // TODO: 可能可以去掉
       build.onResolve({ filter: /^react-router$/ }, () => ({
         path: resolve(require.resolve('react-router'), ''),
       }));
-      build.onResolve({ filter: /^umi$/ }, () => ({
-        path: join(api.paths.absTmpPath, 'exports.ts'),
-      }));
+      build.onResolve(
+        { filter: /^(umi|@umijs\/max|@alipay\/bigfish)$/ },
+        () => ({
+          path: join(api.paths.absTmpPath, 'exports.ts'),
+        }),
+      );
     },
   };
 }
@@ -124,7 +118,7 @@ export function absServerBuildPath(api: IApi) {
   );
 }
 
-export async function saveMapToFile(
+export function saveMapToFile(
   map: Map<string, string> | undefined,
   filePath: string,
 ) {
@@ -152,10 +146,10 @@ export async function readMapFromFile(
 
 function getSSRCacheDir(api: IApi) {
   const nodeModulesPath = resolve(api.cwd, 'node_modules');
-  return join(nodeModulesPath, '.cache/ssr');
+  return join(nodeModulesPath, '.cache/.umi/ssr');
 }
 
-export async function saveCssManifestToCache(
+export function saveCssManifestToCache(
   api: IApi,
   cssManifest: Map<string, string> | undefined,
 ) {
@@ -164,7 +158,7 @@ export async function saveCssManifestToCache(
   return saveMapToFile(cssManifest, cssManifestCachePath);
 }
 
-export async function saveAssetsManifestToCache(
+export function saveAssetsManifestToCache(
   api: IApi,
   assetsManifest: Map<string, string> | undefined,
 ) {

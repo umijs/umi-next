@@ -24,11 +24,13 @@ function assetsLoader(
         { filter: assetsFilter, namespace: 'staticAssets' },
         async (args) => {
           const webpackAssetPath = webpackAssetsManifest.get(args.path);
-          if (!webpackAssetPath)
+          if (!webpackAssetPath) {
             return {
               contents: readFileSync(args.path),
               loader: 'dataurl',
             };
+          }
+          // TODO: / 可能不需要
           return { contents: '/' + webpackAssetPath, loader: 'text' };
         },
       );

@@ -19,8 +19,14 @@ function svgLoader(
       });
       build.onLoad({ filter: /\.(svg)$/, namespace: 'svgAssets' }, (args) => {
         let url = webpackAssetsManifest.get(args.path);
-        if (!url) url = Buffer.from(readFileSync(args.path)).toString('base64');
-        else url = '/' + url;
+        if (!url) {
+          url = Buffer.from(readFileSync(args.path)).toString('base64');
+        }
+        // TODO: 可能可以删
+        // TODO: 支持非 base64 的场景
+        else {
+          url = '/' + url;
+        }
         return {
           contents: `
 import React from 'react';

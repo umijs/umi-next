@@ -1,6 +1,6 @@
-import { getClientRootComponent } from '{{{ rendererPath }}}';
+import { getClientRootComponent } from '{{{ serverRendererPath }}}';
 import { getRoutes } from './core/route';
-import { PluginManager } from '{{{ umiPath }}}/client/plugin.js';
+import { PluginManager } from '{{{ pluginPath }}}';
 import createRequestHandler from '{{{ umiServerPath }}}';
 import { resolve } from 'path';
 

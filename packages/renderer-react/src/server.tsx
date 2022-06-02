@@ -12,7 +12,6 @@ export async function getClientRootComponent(opts: {
   pluginManager: any;
   location: string;
   loaderData: { [routeKey: string]: any };
-  matches: string[];
   manifest: any;
 }) {
   const basename = '/';
@@ -43,11 +42,7 @@ export async function getClientRootComponent(opts: {
     });
   }
   return (
-    <Html
-      loaderData={opts.loaderData}
-      matches={opts.matches}
-      manifest={opts.manifest}
-    >
+    <Html loaderData={opts.loaderData} manifest={opts.manifest}>
       <AppContext.Provider
         value={{
           routes: opts.routes,
@@ -57,7 +52,6 @@ export async function getClientRootComponent(opts: {
           basename,
           clientLoaderData: {},
           serverLoaderData: opts.loaderData,
-          loaderData: opts.loaderData,
         }}
       >
         {rootContainer}
@@ -66,12 +60,14 @@ export async function getClientRootComponent(opts: {
   );
 }
 
-function Html({ children, loaderData, matches, manifest }: any) {
+function Html({ children, loaderData, manifest }: any) {
   const cssFilePath: string =
     (Object.values(manifest).find((file) =>
       (file as string).match(/umi(.*)\.css$/),
     ) as string) || '/umi.css';
 
+  // TODO: 处理 head 标签，比如 favicon.ico 的一致性
+  // TODO: root 支持配置
   return (
     <html lang="en">
       <head>
@@ -91,13 +87,6 @@ function Html({ children, loaderData, matches, manifest }: any) {
           dangerouslySetInnerHTML={{
             __html: `window.__UMI_LOADER_DATA__ = ${JSON.stringify(
               loaderData,
-            )}`,
-          }}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.__UMI_SERVER_RENDERED_ROUTES__ = ${JSON.stringify(
-              matches,
             )}`,
           }}
         />
