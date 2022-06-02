@@ -21,15 +21,6 @@ export default {
       type: 'nav',
       children: [
         {
-          title: 'Introduce',
-          children: [
-            'introduce/introduce',
-            'introduce/philosophy',
-            'introduce/contributing',
-            'introduce/upgrade-to-umi-4',
-          ],
-        },
-        {
           title: 'Tutorials',
           children: ['tutorials/getting-started', 'tutorials/blog'],
         },
@@ -41,6 +32,15 @@ export default {
             'api/runtime-config',
             'api/commands',
             'api/plugin-api',
+          ],
+        },
+        {
+          title: 'Introduce',
+          children: [
+            'introduce/introduce',
+            'introduce/philosophy',
+            'introduce/contributing',
+            'introduce/upgrade-to-umi-4',
           ],
         },
         {
