@@ -29,11 +29,12 @@ export default (api: IApi) => {
 
     // tsconfig.json
     const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
+    const baseUrl = api.appData.hasSrcDir ? '../../' : '../';
     api.writeTmpFile({
       noPluginDir: true,
       path: 'tsconfig.json',
-      // 1、basic config
-      // 2、alias
+      // x 1、basic config
+      // x 2、alias
       // 3、language service platform
       // 4、typing
       content: JSON.stringify(
@@ -46,7 +47,7 @@ export default (api: IApi) => {
             jsx: 'react',
             esModuleInterop: true,
             sourceMap: true,
-            // baseUrl: '.',
+            baseUrl,
             strict: true,
             paths: {
               '@/*': [`${srcPrefix}*`],
