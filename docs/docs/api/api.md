@@ -125,7 +125,7 @@ history.go(-1);
 ```ts
 import { history } from 'umi';
 
-const unlisten = history.listen((location, action) => {
+const unlisten = history.listen(({ location, action }) => {
   console.log(location.pathname);
 });
 unlisten();
@@ -384,6 +384,8 @@ declare function useAppData(): {
   pluginManager: any;
   rootElement: string;
   basename: string;
+  clientLoaderData: { [routeKey: string]: any };
+  preloadRoute: (to: string) => void;
 };
 ```
 注意：此处 API 可能还会调整。
