@@ -103,7 +103,7 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
       }
 
       // check children access code
-      if (route.children.length > 0) {
+      if (route.children?.length) {
         const isNoAccessibleChild = !route.children.reduce((hasAccessibleChild, child) => {
           process(child, accessCode);
 
