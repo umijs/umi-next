@@ -113,6 +113,6 @@ export * from '${this.file}';
       cwd: dep,
     });
     assert(pkg, `package.json not found for ${opts.dep}`);
-    return require(pkg).version;
+    return require(pkg).version || null;
   }
 }
