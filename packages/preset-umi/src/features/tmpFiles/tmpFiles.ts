@@ -446,6 +446,10 @@ export default function EmptyRoute() {
           path: '@@/core/terminal.ts',
         });
       }
+      // umi/dist/defineMock.js
+      exports.push('// defineMock');
+      const umiPath = winPath(join(umiDir, 'dist/defineMock.js'));
+      exports.push(`export { defineMock } from '${umiPath}'`);
       // plugins
       exports.push('// plugins');
       const plugins = readdirSync(api.paths.absTmpPath).filter((file) => {
