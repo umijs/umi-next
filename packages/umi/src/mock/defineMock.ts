@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@umijs/bundler-webpack/compiled/express';
 
-type IValue =
+type MockDeclare =
   | string
   | number
   | null
@@ -9,6 +9,6 @@ type IValue =
   | Record<string, any>
   | RequestHandler;
 
-export function defineMock(mockData: { [key: string]: IValue }) {
+export function defineMock(mockData: { [key: string]: MockDeclare }) {
   return mockData;
 }

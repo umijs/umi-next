@@ -446,9 +446,9 @@ export default function EmptyRoute() {
           path: '@@/core/terminal.ts',
         });
       }
-      // umi/dist/defineMock.js
-      exports.push('// defineMock');
-      const umiPath = winPath(join(umiDir, 'dist/defineMock.js'));
+      // umi/dist/mock/helper.js
+      exports.push('// mock');
+      const umiPath = winPath(join(umiDir, 'dist/mock/helper.js'));
       exports.push(`export { defineMock } from '${umiPath}'`);
       // plugins
       exports.push('// plugins');

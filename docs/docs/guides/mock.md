@@ -102,7 +102,7 @@ export default {
 
 ### defineMock
 
-另外，也可以使用 defineMock 函数声明返回值，例如：
+另外，也可以使用 `defineMock` 类型帮助函数来提供编写 mock 对象的代码提示，如：
 ```ts
 import { defineMock } from "umi";
 
@@ -117,7 +117,7 @@ export default defineMock({
   },
 });
 ```
-defineMock 仅仅是提供了类型提示，入参与出参是完全一样的，类似与 lodash 的 identity 函数
+`defineMock` 仅仅提供类型提示，入参与出参完全一致。
 ## 关闭 Mock
 
 Umi 默认开启 Mock 功能，如果不需要的话可以从配置文件关闭：
