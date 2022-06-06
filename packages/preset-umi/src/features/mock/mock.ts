@@ -32,13 +32,18 @@ export default function (api: IApi) {
   };
 
   api.onStart(() => {
+    const mockConfig = api.config.mock || {};
+    const { include = [], exclude = [] } = mockConfig;
     watch({
-      path: `${api.cwd}/mock`,
+      path: ['mock', ...include].map((file) => `${api.cwd}/${file}`),
+      watchOpts: {
+        ignored: exclude.map((file: string) => `${api.cwd}/${file}`),
+      },
       addToUnWatches: true,
       onChange: () => {
         context.mockData = getMockData({
           cwd: api.cwd,
-          mockConfig: api.config.mock || {},
+          mockConfig,
         });
       },
     });
