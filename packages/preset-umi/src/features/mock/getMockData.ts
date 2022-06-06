@@ -32,32 +32,36 @@ export function getMockData(opts: {
       return memo;
     }, [])
     .reduce<Record<string, any>>((memo, file) => {
-      const mockFile = `${opts.cwd}/${file}`;
-      const m = require(mockFile);
-      // Cannot convert undefined or null to object
-      // Support esm and cjs
-      const obj = m?.default || m || {};
-      for (const key of Object.keys(obj)) {
-        const mock = getMock({ key, obj });
-        mock.file = mockFile;
-        // check conflict
-        const id = `${mock.method} ${mock.path}`;
-        assert(
-          lodash.isArray(mock.handler) ||
-            lodash.isPlainObject(mock.handler) ||
-            typeof mock.handler === 'function',
-          `Mock handler must be function or array or object, but got ${typeof mock.handler} for ${
-            mock.method
-          } in ${mock.file}`,
-        );
-        if (memo[id]) {
-          logger.warn(
-            `${id} is duplicated in ${normalizeMockFile(
-              mockFile,
-            )} and ${normalizeMockFile(memo[id].file)}`,
+      try {
+        const mockFile = `${opts.cwd}/${file}`;
+        const m = require(mockFile);
+        // Cannot convert undefined or null to object
+        // Support esm and cjs
+        const obj = m?.default || m || {};
+        for (const key of Object.keys(obj)) {
+          const mock = getMock({ key, obj });
+          mock.file = mockFile;
+          // check conflict
+          const id = `${mock.method} ${mock.path}`;
+          assert(
+            lodash.isArray(mock.handler) ||
+              lodash.isPlainObject(mock.handler) ||
+              typeof mock.handler === 'function',
+            `Mock handler must be function or array or object, but got ${typeof mock.handler} for ${
+              mock.method
+            } in ${mock.file}`,
           );
+          if (memo[id]) {
+            logger.warn(
+              `${id} is duplicated in ${normalizeMockFile(
+                mockFile,
+              )} and ${normalizeMockFile(memo[id].file)}`,
+            );
+          }
+          memo[id] = mock;
         }
-        memo[id] = mock;
+      } catch (error) {
+        logger.error(error);
       }
       return memo;
     }, {});
