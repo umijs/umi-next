@@ -1,3 +1,4 @@
+import path from 'path';
 import { watch } from '../../commands/dev/watch';
 import { IApi } from '../../types';
 import { createMockMiddleware } from './createMockMiddleware';
@@ -35,9 +36,13 @@ export default function (api: IApi) {
     const mockConfig = api.config.mock || {};
     const { include = [], exclude = [] } = mockConfig;
     watch({
-      path: ['mock', ...include].map((file) => `${api.cwd}/${file}`),
+      path: ['mock', ...include].map((pattern) =>
+        path.resolve(api.cwd, pattern),
+      ),
       watchOpts: {
-        ignored: exclude.map((file: string) => `${api.cwd}/${file}`),
+        ignored: exclude.map((pattern: string) =>
+          path.resolve(api.cwd, pattern),
+        ),
       },
       addToUnWatches: true,
       onChange: () => {
