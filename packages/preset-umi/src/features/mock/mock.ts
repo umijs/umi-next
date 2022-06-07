@@ -1,3 +1,4 @@
+import { logger } from '@umijs/utils';
 import path from 'path';
 import { watch } from '../../commands/dev/watch';
 import { IApi } from '../../types';
@@ -32,6 +33,18 @@ export default function (api: IApi) {
     mockData: null,
   };
 
+  function updateMockData(onSuccess?: Function) {
+    try {
+      context.mockData = getMockData({
+        cwd: api.cwd,
+        mockConfig: api.config.mock || {},
+      });
+      onSuccess?.();
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
   api.onStart(() => {
     const mockConfig = api.config.mock || {};
     const { include = [], exclude = [] } = mockConfig;
@@ -46,19 +59,15 @@ export default function (api: IApi) {
       },
       addToUnWatches: true,
       onChange: () => {
-        context.mockData = getMockData({
-          cwd: api.cwd,
-          mockConfig,
+        updateMockData(() => {
+          logger.info('Mock file update successful');
         });
       },
     });
   });
 
   api.addBeforeMiddlewares(async () => {
-    context.mockData = getMockData({
-      cwd: api.cwd,
-      mockConfig: api.config.mock || {},
-    });
+    updateMockData();
     return [
       createMockMiddleware({
         context,
