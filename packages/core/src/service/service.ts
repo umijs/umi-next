@@ -536,6 +536,7 @@ export class Service {
     } else {
       plugin = this.keyToPluginMap[hook as string];
     }
+    if (!plugin) return false;
     const { id, key, enableBy } = plugin;
     if (this.skipPluginIds.has(id)) return false;
     if (this.userConfig[key] === false) return false;
