@@ -1,22 +1,20 @@
 import React from 'react';
 import { MicroApp } from './MicroApp';
-import { useLocation } from 'umi';
 
 export function getMicroAppRouteComponent(opts: {
   appName: string;
   base: string;
+  routePath: string;
   masterHistoryType: string;
   routeProps?: any;
 }) {
-  const { base, masterHistoryType, appName, routeProps } = opts;
-  const RouteComponent = ({ match }: any) => {
-    const url = useLocation().pathname;
-
+  const { base, masterHistoryType, appName, routeProps, routePath } = opts;
+  const RouteComponent = () => {
     // 默认取静态配置的 base
     let umiConfigBase = base === '/' ? '' : base;
 
-    let runtimeMatchedBase =
-      umiConfigBase + (url.endsWith('/') ? url.substr(0, url.length - 1) : url);
+    // 拼接子应用挂载路由
+    let runtimeMatchedBase = umiConfigBase + routePath.replace('/*', '');
 
     {{#dynamicRoot}}
     // @see https://github.com/umijs/umi/blob/master/packages/preset-built-in/src/plugins/commands/htmlUtils.ts#L102

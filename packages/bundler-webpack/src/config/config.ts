@@ -30,10 +30,12 @@ import { addSVGRules } from './svgRules';
 
 export interface IOpts {
   cwd: string;
+  rootDir?: string;
   env: Env;
   entry: Record<string, string>;
   extraBabelPresets?: any[];
   extraBabelPlugins?: any[];
+  extraBabelIncludes?: string[];
   extraEsbuildLoaderHandler?: any[];
   babelPreset?: any;
   chainWebpack?: Function;
@@ -66,6 +68,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     babelPreset: opts.babelPreset,
     extraBabelPlugins: opts.extraBabelPlugins || [],
     extraBabelPresets: opts.extraBabelPresets || [],
+    extraBabelIncludes: opts.extraBabelIncludes || [],
     extraEsbuildLoaderHandler: opts.extraEsbuildLoaderHandler || [],
     browsers: getBrowsersList({
       targets: userConfig.targets,
@@ -182,6 +185,9 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   // await applyPurgeCSSWebpackPlugin(applyOpts);
   // handle HarmonyLinkingError
   await addHarmonyLinkingErrorPlugin(applyOpts);
+  // remove node: prefix
+  // disable for performance
+  // await addNodePrefixPlugin(applyOpts);
   // runtimePublicPath
   if (userConfig.runtimePublicPath) {
     config.plugin('runtimePublicPath').use(RuntimePublicPathPlugin);
@@ -197,18 +203,28 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
       },
       cacheDirectory:
         opts.cache.cacheDirectory ||
-        join(opts.cwd, 'node_modules', '.cache', 'bundler-webpack'),
+        // 使用 rootDir 是在有 APP_ROOT 时，把 cache 目录放在根目录下
+        join(
+          opts.rootDir || opts.cwd,
+          'node_modules',
+          '.cache',
+          'bundler-webpack',
+        ),
     });
 
     // tnpm 安装依赖的情况 webpack 默认的 managedPaths 不生效
     // 使用 immutablePaths 避免 node_modules 的内容被写入缓存
     // tnpm 安装的依赖路径中同时包含包名和版本号，满足 immutablePaths 使用的条件
+    // 同时配置 managedPaths 将 tnpm 的软连接结构标记为可信，避免执行快照序列化时 OOM
     // ref: smallfish
     if (/*isTnpm*/ require('@umijs/utils/package').__npminstall_done) {
+      const nodeModulesPath =
+        opts.cache.absNodeModulesPath ||
+        join(opts.rootDir || opts.cwd, 'node_modules');
+
       config.snapshot({
-        immutablePaths: [
-          opts.cache.absNodeModulesPath || join(opts.cwd, 'node_modules'),
-        ],
+        immutablePaths: [nodeModulesPath],
+        managedPaths: [nodeModulesPath],
       });
     }
 

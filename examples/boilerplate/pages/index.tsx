@@ -1,6 +1,9 @@
 // @ts-ignore
 import marked from 'marked';
-import React from 'react';
+import React, { useState } from 'react';
+// @ts-ignore
+import { terminal } from 'umi';
+import { ThemeToggle } from '../components/ThemeToggle';
 // @ts-ignore
 import Smileurl, { ReactComponent as SvgSmile } from '../smile.svg';
 import './global.less';
@@ -9,7 +12,14 @@ import styles from './index.less';
 
 export default function HomePage() {
   console.log('marked', marked);
-  const [count] = React.useState(0);
+  const [count] = useState(0);
+  terminal.log(`Some info from the app`);
+  terminal.log({
+    json: { foo: 'bar' },
+  });
+  terminal.info(`Hey terminal, A message from the browser`);
+  terminal.warn(`Watch out, warning from the browser`);
+  terminal.error(`Ups, testing an error message from the browser`);
 
   return (
     <div className={styles.title}>
@@ -18,6 +28,8 @@ export default function HomePage() {
       <div className={styles.smile}></div>
       <img src={Smileurl} alt="" />
       <SvgSmile />
+      <div>test</div>
+      <ThemeToggle />
     </div>
   );
 }

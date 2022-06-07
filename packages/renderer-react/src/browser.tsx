@@ -1,10 +1,11 @@
 import { History } from 'history';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, useRoutes } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+// compatible with < react@18 in @umijs/preset-umi/src/features/react
+import ReactDOM from 'react-dom/client';
+import { matchRoutes, Router, useRoutes } from 'react-router-dom';
 import { AppContext, useAppData } from './appContext';
 import { createClientRoutes } from './routes';
-import { IRouteComponents, IRoutesById } from './types';
+import { ILoaderData, IRouteComponents, IRoutesById } from './types';
 
 function BrowserRoutes(props: {
   routes: any;
@@ -53,6 +54,8 @@ function Routes() {
 }
 
 export function renderClient(opts: {
+  publicPath?: string;
+  runtimePublicPath?: boolean;
   rootElement?: HTMLElement;
   routes: IRoutesById;
   routeComponents: IRouteComponents;
@@ -62,11 +65,18 @@ export function renderClient(opts: {
   history: History;
 }) {
   const basename = opts.basename || '/';
-  const rootElement = opts.rootElement || document.getElementById('root');
+  const rootElement = opts.rootElement || document.getElementById('root')!;
   const clientRoutes = createClientRoutes({
     routesById: opts.routes,
     routeComponents: opts.routeComponents,
     loadingComponent: opts.loadingComponent,
+  });
+  opts.pluginManager.applyPlugins({
+    key: 'patchClientRoutes',
+    type: 'event',
+    args: {
+      routes: clientRoutes,
+    },
   });
   let rootContainer = (
     <BrowserRoutes
@@ -95,26 +105,90 @@ export function renderClient(opts: {
       args: {},
     });
   }
-  const browser = (
-    <AppContext.Provider
-      value={{
-        routes: opts.routes,
-        routeComponents: opts.routeComponents,
-        clientRoutes,
-        pluginManager: opts.pluginManager,
-        rootElement: opts.rootElement,
-        basename,
-      }}
-    >
-      {rootContainer}
-    </AppContext.Provider>
-  );
 
-  // @ts-ignore
+  const Browser = () => {
+    const [clientLoaderData, setClientLoaderData] = useState<ILoaderData>({});
+
+    const handleRouteChange = useCallback(
+      (p: string) => {
+        // Patched routes has to id
+        const matchedRouteIds = (
+          matchRoutes(clientRoutes, p)?.map(
+            // @ts-ignore
+            (route) => route.route.id,
+          ) || []
+        ).filter(Boolean);
+        matchedRouteIds.forEach((id) => {
+          // preload
+          // @ts-ignore
+          const manifest = window.__umi_manifest__;
+          if (manifest) {
+            const routeIdReplaced = id.replace(/[\/\-]/g, '_');
+            const preloadId = 'preload-' + routeIdReplaced;
+            if (!document.getElementById(preloadId)) {
+              const key = Object.keys(manifest).find((k) =>
+                k.startsWith(routeIdReplaced + '.'),
+              );
+              if (!key) return;
+              let file = manifest[key];
+              const link = document.createElement('link');
+              link.id = preloadId;
+              link.rel = 'preload';
+              link.as = 'script';
+              // publicPath already in the manifest,
+              // but if runtimePublicPath is true, we need to replace it
+              if (opts.runtimePublicPath) {
+                file = file.replace(
+                  new RegExp(`^${opts.publicPath}`),
+                  // @ts-ignore
+                  window.publicPath,
+                );
+              }
+              link.href = file;
+              document.head.appendChild(link);
+            }
+          }
+          // client loader
+          const clientLoader = opts.routes[id].clientLoader;
+          if (clientLoader && !clientLoaderData[id]) {
+            clientLoader().then((data: any) => {
+              setClientLoaderData((d: any) => ({ ...d, [id]: data }));
+            });
+          }
+        });
+      },
+      [clientLoaderData],
+    );
+
+    useEffect(() => {
+      handleRouteChange(window.location.pathname);
+      return opts.history.listen((e) => {
+        handleRouteChange(e.location.pathname);
+      });
+    }, []);
+
+    return (
+      <AppContext.Provider
+        value={{
+          routes: opts.routes,
+          routeComponents: opts.routeComponents,
+          clientRoutes,
+          pluginManager: opts.pluginManager,
+          rootElement: opts.rootElement,
+          basename,
+          clientLoaderData,
+          preloadRoute: handleRouteChange,
+        }}
+      >
+        {rootContainer}
+      </AppContext.Provider>
+    );
+  };
+
   if (ReactDOM.createRoot) {
-    // @ts-ignore
-    ReactDOM.createRoot(rootElement).render(browser);
+    ReactDOM.createRoot(rootElement).render(<Browser />);
   } else {
-    ReactDOM.render(browser, rootElement);
+    // @ts-ignore
+    ReactDOM.render(<Browser />, rootElement);
   }
 }

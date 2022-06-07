@@ -34,8 +34,8 @@ import React from 'react';
 import { useModel } from '@@/plugin-model';
 ${
   loading
-    ? `import Loading from ${loading}`
-    : `function Loading() { return <div>loading</div>; }`
+    ? `import Loading from '${loading}'`
+    : `function Loading() { return <div />; }`
 }
 export default function InitialStateProvider(props: any) {
   const appLoaded = React.useRef(false);
@@ -114,7 +114,7 @@ export default () => ({ loading: false, refresh: () => {} })
       content: `
 import React from 'react';
 import Provider from './Provider';
-export function innerProvider(container) {
+export function dataflowProvider(container) {
   return <Provider>{ container }</Provider>;
 }
       `,

@@ -3,12 +3,13 @@ import {
   getConfigRoutes,
   getConventionRoutes,
 } from '@umijs/core';
-import { resolve, winPath } from '@umijs/utils';
+import { resolve, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import { IApi } from '../../types';
+import { getModuleExports } from './getModuleExports';
 
-// get api routs
+// get api routes
 export async function getApiRoutes(opts: { api: IApi }) {
   const routes = getConventionRoutes({
     base: opts.api.paths.absApiRoutesPath,
@@ -46,6 +47,19 @@ export async function getRoutes(opts: { api: IApi }) {
   if (opts.api.config.routes) {
     routes = getConfigRoutes({
       routes: opts.api.config.routes,
+      onResolveComponent(component) {
+        if (component.startsWith('@/')) {
+          component = component.replace('@/', '../');
+        }
+        component = winPath(
+          resolve.sync(localPath(component), {
+            basedir: opts.api.paths.absPagesPath,
+            extensions: ['.js', '.jsx', '.tsx', '.ts', '.vue'],
+          }),
+        );
+        component = component.replace(`${opts.api.paths.absSrcPath}/`, '@/');
+        return component;
+      },
     });
   } else {
     routes = getConventionRoutes({
@@ -59,8 +73,7 @@ export async function getRoutes(opts: { api: IApi }) {
   function localPath(path: string) {
     if (path.charAt(0) !== '.') {
       return `./${path}`;
-    }
-    {
+    } else {
       return path;
     }
   }
@@ -68,28 +81,60 @@ export async function getRoutes(opts: { api: IApi }) {
   for (const id of Object.keys(routes)) {
     if (routes[id].file) {
       // TODO: cache for performance
-      const file = isAbsolute(routes[id].file)
-        ? routes[id].file
-        : resolve.sync(localPath(routes[id].file), {
-            basedir:
-              opts.api.config.conventionRoutes?.base ||
-              opts.api.paths.absPagesPath,
-            extensions: ['.js', '.jsx', '.tsx', '.ts'],
-          });
+      let file = routes[id].file;
+      const basedir =
+        opts.api.config.conventionRoutes?.base || opts.api.paths.absPagesPath;
+
+      if (!isAbsolute(file)) {
+        if (file.startsWith('@/')) {
+          file = file.replace('@/', '../');
+        }
+        file = resolve.sync(localPath(file), {
+          basedir,
+          extensions: ['.js', '.jsx', '.tsx', '.ts', '.vue'],
+        });
+      }
+
+      const isJSFile = /.[jt]sx?/.test(file);
       routes[id].__content = readFileSync(file, 'utf-8');
+      routes[id].__absFile = file;
+      routes[id].__isJSFile = isJSFile;
+      if (opts.api.config.clientLoader) {
+        routes[id].__exports =
+          isJSFile && existsSync(file)
+            ? await getModuleExports({
+                file,
+              })
+            : [];
+        routes[id].__hasClientLoader =
+          routes[id].__exports.includes('clientLoader');
+        routes[id].clientLoader = `clientLoaders['${id}']`;
+      }
     }
   }
 
   // layout routes
-  const absLayoutPath = join(opts.api.paths.absSrcPath, 'layouts/index.tsx');
-  const layouts = await opts.api.applyPlugins({
-    key: 'addLayouts',
-    initialValue: [
-      existsSync(absLayoutPath) && {
-        id: '@@/global-layout',
-        file: absLayoutPath,
-      },
-    ].filter(Boolean),
+  const absSrcPath = opts.api.paths.absSrcPath;
+
+  const absLayoutPath = tryPaths([
+    join(opts.api.paths.absSrcPath, 'layouts/index.tsx'),
+    join(opts.api.paths.absSrcPath, 'layouts/index.vue'),
+  ]);
+
+  const layouts = (
+    await opts.api.applyPlugins({
+      key: 'addLayouts',
+      initialValue: [
+        absLayoutPath && {
+          id: '@@/global-layout',
+          file: winPath(absLayoutPath),
+        },
+      ].filter(Boolean),
+    })
+  ).map((layout: { file: string }) => {
+    // prune local path prefix, avoid mix in outputs
+    layout.file = layout.file.replace(new RegExp(`^${absSrcPath}`), '@');
+    return layout;
   });
   for (const layout of layouts) {
     addParentRoute({
@@ -127,12 +172,20 @@ export async function getRoutes(opts: { api: IApi }) {
 export async function getRouteComponents(opts: {
   routes: Record<string, any>;
   prefix: string;
+  api: IApi;
 }) {
   const imports = Object.keys(opts.routes)
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
-        return `'${key}': () => import('./EmptyRoute'),`;
+        return `'${key}': () => import( './EmptyRoute'),`;
+      }
+      if (route.hasClientLoader) {
+        route.file = join(
+          opts.api.paths.absTmpPath,
+          'pages',
+          route.id.replace(/[\/\-]/g, '_') + '.js',
+        );
       }
       // e.g.
       // component: () => <h1>foo</h1>
@@ -140,11 +193,16 @@ export async function getRouteComponents(opts: {
       if (route.file.startsWith('(')) {
         return `'${key}': () => Promise.resolve(${route.file}),`;
       }
+
       const path =
         isAbsolute(route.file) || route.file.startsWith('@/')
           ? route.file
           : `${opts.prefix}${route.file}`;
-      return `'${key}': () => import('${winPath(path)}'),`;
+
+      return `'${key}': () => import(/* webpackChunkName: "${key.replace(
+        /[\/-]/g,
+        '_',
+      )}" */'${winPath(path)}'),`;
     })
     .join('\n');
   return `{\n${imports}\n}`;

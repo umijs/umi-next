@@ -12,6 +12,7 @@ export default (api: IApi) => {
     'onGenerateFiles',
     'onBeforeCompiler',
     'onBuildComplete',
+    'onBuildHtmlComplete',
     'onPatchRoute',
     // 'onPatchRouteBefore',
     // 'onPatchRoutes',
@@ -109,13 +110,21 @@ export default (api: IApi) => {
         .filter((text) => text !== false)
         .join('\n');
 
-      // transform imports for all javascript-like files
-      if (/\.(t|j)sx?$/.test(absPath)) {
+      // transform imports for all javascript-like files only vite mode enable
+      if (api.appData.vite && /\.(t|j)sx?$/.test(absPath)) {
         content = transformIEAR({ content, path: absPath }, api);
       }
 
-      if (!existsSync(absPath) || readFileSync(absPath, 'utf-8') !== content) {
+      if (!existsSync(absPath)) {
         writeFileSync(absPath, content, 'utf-8');
+      } else {
+        const fileContent = readFileSync(absPath, 'utf-8');
+
+        if (fileContent.startsWith('// debug') || fileContent === content) {
+          return;
+        } else {
+          writeFileSync(absPath, content, 'utf-8');
+        }
       }
     },
   });

@@ -1,5 +1,6 @@
+import type { HttpsServerOptions } from '@umijs/bundler-utils';
+import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer';
 import { Options as LegacyOptions } from '../compiled/@vitejs/plugin-legacy';
-import type { PluginVisualizerOptions } from '../compiled/rollup-plugin-visualizer';
 import type { Plugin, ProxyOptions } from '../compiled/vite';
 
 export enum Env {
@@ -47,5 +48,6 @@ export interface IConfig {
   svgr?: { [key: string]: any };
   svgo?: { [key: string]: any } | false;
   targets?: { [key: string]: any };
+  https?: HttpsServerOptions;
   [key: string]: any;
 }

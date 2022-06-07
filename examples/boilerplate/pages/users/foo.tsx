@@ -1,3 +1,9 @@
 import React from 'react';
 
-export default () => <h2>user: Foo</h2>;
+export default () => {
+  return (
+    <div>
+      <h2>Users Foo Page</h2>
+    </div>
+  );
+};

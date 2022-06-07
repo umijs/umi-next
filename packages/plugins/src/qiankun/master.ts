@@ -40,16 +40,13 @@ export default (api: IApi) => {
     },
   }));
 
-  // TODO: modify routes
   api.modifyRoutes((memo) => {
     Object.keys(memo).forEach((id) => {
       const route = memo[id];
       if (route.microApp) {
         const appName = route.microApp;
-        // TODO: config base
-        const base = '/';
-        // TODO: config masterHistoryType
-        const masterHistoryType = 'browser';
+        const base = api.config.base || '/';
+        const masterHistoryType = api.config.history?.type || 'browser';
         const routeProps = route.microAppProps || {};
         const normalizedRouteProps = JSON.stringify(routeProps).replace(
           /"/g,
@@ -57,7 +54,7 @@ export default (api: IApi) => {
         );
         route.file = `(async () => {
           const { getMicroAppRouteComponent } = await import('@@/plugin-qiankun-master/getMicroAppRouteComponent');
-          return getMicroAppRouteComponent({ appName: '${appName}', base: '${base}', masterHistoryType: '${masterHistoryType}', routeProps: ${normalizedRouteProps} })
+          return getMicroAppRouteComponent({ appName: '${appName}', base: '${base}', routePath: '${route.path}', masterHistoryType: '${masterHistoryType}', routeProps: ${normalizedRouteProps} })
         })()`;
       }
     });
@@ -128,9 +125,18 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
           },
         });
       } else {
+        let content = getFileContent(file);
+
+        if (!api.config.qiankun.externalQiankun) {
+          content = content.replace(
+            /from 'qiankun'/g,
+            `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
+          );
+        }
+
         api.writeTmpFile({
           path: file.replace(/\.tpl$/, ''),
-          content: getFileContent(file)
+          content: content
             .replace(
               '__USE_MODEL__',
               api.isPluginEnable('model')
@@ -138,15 +144,18 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
                 : `const useModel = null;`,
             )
             .replace(
-              /from 'qiankun'/g,
-              `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
-            )
-            .replace(
               /from 'lodash\//g,
               `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
             ),
         });
       }
+    });
+
+    api.writeTmpFile({
+      path: 'index.ts',
+      content: `
+export { MicroApp } from './MicroApp';
+      `,
     });
   });
 };

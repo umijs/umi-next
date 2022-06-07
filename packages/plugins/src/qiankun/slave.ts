@@ -31,7 +31,10 @@ export default (api: IApi) => {
     key: 'addExtraModels',
     fn() {
       return [
-        `@@/plugin-qiankun-slave/qiankunModel#{"namespace":"${qiankunStateFromMasterModelNamespace}"}`,
+        withTmpPath({
+          api,
+          path: `qiankunModel.ts#{"namespace":"${qiankunStateFromMasterModelNamespace}"}`,
+        }),
       ];
     },
   });
@@ -82,7 +85,8 @@ export default (api: IApi) => {
   });
 
   api.addHTMLHeadScripts(() => {
-    const dontModify = api.config.qiankun?.shouldNotModifyRuntimePublicPath;
+    const dontModify =
+      api.config.qiankun?.slave?.shouldNotModifyRuntimePublicPath;
     return dontModify
       ? []
       : [
@@ -146,40 +150,50 @@ if (!window.__POWERED_BY_QIANKUN__) {
     );
   }
 
-  api.onGenerateFiles(() => {
-    //     api.writeTmpFile({
-    //       path: 'slaveOptions.ts',
-    //       content: `
-    // let options = ${JSON.stringify((api.config.qiankun || {}).slave || {})};
-    // export const getSlaveOptions = () => options;
-    // export const setSlaveOptions = (newOpts) => options = ({ ...options, ...newOpts });
-    //       `,
-    //     });
+  api.onGenerateFiles({
+    fn() {
+      //     api.writeTmpFile({
+      //       path: 'slaveOptions.ts',
+      //       content: `
+      // let options = ${JSON.stringify((api.config.qiankun || {}).slave || {})};
+      // export const getSlaveOptions = () => options;
+      // export const setSlaveOptions = (newOpts) => options = ({ ...options, ...newOpts });
+      //       `,
+      //     });
 
-    [
-      'qiankunModel.ts',
-      'connectMaster.tsx',
-      'slaveRuntimePlugin.ts',
-      'lifecycles.ts',
-    ].forEach((file) => {
-      api.writeTmpFile({
-        path: file.replace(/\.tpl$/, ''),
-        content: getFileContent(file)
-          .replace(
-            '__USE_MODEL__',
-            api.isPluginEnable('model')
-              ? `import { useModel } from '@@/plugin/model'`
-              : `const useModel = null;`,
-          )
-          .replace(
-            /from 'qiankun'/g,
-            `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
-          )
-          .replace(
-            /from 'lodash\//g,
-            `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
-          ),
+      [
+        'qiankunModel.ts',
+        'connectMaster.tsx',
+        'slaveRuntimePlugin.ts',
+        'lifecycles.ts',
+      ].forEach((file) => {
+        api.writeTmpFile({
+          path: file.replace(/\.tpl$/, ''),
+          content: getFileContent(file)
+            .replace(
+              '__USE_MODEL__',
+              api.isPluginEnable('model')
+                ? `import { useModel } from '@@/plugin-model'`
+                : `const useModel = null;`,
+            )
+            .replace(
+              /from 'qiankun'/g,
+              `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
+            )
+            .replace(
+              /from 'lodash\//g,
+              `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
+            ),
+        });
       });
-    });
+
+      api.writeTmpFile({
+        path: 'index.ts',
+        content: `
+export { connectMaster } from './connectMaster';
+      `,
+      });
+    },
+    before: 'model',
   });
 };

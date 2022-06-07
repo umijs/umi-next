@@ -46,6 +46,9 @@ const expects: Record<string, Function> = {
   'css-side-effects'({ files }: IOpts) {
     expect(files['index.css']).toContain(`color: red;`);
   },
+  'fully-specified'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`console.log("a")`);
+  },
   define({ files }: IOpts) {
     expect(files['index.js']).toContain(`console.log("1");`);
     expect(files['index.js']).toContain(`console.log("2");`);
@@ -57,6 +60,18 @@ const expects: Record<string, Function> = {
       `var external_React_namespaceObject = React;`,
     );
   },
+  'extra-babel-includes'({ files }: IOpts) {
+    const dist = files['index.js'];
+
+    // jsx
+    expect(dist).toContain('children: "JSX"');
+
+    // unicode regex
+    expect(dist).not.toContain('p{Punctuation}/ug');
+
+    // class decorator
+    expect(dist).toContain('_createClass(Person');
+  },
   json({ files }: IOpts) {
     expect(files['index.js']).toContain(
       `var react_namespaceObject = {"foo":"react"};`,
@@ -66,6 +81,10 @@ const expects: Record<string, Function> = {
     expect(files['index.js']).toContain(`# foo`);
   },
   'node-polyfill'({ files }: IOpts) {
+    expect(files['index.js']).toContain(`exports.join = function() {`);
+    expect(files['index.js']).toContain(`__webpack_require__.g.foo`);
+  },
+  'node-prefix'({ files }: IOpts) {
     expect(files['index.js']).toContain(`exports.join = function() {`);
     expect(files['index.js']).toContain(`__webpack_require__.g.foo`);
   },
@@ -80,6 +99,9 @@ const expects: Record<string, Function> = {
   'postcss-flexbugs-fixes'({ files }: IOpts) {
     expect(files['index.css']).toContain(`.foo { flex: 1 1; }`);
   },
+  'runtime-public-path'({ files }: IOpts) {
+    expect(files['index.css']).toContain(`background: url(./static/`);
+  },
   svgo({ files }: IOpts) {
     expect(files['static']).toContain(EXISTS);
     expect(files['index.js']).toContain(`.svg`);
@@ -91,6 +113,7 @@ const expects: Record<string, Function> = {
   svgr({ files }: IOpts) {
     expect(files['static']).toContain(EXISTS);
     expect(files['index.js']).toContain(`.svg`);
+    expect(files['index.js']).toContain(`antd_svg`);
   },
   targets({ files }: IOpts) {
     expect(files['index.js']).toContain(`var foo = 'foo';`);

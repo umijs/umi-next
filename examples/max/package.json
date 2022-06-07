@@ -1,0 +1,16 @@
+{
+  "name": "@example/max",
+  "private": true,
+  "scripts": {
+    "build": "max build",
+    "dev": "max dev",
+    "preview": "max preview --port 9527",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@umijs/max": "4.0.0-canary.20220606.1",
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
+  }
+}

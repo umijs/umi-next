@@ -9,7 +9,7 @@
     "noUnusedParameters": true,
     "strict": true,
     "skipLibCheck": true,
-    "target": "es2015",
+    "target": "es2019",
     "jsx": "react",
     "paths": {
       "umi": ["./packages/umi"],
@@ -22,6 +22,8 @@
     "**/examples",
     "**/dist",
     "**/fixtures",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "**/*.e2e.ts",
+    "**/templates"
   ]
 }

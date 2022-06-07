@@ -12,14 +12,14 @@
 
 ### 依赖处理
 
-项目的 `package.json` 需要升级 umi，并替换掉对应的 umi 插件。
+项目的 `package.json` 需要升级 Umi，并替换掉对应的 Umi 插件。
 
-如果 umi@3 中是使用 `umi` + `@umijs/preset-react` 的组合进行开发的，那可以直接使用新版的 `umipro` 直接升级。
+如果 `umi@3` 中是使用 `umi` + `@umijs/preset-react` 的组合进行开发的，那可以直接使用新版的 `max` 直接升级。
 
 ```diff
 {
   "devDependencies": {
-+   "@umijs/pro": "^4.0.0",  
++   "@umijs/max": "^4.0.0",  
 -   "umi": "^3.0.0",
 -   "@umijs/preset-react": "^1.2.2"
   }
@@ -30,35 +30,35 @@
 
 ### 启动命令
 
-如果使用了 `@umijs/pro` 可以使用 `umipro` 命令来替换 `umi`，`umipro dev`，`umipro build` 等
+如果使用了 `@umijs/max` 可以使用 `max` 命令来替换 `umi`，`max dev`，`max build` 等
 
-umi@4 将一些项目前置操作放到了 `setup` 命令中，如 umi@3 中的 `umi g tmp` 等命令，需要使用 `umi setup` 替换
+`umi@4` 将一些项目前置操作放到了 `setup` 命令中，如 umi@3 中的 `umi g tmp` 等命令，需要使用 `umi setup` 替换
 
-`pageage.json`
+`package.json`
 ```diff
 {
   "scripts": {
 -    "build": "umi build",
-+    "build": "umipro build",
++    "build": "max build",
 -    "postinstall": "umi g tmp",
-+    "postinstall": "umipro setup",
++    "postinstall": "max setup",
 -    "start": "umi dev",
-+    "start": "umipro dev",
++    "start": "max dev",
   }
 }
 ```
 
 ### 非官方插件升级
 
-在项目中用到的一些非 umi 官方提供的 umi 插件，请联系相关作者及时根据[插件 api 变动](./guides/plugins)。
+在项目中用到的一些非 Umi 官方提供的 Umi 插件，请联系相关作者及时根据[插件 api 变动](./guides/plugins)。
 
 项目迁移时可先关闭对相应插件包的引用，如临时注释配置中的 `plugins`，移除 package.json 中以 `umi-plugin-`，`@umijs/plugin-` 和 `@umijs/preset-` 开头的所有依赖。
 
 ### 配置层迁移
 
-**umipro 提供的的配置项**如下 `config/config.ts` ：
+**max 提供的的配置项**如下 `config/config.ts` ：
 
-> 需要注意的是，之前的一些插件约定开启的规则，在 umi@4 中几乎都要通过显示的配置开启，因为希望在 umi@4 中有更少的“黑盒”。
+> 需要注意的是，之前的一些插件约定开启的规则，在 `umi@4` 中几乎都要通过显示的配置开启，因为希望在 `umi@4` 中有更少的“黑盒”。
 
 ```typescript
 import { defineConfig, utils } from 'umi';
@@ -108,7 +108,7 @@ export default defineConfig({
 
 ### 代码层修改
 
-Umi 4 中将 react-router@5 升级到 react-router@6，所以路由相关的一些 api 存在着使用上的差异。
+Umi 4 中将 `react-router@5` 升级到 `react-router@6`，所以路由相关的一些 api 存在着使用上的差异。
 
 props 默认为空对象，以下属性都不能直接从 props 中取出
 ![image](https://img.alicdn.com/imgextra/i4/O1CN01H9ScQv21ymaLkwZ8p_!!6000000007054-2-tps-1210-374.png)
@@ -135,6 +135,34 @@ export default function Layout(props) {
 +      <Outlet />
     </div>
   );
+}
+```
+
+使用了 `React.cloneElement` 方式渲染的路由组件改造，示例
+
+```diff
+import React from 'react';
++ import { Outlet } from 'umi';
+
+export default function RouteComponent(props) {
+  return (
+    <div>
+-      { React.cloneElement(props.children, { someProp: 'p1' }) }
++      <Outlet context={{ someProp: 'p1' }} />
+    </div>
+  );
+}
+```
+组件改成从 `useOutletContext` 取值
+```diff
+import React from 'react';
++ import { useOutletContext } from 'umi';
+
+- export function Comp(props){
++ export function Comp() {
++   const props = useOutletContext();
+
+  return props.someProp;
 }
 ```
 
@@ -192,7 +220,7 @@ export default function Page(props) {
   return (
     <div>
 -     { props.match }
-+     { location }
++     { match }
     </div>
   );
 }
@@ -217,7 +245,7 @@ pattern: {path: 'list/search/:type'}
 更多改动和 api 变更，请查阅 [react-router@6](https://reactrouter.com/docs/en/v6/api#uselocation)
 
 
-完成以上操作后，执行下 `umipro dev`，访问 [http://localhost:8000](http://localhost:8000)，请验证所有功能都符合预期。
+完成以上操作后，执行下 `max dev`，访问 [http://localhost:8000](http://localhost:8000)，请验证所有功能都符合预期。
 
 如果你的项目无法正常启动，你可能还需要做如下操作：
 
@@ -239,11 +267,11 @@ location 中的 query 不再支持了，后续推荐用 [search](https://develop
 
 ### *.d 文件找不到，或者它的引用找不到
 
-在 umi@3 中通过 `import` 会自动找到同名的 `.d.ts` 文件，如：
+在 `umi@3` 中通过 `import` 会自动找到同名的 `.d.ts` 文件，如：
 
 `import { ButtonType } from './button';`
 
-如果存在 `.button.d.ts` 文件，在 umi@3 中会正确执行，但是在 umi@4 中会发生报错，你可能需要更加规范的引用类型。
+如果存在 `.button.d.ts` 文件，在 `umi@3` 中会正确执行，但是在 umi@4 中会发生报错，你可能需要更加规范的引用类型。
 
 ```diff
 - import { ButtonType } from './button';

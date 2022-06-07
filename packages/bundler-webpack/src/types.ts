@@ -1,4 +1,5 @@
 import type { Config as SwcConfig } from '@swc/core';
+import type { HttpsServerOptions } from '@umijs/bundler-utils';
 import type { Options as ProxyOptions } from '../compiled/http-proxy-middleware';
 import { Configuration } from '../compiled/webpack';
 import Config from '../compiled/webpack-5-chain';
@@ -61,10 +62,12 @@ export interface IConfig {
   depTranspiler?: Transpiler;
   devtool?: Config.DevTool;
   deadCode?: DeadCodeParams;
+  https?: HttpsServerOptions;
   externals?: WebpackConfig['externals'];
   esm?: { [key: string]: any };
   extraBabelPlugins?: IBabelPlugin[];
   extraBabelPresets?: IBabelPlugin[];
+  extraBabelIncludes?: string[];
   extraPostCSSPlugins?: any[];
   hash?: boolean;
   ignoreMomentLocale?: boolean;

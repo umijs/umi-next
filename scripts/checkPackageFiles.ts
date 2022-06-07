@@ -1,7 +1,8 @@
 import { glob, lodash, logger } from '@umijs/utils';
 import { isMatch } from 'matcher';
 import 'zx/globals';
-import { eachPkg, getPkgs } from './utils';
+import { PATHS } from './.internal/constants';
+import { eachPkg, getPkgs } from './.internal/utils';
 
 const COMMON_IGNORES = [
   // default included
@@ -21,6 +22,9 @@ const COMMON_IGNORES = [
   'tsconfig*.json',
   '*.config.js',
   'package.json',
+  'typings.d.ts',
+  // extra
+  'devToolApp',
 ];
 
 // check packages/*
@@ -50,10 +54,11 @@ eachPkg(getPkgs(), ({ pkgJson, dir, name, pkgPath }) => {
   const testFiles = glob.sync(`${path.join(dir)}/src/**/*.test.ts`);
   const oldPkgJson = lodash.cloneDeep(pkgJson);
   if (testFiles.length) {
-    pkgJson.scripts.test = 'jest -c ../../jest.turbo.config.ts';
+    pkgJson.scripts.test = 'umi-scripts jest-turbo';
   } else {
     delete pkgJson.scripts.test;
   }
+  pkgJson.scripts['build:deps'] = 'umi-scripts bundleDeps';
   if (!lodash.isEqual(oldPkgJson, pkgJson)) {
     fs.writeFileSync(pkgPath, `${JSON.stringify(pkgJson, null, 2)}\n`, 'utf-8');
   }
@@ -65,7 +70,7 @@ if (missingDetected) {
 }
 
 // check examples/*
-const EXAMPLE_DIR = path.join(__dirname, '../examples');
+const EXAMPLE_DIR = PATHS.EXAMPLES;
 eachPkg(
   getPkgs({ base: EXAMPLE_DIR }),
   ({ name, pkgJson, pkgPath }) => {
@@ -83,7 +88,7 @@ eachPkg(
     }
     if (pkgJson.private !== true) {
       pkgJson.private = true;
-      logger.warn(chalk.yellow(`Set '${name}' example as private pacakge`));
+      logger.warn(chalk.yellow(`Set '${name}' example as private package`));
     }
     if (!lodash.isEqual(pkgJson, oldPkgJson)) {
       fs.writeFileSync(

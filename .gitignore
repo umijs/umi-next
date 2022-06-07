@@ -21,6 +21,9 @@
 /packages/father/examples/**/dist
 /packages/father/examples/**/es
 /packages/plugin-docs/client/theme-doc/tailwind.out.css
+/packages/preset-umi/devToolApp/.umi
+/packages/preset-umi/devToolApp/.umi-production
+/packages/preset-umi/devToolApp/node_modules
 /.umi
 /.mfsu
 /.umi-production
@@ -30,3 +33,8 @@
 *.tsbuildinfo
 .jest-cache
 .swc
+/test/**/fixtures/*/dist
+/test/**/fixtures/*/.umi
+/test/**/fixtures/*/.umi-production
+/test/**/fixtures/*/src/.umi
+/test/**/fixtures/*/src/.umi-production

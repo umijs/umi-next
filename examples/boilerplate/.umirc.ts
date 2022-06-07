@@ -1,6 +1,42 @@
 import extraConfig from './extraConfig';
 
 export default {
+  base: '/foo',
+  // history: { type: 'hash' },
+  routes: [
+    { path: '/', component: 'index' },
+    {
+      path: '/users',
+      component: 'users',
+      routes: [
+        {
+          path: '/users/foo',
+          component: 'users/foo',
+        },
+        {
+          path: '/users/login',
+          component: 'users/login',
+        },
+      ],
+    },
+    {
+      path: '/users/:id',
+      component: 'users/$id',
+      wrappers: ['@/wrappers/foo', '@/wrappers/bar'],
+    },
+    {
+      path: '/about',
+      component: 'about',
+    },
+    {
+      path: '/class-component',
+      component: 'class-component',
+    },
+    {
+      path: '*',
+      component: '@/components/404',
+    },
+  ],
   externals: {
     marked: [
       'script https://gw.alipayobjects.com/os/lib/marked/2.0.0/marked.min.js',
@@ -23,6 +59,7 @@ export default {
   },
   // vite: {},
   deadCode: {},
+  https: {},
   // fastRefresh: false,
   // favicon: 'https://sivers.com/favicon.ico',
   headScripts: [`console.log('head script')`],
@@ -34,5 +71,12 @@ export default {
   // esmi: {},
   // esm: {},
   lowImport: false,
+  title: 'boilerplate - umi 4',
+  cssMinifier: 'parcelCSS',
+  cssMinifierOptions: {
+    targets: {
+      chrome: 60,
+    },
+  },
   ...extraConfig,
 };

@@ -1,8 +1,8 @@
 import type { RequestHandler } from '@umijs/bundler-utils/compiled/express';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { matchRoutes } from 'react-router-dom';
-import { createServerRoutes } from './routes';
+// import { matchRoutes } from 'react-router-dom';
+// import { createServerRoutes } from './routes';
 import { normalizeScripts } from './scripts';
 import { normalizeStyles } from './styles';
 
@@ -20,12 +20,14 @@ export interface IOpts {
   links?: Record<string, string>[];
   metas?: Record<string, string>[];
   styles?: (Record<string, string> | string)[];
-  favicon?: string;
+  favicons?: string[];
+  title?: string;
   headScripts?: (Record<string, string> | string)[];
   scripts?: (Record<string, string> | string)[];
   mountElementId?: string;
   esmScript?: boolean;
   modifyHTML?: (html: string, args: { path?: string }) => Promise<string>;
+  historyType?: 'hash' | 'browser';
 }
 
 export async function getMarkup(
@@ -82,9 +84,13 @@ export async function getMarkup(
     return `<${opts.tagName} ${attrs} />`;
   }
 
-  const favicon = opts.favicon
-    ? `<link rel="shortcut icon" href="${opts.favicon}">`
-    : '';
+  const favicons: string[] = [];
+  if (Array.isArray(opts.favicons)) {
+    opts.favicons.forEach((e) => {
+      favicons.push(`<link rel="shortcut icon" href="${e}">`);
+    });
+  }
+  const title = opts.title ? `<title>${opts.title}</title>` : '';
   const metas = (opts.metas || []).map((meta) =>
     getTagContent({ attrs: meta, tagName: 'meta' }),
   );
@@ -107,7 +113,8 @@ export async function getMarkup(
 />
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />`,
     metas.join('\n'),
-    favicon,
+    favicons.join('\n'),
+    title,
     links.join('\n'),
     styles.join('\n'),
     headScripts.join('\n'),
@@ -128,13 +135,21 @@ export async function getMarkup(
 
 export function createRequestHandler(opts: IOpts): RequestHandler {
   return async (req, res, next) => {
-    // 匹配路由，不匹配走 next()
-    // TODO: cache
-    const routes = createServerRoutes({
-      routesById: opts.routes,
-    });
-    const matches = matchRoutes(routes, req.path, opts.base);
-    if (matches) {
+    if (
+      opts.historyType === 'browser' &&
+      opts.base !== '/' &&
+      req.path === '/'
+    ) {
+      // 如果是 browser，并且配置了非 / base，访问 / 时 redirect 到 base 路径
+      res.redirect(opts.base);
+    } else if (req.headers.accept?.includes('text/html')) {
+      // 匹配路由，不匹配走 next()
+      // const routes = createServerRoutes({
+      //   routesById: opts.routes,
+      // });
+      // const matches = matchRoutes(routes, req.path, opts.base);
+
+      // 其他接受 HTML 的请求都兜底返回 HTML
       res.set('Content-Type', 'text/html');
       const markup = await getMarkup({ ...opts, path: req.path });
       res.end(markup);

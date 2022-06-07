@@ -36,7 +36,7 @@ article ul {
 }
 
 article li {
-  @apply mt-2 dark:text-white;
+  @apply text-base mt-2 leading-7 text-gray-700 dark:text-white;
 }
 
 article ol {
@@ -51,43 +51,129 @@ article h2 a {
   @apply no-underline dark:text-white;
 }
 
+/* 行内代码 */
 article code {
-  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md dark:text-white;
+  @apply text-sky-600 dark:text-sky-300 bg-slate-800 bg-opacity-5 dark:bg-opacity-100 border border-black border-opacity-5 rounded-md;
   font-size: 0.9em;
   padding: 2px 0.25em;
   box-decoration-break: clone;
   font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
 }
 
-article inlinecode {
-  @apply bg-black bg-opacity-5 border border-black border-opacity-5 rounded-md px-1.5 py-0.5 text-xs dark:text-white dark:bg-gray-700;
+/* 行内高亮代码 */
+article span[data-rehype-pretty-code-fragment] code {
+  @apply bg-zinc-900 dark:bg-zinc-900;
 }
 
+/* 代码块 */
 article pre {
-  /* content-visibility: auto; */
   contain: paint;
-  @apply p-4 bg-slate-100 dark:bg-slate-800 rounded-xl my-8 overflow-x-auto font-medium subpixel-antialiased dark:text-white;
+  @apply my-4 bg-zinc-900 dark:bg-zinc-900 text-neutral-300 dark:text-neutral-300 rounded-md font-medium subpixel-antialiased transition;
+}
+article pre > code {
+  @apply grid leading-relaxed p-4 text-sm text-neutral-300 dark:text-neutral-300 bg-transparent dark:bg-transparent rounded-none border-none min-w-full overflow-x-auto;
+}
+article div[data-rehype-pretty-code-fragment] {
+  @apply my-4;
 }
 
-article pre code {
-  line-height: 1.25rem;
-  @apply relative p-0 text-sm text-current bg-transparent rounded-none border-none inline-block min-w-full dark:text-white;
+/* 代码块的标题部分 */
+article
+  div[data-rehype-pretty-code-fragment]
+  > div[data-rehype-pretty-code-title] {
+  @apply pb-1 text-sm text-zinc-400 dark:text-neutral-400 text-center;
 }
 
-article pre code .line.highlighted {
-  @apply before:block before:absolute before:h-5 before:bg-gray-500 before:bg-opacity-10 before:-inset-x-4 before:pointer-events-none before:select-none dark:text-white;
+/* 代码块的代码部分 */
+article div[data-rehype-pretty-code-fragment] > pre {
+  @apply pt-6 my-0;
+}
+article div[data-rehype-pretty-code-fragment] > pre > code {
+  @apply my-0 pt-0 px-0;
 }
 
-article a code {
-  @apply text-current no-underline dark:text-white;
+/* 代码块的使用语言 */
+article div[data-rehype-pretty-code-fragment] > pre::before {
+  @apply fixed top-0 right-0 px-2 text-sm uppercase bg-neutral-300 text-zinc-900 bg-opacity-80 dark:bg-opacity-60 rounded-sm;
+  content: attr(data-language);
 }
 
+/* 代码块的代码行 */
+article div[data-rehype-pretty-code-fragment] > pre > code .line {
+  @apply pl-3 pr-4;
+}
+
+/* 代码块的行内高亮文字 */
+article div[data-rehype-pretty-code-fragment] > pre > code .line .word {
+  @apply px-1.5 inline-block bg-neutral-300 bg-opacity-20 rounded-sm;
+}
+
+/* 代码块的行号 */
+article div[data-rehype-pretty-code-fragment] > pre > code {
+  counter-reset: line;
+}
+article div[data-rehype-pretty-code-fragment] > pre > code > .line::before {
+  @apply text-neutral-600 w-4 mr-4 inline-block text-right;
+  counter-increment: line;
+  content: counter(line);
+}
+
+/* 代码块的高亮行 */
+article div[data-rehype-pretty-code-fragment] pre > code > .line {
+  @apply border-l-2 border-transparent;
+}
+article div[data-rehype-pretty-code-fragment] pre > code > .line.highlighted {
+  @apply bg-neutral-100 dark:bg-neutral-300 bg-opacity-10 dark:bg-opacity-10 border-l-blue-400 dark:border-l-sky-600;
+}
+
+/* 链接 */
 article a {
-  @apply text-blue-600 mx-1 hover:text-blue-300 transition dark:text-blue-400;
+  @apply mx-1 text-cyan-600 dark:text-fuchsia-200 hover:text-cyan-900 dark:hover:text-fuchsia-400 transition;
   background-image: linear-gradient(
     transparent 60%,
     rgba(130, 199, 255, 0.28) 55%
   );
+}
+.dark article a {
+  background-image: linear-gradient(
+    transparent 60%,
+    rgba(238, 157, 234, 0.28) 55%
+  );
+}
+
+/* 行内代码块链接 */
+article a > code {
+  @apply text-cyan-600 dark:text-fuchsia-200 hover:text-cyan-900 dark:hover:text-fuchsia-400 transition;
+  background-image: linear-gradient(
+    transparent 60%,
+    rgba(130, 199, 255, 0.28) 55%
+  );
+}
+.dark article a > code {
+  background-image: linear-gradient(
+    transparent 60%,
+    rgba(238, 157, 234, 0.28) 55%
+  );
+}
+
+article table {
+  @apply table-auto w-full shadow rounded-xl text-left overflow-hidden dark:shadow-gray-800 my-8;
+}
+
+article table thead {
+  @apply bg-blue-100 dark:bg-gray-800;
+}
+
+article table thead th {
+  @apply py-3 px-4 text-gray-700 dark:text-white;
+}
+
+article table tbody tr {
+  @apply border-b border-b-zinc-100 dark:border-b-gray-600;
+}
+
+article table tbody td {
+  @apply py-2 px-4 text-gray-700 dark:text-white;
 }
 
 .link-with-underline {
@@ -161,39 +247,51 @@ h6 {
     @apply border-l-8;
   }
 
-  .mdx-message > p {
+  .mdx-message code {
+    @apply dark:bg-opacity-50;
+  }
+
+  .mdx-message-text :first-child {
     @apply mt-0;
   }
 
-  .mdx-message-info {
-    @apply bg-blue-50 border-blue-300 dark:bg-blue-100 dark:border-blue-500;
+  .mdx-message-text img {
+    @apply rounded-md;
   }
 
-  .mdx-message-info > p {
-    @apply text-blue-900 dark:text-blue-900;
+  .mdx-message-text pre {
+    @apply my-2;
+  }
+
+  .mdx-message-info {
+    @apply bg-blue-50 border-blue-300 dark:bg-blue-900 dark:border-blue-500;
+  }
+
+  .mdx-message-info code {
+    @apply text-blue-800 dark:text-blue-200;
   }
 
   .mdx-message-success {
-    @apply bg-green-50 border-green-300 dark:bg-green-100 dark:border-green-500;
+    @apply bg-green-50 border-green-300 dark:bg-green-700 dark:border-green-500;
   }
 
-  .mdx-message-success > p {
-    @apply text-green-900 dark:text-green-900;
+  .mdx-message-success code {
+    @apply text-green-800 dark:text-green-200;
   }
 
   .mdx-message-warning {
-    @apply bg-orange-50 border-orange-300 dark:bg-orange-100 dark:border-orange-500;
+    @apply bg-orange-50 border-orange-300 dark:bg-orange-700 dark:border-orange-500;
   }
 
-  .mdx-message-warning > p {
-    @apply text-orange-900 dark:text-orange-900;
+  .mdx-message-warning code {
+    @apply text-orange-700 dark:text-orange-100;
   }
 
   .mdx-message-error {
-    @apply bg-red-50 border-red-300 dark:bg-red-100 dark:border-red-500;
+    @apply bg-red-50 border-red-300 dark:bg-rose-700 dark:border-rose-500;
   }
 
-  .mdx-message-error > p {
-    @apply text-red-900 dark:text-red-900;
+  .mdx-message-error code {
+    @apply text-red-700 dark:text-rose-100;
   }
 }

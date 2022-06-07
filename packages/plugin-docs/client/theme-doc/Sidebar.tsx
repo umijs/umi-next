@@ -28,7 +28,7 @@ export default (props: SidebarProps) => {
     <ul
       className={cx(
         'h-screen lg:h-[calc(100vh-8rem)] overflow-y-scroll',
-        'lg:w-64 p-8 pb-12 fadeout w-full',
+        'lg:w-64 px-8 pt-12 lg:pt-8 pb-36 fadeout w-full',
       )}
     >
       {(matchedNav.children || []).map((item) => {
@@ -49,7 +49,8 @@ export default (props: SidebarProps) => {
                 if (to === window.location.pathname) {
                   return (
                     <div
-                      key={child}
+                      id="active-nav-item"
+                      key={route.path}
                       className="my-2 hover:text-blue-400 transition-all
                        bg-blue-50 text-blue-400 px-4 py-1
                        rounded-lg cursor-default dark:bg-blue-900 dark:text-blue-200"
@@ -61,7 +62,9 @@ export default (props: SidebarProps) => {
 
                 return (
                   <components.Link
-                    to={route.path}
+                    key={route.path}
+                    to={to.startsWith('/') ? to : `/${to}`}
+                    prefetch
                     onClick={() =>
                       props.setMenuOpened && props.setMenuOpened((o) => !o)
                     }

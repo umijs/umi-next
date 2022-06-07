@@ -1,6 +1,6 @@
 {
   "name": "@umijs/core",
-  "version": "4.0.0-canary.20220325.1",
+  "version": "4.0.0-canary.20220606.1",
   "homepage": "https://github.com/umijs/umi-next/tree/master/packages/core#readme",
   "bugs": "https://github.com/umijs/umi-next/issues",
   "repository": {
@@ -16,20 +16,19 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
+    "build:deps": "umi-scripts bundleDeps",
     "dev": "pnpm build -- --watch",
-    "test": "jest -c ../../jest.turbo.config.ts"
+    "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
-    "@umijs/bundler-utils": "4.0.0-canary.20220325.1",
-    "@umijs/utils": "4.0.0-canary.20220325.1"
+    "@umijs/bundler-utils": "4.0.0-canary.20220606.1",
+    "@umijs/utils": "4.0.0-canary.20220606.1"
   },
   "devDependencies": {
     "@hapi/joi": "17.1.1",
     "@types/hapi__joi": "17.1.8",
     "dotenv": "16.0.0",
-    "just-diff": "5.0.1",
-    "tapable": "2.2.1"
+    "just-diff": "5.0.1"
   },
   "publishConfig": {
     "access": "public"
@@ -41,14 +40,13 @@
     "deps": [
       "@hapi/joi",
       "dotenv",
-      "just-diff",
-      "tapable"
+      "just-diff"
     ],
     "externals": {
       "@hapi/joi": "$$LOCAL",
       "dotenv": "$$LOCAL",
       "just-diff": "$$LOCAL",
-      "tapable": "$$LOCAL"
+      "tapable": "@umijs/bundler-utils/compiled/tapable"
     }
   }
 }

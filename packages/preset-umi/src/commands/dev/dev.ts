@@ -1,18 +1,19 @@
 import type { RequestHandler } from '@umijs/bundler-webpack';
-import { lodash, logger, portfinder, winPath } from '@umijs/utils';
+import { chalk, lodash, logger, portfinder, winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
 import { basename, join } from 'path';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
-import { clearTmp } from '../../utils/clearTmp';
 import { lazyImportFromCurrentPkg } from '../../utils/lazyImportFromCurrentPkg';
 import { createRouteMiddleware } from './createRouteMiddleware';
 import { faviconMiddleware } from './faviconMiddleware';
 import { getBabelOpts } from './getBabelOpts';
+import ViteHtmlPlugin from './plugins/ViteHtmlPlugin';
 import { printMemoryUsage } from './printMemoryUsage';
 import {
   addUnWatch,
   createDebouncedHandler,
+  expandCSSPaths,
   expandJSPaths,
   unwatch,
   watch,
@@ -40,10 +41,8 @@ umi dev
 PORT=8888 umi dev
 `,
     async fn() {
+      logger.info(chalk.cyan.bold(`Umi v${api.appData.umi.version}`));
       const enableVite = !!api.config.vite;
-
-      // clear tmp except cache
-      clearTmp(api.paths.absTmpPath);
 
       // check package.json
       await api.applyPlugins({
@@ -90,6 +89,8 @@ PORT=8888 umi dev
           join(absSrcPath, 'layouts'),
           ...expandJSPaths(join(absSrcPath, 'loading')),
           ...expandJSPaths(join(absSrcPath, 'app')),
+          ...expandJSPaths(join(absSrcPath, 'global')),
+          ...expandCSSPaths(join(absSrcPath, 'global')),
         ].filter(Boolean),
       });
       lodash.uniq<string>(watcherPaths.map(winPath)).forEach((p: string) => {
@@ -153,6 +154,7 @@ PORT=8888 umi dev
               api.restartServer();
               return;
             }
+            await api.service.resolveConfig();
             if (data.changes[api.ConfigChangeType.regenerateTmpFiles]) {
               logger.event(
                 `config ${data.changes[
@@ -230,6 +232,7 @@ PORT=8888 umi dev
       const opts = {
         config: api.config,
         cwd: api.cwd,
+        rootDir: process.cwd(),
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),
         },
@@ -246,13 +249,26 @@ PORT=8888 umi dev
           ...beforeMiddlewares,
           faviconMiddleware,
         ]),
-        afterMiddlewares: middlewares.concat(createRouteMiddleware({ api })),
+        // vite 模式使用 ./plugins/ViteHtmlPlugin.ts 处理
+        afterMiddlewares: enableVite
+          ? []
+          : middlewares.concat(createRouteMiddleware({ api })),
         onDevCompileDone(opts: any) {
           debouncedPrintMemoryUsage();
+          api.appData.bundleStatus.done = true;
           api.applyPlugins({
             key: 'onDevCompileDone',
             args: opts,
           });
+        },
+        onProgress(opts: any) {
+          api.appData.bundleStatus.progresses = opts.progresses;
+        },
+        onMFSUProgress(opts: any) {
+          api.appData.mfsuBundleStatus = {
+            ...api.appData.mfsuBundleStatus,
+            ...opts,
+          };
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
         cache: {
@@ -290,5 +306,10 @@ PORT=8888 umi dev
         },
       });
     },
+  });
+
+  api.modifyViteConfig((viteConfig) => {
+    viteConfig.plugins?.push(ViteHtmlPlugin(api));
+    return viteConfig;
   });
 };

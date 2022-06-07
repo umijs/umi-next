@@ -1,12 +1,14 @@
+import { createHttpsServer } from '@umijs/bundler-utils';
 import express from '@umijs/bundler-utils/compiled/express';
 import { createProxyMiddleware } from '@umijs/bundler-webpack/compiled/http-proxy-middleware';
 import webpack, {
   Configuration,
 } from '@umijs/bundler-webpack/compiled/webpack';
 import { chalk, logger } from '@umijs/utils';
+import cors from 'cors';
 import { createReadStream, existsSync } from 'fs';
 import http from 'http';
-import { join } from 'path';
+import { extname, join } from 'path';
 import { MESSAGE_TYPE } from '../constants';
 import { IConfig } from '../types';
 import { createWebSocketServer } from './ws';
@@ -20,6 +22,7 @@ interface IOpts {
   beforeMiddlewares?: any[];
   afterMiddlewares?: any[];
   onDevCompileDone?: Function;
+  onProgress?: Function;
 }
 
 export async function createServer(opts: IOpts) {
@@ -27,34 +30,14 @@ export async function createServer(opts: IOpts) {
   const { proxy } = userConfig;
   const app = express();
 
-  // basename middleware
-  app.use((req, _res, next) => {
-    const { url, path } = req;
-    const { basename, history } = userConfig;
-    if (
-      history?.type === 'browser' &&
-      basename !== '/' &&
-      url.startsWith(basename)
-    ) {
-      req.url = url.slice(basename.length);
-      req.path = path.slice(basename.length);
-    }
-    next();
-  });
-
   // cros
-  app.use((_req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Content-Length, Authorization, Accept, X-Requested-With',
-    );
-    res.header(
-      'Access-Control-Allow-Methods',
-      'GET, HEAD, PUT, POST, PATCH, DELETE, OPTIONS',
-    );
-    next();
-  });
+  app.use(
+    cors({
+      origin: true,
+      methods: ['GET', 'HEAD', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+      credentials: true,
+    }),
+  );
 
   // compression
   app.use(require('@umijs/bundler-webpack/compiled/compression')());
@@ -66,21 +49,43 @@ export async function createServer(opts: IOpts) {
 
   // TODO: add to before middleware
   app.use((req, res, next) => {
-    if (req.path === '/umi.js' && existsSync(join(opts.cwd, 'umi.js'))) {
-      res.setHeader('Content-Type', 'application/javascript');
-      createReadStream(join(opts.cwd, 'umi.js')).on('error', next).pipe(res);
+    const file = req.path;
+    const filePath = join(opts.cwd, file);
+    const ext = extname(filePath);
+
+    if (ext === '.js' && existsSync(filePath)) {
+      res.sendFile(filePath);
     } else {
       next();
     }
   });
 
   // webpack dev middleware
-  const compiler = webpack(
-    Array.isArray(webpackConfig) ? webpackConfig : [webpackConfig],
-  );
+  const configs = Array.isArray(webpackConfig)
+    ? webpackConfig
+    : [webpackConfig];
+  const progresses: any[] = [];
+  if (opts.onProgress) {
+    configs.forEach((config) => {
+      const progress = {
+        percent: 0,
+        status: 'waiting',
+      };
+      progresses.push(progress);
+      config.plugins.push(
+        new webpack.ProgressPlugin((percent, msg) => {
+          progress.percent = percent;
+          progress.status = msg;
+          opts.onProgress!({ progresses });
+        }),
+      );
+    });
+  }
+  const compiler = webpack(configs);
+
   const webpackDevMiddleware = require('@umijs/bundler-webpack/compiled/webpack-dev-middleware');
   const compilerMiddleware = webpackDevMiddleware(compiler, {
-    publicPath: '/',
+    publicPath: userConfig.publicPath || '/',
     writeToDisk: userConfig.writeToDisk,
     stats: 'none',
     // watchOptions: { ignored }
@@ -205,7 +210,13 @@ export async function createServer(opts: IOpts) {
     }
   });
 
-  const server = http.createServer(app);
+  const server = userConfig.https
+    ? await createHttpsServer(app, userConfig.https)
+    : http.createServer(app);
+  if (!server) {
+    return null;
+  }
+
   const ws = createWebSocketServer(server);
 
   ws.wss.on('connection', (socket) => {
@@ -214,10 +225,14 @@ export async function createServer(opts: IOpts) {
     }
   });
 
+  const protocol = userConfig.https ? 'https:' : 'http:';
   const port = opts.port || 8000;
+
   server.listen(port, () => {
     const host = opts.host && opts.host !== '0.0.0.0' ? opts.host : '127.0.0.1';
-    logger.ready(`App listening at ${chalk.green(`http://${host}:${port}`)}`);
+    logger.ready(
+      `App listening at ${chalk.green(`${protocol}//${host}:${port}`)}`,
+    );
   });
 
   return server;

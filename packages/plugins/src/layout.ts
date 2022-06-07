@@ -1,9 +1,8 @@
 import * as allIcons from '@ant-design/icons';
-import assert from 'assert';
-import { dirname } from 'path';
+import { existsSync } from 'fs';
+import { dirname, join } from 'path';
 import { IApi } from 'umi';
 import { lodash, Mustache, winPath } from 'umi/plugin-utils';
-import { resolveProjectDep } from './utils/resolveProjectDep';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: IApi) => {
@@ -18,12 +17,32 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
-  const pkgPath =
-    resolveProjectDep({
-      pkg: api.pkg,
-      cwd: api.cwd,
-      dep: '@ant-design/pro-layout',
-    }) || dirname(require.resolve('@ant-design/pro-layout/package.json'));
+  /**
+   * 优先去找 '@alipay/tech-ui'，保证稳定性
+   */
+  const depList = ['@alipay/tech-ui', '@ant-design/pro-layout'];
+
+  const pkgHasDep = depList.find((dep) => {
+    const { pkg } = api;
+    if (pkg.dependencies?.[dep] || pkg.devDependencies?.[dep]) {
+      return true;
+    }
+    return false;
+  });
+
+  const getPkgPath = () => {
+    // 如果  layout 和 techui至少有一个在，找到他们的地址
+    if (
+      pkgHasDep &&
+      existsSync(join(api.cwd, 'node_modules', pkgHasDep, 'package.json'))
+    ) {
+      return join(api.cwd, 'node_modules', pkgHasDep);
+    }
+    // 如果项目中没有去找插件以来的
+    return dirname(require.resolve('@ant-design/pro-layout/package.json'));
+  };
+
+  const pkgPath = getPkgPath();
 
   api.modifyAppData((memo) => {
     const version = require(`${pkgPath}/package.json`).version;
@@ -35,8 +54,11 @@ export default (api: IApi) => {
   });
 
   api.modifyConfig((memo) => {
-    // import from @ant-design/pro-layout
-    memo.alias['@ant-design/pro-layout'] = pkgPath;
+    // 只在没有自行依赖 @ant-design/pro-layout 或 @alipay/tech-ui 时
+    // 才使用插件中提供的 @ant-design/pro-layout
+    if (!pkgHasDep) {
+      memo.alias['@ant-design/pro-layout'] = pkgPath;
+    }
     return memo;
   });
 
@@ -48,9 +70,9 @@ export default (api: IApi) => {
       content: `
 import { Link, useLocation, useNavigate, Outlet, useAppData, useRouteData, matchRoutes } from 'umi';
 import { useMemo } from 'react';
-import ProLayout, {
-  PageLoading,
-} from '@ant-design/pro-layout';
+import  {
+  ProLayout,
+} from "${pkgHasDep || '@ant-design/pro-layout'}";
 import './Layout.less';
 import Logo from './Logo';
 import Exception from './Exception';
@@ -124,7 +146,8 @@ const { formatMessage } = useIntl();
         }
         if (menuItemProps.path && location.pathname !== menuItemProps.path) {
           return (
-            <Link to={menuItemProps.path} target={menuItemProps.target}>
+            // handle wildcard route path, for example /slave/* from qiankun
+            <Link to={menuItemProps.path.replace('/*', '')} target={menuItemProps.target}>
               {defaultDom}
             </Link>
           );
@@ -180,11 +203,6 @@ const { formatMessage } = useIntl();
       const { icon } = api.appData.routes[id];
       if (icon) {
         const upperIcon = lodash.upperFirst(lodash.camelCase(icon));
-        assert(
-          // @ts-ignore
-          allIcons[upperIcon] || allIcons[`${upperIcon}Outlined`],
-          `Icon ${upperIcon} is not found`,
-        );
         // @ts-ignore
         if (allIcons[upperIcon]) {
           memo[upperIcon] = true;
@@ -232,7 +250,9 @@ export function patchRoutes({ routes }) {
     const { icon } = routes[key];
     if (icon && typeof icon === 'string') {
       const upperIcon = formatIcon(icon);
-      routes[key].icon = React.createElement(icons[upperIcon] || icons[upperIcon + 'Outlined']);
+      if (icons[upperIcon] || icons[upperIcon + 'Outlined']) {
+        routes[key].icon = React.createElement(icons[upperIcon] || icons[upperIcon + 'Outlined']);
+      }
     }
   });
 }

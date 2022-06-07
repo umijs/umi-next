@@ -90,12 +90,45 @@ export class GeneratorHelper {
     }
   }
 
+  addScript(name: string, cmd: string) {
+    const { api } = this;
+
+    if (api.pkg.scripts?.[name] && api.pkg.scripts?.[name] !== cmd) {
+      logger.warn(
+        `scripts.${name} = "${api.pkg.scripts?.[name]}" already exists, will be overwritten with "${cmd}"!`,
+      );
+    }
+
+    api.pkg.scripts = {
+      ...api.pkg.scripts,
+      [name]: cmd,
+    };
+    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
+    logger.info('Write package.json');
+  }
+
   installDeps() {
     const { npmClient } = this.api.appData;
     installWithNpmClient({
       npmClient,
     });
     logger.info(`Install dependencies with ${npmClient}`);
+  }
+
+  async ensureVariableWithQuestion<V>(
+    v: V,
+    question: Omit<prompts.PromptObject<'variable'>, 'name'>,
+  ) {
+    if (!v) {
+      const res = await promptsExitWhenCancel({
+        ...question,
+        name: 'variable',
+      });
+
+      return res.variable ? res.variable : question.initial;
+    }
+
+    return v;
   }
 }
 
@@ -120,4 +153,8 @@ export function promptsExitWhenCancel<T extends string = string>(
       process.exit(1);
     },
   });
+}
+
+export function trim(s?: string) {
+  return s?.trim() || '';
 }

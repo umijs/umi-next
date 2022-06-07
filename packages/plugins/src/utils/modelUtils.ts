@@ -4,7 +4,7 @@ import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { basename, extname, join } from 'path';
+import { basename, dirname, extname, format, join } from 'path';
 import { IApi } from 'umi';
 import { glob, winPath } from 'umi/plugin-utils';
 import { getIdentifierDeclaration } from './astUtils';
@@ -19,7 +19,8 @@ export class Model {
   namespace: string;
   id: string;
   exportName: string;
-  constructor(file: string, id: number) {
+  deps: string[];
+  constructor(file: string, sort: {} | undefined, id: number) {
     let namespace;
     let exportName;
     const [_file, meta] = file.split('#');
@@ -32,6 +33,41 @@ export class Model {
     this.id = `model_${id}`;
     this.namespace = namespace || basename(file, extname(file));
     this.exportName = exportName || 'default';
+    this.deps = sort ? this.findDeps(sort) : [];
+  }
+
+  findDeps(sort: object) {
+    const content = readFileSync(this.file, 'utf-8');
+
+    // transform with esbuild first
+    // to reduce unexpected ast problem
+    const loader = extname(this.file).slice(1) as Loader;
+    const result = transformSync(content, {
+      loader,
+      sourcemap: false,
+      minify: false,
+    });
+
+    // transform with babel
+    const deps = new Set<string>();
+    const ast = parser.parse(result.code, {
+      sourceType: 'module',
+      sourceFilename: this.file,
+      plugins: [],
+    });
+    // TODO: use sort
+    sort;
+    traverse(ast, {
+      CallExpression: (path: Babel.NodePath<t.CallExpression>) => {
+        if (
+          t.isIdentifier(path.node.callee, { name: 'useModel' }) &&
+          t.isStringLiteral(path.node.arguments[0])
+        ) {
+          deps.add(path.node.arguments[0].value);
+        }
+      },
+    });
+    return [...deps];
   }
 }
 
@@ -44,10 +80,10 @@ export class ModelUtils {
     this.opts = opts;
   }
 
-  getAllModels(opts: { extraModels: string[] }) {
+  getAllModels(opts: { sort?: object; extraModels: string[] }) {
     // reset count
     this.count = 1;
-    return [
+    const models = [
       ...this.getModels({
         base: join(this.api.paths.absSrcPath, 'models'),
         pattern: '**/*.{ts,tsx,js,jsx}',
@@ -62,8 +98,69 @@ export class ModelUtils {
       }),
       ...opts.extraModels,
     ].map((file: string) => {
-      return new Model(file, this.count++);
+      return new Model(file, opts.sort, this.count++);
     });
+    // check duplicate
+    const namespaces = models.map((model) => model.namespace);
+    if (new Set(namespaces).size !== namespaces.length) {
+      throw new Error(
+        `Duplicate namespace in models: ${namespaces.join(', ')}`,
+      );
+    }
+    // sort models by deps
+    if (opts.sort) {
+      const namespaces: string[] = this.getSortedNamespaces(models);
+      models.sort(
+        (a, b) =>
+          namespaces.indexOf(a.namespace) - namespaces.indexOf(b.namespace),
+      );
+    }
+    return models;
+  }
+
+  getSortedNamespaces(models: Model[]) {
+    let final: string[] = [];
+    models.forEach((model, index) => {
+      const { deps, namespace } = model;
+      if (deps && deps.length) {
+        const itemGroup = [...deps, namespace];
+        const cannotUse = [namespace];
+        for (let i = 0; i <= index; i += 1) {
+          if (models[i].deps.filter((v) => cannotUse.includes(v)).length) {
+            if (!cannotUse.includes(models[i].namespace)) {
+              cannotUse.push(models[i].namespace);
+              i = -1;
+            }
+          }
+        }
+        const errorList = deps.filter((v) => cannotUse.includes(v));
+        if (errorList.length) {
+          throw Error(
+            `Circular dependencies: ${namespace} can't use ${errorList.join(
+              ', ',
+            )}`,
+          );
+        }
+        const intersection = final.filter((v) => itemGroup.includes(v));
+        if (intersection.length) {
+          // first intersection
+          const finalIndex = final.indexOf(intersection[0]);
+          // replace with groupItem
+          final = final
+            .slice(0, finalIndex)
+            .concat(itemGroup)
+            .concat(final.slice(finalIndex + 1));
+        } else {
+          final.push(...itemGroup);
+        }
+      }
+      if (!final.includes(namespace)) {
+        // first occurrence append to the end
+        final.push(namespace);
+      }
+    });
+
+    return [...new Set(final)];
   }
 
   getModels(opts: { base: string; pattern?: string }) {
@@ -123,12 +220,16 @@ export class ModelUtils {
     const imports: string[] = [];
     const modelProps: string[] = [];
     models.forEach((model) => {
+      const fileWithoutExt = format({
+        dir: dirname(model.file),
+        base: basename(model.file, extname(model.file)),
+      });
       if (model.exportName !== 'default') {
         imports.push(
-          `import { ${model.exportName} as ${model.id} } from '${model.file}';`,
+          `import { ${model.exportName} as ${model.id} } from '${fileWithoutExt}';`,
         );
       } else {
-        imports.push(`import ${model.id} from '${model.file}';`);
+        imports.push(`import ${model.id} from '${fileWithoutExt}';`);
       }
       modelProps.push(
         `${model.id}: { namespace: '${model.namespace}', model: ${model.id} },`,
@@ -139,6 +240,6 @@ ${imports.join('\n')}
 
 export const models = {
 ${modelProps.join('\n')}
-}`;
+} as const`;
   }
 }

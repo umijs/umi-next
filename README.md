@@ -1,28 +1,23 @@
 # umi (v4 develop version)
 
 <p>
-  <a href="https://www.npmjs.com/package/umi" target="_blank">
-    <img src="https://img.shields.io/npm/v/umi.svg" />
-  </a>
-  <a href="https://www.npmjs.com/package/umi" target="_blank">
-    <img src="https://img.shields.io/npm/dm/umi.svg" />
-  </a>
-  <a href="https://github.com/umijs/umi-next" target="_blank">
-    <img src="https://github.com/umijs/umi-next/workflows/CI/badge.svg" alt="build status"  />
-  </a>
+  <a href="https://www.npmjs.com/package/umi"><img src="https://badgen.net/npm/v/umi" alt="Version" /></a>
+  <a href="https://www.npmjs.com/package/umi"><img src="https://badgen.net/npm/dm/umi" alt="Downloads" /></a>
+  <a href="https://github.com/umijs/umi-next"><img src="https://github.com/umijs/umi-next/workflows/CI/badge.svg?branch=master&event=push" alt="build status" /></a>
+  <a href="https://www.npmjs.com/package/umi"><img src="https://badgen.net/npm/license/umi" alt="License" /></a>
 </p>
 
-A framework in react community.
+A framework in react community ✨
 
 > Please consider following this project's author, [sorrycc](https://github.com/sorrycc), and consider starring the project to show your ❤️ and support.
 
-## Migrating from 3.x
+### [🚀 Read the launch post →](https://next.umijs.org/blog/umi-4-rc)
 
-TODO
+### [📚 Learn Umi →](https://next.umijs.org/)
 
 ## Contribution
 
-See [Contributing Guide](./CONTRIBUTING.md).
+See [Contributing Guide](https://next.umijs.org/docs/introduce/contributing).
 
 ### Core Maintainers
 
@@ -39,6 +34,8 @@ Maintainers are community members who have 10 or more PRs merged in umi, or have
 * [YdreamW](https://github.com/YdreamW)
 * [ken20001207](https://github.com/ken20001207)
 * [fz6m](https://github.com/fz6m)
+* [stormslowly](https://github.com/stormslowly)
+* [xierenyuan](https://github.com/xierenyuan)
 
 ### Contributors
 

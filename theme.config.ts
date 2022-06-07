@@ -53,6 +53,7 @@ export default {
             'guides/mock',
             'guides/proxy',
             'guides/styling',
+            'guides/client-loader',
             'guides/typescript',
             'guides/deployment',
             'guides/env-variables',
@@ -66,6 +67,7 @@ export default {
             'guides/boilerplate',
             'guides/generator',
             'guides/lint',
+            'guides/debug',
             'guides/test',
             'guides/plugins',
           ],
@@ -73,8 +75,7 @@ export default {
         {
           title: 'Umi Max',
           children: [
-            'max/api',
-            'max/config',
+            'max/introduce',
             'max/layout-menu',
             'max/antd',
             'max/charts',
@@ -83,7 +84,9 @@ export default {
             'max/access',
             'max/i18n',
             'max/micro-frontend',
-            'max/bacon',
+            'max/dva',
+            // 暂不支持
+            // 'max/bacon',
           ],
         },
       ],
@@ -104,6 +107,7 @@ export default {
       ],
     },
   ],
+  themeSwitch: {},
   announcement: {
     title: 'Umi4 即将推出!!!',
     link: 'https://github.com/umijs/umi-next',

@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { parse } from '../../../compiled/ini';
 import { osLocale } from '../../../compiled/os-locale';
-import { expandJSPaths } from '../../commands/dev/watch';
+import { expandCSSPaths, expandJSPaths } from '../../commands/dev/watch';
 import { createResolver, scan } from '../../libs/scan';
 import { IApi } from '../../types';
 import { getApiRoutes, getRoutes } from '../tmpFiles/routes';
@@ -18,38 +18,35 @@ export default (api: IApi) => {
       api,
     });
     memo.hasSrcDir = api.paths.absSrcPath.endsWith('/src');
-    memo.npmClient = api.userConfig.npmClient || getNpmClient();
+    memo.npmClient = api.userConfig.npmClient || getNpmClient({ cwd: api.cwd });
     memo.umi = {
       version: require('../../../package.json').version,
+      name: 'Umi',
+      importSource: 'umi',
     };
+    memo.bundleStatus = {
+      done: false,
+    };
+    if (api.config.mfsu !== false) {
+      memo.mfsuBundleStatus = {
+        done: false,
+      };
+    }
     memo.react = {
       version: require(join(api.config.alias.react, 'package.json')).version,
+      path: api.config.alias.react,
+    };
+    memo['react-dom'] = {
+      version: require(join(api.config.alias['react-dom'], 'package.json'))
+        .version,
+      path: api.config.alias['react-dom'],
     };
     memo.appJS = await getAppJsInfo();
     memo.locale = await osLocale();
     memo.vite = api.config.vite ? {} : undefined;
-    memo.globalCSS = [
-      'global.css',
-      'global.less',
-      'global.scss',
-      'global.sass',
-    ].reduce<string[]>((memo, key) => {
-      if (existsSync(join(api.paths.absSrcPath, key))) {
-        memo.push(join(api.paths.absSrcPath, key));
-      }
-      return memo;
-    }, []);
-    memo.globalJS = [
-      'global.ts',
-      'global.tsx',
-      'global.jsx',
-      'global.js',
-    ].reduce<string[]>((memo, key) => {
-      if (existsSync(join(api.paths.absSrcPath, key))) {
-        memo.push(join(api.paths.absSrcPath, key));
-      }
-      return memo;
-    }, []);
+    const { globalCSS, globalJS } = getGlobalFiles();
+    memo.globalCSS = globalCSS;
+    memo.globalJS = globalJS;
 
     const gitDir = findGitDir(api.paths.cwd);
     if (gitDir) {
@@ -64,6 +61,8 @@ export default (api: IApi) => {
       }
       memo.git = git;
     }
+
+    memo.framework = 'react';
 
     return memo;
   });
@@ -88,6 +87,9 @@ export default (api: IApi) => {
     async fn(args: any) {
       if (!args.isFirstTime) {
         api.appData.appJS = await getAppJsInfo();
+        const { globalCSS, globalJS } = getGlobalFiles();
+        api.appData.globalCSS = globalCSS;
+        api.appData.globalJS = globalJS;
       }
     },
     stage: Number.NEGATIVE_INFINITY,
@@ -133,5 +135,29 @@ export default (api: IApi) => {
       }
     }
     return null;
+  }
+
+  function getGlobalFiles() {
+    const absSrcPath = api.paths.absSrcPath;
+    const existsAndPushFile = (memo: string[], file: string) => {
+      if (existsSync(file)) {
+        memo.push(file);
+      }
+      return memo;
+    };
+
+    const globalCSS = expandCSSPaths(join(absSrcPath, 'global')).reduce<
+      string[]
+    >(existsAndPushFile, []);
+
+    const globalJS = expandJSPaths(join(absSrcPath, 'global')).reduce<string[]>(
+      existsAndPushFile,
+      [],
+    );
+
+    return {
+      globalCSS,
+      globalJS,
+    };
   }
 };

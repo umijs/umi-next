@@ -5,7 +5,7 @@
  * @since 2019-06-20
  */
 
-import { ReactComponentElement } from 'react';
+import React, { ReactComponentElement } from 'react';
 import type { IRouteProps } from 'umi';
 
 export const defaultMountContainerId = 'root-subapp';
@@ -48,6 +48,7 @@ export function patchMicroAppRoute(
   getMicroAppRouteComponent: (opts: {
     appName: string;
     base: string;
+    routePath: string;
     masterHistoryType: string;
     routeProps?: any;
   }) => string | ReactComponentElement<any>,
@@ -63,9 +64,9 @@ export function patchMicroAppRoute(
   const microAppProps =
     route[`${routeBindingAlias}Props`] || route.microAppProps || {};
   if (microAppName) {
-    if (route.routes?.length) {
-      const childrenRouteHasComponent = route.routes.some(
-        (r: any) => r.component,
+    if (route.children?.length) {
+      const childrenRouteHasComponent = route.children.some(
+        (r: any) => r.element,
       );
       if (childrenRouteHasComponent) {
         throw new Error(
@@ -74,7 +75,10 @@ export function patchMicroAppRoute(
       }
     }
 
-    route.exact = false;
+    // 自动追加通配符，匹配子应用的路由
+    if (!route.path.endsWith('/*')) {
+      route.path = route.path.replace(/\/?$/, '/*');
+    }
 
     const { settings = {}, ...componentProps } = microAppProps;
     const routeProps = {
@@ -85,10 +89,11 @@ export function patchMicroAppRoute(
     const opts = {
       appName: microAppName,
       base,
+      routePath: route.path,
       masterHistoryType,
       routeProps,
     };
-    route.component = getMicroAppRouteComponent(opts);
+    route.element = React.createElement(getMicroAppRouteComponent(opts), null);
   }
 }
 
@@ -100,8 +105,8 @@ const recursiveSearch = (
     if (routes[i].path === path) {
       return routes[i];
     }
-    if (routes[i].routes && routes[i].routes?.length) {
-      const found = recursiveSearch(routes[i].routes || [], path);
+    if (routes[i].children && routes[i].children?.length) {
+      const found = recursiveSearch(routes[i].children || [], path);
       if (found) {
         return found;
       }
@@ -123,8 +128,8 @@ export function insertRoute(routes: IRouteProps[], microAppRoute: IRouteProps) {
       );
     }
     found.exact = false;
-    found.routes = found.routes || [];
-    found.routes.push(microAppRoute);
+    found.children = found.children || [];
+    found.children.push(microAppRoute);
   } else {
     throw new Error(
       `[plugin-qiankun]: path "${microAppRoute.insert}" not found`,

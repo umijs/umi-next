@@ -2,7 +2,7 @@
 
 为方便查找，以下内容通过字母排序。
 
-在查用 umi 插件 API 之前，我们建议你先阅读[插件](../guides/plugins)一节，以了解 umi 插件的机制及原理，这将帮助你更好的使用插件 API。
+在查用 Umi 插件 API 之前，我们建议你先阅读[插件](../guides/plugins)一节，以了解 umi 插件的机制及原理，这将帮助你更好的使用插件 API。
 
 ## 核心 API
 service 和 PluginAPI 里定义的方法。
@@ -47,7 +47,7 @@ api.isPluginEnable( key：string)
 ```
 判断插件是否启用，传入的参数是插件的 key
 
-### register <span id = 'register'/>
+### register
 ```ts
 api.register({ key: string, fn, before?: string, stage?: number})
 ```
@@ -56,9 +56,9 @@ api.register({ key: string, fn, before?: string, stage?: number})
 - `key` 是注册的 hook 的类别名称，可以多次使用 `register` 向同一个 `key` 注册 hook，它们将会依次执行。这个 `key` 也同样是使用 `applyPlugins` 收集 hooks 数据时使用的 `key`。注意： **这里的 key 和 插件的 key 没有任何联系。** 
 - `fn` 是 hook 的定义，可以是同步的，也可以是异步的（返回一个 Promise 即可）
 - `stage` 用于调整执行顺序，默认为 0，设为 -1 或更少会提前执行，设为 1 或更多会后置执行。
-- `before` 同样用于调整执行的顺序，传入的值为注册的 hook 的名称。注意：**`register` 注册的 hook 的名称是所在 umi 插件的 id。** stage 和 before 的更多用法参考 [tapable](https://github.com/webpack/tapable)
+- `before` 同样用于调整执行的顺序，传入的值为注册的 hook 的名称。注意：**`register` 注册的 hook 的名称是所在 Umi 插件的 id。** stage 和 before 的更多用法参考 [tapable](https://github.com/webpack/tapable)
 
-注意： 相较于 umi@3， umi@4 去除了 `pluginId` 参数。
+注意： 相较于 `umi@3`， `umi@4` 去除了 `pluginId` 参数。
 
 fn 的写法需要结合即将使用的 applyPlugins 的 type 参数来确定：
 - `api.ApplyPluginsType.add` `applyPlugins` 将按照 hook 顺序来将它们的返回值拼接成一个数组。此时 `fn` 需要有返回值，`fn` 将获取 `applyPlugins` 的参数 `args` 来作为自己的参数。`applyPlugins` 的 `initialValue` 必须是一个数组，它的默认值是空数组。当 `key` 以 `'add'` 开头且没有显式地声明 `type` 时，`applyPlugins` 会默认按此类型执行。
@@ -67,13 +67,13 @@ fn 的写法需要结合即将使用的 applyPlugins 的 type 参数来确定：
 
 e.g.1 add 型
 ```ts
-api.regiser({
+api.register({
   key: 'addFoo',
   // 同步
   fn: (args) => args
 });
 
-api.regiser({
+api.register({
   key: 'addFoo',
   // 异步
   fn: async (args) => args * 2
@@ -113,11 +113,20 @@ api.applyPlugins({
 
 ### registerCommand
 ```ts
-api.registerCommand({ name: string, description?: string, options?: string, details?: string, fn, alias?: string | string[] })
+api.registerCommand({
+  name: string,
+  description? : string,
+  options? : string,
+  details? : string,
+  fn,
+  alias? : string | string[]
+  resolveConfigMode? : 'strict' | 'loose'
+})
 ```
 注册命令。
 - `alias` 为别名，比如 generate 的别名 g
 - `fn` 的参数为 `{ args }`， args 的格式同 [yargs](https://github.com/yargs/yargs) 的解析结果，需要注意的是 `_` 里的 command 本身被去掉了，比如执行`umi generate page foo`，`args._` 为 `['page','foo']`
+- `resolveConfigMode` 参数控制执行命令时配置解析的方式，`strict` 模式下强校验 Umi 项目的配置文件内容，如果有非法内容中断命令执行；`loose` 模式下不执行配置文件的校验检查。
 
 ### registerMethod
 ```ts
@@ -129,7 +138,7 @@ api.registerMethod({ name: string, fn? })
 - 当没有传入 fn 时，`registerMethod` 会将 `name` 作为 `api.register` 的 `key` 并且将其柯里化后作为 `fn`。这种情况下相当于注册了一个 `register` 的快捷调用方式，便于注册 hook。
 
 注意： 
-- 相较于 umi@3， umi@4 去除了 exitsError 参数。
+- 相较于 `umi@3`， `umi@4` 去除了 exitsError 参数。
 - 通常不建议注册额外的方法，因为它们不会有 ts 提示，直接使用 `api.register()` 是一个更安全的做法。
 
 e.g.1
@@ -194,7 +203,7 @@ api.registerPlugins([
 ])
 ```
 
-注意： 相较于 umi@3 ，umi@4 不再支持在 `registerPresets` 和 `registerPlugins` 中直接传入插件对象了，现在只允许传入插件的路径。
+注意： 相较于 `umi@3` ，`umi@4` 不再支持在 `registerPresets` 和 `registerPlugins` 中直接传入插件对象了，现在只允许传入插件的路径。
 
 ### registerGenerator
 
@@ -297,7 +306,7 @@ api.addEntryImportsAhead(() => ({
 ### addExtraBabelPresets
 添加额外的 Babel 插件集。传入的 fn 不需要参数，且需要返回一个 Babel 插件集或其数组。
 
-### addHTMLHeadScripts  <span id = 'addHTMLHeadScripts'/>
+### addHTMLHeadScripts
 往 HTML 的 `<head>` 元素里添加 Script。传入的 fn 不需要参数，且需要返回一个 string（想要加入的代码） 或者 `{ async?: boolean, charset?: string, crossOrigin?: string | null, defer?: boolean, src?: string, type?: string, content?: string }` 或者它们的数组。
 ```ts
 api.addHTMLHeadScripts(() => `console.log('I am in HTML-head')`)
@@ -374,7 +383,7 @@ api.chainWebpack(( memo, { webpack, env}) => {
 })
 ```
 
-### modifyAppData （umi@4 新增）
+### modifyAppData （`umi@4` 新增）
 
 修改 app 元数据。传入的 fn 接收 appData 并且返回它。
 ```ts
@@ -385,7 +394,7 @@ api.modifyAppData((memo) => {
 ```
 
 ### modifyConfig
-修改配置，相较于用户的配置，这份是最终传给 Umi 使用的配置。传入的 fn 接收 config 作为第一个参数，并且返回它。另外 fn 可以接收 `{ paths }` 作为第二个参数。`paths` 保存了 umi 的各个路径。
+修改配置，相较于用户的配置，这份是最终传给 Umi 使用的配置。传入的 fn 接收 config 作为第一个参数，并且返回它。另外 fn 可以接收 `{ paths }` 作为第二个参数。`paths` 保存了 Umi 的各个路径。
 ```ts
 api.modifyConfig((memo, { path }) => {
   memo.alias = {
@@ -479,6 +488,9 @@ generate 之后，webpack / vite compiler 之前。传入的 fn 不接收任何�
 ### onBuildComplete
 build 完成时。传入的 fn 接收 `{ isFirstCompile: boolean, stats, time: number, err?: Error }` 作为参数。
 
+### onBuildHtmlComplete
+build 完成且 html 完成构建之后。
+
 ### onCheck
 检查时，在 onStart 之前执行。传入的 fn 不接收任何参数
 
@@ -494,7 +506,8 @@ args: {
     loc: any;
     default: string;
     namespace: string;
-    specifiers: Record<string, string>;
+    kind: babelImportKind;
+    specifiers: Record<string, { name: string; kind: babelImportKind }>;
   }[];
   exports: any[];
   cjsExports: string[]; 
@@ -601,7 +614,7 @@ setTimeout(()=>{
 注意： 注册阶段使用的 plugin 对象是你 `describe` 之前的对象。
 
 ### service
-umi 的 `Service` 实例。通常不需要用到，除非你知道为什么。
+Umi 的 `Service` 实例。通常不需要用到，除非你知道为什么。
 
 ### userConfig
 用户的配置，从 `.umirc` 或 `config/config` 中读取的内容，没有经过 defaultConfig 以及插件的任何处理。可以在注册阶段使用。
@@ -623,7 +636,7 @@ umi 的 `Service` 实例。通常不需要用到，除非你知道为什么。
 - config
 
 ### ServiceStage
-umi service 的运行阶段。有如下阶段：
+Umi service 的运行阶段。有如下阶段：
 - uninitialized
 - init
 - initPresets

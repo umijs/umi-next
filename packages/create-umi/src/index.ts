@@ -24,41 +24,60 @@ export default async ({
   cwd: string;
   args: yParser.Arguments;
 }) => {
-  const [_, name] = args._;
+  const [name] = args._;
   let npmClient = 'pnpm' as any;
   let registry = 'https://registry.npmjs.org/';
+  let appTemplate = 'app';
   // test ignore prompts
   if (!args.default) {
-    const response = await prompts([
+    const response = await prompts(
+      [
+        {
+          type: 'select',
+          name: 'appTemplate',
+          message: 'Pick Umi App Template',
+          choices: [
+            { title: 'Simple App', value: 'app' },
+            { title: 'Enterprise App', value: 'max' },
+          ],
+          initial: 0,
+        },
+        {
+          type: 'select',
+          name: 'npmClient',
+          message: 'Pick Npm Client',
+          choices: [
+            { title: 'npm', value: 'npm' },
+            { title: 'cnpm', value: 'cnpm' },
+            { title: 'tnpm', value: 'tnpm' },
+            { title: 'yarn', value: 'yarn' },
+            { title: 'pnpm', value: 'pnpm' },
+          ],
+          initial: 4,
+        },
+        {
+          type: 'select',
+          name: 'registry',
+          message: 'Pick Npm Registry',
+          choices: [
+            {
+              title: 'npm',
+              value: 'https://registry.npmjs.org/',
+              selected: true,
+            },
+            { title: 'taobao', value: 'https://registry.npmmirror.com' },
+          ],
+        },
+      ],
       {
-        type: 'select',
-        name: 'npmClient',
-        message: 'Pick Npm Client',
-        choices: [
-          { title: 'npm', value: 'npm' },
-          { title: 'cnpm', value: 'cnpm' },
-          { title: 'tnpm', value: 'tnpm' },
-          { title: 'yarn', value: 'yarn' },
-          { title: 'pnpm', value: 'pnpm' },
-        ],
-        initial: 4,
+        onCancel() {
+          process.exit(1);
+        },
       },
-      {
-        type: 'select',
-        name: 'registry',
-        message: 'Pick Npm Registry',
-        choices: [
-          {
-            title: 'npm',
-            value: 'https://registry.npmjs.org/',
-            selected: true,
-          },
-          { title: 'taobao', value: 'https://registry.npmmirror.com' },
-        ],
-      },
-    ]);
+    );
     npmClient = response.npmClient;
     registry = response.registry;
+    appTemplate = response.appTemplate;
   }
 
   const pluginPrompts = [
@@ -90,9 +109,12 @@ export default async ({
     },
   ] as prompts.PromptObject[];
 
+  const target = name ? join(cwd, name) : cwd;
+  const templateName = args.plugin ? 'plugin' : appTemplate;
+
   const generator = new BaseGenerator({
-    path: join(__dirname, '..', 'templates', args.plugin ? 'plugin' : 'app'),
-    target: name ? join(cwd, name) : cwd,
+    path: join(__dirname, '..', 'templates', templateName),
+    target,
     data: args.default
       ? testData
       : {
@@ -106,6 +128,6 @@ export default async ({
 
   if (!args.default) {
     // install
-    installWithNpmClient({ npmClient });
+    installWithNpmClient({ npmClient, cwd: target });
   }
 };

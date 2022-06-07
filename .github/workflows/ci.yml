@@ -26,16 +26,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [14.x, 16.x, 18.x]
+        os: [ubuntu-latest, windows-latest]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org/'
@@ -49,9 +49,8 @@ jobs:
             ${{ runner.os }}-node${{ matrix.node-version }}-
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2.1.0
+        uses: pnpm/action-setup@v2.2.1
         with:
-          version: latest
           run_install: true
 
       # We use week in the turbo cache key to keep the cache from infinitely growing
