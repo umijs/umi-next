@@ -25,7 +25,9 @@ import {
 import { Dep } from '../dep/dep';
 import { DepBuilder } from '../depBuilder/depBuilder';
 import { DepModule } from '../depInfo';
-import getAwaitImportHandler from '../esbuildHandlers/awaitImport';
+import getAwaitImportHandler, {
+  getImportHandlerV4,
+} from '../esbuildHandlers/awaitImport';
 import { Mode } from '../types';
 import { makeArray } from '../utils/makeArray';
 import {
@@ -313,8 +315,9 @@ promise new Promise(resolve => {
 
   getEsbuildLoaderHandler() {
     if (this.opts.version === 'v4') {
-      console.warn('MFSU v4 not supported esbuild');
-      return [];
+      const opts = this.strategy.getBabelPlugin()[1] as any;
+
+      return [getImportHandlerV4(opts)];
     }
 
     const cache = new Map<string, any>();
