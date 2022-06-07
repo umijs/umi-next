@@ -10,10 +10,9 @@ import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
-import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu/mfsu';
-import parseImport from './importParser';
+import handleBabelPluginImport from './simulations/babel-plugin-import';
 
 interface IOpts {
   mfsu: MFSU;
@@ -22,9 +21,11 @@ interface IOpts {
   preDeps?: string[];
 }
 
-type Match = ReturnType<typeof checkMatch> & { version: string };
+export type Match = ReturnType<typeof checkMatch> & { version: string };
 
 type FileChangeEvent = { event: 'unlink' | 'change'; path: string };
+
+type Matched = Record<string, Match>;
 
 export class StaticDepInfo {
   private opts: IOpts;
@@ -35,7 +36,7 @@ export class StaticDepInfo {
 
   private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
-  private readonly presetDep: string[];
+  private readonly safeList: string[];
   private currentDep: Record<string, Match> = {};
   private _snapshot: Record<string, Match> = {};
 
@@ -43,6 +44,20 @@ export class StaticDepInfo {
 
   pendingChanges: FileChangeEvent[] = [];
   private produced: { changes: FileChangeEvent[] }[] = [];
+  private readonly cwd: string;
+  private readonly runtimeSimulations: {
+    packageName: string;
+    handleImports: <T>(
+      opts: {
+        imports: ImportSpecifier[];
+        rawCode: string;
+        mfName: string;
+        alias: Record<string, string>;
+        pathToVersion(p: string): string;
+      },
+      handleConfig?: T,
+    ) => Match[];
+  }[];
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -50,7 +65,7 @@ export class StaticDepInfo {
     this.mfsu = opts.mfsu;
 
     console.log('caching at ', opts.cachePath);
-    this.presetDep = opts.preDeps || [
+    this.safeList = opts.preDeps || [
       'react',
       'react-error-overlay',
       'react/jsx-dev-runtime',
@@ -62,6 +77,14 @@ export class StaticDepInfo {
       this.opts.mfsu.opts.tmpBase!,
       'MFSU_CACHE_v4.json',
     );
+
+    this.cwd = this.mfsu.opts.cwd!;
+    this.runtimeSimulations = [
+      {
+        packageName: 'antd',
+        handleImports: handleBabelPluginImport,
+      },
+    ];
 
     this.debouchedHandleChanges = lodash.debounce(this.handleEvents, 500);
   }
@@ -180,8 +203,7 @@ export class StaticDepInfo {
       // fixme ensure the last one
       newFile = newFile.replace(extname(newFile), '.js');
 
-      const c = readFileSync(newFile, 'utf-8');
-      this.fileContentCache[f] = c;
+      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
     }
 
     this.currentDep = await this._getDependencies();
@@ -265,10 +287,19 @@ export class StaticDepInfo {
     const matched: Record<string, Match> = {};
     const unMatched = new Set<string>();
 
-    const antdImports: ImportSpecifier[] = [];
+    const pkgNames = this.runtimeSimulations.map(
+      ({ packageName }) => packageName,
+    );
+    const groupedMockImports: Record<string, ImportSpecifier[]> = {};
+
     for (const imp of imports) {
-      if (imp.n === 'antd') {
-        antdImports.push(imp);
+      if (pkgNames.indexOf(imp.n!) >= 0) {
+        const name = imp.n!;
+        if (groupedMockImports[name]) {
+          groupedMockImports[name].push(imp);
+        } else {
+          groupedMockImports[name] = [imp];
+        }
         continue;
       }
 
@@ -300,57 +331,45 @@ export class StaticDepInfo {
       }
     }
 
-    if (antdImports.length > 0) {
-      const importSnippets = antdImports
-        .map(({ ss, se }) => {
-          return bigCodeString.slice(ss, se + 1);
-        })
-        .join('\n');
+    this.simulateRuntimeTransform(matched, groupedMockImports, bigCodeString);
 
-      const parsedImports = parseImport(importSnippets);
+    this.appendSafeList(matched, opts);
 
-      const importedVariable = new Set<string>();
+    console.timeEnd('_getDependencies');
+    return matched;
+  }
 
-      for (const i of parsedImports) {
-        i.imports.forEach((v) => {
-          importedVariable.add(v);
+  private simulateRuntimeTransform(
+    matched: Matched,
+    groupedImports: Record<string, ImportSpecifier[]>,
+    rawCode: string,
+  ) {
+    for (const mock of this.runtimeSimulations) {
+      const name = mock.packageName;
+
+      const pathToVersion = (dep: string) => {
+        return Dep.getDepVersion({
+          dep,
+          cwd: this.cwd,
         });
-      }
+      };
 
-      const mfName = this.mfsu.opts.mfName;
-      const base = antdImports[0].n!;
-      for (const v of importedVariable.entries()) {
-        const dashed = toDash(v[0]);
+      const ms = mock.handleImports({
+        imports: groupedImports[name],
+        rawCode,
+        alias: this.mfsu.alias,
+        mfName: this.mfsu.opts.mfName!,
+        pathToVersion,
+      });
 
-        // fixme respect to config#antd
-        const importBase = join(base, 'es', dashed);
-        const componentPath = getAliasedPathWithLoopDetect({
-          value: importBase,
-          alias: this.mfsu.alias,
-        });
-        const styleImportPath = join(componentPath, 'style');
-
-        const version = Dep.getDepVersion({
-          dep: componentPath,
-          cwd,
-        });
-
-        matched[componentPath] = {
-          isMatch: true,
-          value: componentPath,
-          replaceValue: `${mfName}/${componentPath}`,
-          version,
-        };
-        matched[styleImportPath] = {
-          isMatch: true,
-          value: styleImportPath,
-          replaceValue: `${mfName}/${styleImportPath}`,
-          version,
-        };
+      for (const m of ms) {
+        matched[m.value] = m;
       }
     }
+  }
 
-    for (const p of this.presetDep) {
+  private appendSafeList(matched: Matched, opts: any) {
+    for (const p of this.safeList) {
       const match = checkMatch({
         value: p,
         depth: 1,
@@ -362,13 +381,11 @@ export class StaticDepInfo {
           ...match,
           version: Dep.getDepVersion({
             dep: match.value,
-            cwd,
+            cwd: this.cwd,
           }),
         };
       }
     }
-    console.timeEnd('_getDependencies');
-    return matched;
   }
 
   async batchProcess(files: string[]) {
@@ -388,15 +405,4 @@ export class StaticDepInfo {
   async allRuntimeHelpers() {
     // todo mfsu4
   }
-}
-
-const capitalLettersReg = /([A-Z])/g;
-
-// https://github.com/node4good/lodash-contrib/blob/91dded5d52f6dca50a4c74782740b02478c2c548/common-js/_.util.strings.js#L104
-function toDash(string: string): string {
-  string = string.replace(capitalLettersReg, function ($1) {
-    return '-' + $1.toLowerCase();
-  });
-  // remove first dash
-  return string.charAt(0) == '-' ? string.substr(1) : string;
 }
