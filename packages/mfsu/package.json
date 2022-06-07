@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm tsc",
+    "build": "pnpm tsc && cp src/staticDepInfo/_importParser.js dist/staticDepInfo/_importParser.js",
     "postbuild": "cp src/staticDepInfo/_importParser.js dist/staticDepInfo/_importParser.js",
     "build:deps": "umi-scripts bundleDeps",
     "dev": "pnpm build -- --watch",
