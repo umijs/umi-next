@@ -1,4 +1,11 @@
-import { copyFileSync, readFileSync, statSync, writeFileSync } from 'fs';
+import {
+  copyFileSync,
+  existsSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'fs';
 import { dirname, join, relative } from 'path';
 import chalk from '../../compiled/chalk';
 import fsExtra from '../../compiled/fs-extra';
@@ -35,7 +42,22 @@ class Generator {
 
   async writing() {}
 
-  copyTpl(opts: { templatePath: string; target: string; context: object }) {
+  copyTpl(opts: {
+    templatePath: string;
+    target: string;
+    context: object;
+    skipCheckStat?: boolean;
+  }) {
+    // skip write file when target is exists.
+    if (!opts?.skipCheckStat && existsSync(opts.target)) {
+      console.log(
+        `${chalk.yellow('Skip:')} ${relative(
+          this.baseDir,
+          opts.target,
+        )} is exists.`,
+      );
+      return;
+    }
     const tpl = readFileSync(opts.templatePath, 'utf-8');
     const content = Mustache.render(tpl, opts.context);
     fsExtra.mkdirpSync(dirname(opts.target));
@@ -45,7 +67,23 @@ class Generator {
     writeFileSync(opts.target, content, 'utf-8');
   }
 
-  copyDirectory(opts: { path: string; context: object; target: string }) {
+  copyDirectory(opts: {
+    path: string;
+    context: object;
+    target: string;
+    skipCheckStat?: boolean;
+  }) {
+    // skip write file when target is Non Empty Directory.
+    if (
+      !opts?.skipCheckStat &&
+      existsSync(opts.target) &&
+      readdirSync(opts.target).length > 0
+    ) {
+      console.log(
+        `${chalk.yellow('Skip:')} ${opts.target} is Non Empty Directory.`,
+      );
+      return;
+    }
     const files = glob.sync('**/*', {
       cwd: opts.path,
       dot: true,

@@ -73,20 +73,31 @@ export class GeneratorHelper {
 
     const externalDeps = lodash.omit(deps, ['@umijs/plugins']);
 
+    // 已存在给出覆盖提示
+    Object.keys(externalDeps).forEach((key: string) => {
+      if (hasDeps({ name: key, pkg: api.pkg })) {
+        logger.info(
+          `${key} Version: ${api.pkg.devDependencies![key]} is replaced by ${
+            externalDeps[key]
+          }`,
+        );
+      }
+    });
+
     if (this.needInstallUmiPlugin) {
       api.pkg.devDependencies = {
         ...api.pkg.devDependencies,
         ...deps,
       };
       writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-      logger.info('Write package.json');
+      logger.info(`addDevDeps: ${Object.keys(deps).join(',')}`);
     } else if (!lodash.isEmpty(externalDeps)) {
       api.pkg.devDependencies = {
         ...api.pkg.devDependencies,
         ...externalDeps,
       };
       writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-      logger.info('Write package.json');
+      logger.info(`addDevDeps: ${Object.keys(deps).join(',')}`);
     }
   }
 
