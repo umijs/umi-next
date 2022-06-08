@@ -71,28 +71,8 @@ export class StaticAnalyzeStrategy implements IMFSUStrategy {
   getBuildDepPlugConfig(): IBuildDepPluginOpts {
     const mfsu = this.mfsu;
     return {
-      onFileChange: async (c) => {
-        console.log('webpack found', c.modifiedFiles, c.removedFiles);
-
-        // webpack start
-        if (!c.modifiedFiles || c.modifiedFiles.size === 0) {
-          return;
-        }
-
-        const start = Date.now();
-        let event = this.staticDepInfo.getProducedEvent();
-        while (event.length === 0) {
-          await sleep(200);
-          console.log('.');
-          event = this.staticDepInfo.getProducedEvent();
-          if (Date.now() - start > 5000) {
-            console.log('waiting too long');
-            break;
-          }
-        }
-      },
       beforeCompile: async () => {
-        console.log('new mfsu dep is building');
+        logger.event(`[mfsu4] start build deps`);
         if (mfsu.depBuilder.isBuilding) {
           mfsu.buildDepsAgain = true;
         } else {
@@ -110,6 +90,31 @@ export class StaticAnalyzeStrategy implements IMFSUStrategy {
                 done: true,
               });
             });
+        }
+      },
+      onFileChange: async (c) => {
+        logger.debug(
+          'webpack found changes modified:',
+          c.modifiedFiles,
+          'removed:',
+          c.removedFiles,
+        );
+
+        // webpack init run
+        if (!c.modifiedFiles || c.modifiedFiles.size === 0) {
+          return;
+        }
+
+        const start = Date.now();
+        let event = this.staticDepInfo.getProducedEvent();
+        while (event.length === 0) {
+          await sleep(200);
+          console.log('.');
+          event = this.staticDepInfo.getProducedEvent();
+          if (Date.now() - start > 5000) {
+            logger.warn('webpack wait mfsu deps too long');
+            break;
+          }
         }
       },
       onCompileDone: () => {
