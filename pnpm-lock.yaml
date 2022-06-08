@@ -930,10 +930,12 @@ importers:
       '@umijs/bundler-webpack': 4.0.0-canary.20220606.1
       '@umijs/core': 4.0.0-canary.20220606.1
       '@umijs/utils': 4.0.0-canary.20220606.1
+      '@zerollup/ts-transform-paths': 1.7.18
       babel-plugin-module-resolver: 4.1.0
       babel-plugin-transform-define: 2.0.1
       loader-runner: 4.2.0
       minimatch: 3.1.2
+      typescript: ^4.7.2
       v8-compile-cache: 2.3.0
     dependencies:
       '@umijs/babel-preset-umi': link:../babel-preset-umi
@@ -944,9 +946,11 @@ importers:
       babel-plugin-transform-define: 2.0.1
       loader-runner: 4.2.0
       minimatch: 3.1.2
+      typescript: 4.7.2
       v8-compile-cache: 2.3.0
     devDependencies:
       '@types/loader-runner': 2.2.4
+      '@zerollup/ts-transform-paths': 1.7.18_typescript@4.7.2
 
   packages/lint:
     specifiers:
@@ -8929,6 +8933,24 @@ packages:
 
   /@xtuc/long/4.2.2:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
+
+  /@zerollup/ts-helpers/1.7.18_typescript@4.7.2:
+    resolution: {integrity: sha512-S9zN+y+i5yN/evfWquzSO3lubqPXIsPQf6p9OiPMpRxDx/0totPLF39XoRw48Dav5dSvbIE8D2eAPpXXJxvKwg==}
+    peerDependencies:
+      typescript: '>=3.7.2'
+    dependencies:
+      resolve: 1.22.0
+      typescript: 4.7.2
+    dev: true
+
+  /@zerollup/ts-transform-paths/1.7.18_typescript@4.7.2:
+    resolution: {integrity: sha512-YPVUxvWQVzRx1OBN0Pmkd58+R9FcfUJuwTaPUSoi5rKxuXMtxevTXdfi0w5mEaIH8b0DfL+wg0wFDHiJE+S2zA==}
+    peerDependencies:
+      typescript: '>=3.7.2'
+    dependencies:
+      '@zerollup/ts-helpers': 1.7.18_typescript@4.7.2
+      typescript: 4.7.2
+    dev: true
 
   /@zkochan/js-yaml/0.0.6:
     resolution: {integrity: sha512-nzvgl3VfhcELQ8LyVrYOru+UtAy1nrygk2+AGbTm8a5YcO6o8lSjAT+pfg3vJWxIoZKOUhrK6UU7xW/+00kQrg==}

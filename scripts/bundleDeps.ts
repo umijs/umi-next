@@ -132,6 +132,7 @@ Object.keys(exported).forEach(function (key) {
         code.includes('"node:') &&
         opts.pkgName && // skip local file bundle like babel/bundle.js
         opts.pkgName !== 'stylelint-declaration-block-no-ignored-properties' &&
+        opts.pkgName !== '@zerollup/ts-transform-paths' &&
         opts.pkgName !== 'vite'
       ) {
         throw new Error(`${opts.pkgName} has "node:"`);
