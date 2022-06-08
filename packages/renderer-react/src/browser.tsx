@@ -149,7 +149,7 @@ export function renderClient(opts: {
             }
           }
           // client loader
-          const clientLoader = opts.routes[id].clientLoader;
+          const clientLoader = opts.routes[id]?.clientLoader;
           if (clientLoader && !clientLoaderData[id]) {
             clientLoader().then((data: any) => {
               setClientLoaderData((d: any) => ({ ...d, [id]: data }));
