@@ -143,6 +143,7 @@ export class StaticDepInfo {
         // fixme respect to environment
         '**/.umi-production/**',
         '**/node_modules/**',
+        '**/.git/**',
       ],
     });
     console.timeEnd('fast-glob');
@@ -155,8 +156,11 @@ export class StaticDepInfo {
         // fixme respect to environment
         '**/.umi-production/**',
         '**/node_modules/**',
+        '**/.git/**',
       ],
       cwd: this.srcPath,
+      ignoreInitial: true,
+      ignorePermissionErrors: true,
     });
 
     const p = new Promise<void>((resolve) => {
@@ -168,8 +172,6 @@ export class StaticDepInfo {
     console.timeEnd('chodidar'); // it seems chodidar is faster than fast-glob
 
     dirWatcher.on('all', (event, path) => {
-      console.log('event', event, '-->', path);
-
       switch (event) {
         case 'change':
         case 'add':
@@ -395,6 +397,10 @@ export class StaticDepInfo {
         bundle: false,
         outdir: this.cachePath,
         outbase: this.srcPath,
+        loader: {
+          // in case some js using some feature, eg: decorator
+          '.jsx': 'tsx',
+        },
       });
     } catch (e) {
       // error ignored due to user have to update code to fix then trigger another batchProcess;
