@@ -101,7 +101,7 @@ importers:
       '@ant-design/pro-layout': ^7.0.1-beta.17
       '@ant-design/pro-table': ^2.76.0
       '@antv/l7-react': ^2.3.9
-      '@umijs/max': 4.0.0-canary.20220606.1
+      '@umijs/max': 4.0.0-rc.22
       ahooks: ^3.4.0
       antd: 4.20.6
       classnames: ^2.3.1
@@ -140,22 +140,22 @@ importers:
 
   examples/api-route-demo:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
 
   examples/boilerplate:
     specifiers:
       hoist-non-react-statics: ^3.3.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       hoist-non-react-statics: 3.3.2
       umi: link:../../packages/umi
 
   examples/boilerplate-vue:
     specifiers:
-      '@umijs/preset-vue': 4.0.0-canary.20220606.1
-      umi: 4.0.0-canary.20220606.1
+      '@umijs/preset-vue': 4.0.0-rc.22
+      umi: 4.0.0-rc.22
       vue: 3.2.36
     dependencies:
       '@umijs/preset-vue': link:../../packages/preset-vue
@@ -164,7 +164,7 @@ importers:
 
   examples/bug-mfsu-fast-refresh:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
 
@@ -172,10 +172,10 @@ importers:
     specifiers:
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.5
-      '@umijs/bundler-vite': 4.0.0-canary.20220606.1
+      '@umijs/bundler-vite': 4.0.0-rc.22
       react: ^18.1.0
       react-dom: ^18.1.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.5
@@ -192,7 +192,7 @@ importers:
       react: ^18.1.0
       react-dom: ^18.1.0
       react-router-dom: ^6.3.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.5
@@ -205,14 +205,14 @@ importers:
   examples/client-loader:
     specifiers:
       express: 4.18.1
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       express: 4.18.1
       umi: link:../../packages/umi
 
   examples/diff-client-loader:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
 
@@ -228,7 +228,7 @@ importers:
       redux: ^4.2.0
       swiper: ^8.1.4
       swr: 1.3.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@codesandbox/sandpack-react': 1.0.1_react-dom@18.1.0+react@18.1.0
       antd: 4.20.6_react-dom@18.1.0+react@18.1.0
@@ -246,7 +246,7 @@ importers:
     specifiers:
       eslint: ^8.15.0
       stylelint: ^14.8.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     devDependencies:
       eslint: 8.15.0
       stylelint: 14.8.2
@@ -255,7 +255,7 @@ importers:
   examples/max:
     specifiers:
       '@ant-design/icons': ^4.7.0
-      '@umijs/max': 4.0.0-canary.20220606.1
+      '@umijs/max': 4.0.0-rc.22
       react: 18.1.0
       react-dom: 18.1.0
     dependencies:
@@ -270,7 +270,7 @@ importers:
       '@types/react-dom': ^18.0.5
       react: ^18.1.0
       react-dom: ^18.1.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.5
@@ -282,7 +282,7 @@ importers:
     specifiers:
       '@example/x-design': workspace:*
       antd: 4.20.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@example/x-design': link:../x-design
       antd: 4.20.2_react-dom@18.1.0+react@18.1.0
@@ -296,7 +296,7 @@ importers:
       '@babel/preset-typescript': ^7.16.7
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.5
-      '@umijs/mfsu': 4.0.0-canary.20220606.1
+      '@umijs/mfsu': 4.0.0-rc.22
       antd: ^4.20.6
       babel-loader: ^8.2.4
       esbuild: 0.14.35
@@ -329,7 +329,7 @@ importers:
 
   examples/qiankun-slave:
     specifiers:
-      '@umijs/max': 4.0.0-canary.20220606.1
+      '@umijs/max': 4.0.0-rc.22
       react: 18.1.0
       react-dom: 18.1.0
     dependencies:
@@ -339,7 +339,7 @@ importers:
 
   examples/remix:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
 
@@ -351,7 +351,7 @@ importers:
       jest: ^27
       ts-node: ^10
       typescript: ^4.7.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
     devDependencies:
@@ -364,15 +364,15 @@ importers:
 
   examples/tmp-swc-transpiler:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
 
   examples/vue-demo:
     specifiers:
-      '@umijs/preset-vue': 4.0.0-canary.20220606.1
+      '@umijs/preset-vue': 4.0.0-rc.22
       babel-plugin-import: ^1.13.5
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       vant: 3.4.9
       vite-plugin-style-import: 2.0.0
       vue: 3.2.36
@@ -387,9 +387,9 @@ importers:
 
   examples/with-antd:
     specifiers:
-      '@umijs/plugins': 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
       antd: ^4.20.6
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
       antd: 4.20.6_react-dom@18.1.0+react@18.1.0
@@ -397,8 +397,8 @@ importers:
 
   examples/with-dva:
     specifiers:
-      '@umijs/plugins': 4.0.0-canary.20220606.1
-      umi: 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
       umi: link:../../packages/umi
@@ -408,7 +408,7 @@ importers:
       '@emotion/cache': ^11.7.1
       '@emotion/react': ^11.9.0
       '@emotion/styled': ^11.8.1
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@emotion/cache': 11.7.1
       '@emotion/react': 11.9.0_@types+react@18.0.9+react@18.1.0
@@ -419,7 +419,7 @@ importers:
     specifiers:
       mobx: ^6.6.0
       mobx-react: ^7.5.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       mobx: 6.6.0
       mobx-react: 7.5.0_ca72120f84c69ebf01bb6728cc9f860c
@@ -431,7 +431,7 @@ importers:
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.5
       typescript: ^4.7.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@monaco-editor/react': 4.4.5_react-dom@18.1.0+react@18.1.0
       umi: link:../../packages/umi
@@ -444,7 +444,7 @@ importers:
     specifiers:
       react: ^17.0.0
       react-dom: ^17.0.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -453,7 +453,7 @@ importers:
   examples/with-react-query:
     specifiers:
       react-query: ^3.38.1
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       react-query: 3.38.1_react-dom@18.1.0+react@18.1.0
       umi: link:../../packages/umi
@@ -465,7 +465,7 @@ importers:
       '@types/three': ^0.140.0
       three: ^0.141.0
       troika-three-text: ^0.46.4
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@react-three/drei': 9.11.3_065177dc3832fbbb7a51115cf182a28c
       '@react-three/fiber': 8.0.19_2bb2b1641342b57be706df06cdffdaa3
@@ -477,7 +477,7 @@ importers:
   examples/with-recoil:
     specifiers:
       recoil: ^0.7.3-alpha.1
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       recoil: 0.7.3-alpha.1_react-dom@18.1.0+react@18.1.0
       umi: link:../../packages/umi
@@ -486,7 +486,7 @@ importers:
     specifiers:
       react-redux: ^8.0.2
       redux: ^4.2.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       react-redux: 8.0.2_69608314d6a44ae4326a193fc1251e30
       redux: 4.2.0
@@ -496,7 +496,7 @@ importers:
     specifiers:
       '@reduxjs/toolkit': ^1.8.2
       react-redux: ^8.0.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@reduxjs/toolkit': 1.8.2_react-redux@8.0.2+react@18.1.0
       react-redux: 8.0.2_860a50afffe39687c5bcaf033b12f67e
@@ -506,7 +506,7 @@ importers:
     specifiers:
       '@rematch/core': ^2.2.0
       react-redux: ^8.0.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@rematch/core': 2.2.0
       react-redux: 8.0.2_860a50afffe39687c5bcaf033b12f67e
@@ -516,9 +516,9 @@ importers:
     specifiers:
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.5
-      '@umijs/plugins': 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
       typescript: ^4.7.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
       umi: link:../../packages/umi
@@ -533,7 +533,7 @@ importers:
       '@types/react-dom': ^18.0.5
       sass: ^1.50.0
       typescript: ^4.7.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       umi: link:../../packages/umi
     devDependencies:
@@ -546,7 +546,7 @@ importers:
     specifiers:
       '@types/styled-components': ^5.1.25
       styled-components: ^5.3.5
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       styled-components: 5.3.5_react-dom@18.1.0+react@18.1.0
       umi: link:../../packages/umi
@@ -555,9 +555,9 @@ importers:
 
   examples/with-tailwindcss:
     specifiers:
-      '@umijs/plugins': 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
       tailwindcss: ^3.0.24
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
       tailwindcss: 3.0.24_ts-node@10.7.0
@@ -565,9 +565,9 @@ importers:
 
   examples/with-unocss:
     specifiers:
-      '@umijs/plugins': 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
       '@unocss/cli': ^0.33.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       unocss: ^0.34.1
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
@@ -577,7 +577,7 @@ importers:
 
   examples/with-unstated:
     specifiers:
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       unstated-next: ^1.1.0
     dependencies:
       umi: link:../../packages/umi
@@ -585,8 +585,8 @@ importers:
 
   examples/with-use-model:
     specifiers:
-      '@umijs/plugins': 4.0.0-canary.20220606.1
-      umi: 4.0.0-canary.20220606.1
+      '@umijs/plugins': 4.0.0-rc.22
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/plugins': link:../../packages/plugins
       umi: link:../../packages/umi
@@ -594,7 +594,7 @@ importers:
   examples/with-valtio:
     specifiers:
       '@types/three': ^0.140.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       valtio: ^1.6.1
     dependencies:
       '@types/three': 0.140.0
@@ -606,7 +606,7 @@ importers:
       '@vanilla-extract/babel-plugin': ^1.1.6
       '@vanilla-extract/css': ^1.7.0
       '@vanilla-extract/webpack-plugin': ^2.1.9
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@vanilla-extract/babel-plugin': 1.1.6
       '@vanilla-extract/css': 1.7.0
@@ -615,9 +615,9 @@ importers:
 
   examples/with-vue-element-plus:
     specifiers:
-      '@umijs/preset-vue': 4.0.0-canary.20220606.1
+      '@umijs/preset-vue': 4.0.0-rc.22
       element-plus: ^2.2.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       vue: 3.2.36
     dependencies:
       '@umijs/preset-vue': link:../../packages/preset-vue
@@ -627,9 +627,9 @@ importers:
 
   examples/with-vue-pinia:
     specifiers:
-      '@umijs/preset-vue': 4.0.0-canary.20220606.1
+      '@umijs/preset-vue': 4.0.0-rc.22
       pinia: ^2.0.14
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       vue: 3.2.36
     dependencies:
       '@umijs/preset-vue': link:../../packages/preset-vue
@@ -642,7 +642,7 @@ importers:
 
   packages/ast:
     specifiers:
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
     dependencies:
       '@umijs/bundler-utils': link:../bundler-utils
 
@@ -650,8 +650,8 @@ importers:
     specifiers:
       '@babel/runtime': 7.17.9
       '@bloomberg/record-tuple-polyfill': 0.0.4
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       core-js: 3.22.4
     dependencies:
       '@babel/runtime': 7.17.9
@@ -663,8 +663,8 @@ importers:
   packages/bundler-esbuild:
     specifiers:
       '@alitajs/postcss-plugin-px2rem': ^0.0.1
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       enhanced-resolve: 5.9.3
       postcss: ^8.4.13
       postcss-flexbugs-fixes: 5.0.2
@@ -709,7 +709,7 @@ importers:
       '@types/babel__traverse': 7.17.1
       '@types/less': 3.0.3
       '@types/spdy': ^3.4.5
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/utils': 4.0.0-rc.22
       cjs-module-lexer: 1.2.2
       es-module-lexer: 0.10.5
       esbuild: 0.14.36
@@ -764,8 +764,8 @@ importers:
       '@types/caniuse-lite': 1.0.1
       '@types/rollup-plugin-visualizer': 4.2.1
       '@types/svgo': 2.6.3
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       '@vitejs/plugin-legacy': 1.7.1
       '@vitejs/plugin-react': 1.2.0
       caniuse-lite: 1.0.30001327
@@ -803,10 +803,10 @@ importers:
       '@types/hapi__joi': 17.1.8
       '@types/webpack-sources': 3.2.0
       '@types/ws': 8.5.3
-      '@umijs/babel-preset-umi': 4.0.0-canary.20220606.1
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/mfsu': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/babel-preset-umi': 4.0.0-rc.22
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/mfsu': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       autoprefixer: 10.4.4
       babel-loader: 8.2.4
       compression: 1.7.4
@@ -904,8 +904,8 @@ importers:
     specifiers:
       '@hapi/joi': 17.1.1
       '@types/hapi__joi': 17.1.8
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       dotenv: 16.0.0
       just-diff: 5.0.1
     dependencies:
@@ -919,14 +919,14 @@ importers:
 
   packages/create-umi:
     specifiers:
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/utils': 4.0.0-rc.22
     dependencies:
       '@umijs/utils': link:../utils
 
   packages/father:
     specifiers:
-      '@umijs/core': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/core': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       v8-compile-cache: 2.3.0
     dependencies:
       '@umijs/core': link:../core
@@ -941,7 +941,7 @@ importers:
       '@stylelint/postcss-css-in-js': ^0.38.0
       '@typescript-eslint/eslint-plugin': 5.22.0
       '@typescript-eslint/parser': 5.22.0
-      '@umijs/babel-preset-umi': 4.0.0-canary.20220606.1
+      '@umijs/babel-preset-umi': 4.0.0-rc.22
       eslint-plugin-jest: 26.1.5
       eslint-plugin-react: 7.29.4
       eslint-plugin-react-hooks: 4.5.0
@@ -974,12 +974,12 @@ importers:
 
   packages/max:
     specifiers:
-      '@umijs/lint': 4.0.0-canary.20220606.1
-      '@umijs/plugins': 4.0.0-canary.20220606.1
+      '@umijs/lint': 4.0.0-rc.22
+      '@umijs/plugins': 4.0.0-rc.22
       antd: ^4.20.6
       eslint: 8.15.0
       stylelint: 14.8.2
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       '@umijs/lint': link:../lint
       '@umijs/plugins': link:../plugins
@@ -990,9 +990,9 @@ importers:
 
   packages/mfsu:
     specifiers:
-      '@umijs/bundler-esbuild': 4.0.0-canary.20220606.1
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-esbuild': 4.0.0-rc.22
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       chokidar: ^3.5.3
       enhanced-resolve: 5.9.3
       fast-glob: ^3.2.11
@@ -1024,7 +1024,7 @@ importers:
       remark-gfm: ^3.0.1
       shiki: ^0.10.1
       tailwindcss: ^3.0.24
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
     dependencies:
       keymaster: 1.6.2
       react-helmet: 6.1.0_react@18.1.0
@@ -1045,7 +1045,7 @@ importers:
       '@ahooksjs/use-request': ^2.0.0
       '@ant-design/icons': ^4.7.0
       '@ant-design/pro-layout': ^7.0.1-beta.17
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
       antd-dayjs-webpack-plugin: ^1.0.6
       axios: ^0.27.2
       babel-plugin-import: ^1.13.5
@@ -1061,7 +1061,7 @@ importers:
       react-intl: 3.12.1
       react-redux: ^8.0.2
       redux: ^4.2.0
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       warning: ^4.0.3
     dependencies:
       '@ahooksjs/use-request': 2.8.15_react@18.1.0
@@ -1093,15 +1093,15 @@ importers:
       '@types/body-parser': 1.19.2
       '@types/ini': 1.3.31
       '@types/multer': 1.4.7
-      '@umijs/ast': 4.0.0-canary.20220606.1
-      '@umijs/babel-preset-umi': 4.0.0-canary.20220606.1
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/bundler-vite': 4.0.0-canary.20220606.1
-      '@umijs/bundler-webpack': 4.0.0-canary.20220606.1
-      '@umijs/core': 4.0.0-canary.20220606.1
-      '@umijs/renderer-react': 4.0.0-canary.20220606.1
-      '@umijs/server': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/ast': 4.0.0-rc.22
+      '@umijs/babel-preset-umi': 4.0.0-rc.22
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/bundler-vite': 4.0.0-rc.22
+      '@umijs/bundler-webpack': 4.0.0-rc.22
+      '@umijs/core': 4.0.0-rc.22
+      '@umijs/renderer-react': 4.0.0-rc.22
+      '@umijs/server': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       body-parser: 1.20.0
       core-js: 3.22.4
       current-script-polyfill: 1.0.0
@@ -1154,9 +1154,9 @@ importers:
 
   packages/preset-vue:
     specifiers:
-      '@umijs/renderer-vue': 4.0.0-canary.20220606.1
+      '@umijs/renderer-vue': 4.0.0-rc.22
       '@vitejs/plugin-vue': 2.3.1
-      umi: 4.0.0-canary.20220606.1
+      umi: 4.0.0-rc.22
       vue: 3.2.36
       vue-loader: 17.0.0
       vue-router: 4.0.15
@@ -1191,7 +1191,7 @@ importers:
 
   packages/server:
     specifiers:
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
       history: 5.3.0
       react: 18.1.0
       react-dom: 18.1.0
@@ -1222,15 +1222,15 @@ importers:
 
   packages/umi:
     specifiers:
-      '@umijs/bundler-utils': 4.0.0-canary.20220606.1
-      '@umijs/bundler-webpack': 4.0.0-canary.20220606.1
-      '@umijs/core': 4.0.0-canary.20220606.1
-      '@umijs/lint': 4.0.0-canary.20220606.1
-      '@umijs/preset-umi': 4.0.0-canary.20220606.1
-      '@umijs/renderer-react': 4.0.0-canary.20220606.1
-      '@umijs/server': 4.0.0-canary.20220606.1
-      '@umijs/test': 4.0.0-canary.20220606.1
-      '@umijs/utils': 4.0.0-canary.20220606.1
+      '@umijs/bundler-utils': 4.0.0-rc.22
+      '@umijs/bundler-webpack': 4.0.0-rc.22
+      '@umijs/core': 4.0.0-rc.22
+      '@umijs/lint': 4.0.0-rc.22
+      '@umijs/preset-umi': 4.0.0-rc.22
+      '@umijs/renderer-react': 4.0.0-rc.22
+      '@umijs/server': 4.0.0-rc.22
+      '@umijs/test': 4.0.0-rc.22
+      '@umijs/utils': 4.0.0-rc.22
       prettier-plugin-organize-imports: ^2.3.4
       prettier-plugin-packagejson: ^2.2.17
     dependencies:
@@ -6554,6 +6554,15 @@ packages:
     dev: false
     optional: true
 
+  /@parcel/css-darwin-x64/1.9.0:
+    resolution: {integrity: sha512-4SpuwiM/4ayOgKflqSLd87XT7YwyC3wd2QuzOOkasjbe38UU+tot/87l2lQYEB538YinLdfwFQuFLDY0x9MxgA==}
+    engines: {node: '>= 12.0.0'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
   /@parcel/css-linux-arm-gnueabihf/1.9.0:
     resolution: {integrity: sha512-KxCyX5fFvX5636Y8LSXwCxXMtIncgP7Lkw8nLsqd24C5YqMokmuOtAcHb/vQ9zQG6YiUWTv0MybqDuL7dBDfVw==}
     engines: {node: '>= 12.0.0'}
@@ -6615,7 +6624,7 @@ packages:
       detect-libc: 1.0.3
     optionalDependencies:
       '@parcel/css-darwin-arm64': 1.9.0
-      '@parcel/css-darwin-x64': registry.npmmirror.com/@parcel/css-darwin-x64/1.9.0
+      '@parcel/css-darwin-x64': 1.9.0
       '@parcel/css-linux-arm-gnueabihf': 1.9.0
       '@parcel/css-linux-arm64-gnu': 1.9.0
       '@parcel/css-linux-arm64-musl': 1.9.0
@@ -7155,6 +7164,15 @@ packages:
     dev: true
     optional: true
 
+  /@swc/core-darwin-x64/1.2.165:
+    resolution: {integrity: sha512-R1WRiDnkmXWBkyNGR09WDq+mCFIujhdUs3e4QiHJih1HY2rKGXU0SZKoqaBTjeVerk/IYXaEnZM3Bx7sb0oyEQ==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /@swc/core-freebsd-x64/1.2.165:
     resolution: {integrity: sha512-bL7Jxy2is/+YLZedQsF5a7swpbq9RGsvtXJmx5Bi0JqaavqWpbICmQtTr9I2S97taw16S/k8vOJ6DPzEvgJWWQ==}
     engines: {node: '>=10'}
@@ -7244,7 +7262,7 @@ packages:
       '@swc/core-android-arm-eabi': 1.2.165
       '@swc/core-android-arm64': 1.2.165
       '@swc/core-darwin-arm64': 1.2.165
-      '@swc/core-darwin-x64': registry.npmmirror.com/@swc/core-darwin-x64/1.2.165
+      '@swc/core-darwin-x64': 1.2.165
       '@swc/core-freebsd-x64': 1.2.165
       '@swc/core-linux-arm-gnueabihf': 1.2.165
       '@swc/core-linux-arm64-gnu': 1.2.165
@@ -12106,6 +12124,15 @@ packages:
     resolution: {integrity: sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==}
     dev: true
 
+  /errno/0.1.8:
+    resolution: {integrity: sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      prr: 1.0.1
+    dev: true
+    optional: true
+
   /error-ex/1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
     dependencies:
@@ -12267,6 +12294,24 @@ packages:
     os: [darwin]
     requiresBuild: true
     dev: true
+    optional: true
+
+  /esbuild-darwin-64/0.14.35:
+    resolution: {integrity: sha512-cN7ejc3Q0+5hFYXSLKd7GfnrY3hEjx/QxYUiU5f8KEJpH1CJsQEl69ALS5WYYrPrlgKHGKusRVKOkK1x20fe6g==}
+    engines: {node: '>=12'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /esbuild-darwin-64/0.14.36:
+    resolution: {integrity: sha512-kkl6qmV0dTpyIMKagluzYqlc1vO0ecgpviK/7jwPbRDEv5fejRTaBBEE2KxEQbTHcLhiiDbhG7d5UybZWo/1zQ==}
+    engines: {node: '>=12'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
     optional: true
 
   /esbuild-darwin-arm64/0.14.27:
@@ -12797,7 +12842,7 @@ packages:
     optionalDependencies:
       esbuild-android-64: 0.14.35
       esbuild-android-arm64: 0.14.35
-      esbuild-darwin-64: registry.npmmirror.com/esbuild-darwin-64/0.14.35
+      esbuild-darwin-64: 0.14.35
       esbuild-darwin-arm64: 0.14.35
       esbuild-freebsd-64: 0.14.35
       esbuild-freebsd-arm64: 0.14.35
@@ -12825,7 +12870,7 @@ packages:
     optionalDependencies:
       esbuild-android-64: 0.14.36
       esbuild-android-arm64: 0.14.36
-      esbuild-darwin-64: registry.npmmirror.com/esbuild-darwin-64/0.14.36
+      esbuild-darwin-64: 0.14.36
       esbuild-darwin-arm64: 0.14.36
       esbuild-freebsd-64: 0.14.36
       esbuild-freebsd-arm64: 0.14.36
@@ -14735,6 +14780,14 @@ packages:
     resolution: {integrity: sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==}
     engines: {node: '>= 4'}
 
+  /image-size/0.5.5:
+    resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
+    engines: {node: '>=0.10.0'}
+    hasBin: true
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /immer/8.0.4:
     resolution: {integrity: sha512-jMfL18P+/6P6epANRvRk6q8t+3gGhqsJ9EuJ25AXE+9bNTYtssvzeYbEd0mXRYWCmmXSIbnlpz6vd6iJlmGGGQ==}
     dev: false
@@ -15593,7 +15646,7 @@ packages:
       sane: 4.1.0
       walker: 1.0.8
     optionalDependencies:
-      fsevents: registry.npmmirror.com/fsevents/2.3.2
+      fsevents: 2.3.2
     dev: false
 
   /jest-haste-map/27.5.1:
@@ -16174,7 +16227,7 @@ packages:
   /jsonfile/4.0.0:
     resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
     optionalDependencies:
-      graceful-fs: registry.npmmirror.com/graceful-fs/4.2.10
+      graceful-fs: 4.2.10
     dev: true
 
   /jsonfile/6.1.0:
@@ -16360,13 +16413,13 @@ packages:
       parse-node-version: 1.0.1
       tslib: 2.3.1
     optionalDependencies:
-      errno: registry.npmmirror.com/errno/0.1.8
-      graceful-fs: registry.npmmirror.com/graceful-fs/4.2.10
-      image-size: registry.npmmirror.com/image-size/0.5.5
-      make-dir: registry.npmmirror.com/make-dir/2.1.0
-      mime: registry.npmmirror.com/mime/1.6.0
-      needle: registry.npmmirror.com/needle/2.9.1
-      source-map: registry.npmmirror.com/source-map/0.6.1
+      errno: 0.1.8
+      graceful-fs: 4.2.10
+      image-size: 0.5.5
+      make-dir: 2.1.0
+      mime: 1.6.0
+      needle: 2.9.1
+      source-map: 0.6.1
     dev: true
 
   /leven/3.1.0:
@@ -18007,6 +18060,18 @@ packages:
       split2: 3.2.2
       through2: 4.0.2
     dev: true
+
+  /needle/2.9.1:
+    resolution: {integrity: sha512-6R9fqJ5Zcmf+uYaFgdIHmLwNldn5HbK8L5ybn7Uz+ylX/rnOsSp1AHcvQSrCaFN+qNM1wpymHqD7mVasEOlHGQ==}
+    engines: {node: '>= 4.4.x'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      debug: 3.2.7
+      iconv-lite: 0.4.24
+      sax: 1.2.4
+    dev: true
+    optional: true
 
   /negotiator/0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
@@ -22218,7 +22283,7 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: registry.npmmirror.com/fsevents/2.3.2
+      fsevents: 2.3.2
     dev: true
 
   /rsvp/4.8.5:
@@ -24125,6 +24190,14 @@ packages:
       safe-buffer: 5.2.1
     dev: true
 
+  /turbo-darwin-64/1.2.8:
+    resolution: {integrity: sha512-W46D05e1EUBE5TpRYjAHZXvR01EGhY8AcZUZa1mQCLmOb/W3knS1jHDAMEfXoPuDhdlolejEcbSHFCmqFRQ6OQ==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /turbo-darwin-arm64/1.2.8:
     resolution: {integrity: sha512-hDcbQzUnKDa5j+MPnt8hbhcENeGD+dxee9O8LkRUGgHFQzqME0YVZsRDwwMCnpRSmr9ZlvZYQJPRELhBdary9Q==}
     cpu: [arm64]
@@ -24226,7 +24299,7 @@ packages:
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: registry.npmmirror.com/turbo-darwin-64/1.2.8
+      turbo-darwin-64: 1.2.8
       turbo-darwin-arm64: 1.2.8
       turbo-freebsd-64: 1.2.8
       turbo-freebsd-arm64: 1.2.8
@@ -24332,7 +24405,7 @@ packages:
       source-map: 0.5.7
       yargs: 3.10.0
     optionalDependencies:
-      uglify-to-browserify: registry.npmmirror.com/uglify-to-browserify/1.0.2
+      uglify-to-browserify: 1.0.2
     dev: false
 
   /uglify-js/3.15.4:
@@ -24348,6 +24421,12 @@ packages:
     hasBin: true
     requiresBuild: true
     dev: true
+    optional: true
+
+  /uglify-to-browserify/1.0.2:
+    resolution: {integrity: sha1-bgkk1r2mta/jSeOabWMoUKD4grc=}
+    requiresBuild: true
+    dev: false
     optional: true
 
   /uid-number/0.0.6:
@@ -25703,100 +25782,6 @@ packages:
       - encoding
     dev: true
 
-  registry.npmmirror.com/@parcel/css-darwin-x64/1.9.0:
-    resolution: {integrity: sha512-4SpuwiM/4ayOgKflqSLd87XT7YwyC3wd2QuzOOkasjbe38UU+tot/87l2lQYEB538YinLdfwFQuFLDY0x9MxgA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@parcel/css-darwin-x64/-/css-darwin-x64-1.9.0.tgz}
-    name: '@parcel/css-darwin-x64'
-    version: 1.9.0
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  registry.npmmirror.com/@swc/core-darwin-x64/1.2.165:
-    resolution: {integrity: sha512-R1WRiDnkmXWBkyNGR09WDq+mCFIujhdUs3e4QiHJih1HY2rKGXU0SZKoqaBTjeVerk/IYXaEnZM3Bx7sb0oyEQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@swc/core-darwin-x64/-/core-darwin-x64-1.2.165.tgz}
-    name: '@swc/core-darwin-x64'
-    version: 1.2.165
-    engines: {node: '>=10'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/errno/0.1.8:
-    resolution: {integrity: sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/errno/-/errno-0.1.8.tgz}
-    name: errno
-    version: 0.1.8
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      prr: 1.0.1
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/esbuild-darwin-64/0.14.35:
-    resolution: {integrity: sha512-cN7ejc3Q0+5hFYXSLKd7GfnrY3hEjx/QxYUiU5f8KEJpH1CJsQEl69ALS5WYYrPrlgKHGKusRVKOkK1x20fe6g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/esbuild-darwin-64/-/esbuild-darwin-64-0.14.35.tgz}
-    name: esbuild-darwin-64
-    version: 0.14.35
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/esbuild-darwin-64/0.14.36:
-    resolution: {integrity: sha512-kkl6qmV0dTpyIMKagluzYqlc1vO0ecgpviK/7jwPbRDEv5fejRTaBBEE2KxEQbTHcLhiiDbhG7d5UybZWo/1zQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/esbuild-darwin-64/-/esbuild-darwin-64-0.14.36.tgz}
-    name: esbuild-darwin-64
-    version: 0.14.36
-    engines: {node: '>=12'}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  registry.npmmirror.com/fsevents/2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/fsevents/-/fsevents-2.3.2.tgz}
-    name: fsevents
-    version: 2.3.2
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-    requiresBuild: true
-    optional: true
-
-  registry.npmmirror.com/graceful-fs/4.2.10:
-    resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/graceful-fs/-/graceful-fs-4.2.10.tgz}
-    name: graceful-fs
-    version: 4.2.10
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/image-size/0.5.5:
-    resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/image-size/-/image-size-0.5.5.tgz}
-    name: image-size
-    version: 0.5.5
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/make-dir/2.1.0:
-    resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/make-dir/-/make-dir-2.1.0.tgz}
-    name: make-dir
-    version: 2.1.0
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dependencies:
-      pify: 4.0.1
-      semver: 5.7.1
-    dev: true
-    optional: true
-
   registry.npmmirror.com/mime/1.6.0:
     resolution: {integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/mime/-/mime-1.6.0.tgz}
     name: mime
@@ -25804,50 +25789,9 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
-  registry.npmmirror.com/needle/2.9.1:
-    resolution: {integrity: sha512-6R9fqJ5Zcmf+uYaFgdIHmLwNldn5HbK8L5ybn7Uz+ylX/rnOsSp1AHcvQSrCaFN+qNM1wpymHqD7mVasEOlHGQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/needle/-/needle-2.9.1.tgz}
-    name: needle
-    version: 2.9.1
-    engines: {node: '>= 4.4.x'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      debug: 3.2.7
-      iconv-lite: 0.4.24
-      sax: 1.2.4
-    dev: true
-    optional: true
-
   registry.npmmirror.com/source-map/0.5.7:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/source-map/-/source-map-0.5.7.tgz}
     name: source-map
     version: 0.5.7
     engines: {node: '>=0.10.0'}
     dev: false
-
-  registry.npmmirror.com/source-map/0.6.1:
-    resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/source-map/-/source-map-0.6.1.tgz}
-    name: source-map
-    version: 0.6.1
-    engines: {node: '>=0.10.0'}
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/turbo-darwin-64/1.2.8:
-    resolution: {integrity: sha512-W46D05e1EUBE5TpRYjAHZXvR01EGhY8AcZUZa1mQCLmOb/W3knS1jHDAMEfXoPuDhdlolejEcbSHFCmqFRQ6OQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/turbo-darwin-64/-/turbo-darwin-64-1.2.8.tgz}
-    name: turbo-darwin-64
-    version: 1.2.8
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  registry.npmmirror.com/uglify-to-browserify/1.0.2:
-    resolution: {integrity: sha512-vb2s1lYx2xBtUgy+ta+b2J/GLVUR+wmpINwHePmPRhOsIVCG2wDzKJ0n14GslH1BifsqVzSOwQhRaCAsZ/nI4Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz}
-    name: uglify-to-browserify
-    version: 1.0.2
-    requiresBuild: true
-    dev: false
-    optional: true
