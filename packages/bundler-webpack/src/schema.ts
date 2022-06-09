@@ -112,6 +112,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           esbuild: Joi.boolean(),
           mfName: Joi.string(),
           runtimePublicPath: Joi.boolean(),
+          version: Joi.string().optional().valid('v3', 'v4').default('v3'),
         }),
         Joi.boolean(),
       ),
