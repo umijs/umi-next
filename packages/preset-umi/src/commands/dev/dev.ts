@@ -283,6 +283,7 @@ PORT=8888 umi dev
           };
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
+        mfsuVersion: api.config.mfsu?.version,
         cache: {
           buildDependencies: [
             api.pkgPath,
