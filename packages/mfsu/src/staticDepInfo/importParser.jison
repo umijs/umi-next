@@ -1,4 +1,5 @@
 /* reference https://262.ecma-international.org/12.0/#prod-ImportsList */
+/*           https://tc39.es/ecma262/multipage/ecmascript-language-scripts-and-modules.html#sec-exports*/
 /* lexical grammar */
 %lex
 %%
@@ -9,6 +10,7 @@
 "as"                    return 'AS'
 "from"                  return 'FROM'
 "import"                return 'IMPORT'
+"export"                return 'EXPORT'
 "{"                     return 'LBRACE'
 "}"                     return 'RBRACE'
 ","                     return 'COMMA'
@@ -33,6 +35,7 @@ ImportStatements
 ImportStatement
     : IMPORT ModuleSpecifier            { $$ = { from: $2, imports: []} }
     | IMPORT ImportClause FromClause    { $$ = { from: $3, imports: $2 } }
+    | ExportFromStatement
     ;
 
 ImportClause
@@ -72,6 +75,31 @@ FromClause
 
 ModuleSpecifier
     : STRING Semicolon { $$=$1 }
+    ;
+
+ExportFromStatement
+    : EXPORT ExportFromClause FromClause { $$ = {from: $3, imports: $2 } }
+    ;
+
+ExportFromClause
+    : STAR         { $$ = [ '*' ] }
+    | STAR AS ID   { $$ = [ '*' ] }
+    | NamedExports
+    ;
+
+NamedExports
+    : LBRACE ExportsList RBRACE        { $$ = $2 }
+    | LBRACE ExportsList COMMA RBRACE  { $$ = $2 }
+    ;
+
+ExportsList
+    : ExportSpecifier                    { $$ = [ $1 ] }
+    | ExportsList COMMA ExportSpecifier  { $$ = [ ...$1, $3 ] }
+    ;
+
+ExportSpecifier
+    : ID
+    | ID AS ID  { $$ = $1 }
     ;
 
 Semicolon: | SEMICOLON ;
