@@ -401,10 +401,26 @@ export class StaticDepInfo {
           // in case some js using some feature, eg: decorator
           '.jsx': 'tsx',
         },
+        logLevel: 'silent',
       });
     } catch (e) {
       // error ignored due to user have to update code to fix then trigger another batchProcess;
-      console.error(e);
+
+      // @ts-ignore
+      if (e.errors?.length || e.warnings?.length) {
+        logger.warn(
+          'transpile code with esbuild got ',
+          // @ts-ignore
+          e.errors?.lenght || 0,
+          'errors,',
+          // @ts-ignore
+          e.warnings?.length || 0,
+          'warnings',
+        );
+        logger.debug('esbuild transpile code with error', e);
+      } else {
+        logger.warn('transpile code with esbuild error', e);
+      }
     }
   }
 

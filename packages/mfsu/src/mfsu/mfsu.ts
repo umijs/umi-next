@@ -83,8 +83,8 @@ export class MFSU {
     };
     this.opts.cwd = this.opts.cwd || process.cwd();
 
-    this.opts.version = 'v4';
     if (this.opts.version === 'v4') {
+      logger.info('MFSU4 enabled');
       this.strategy = new StaticAnalyzeStrategy({ mfsu: this });
     } else {
       this.strategy = new StrategyCompileTime({ mfsu: this });
