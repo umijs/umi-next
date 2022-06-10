@@ -8,9 +8,9 @@ const Nested = ()=>{
 {{#wrappers}}
     W_{{{ index }}},
 {{/wrappers}}
-  ].reduceRight((children,W)=>{
+  ].reduceRight((children, W) => {
     return <W>{children}</W>
-  },<Comp />)
+  }, <Comp />)
 }
 
 export default Nested;
