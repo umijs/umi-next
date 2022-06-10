@@ -1,5 +1,4 @@
-import React from 'react';
-import { Outlet } from 'umi';
+import { Outlet } from '@umijs/max';
 
 export default () => {
   return (
