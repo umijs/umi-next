@@ -65,7 +65,7 @@ jobs:
 
       - name: Turbo Cache
         id: turbo-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .turbo
           key: turbo-${{ github.job }}-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.ref_name }}-${{ steps.get-week.outputs.WEEK }}-${{ github.sha }}
@@ -75,7 +75,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm i
-        
+
       - run: pnpm build
       - run: pnpm tsc --noEmit
       - run: pnpm test
