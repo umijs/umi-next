@@ -65,6 +65,7 @@ export default (api: IApi) => {
                 : {}),
             },
             allowSyntheticDefaultImports: true,
+            resolveJsonModule: true,
           },
         },
         null,
