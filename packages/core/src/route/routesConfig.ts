@@ -61,9 +61,7 @@ function transformRoute(opts: {
     path: opts.route.path,
     ...(component
       ? {
-          file: opts.onResolveComponent
-            ? opts.onResolveComponent(component)
-            : component,
+          file: opts.onResolveComponent?.(component) ?? component,
         }
       : {}),
     parentId: opts.parentId,
@@ -73,20 +71,9 @@ function transformRoute(opts: {
     opts.memo.ret[id].absPath = absPath;
   }
   if (wrappers?.length) {
-    let parentId = opts.parentId;
-    let path = opts.route.path;
-    wrappers.forEach((wrapper: any) => {
-      const { id } = transformRoute({
-        route: { path, component: wrapper },
-        parentId,
-        memo: opts.memo,
-        onResolveComponent: opts.onResolveComponent,
-      });
-      parentId = id;
-      path = '';
-    });
-    opts.memo.ret[id].parentId = parentId;
-    opts.memo.ret[id].path = path;
+    opts.memo.ret[id].wrappers = wrappers.map(
+      (w: string) => opts.onResolveComponent?.(w) ?? w,
+    );
   }
   if (opts.route.routes) {
     transformRoutes({

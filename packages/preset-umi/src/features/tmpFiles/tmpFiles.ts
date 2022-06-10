@@ -2,7 +2,7 @@ import { lodash, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readdirSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
-import { IApi } from '../../types';
+import { IApi, IRoute } from '../../types';
 import { getModuleExports } from './getModuleExports';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
@@ -316,6 +316,22 @@ export default function EmptyRoute() {
         routeComponents: await getRouteComponents({ routes, prefix, api }),
       },
     });
+
+    for (const route of Object.values<IRoute>(clonedRoutes)) {
+      if (route.wrappers?.length && route.file) {
+        api.writeTmpFile({
+          noPluginDir: true,
+          path: join('core', 'wrapped', `${route.id}.tsx`),
+          tplPath: join(TEMPLATES_DIR, 'wrappedRoute.tpl'),
+          context: {
+            ...route,
+            wrappers: route.wrappers.map((wrapper: string, index: number) => {
+              return { index, wrapper };
+            }),
+          },
+        });
+      }
+    }
 
     // plugin.ts
     const plugins: string[] = await api.applyPlugins({
