@@ -5,91 +5,103 @@ import { getAliasedPathWithLoopDetect } from '../../babelPlugins/awaitImport/get
 import parseImport from '../importParser';
 import type { Match } from '../staticDepInfo';
 
-export default function handleImports(opts: {
-  rawCode: string;
-  imports: ImportSpecifier[];
-  mfName: string;
-  alias: Record<string, string>;
-  pathToVersion(p: string): string;
-}): Match[] {
-  const { imports, rawCode } = opts;
-  if (imports?.length > 0) {
-    const importSnippets = imports
-      .map(({ ss, se }) => {
-        return rawCode.slice(ss, se + 1);
-      })
-      .join('\n');
-    const retMatched: Match[] = [];
+export default function createHandle(importOptions: {
+  libraryName: string;
+  libraryDirectory: string;
+  style: boolean | string;
+}) {
+  const libraryName = importOptions.libraryName;
 
-    const parsedImports = parseImport(importSnippets);
-    const importedVariable = new Set<string>();
+  return function handleImports(opts: {
+    rawCode: string;
+    imports: ImportSpecifier[];
+    mfName: string;
+    alias: Record<string, string>;
+    pathToVersion(p: string): string;
+  }): Match[] {
+    const { imports, rawCode } = opts;
+    if (imports?.length > 0) {
+      const importSnippets = imports
+        .map(({ ss, se }) => {
+          return rawCode.slice(ss, se + 1);
+        })
+        .join('\n');
+      const retMatched: Match[] = [];
 
-    for (const i of parsedImports) {
-      i.imports.forEach((v) => {
-        if (v === '*') {
-          logger.error(
-            `"import * as ant from 'antd'" or "export * from 'antd'" are not allowed in mfsu#version=v4`,
-          );
-          logger.error(`solutions:`);
-          logger.error(`  change to "import { Xxx } from 'antd'" or`);
-          logger.error(`            "export { Xxx } from 'antd'" syntax`);
-          logger.error(`  or use mfsu#version=v3 configuration`);
+      const parsedImports = parseImport(importSnippets);
+      const importedVariable = new Set<string>();
 
-          throw Error(
-            `"import * as ant from 'antd'" not allowed in mfsu#version=4`,
-          );
+      for (const i of parsedImports) {
+        i.imports.forEach((v) => {
+          if (v === '*') {
+            logger.error(
+              `"import * as ant from 'antd'" or "export * from '${libraryName}'" are not allowed in mfsu#version=v4`,
+            );
+            logger.error(`solutions:`);
+            logger.error(
+              `  change to "import { Xxx } from '${libraryName}'" or`,
+            );
+            logger.error(
+              `            "export { Xxx } from '${libraryName}'" syntax`,
+            );
+            logger.error(`  or use mfsu#version=v3 configuration`);
+
+            throw Error(
+              `"import * as ant from 'antd'" not allowed in mfsu#version=4`,
+            );
+          }
+          importedVariable.add(v);
+        });
+      }
+
+      const mfName = opts.mfName;
+      const base = libraryName;
+      for (const v of importedVariable.entries()) {
+        const importVariableName = v[0];
+
+        if (importVariableName === 'default') {
+          const componentPath = getAliasedPathWithLoopDetect({
+            value: base,
+            alias: opts.alias,
+          });
+          const version = opts.pathToVersion(componentPath);
+          retMatched.push({
+            isMatch: true,
+            value: componentPath,
+            replaceValue: `${mfName}/${componentPath}`,
+            version,
+          });
+          continue;
         }
-        importedVariable.add(v);
-      });
-    }
 
-    const mfName = opts.mfName;
-    const base = 'antd';
-    for (const v of importedVariable.entries()) {
-      const importVariableName = v[0];
-
-      if (importVariableName === 'default') {
+        const dashed = toDash(importVariableName);
+        // fixme respect to config#antd
+        const importBase = join(base, 'es', dashed);
         const componentPath = getAliasedPathWithLoopDetect({
-          value: base,
+          value: importBase,
           alias: opts.alias,
         });
+        const styleImportPath = join(componentPath, 'style');
+
         const version = opts.pathToVersion(componentPath);
+
         retMatched.push({
           isMatch: true,
           value: componentPath,
           replaceValue: `${mfName}/${componentPath}`,
           version,
         });
-        continue;
+        retMatched.push({
+          isMatch: true,
+          value: styleImportPath,
+          replaceValue: `${mfName}/${styleImportPath}`,
+          version,
+        });
       }
-
-      const dashed = toDash(importVariableName);
-      // fixme respect to config#antd
-      const importBase = join(base, 'es', dashed);
-      const componentPath = getAliasedPathWithLoopDetect({
-        value: importBase,
-        alias: opts.alias,
-      });
-      const styleImportPath = join(componentPath, 'style');
-
-      const version = opts.pathToVersion(componentPath);
-
-      retMatched.push({
-        isMatch: true,
-        value: componentPath,
-        replaceValue: `${mfName}/${componentPath}`,
-        version,
-      });
-      retMatched.push({
-        isMatch: true,
-        value: styleImportPath,
-        replaceValue: `${mfName}/${styleImportPath}`,
-        version,
-      });
+      return retMatched;
     }
-    return retMatched;
-  }
-  return [];
+    return [];
+  };
 }
 
 const capitalLettersReg = /([A-Z])/g;

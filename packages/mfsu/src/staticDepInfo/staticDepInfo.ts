@@ -123,9 +123,7 @@ export class StaticDepInfo {
       // fixme ensure the last one
       newFile = newFile.replace(extname(newFile), '.js');
 
-      const c = readFileSync(newFile, 'utf-8');
-      console.log(f);
-      this.fileContentCache[f] = c;
+      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
     }
 
     this.currentDep = this._getDependencies();
