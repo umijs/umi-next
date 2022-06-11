@@ -1,4 +1,5 @@
 import type { ImportSpecifier } from '@umijs/bundler-utils/compiled/es-module-lexer';
+import { logger } from '@umijs/utils';
 import { join } from 'path';
 import { getAliasedPathWithLoopDetect } from '../../babelPlugins/awaitImport/getAliasedPath';
 import parseImport from '../importParser';
@@ -25,6 +26,19 @@ export default function handleImports(opts: {
 
     for (const i of parsedImports) {
       i.imports.forEach((v) => {
+        if (v === '*') {
+          logger.error(
+            `"import * as ant from 'antd'" or "export * from 'antd'" are not allowed in mfsu#version=v4`,
+          );
+          logger.error(`solutions:`);
+          logger.error(`  change to "import { Xxx } from 'antd'" or`);
+          logger.error(`            "export { Xxx } from 'antd'" syntax`);
+          logger.error(`  or use mfsu#version=v3 configuration`);
+
+          throw Error(
+            `"import * as ant from 'antd'" not allowed in mfsu#version=4`,
+          );
+        }
         importedVariable.add(v);
       });
     }
@@ -34,7 +48,7 @@ export default function handleImports(opts: {
     for (const v of importedVariable.entries()) {
       const importVariableName = v[0];
 
-      if (importVariableName === 'default' || importVariableName === '*') {
+      if (importVariableName === 'default') {
         const componentPath = getAliasedPathWithLoopDetect({
           value: base,
           alias: opts.alias,
