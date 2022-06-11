@@ -85,7 +85,7 @@ test('babel-plugin-import: default import', () => {
 });
 
 test('babel-plugin-import: namespaces import', () => {
-  expect(
+  expect(() =>
     handleImports({
       imports: [
         // prettier-ignore
@@ -96,10 +96,5 @@ test('babel-plugin-import: namespaces import', () => {
       rawCode: 'import * as ant from "antd";',
       pathToVersion,
     }),
-  ).toEqual(
-    // prettier-ignore
-    [
-            {replaceValue: 'mf/antd', value: 'antd', version: '1.2.3', isMatch: true,},
-        ],
-  );
+  ).toThrow();
 });
