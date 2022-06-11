@@ -8,6 +8,8 @@ import { fsExtra, lodash, logger } from '@umijs/utils';
 import { watch } from 'chokidar';
 import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+// @ts-ignore
+import why from 'is-equal/why';
 import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { Dep } from '../dep/dep';
@@ -38,7 +40,7 @@ export class StaticDepInfo {
   private mfsu: MFSU;
   private readonly safeList: string[];
   private currentDep: Record<string, Match> = {};
-  private _snapshot: Record<string, Match> = {};
+  private builtWithDep: Record<string, Match> = {};
 
   public readonly debouchedHandleChanges: () => Promise<void> | undefined;
 
@@ -212,9 +214,16 @@ export class StaticDepInfo {
   }
 
   shouldBuild() {
-    if (lodash.isEqual(this._snapshot, this.currentDep)) {
+    if (lodash.isEqual(this.builtWithDep, this.currentDep)) {
       return false;
     } else {
+      if (process.env.DEBUG_UMI) {
+        const reason = why(this.builtWithDep, this.currentDep);
+        logger.debug(
+          'mfsu4: isEqual(oldDep,newDep) === false, because ',
+          reason,
+        );
+      }
       return 'dependencies changed';
     }
   }
@@ -235,19 +244,19 @@ export class StaticDepInfo {
   }
 
   snapshot() {
-    this._snapshot = this.currentDep = this._getDependencies();
+    this.builtWithDep = this.currentDep;
   }
 
   loadCache() {
     if (existsSync(this.cacheFilePath)) {
-      this._snapshot = JSON.parse(readFileSync(this.cacheFilePath, 'utf-8'));
+      this.builtWithDep = JSON.parse(readFileSync(this.cacheFilePath, 'utf-8'));
       logger.info('MFSU v4 restored cache');
     }
   }
 
   writeCache() {
     fsExtra.mkdirpSync(dirname(this.cacheFilePath));
-    const newContent = JSON.stringify(this._snapshot, null, 2);
+    const newContent = JSON.stringify(this.builtWithDep, null, 2);
     if (
       existsSync(this.cacheFilePath) &&
       readFileSync(this.cacheFilePath, 'utf-8') === newContent
