@@ -1,6 +1,6 @@
 import {
   ImportSpecifier,
-  init,
+  init as esModuleLexerInit,
   parse,
 } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
@@ -138,6 +138,27 @@ export class StaticDepInfo {
   };
 
   async init() {
+    await Promise.all([
+      this.initFileList(),
+      this.initFileWatch(),
+      esModuleLexerInit,
+    ]);
+
+    await this.batchProcess(this.fileList);
+
+    for (const f of this.fileList) {
+      let newFile = join(this.cachePath, relative(this.srcPath, f));
+
+      // fixme ensure the last one
+      newFile = newFile.replace(extname(newFile), '.js');
+
+      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
+    }
+
+    this.currentDep = await this._getDependencies();
+  }
+
+  private async initFileList() {
     console.time('fast-glob');
     const files = await fg(join(this.srcPath, '**', '*.{ts,js,jsx,tsx}'), {
       dot: true,
@@ -150,8 +171,11 @@ export class StaticDepInfo {
         '**/.git/**',
       ],
     });
+    this.fileList = files;
     console.timeEnd('fast-glob');
+  }
 
+  private async initFileWatch() {
     console.time('chodidar');
     const dirWatcher = watch('./**/*.{ts,js,jsx,tsx}', {
       ignored: [
@@ -196,23 +220,6 @@ export class StaticDepInfo {
         // ignore all others;
       }
     });
-
-    await init;
-
-    this.fileList = files;
-
-    await this.batchProcess(this.fileList);
-
-    for (const f of this.fileList) {
-      let newFile = join(this.cachePath, relative(this.srcPath, f));
-
-      // fixme ensure the last one
-      newFile = newFile.replace(extname(newFile), '.js');
-
-      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
-    }
-
-    this.currentDep = await this._getDependencies();
   }
 
   shouldBuild() {
@@ -416,7 +423,6 @@ export class StaticDepInfo {
       });
     } catch (e) {
       // error ignored due to user have to update code to fix then trigger another batchProcess;
-
       // @ts-ignore
       if (e.errors?.length || e.warnings?.length) {
         logger.warn(
