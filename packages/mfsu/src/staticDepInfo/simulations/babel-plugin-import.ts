@@ -1,5 +1,5 @@
 import type { ImportSpecifier } from '@umijs/bundler-utils/compiled/es-module-lexer';
-import { logger } from '@umijs/utils';
+import { logger, winPath } from '@umijs/utils';
 import { join } from 'path';
 import { getAliasedPathWithLoopDetect } from '../../babelPlugins/awaitImport/getAliasedPath';
 import parseImport from '../importParser';
@@ -10,7 +10,7 @@ export default function createHandle(importOptions: {
   libraryDirectory: string;
   style: boolean | string;
 }) {
-  const libraryName = importOptions.libraryName;
+  const { libraryName, libraryDirectory } = importOptions;
 
   return function handleImports(opts: {
     rawCode: string;
@@ -21,6 +21,8 @@ export default function createHandle(importOptions: {
   }): Match[] {
     const { imports, rawCode } = opts;
     if (imports?.length > 0) {
+      const version = opts.pathToVersion(libraryName);
+
       const importSnippets = imports
         .map(({ ss, se }) => {
           return rawCode.slice(ss, se + 1);
@@ -55,46 +57,68 @@ export default function createHandle(importOptions: {
       }
 
       const mfName = opts.mfName;
-      const base = libraryName;
+
       for (const v of importedVariable.entries()) {
         const importVariableName = v[0];
 
         if (importVariableName === 'default') {
+          const importBase = winPath(join(libraryName, libraryDirectory));
+          const styleBase = winPath(
+            join(libraryName, libraryDirectory, 'style'),
+          );
+
           const componentPath = getAliasedPathWithLoopDetect({
-            value: base,
+            value: winPath(importBase),
             alias: opts.alias,
           });
-          const version = opts.pathToVersion(componentPath);
           retMatched.push({
             isMatch: true,
             value: componentPath,
             replaceValue: `${mfName}/${componentPath}`,
             version,
           });
+
+          const stylePath = getAliasedPathWithLoopDetect({
+            value: winPath(styleBase),
+            alias: opts.alias,
+          });
+          retMatched.push({
+            isMatch: true,
+            value: stylePath,
+            replaceValue: `${mfName}/${stylePath}`,
+            version,
+          });
+
           continue;
         }
 
         const dashed = toDash(importVariableName);
         // fixme respect to config#antd
-        const importBase = join(base, 'es', dashed);
+
+        const importBase = winPath(join(libraryName, libraryDirectory, dashed));
+        const styleImportPath = winPath(
+          join(libraryName, libraryDirectory, dashed, 'style'),
+        );
+
         const componentPath = getAliasedPathWithLoopDetect({
           value: importBase,
           alias: opts.alias,
         });
-        const styleImportPath = join(componentPath, 'style');
-
-        const version = opts.pathToVersion(componentPath);
-
         retMatched.push({
           isMatch: true,
           value: componentPath,
           replaceValue: `${mfName}/${componentPath}`,
           version,
         });
+
+        const stylePath = getAliasedPathWithLoopDetect({
+          value: styleImportPath,
+          alias: opts.alias,
+        });
         retMatched.push({
           isMatch: true,
-          value: styleImportPath,
-          replaceValue: `${mfName}/${styleImportPath}`,
+          value: stylePath,
+          replaceValue: `${mfName}/${stylePath}`,
           version,
         });
       }

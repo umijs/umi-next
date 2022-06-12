@@ -1,9 +1,15 @@
 import { normalize as n } from 'path';
-import handleImports from './babel-plugin-import';
+import createImports from './babel-plugin-import';
 
 function pathToVersion(): string {
   return '1.2.3';
 }
+
+const handleImports = createImports({
+  style: true,
+  libraryDirectory: 'es',
+  libraryName: 'antd',
+});
 
 test('babel-plugin-import: no imports', () => {
   expect(
@@ -79,8 +85,9 @@ test('babel-plugin-import: default import', () => {
   ).toEqual(
     // prettier-ignore
     [
-            {replaceValue: 'mf/antd', value: 'antd', version: '1.2.3', isMatch: true,},
-        ],
+            {replaceValue: 'mf/antd/es', value: 'antd/es', version: '1.2.3', isMatch: true,},
+            {replaceValue: 'mf/antd/es/style', value: 'antd/es/style', version: '1.2.3', isMatch: true,},
+    ],
   );
 });
 
