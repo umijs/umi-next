@@ -1,5 +1,3 @@
-import { sep } from 'path';
-
 type Opts = {
   value: string;
   alias: Record<string, string>;
@@ -30,7 +28,7 @@ export function getAliasedPath({ value, alias }: Opts) {
 }
 
 function addLastSlash(path: string) {
-  return path.endsWith(sep) ? path : `${path}${sep}`;
+  return path.endsWith('/') ? path : `${path}/`;
 }
 
 export function getAliasedPathWithLoopDetect({ value, alias }: Opts): string {
