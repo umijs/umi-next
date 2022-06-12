@@ -105,3 +105,30 @@ test('babel-plugin-import: namespaces import', () => {
     }),
   ).toThrow();
 });
+
+test('babel-plugin-import: 2 components import', () => {
+  expect(
+    createImports({
+      style: 'css',
+      libraryDirectory: 'es',
+      libraryName: 'antd',
+    })({
+      imports: [
+        // prettier-ignore
+        {n: "antd", s: 26, e: 30, ss: 0, se: 31, d: -1, a: -1},
+      ],
+      mfName: 'mf',
+      alias: {},
+      rawCode: 'import {Model, Row} from "antd";',
+      pathToVersion,
+    }),
+  ).toEqual(
+    // prettier-ignore
+    [
+      {replaceValue: `mf/${n('antd/es/model') }`,       value: n('antd/es/model'),       version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/${n('antd/es/model/style/css') }`, value: n('antd/es/model/style/css'), version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/${n('antd/es/row') }`,         value: n('antd/es/row'),         version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/${n('antd/es/row/style/css') }`,   value: n('antd/es/row/style/css'),   version: '1.2.3', isMatch: true,},
+    ],
+  );
+});

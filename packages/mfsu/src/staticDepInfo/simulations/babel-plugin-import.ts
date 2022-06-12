@@ -9,8 +9,31 @@ export default function createHandle(importOptions: {
   libraryName: string;
   libraryDirectory: string;
   style: boolean | string;
+  camel2UnderlineComponentName?: boolean;
+  camel2DashComponentName?: boolean;
 }) {
   const { libraryName, libraryDirectory } = importOptions;
+
+  const useUnderline = importOptions.camel2UnderlineComponentName;
+  const useDash = importOptions.camel2DashComponentName ?? true;
+
+  const transformName = useUnderline
+    ? (n: string) => transCamel(n, '_')
+    : useDash
+    ? (n: string) => transCamel(n, '-')
+    : (n: string) => n;
+
+  /*
+    todo support other config values
+     [x] boolean true
+     [x] string css
+     [ ] function
+   */
+
+  const stylePathFromCompPath =
+    importOptions.style === 'css'
+      ? (compFsPath: string) => winPath(join(compFsPath, 'style/css'))
+      : (compFsPath: string) => winPath(join(compFsPath, 'style'));
 
   return function handleImports(opts: {
     rawCode: string;
@@ -22,6 +45,30 @@ export default function createHandle(importOptions: {
     const { imports, rawCode } = opts;
     if (imports?.length > 0) {
       const version = opts.pathToVersion(libraryName);
+
+      function addToMatches(moduleFsPath: string) {
+        const unAliasedModulePath = getAliasedPathWithLoopDetect({
+          value: winPath(moduleFsPath),
+          alias: opts.alias,
+        });
+        retMatched.push({
+          isMatch: true,
+          value: unAliasedModulePath,
+          replaceValue: `${mfName}/${unAliasedModulePath}`,
+          version,
+        });
+
+        const unAliasedStylePath = getAliasedPathWithLoopDetect({
+          value: stylePathFromCompPath(moduleFsPath),
+          alias: opts.alias,
+        });
+        retMatched.push({
+          isMatch: true,
+          value: unAliasedStylePath,
+          replaceValue: `${mfName}/${unAliasedStylePath}`,
+          version,
+        });
+      }
 
       const importSnippets = imports
         .map(({ ss, se }) => {
@@ -36,21 +83,7 @@ export default function createHandle(importOptions: {
       for (const i of parsedImports) {
         i.imports.forEach((v) => {
           if (v === '*') {
-            logger.error(
-              `"import * as ant from 'antd'" or "export * from '${libraryName}'" are not allowed in mfsu#version=v4`,
-            );
-            logger.error(`solutions:`);
-            logger.error(
-              `  change to "import { Xxx } from '${libraryName}'" or`,
-            );
-            logger.error(
-              `            "export { Xxx } from '${libraryName}'" syntax`,
-            );
-            logger.error(`  or use mfsu#version=v3 configuration`);
-
-            throw Error(
-              `"import * as ant from 'antd'" not allowed in mfsu#version=4`,
-            );
+            errorLogForSpaceImport(libraryName);
           }
           importedVariable.add(v);
         });
@@ -62,65 +95,17 @@ export default function createHandle(importOptions: {
         const importVariableName = v[0];
 
         if (importVariableName === 'default') {
-          const importBase = winPath(join(libraryName, libraryDirectory));
-          const styleBase = winPath(
-            join(libraryName, libraryDirectory, 'style'),
-          );
-
-          const componentPath = getAliasedPathWithLoopDetect({
-            value: winPath(importBase),
-            alias: opts.alias,
-          });
-          retMatched.push({
-            isMatch: true,
-            value: componentPath,
-            replaceValue: `${mfName}/${componentPath}`,
-            version,
-          });
-
-          const stylePath = getAliasedPathWithLoopDetect({
-            value: winPath(styleBase),
-            alias: opts.alias,
-          });
-          retMatched.push({
-            isMatch: true,
-            value: stylePath,
-            replaceValue: `${mfName}/${stylePath}`,
-            version,
-          });
-
+          addToMatches(join(libraryName, libraryDirectory));
           continue;
         }
 
-        const dashed = toDash(importVariableName);
-        // fixme respect to config#antd
-
-        const importBase = winPath(join(libraryName, libraryDirectory, dashed));
-        const styleImportPath = winPath(
-          join(libraryName, libraryDirectory, dashed, 'style'),
+        const transformedName = transformName(importVariableName);
+        const importFsPath = join(
+          libraryName,
+          libraryDirectory,
+          transformedName,
         );
-
-        const componentPath = getAliasedPathWithLoopDetect({
-          value: importBase,
-          alias: opts.alias,
-        });
-        retMatched.push({
-          isMatch: true,
-          value: componentPath,
-          replaceValue: `${mfName}/${componentPath}`,
-          version,
-        });
-
-        const stylePath = getAliasedPathWithLoopDetect({
-          value: styleImportPath,
-          alias: opts.alias,
-        });
-        retMatched.push({
-          isMatch: true,
-          value: stylePath,
-          replaceValue: `${mfName}/${stylePath}`,
-          version,
-        });
+        addToMatches(importFsPath);
       }
       return retMatched;
     }
@@ -128,13 +113,19 @@ export default function createHandle(importOptions: {
   };
 }
 
-const capitalLettersReg = /([A-Z])/g;
+function transCamel(_str: string, symbol: string): string {
+  const str = _str[0].toLowerCase() + _str.substr(1);
+  return str.replace(/([A-Z])/g, ($1) => `${symbol}${$1.toLowerCase()}`);
+}
 
-// https://github.com/node4good/lodash-contrib/blob/91dded5d52f6dca50a4c74782740b02478c2c548/common-js/_.util.strings.js#L104
-function toDash(string: string): string {
-  string = string.replace(capitalLettersReg, function ($1) {
-    return '-' + $1.toLowerCase();
-  });
-  // remove first dash
-  return string.charAt(0) == '-' ? string.substr(1) : string;
+function errorLogForSpaceImport(libraryName: string) {
+  logger.error(
+    `"import * as ant from 'antd'" or "export * from '${libraryName}'" are not allowed in mfsu#version=v4`,
+  );
+  logger.error(`solutions:`);
+  logger.error(`  change to "import { Xxx } from '${libraryName}'" or`);
+  logger.error(`            "export { Xxx } from '${libraryName}'" syntax`);
+  logger.error(`  or use mfsu#version=v3 configuration`);
+
+  throw Error(`"import * as ant from 'antd'" not allowed in mfsu#version=4`);
 }

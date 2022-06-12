@@ -14,7 +14,7 @@ import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu/mfsu';
-import handleBabelPluginImport from './simulations/babel-plugin-import';
+import createPluginImport from './simulations/babel-plugin-import';
 
 interface IOpts {
   mfsu: MFSU;
@@ -84,7 +84,11 @@ export class StaticDepInfo {
     this.runtimeSimulations = [
       {
         packageName: 'antd',
-        handleImports: handleBabelPluginImport,
+        handleImports: createPluginImport({
+          libraryName: 'antd',
+          style: true,
+          libraryDirectory: 'es',
+        }),
       },
     ];
 
