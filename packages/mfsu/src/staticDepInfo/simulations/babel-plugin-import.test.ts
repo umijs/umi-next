@@ -1,4 +1,3 @@
-import { normalize as n } from 'path';
 import createImports from './babel-plugin-import';
 
 function pathToVersion(): string {
@@ -31,18 +30,18 @@ test('babel-plugin-import: with alias', () => {
         {n: "antd", s: 26, e: 30, ss: 0, se: 31, d: -1, a: -1},
       ],
       mfName: 'mf',
-      alias: { antd: n('/project/node_modules/antd') },
+      alias: { antd: '/project/node_modules/antd' },
       rawCode: 'import {Model, Row} from "antd";',
       pathToVersion,
     }),
   ).toEqual(
     // prettier-ignore
     [
-        { replaceValue: `mf/${n('/project/node_modules/antd/es/model')}`,       value: n('/project/node_modules/antd/es/model'),       version: '1.2.3', isMatch: true,},
-        { replaceValue: `mf/${n('/project/node_modules/antd/es/model/style')}`, value: n('/project/node_modules/antd/es/model/style'), version: '1.2.3', isMatch: true,},
+        { replaceValue: `mf//project/node_modules/antd/es/model`,       value: '/project/node_modules/antd/es/model',       version: '1.2.3', isMatch: true,},
+        { replaceValue: `mf//project/node_modules/antd/es/model/style`, value: '/project/node_modules/antd/es/model/style', version: '1.2.3', isMatch: true,},
 
-        { replaceValue: `mf/${n('/project/node_modules/antd/es/row')}`,         value: n('/project/node_modules/antd/es/row'),         version: '1.2.3', isMatch: true,},
-        { replaceValue: `mf/${n('/project/node_modules/antd/es/row/style')}`,   value: n('/project/node_modules/antd/es/row/style'),   version: '1.2.3', isMatch: true,},
+        { replaceValue: `mf//project/node_modules/antd/es/row`,         value: '/project/node_modules/antd/es/row',         version: '1.2.3', isMatch: true,},
+        { replaceValue: `mf//project/node_modules/antd/es/row/style`,   value: '/project/node_modules/antd/es/row/style',   version: '1.2.3', isMatch: true,},
     ],
   );
 });
@@ -62,10 +61,10 @@ test('babel-plugin-import: 2 components import', () => {
   ).toEqual(
     // prettier-ignore
     [
-            {replaceValue: `mf/${n('antd/es/model') }`,       value: n('antd/es/model'),       version: '1.2.3', isMatch: true,},
-            {replaceValue: `mf/${n('antd/es/model/style') }`, value: n('antd/es/model/style'), version: '1.2.3', isMatch: true,},
-            {replaceValue: `mf/${n('antd/es/row') }`,         value: n('antd/es/row'),         version: '1.2.3', isMatch: true,},
-            {replaceValue: `mf/${n('antd/es/row/style') }`,   value: n('antd/es/row/style'),   version: '1.2.3', isMatch: true,},
+            {replaceValue: `mf/antd/es/model`,       value: 'antd/es/model',       version: '1.2.3', isMatch: true,},
+            {replaceValue: `mf/antd/es/model/style`, value: 'antd/es/model/style', version: '1.2.3', isMatch: true,},
+            {replaceValue: `mf/antd/es/row`,         value: 'antd/es/row',         version: '1.2.3', isMatch: true,},
+            {replaceValue: `mf/antd/es/row/style`,   value: 'antd/es/row/style',   version: '1.2.3', isMatch: true,},
         ],
   );
 });
@@ -125,10 +124,10 @@ test('babel-plugin-import: 2 components import', () => {
   ).toEqual(
     // prettier-ignore
     [
-      {replaceValue: `mf/${n('antd/es/model') }`,       value: n('antd/es/model'),       version: '1.2.3', isMatch: true,},
-      {replaceValue: `mf/${n('antd/es/model/style/css') }`, value: n('antd/es/model/style/css'), version: '1.2.3', isMatch: true,},
-      {replaceValue: `mf/${n('antd/es/row') }`,         value: n('antd/es/row'),         version: '1.2.3', isMatch: true,},
-      {replaceValue: `mf/${n('antd/es/row/style/css') }`,   value: n('antd/es/row/style/css'),   version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/antd/es/model`,           value: 'antd/es/model',           version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/antd/es/model/style/css`, value: 'antd/es/model/style/css', version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/antd/es/row`,             value: 'antd/es/row',             version: '1.2.3', isMatch: true,},
+      {replaceValue: `mf/antd/es/row/style/css`,   value: 'antd/es/row/style/css',   version: '1.2.3', isMatch: true,},
     ],
   );
 });
