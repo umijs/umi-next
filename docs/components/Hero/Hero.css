@@ -40,6 +40,10 @@
   margin-left: 27px;
 }
 
+.button:hover {
+  background-image: linear-gradient(224deg, #48a4fe 0%, #6fbafe 100%, #8dc9ff 100%);
+}
+
 .githubStar {
   font-size: 18px;
   color: #4A5E71;
