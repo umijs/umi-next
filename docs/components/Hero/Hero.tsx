@@ -1,5 +1,5 @@
 import React from 'react';
-import TextLoop from 'react-text-loop';
+import { TextLoop } from 'react-text-loop-next';
 import GithubStar from './GithubStar';
 // @ts-ignore
 import { Link } from 'umi';

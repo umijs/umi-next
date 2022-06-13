@@ -37,7 +37,7 @@ importers:
       prettier-plugin-packagejson: ^2.2.17
       react: 18.1.0
       react-dom: 18.1.0
-      react-text-loop: 2.3.0
+      react-text-loop-next: 0.0.3
       regenerator-runtime: ^0.13.9
       resolve: ^1.22.0
       rimraf: ^3.0.2
@@ -82,7 +82,7 @@ importers:
       prettier-plugin-packagejson: 2.2.17_prettier@2.6.2
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-      react-text-loop: 2.3.0_react-dom@18.1.0+react@18.1.0
+      react-text-loop-next: 0.0.3_react-dom@18.1.0+react@18.1.0
       regenerator-runtime: 0.13.9
       resolve: 1.22.0
       rimraf: 3.0.2
@@ -19498,7 +19498,7 @@ packages:
     dev: true
 
   /performance-now/2.1.0:
-    resolution: {integrity: sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=}
+    resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
     dev: true
 
   /periscopic/3.0.4:
@@ -22331,10 +22331,6 @@ packages:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
     dev: false
 
-  /react-fast-compare/2.0.4:
-    resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
-    dev: true
-
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
     dev: false
@@ -22601,11 +22597,11 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
-  /react-text-loop/2.3.0_react-dom@18.1.0+react@18.1.0:
-    resolution: {integrity: sha512-tRLxdkhc1ojAICxERJNOWj3Ry7NIGmFQF4tR6cRVyL+5zVD+gj+8uGPvOgEBLuj2vmjTXLPvBMVVCnoAIy1+DA==}
+  /react-text-loop-next/0.0.3_react-dom@18.1.0+react@18.1.0:
+    resolution: {integrity: sha512-TbkzFLArOCrBcnyLFhB7Z+KOQvP9fmZYJ3x6gSdG6BE7wxrSBJ+LQaF+WqAQqTYpmSaHBDso7kKVRnGsrBYijQ==}
     peerDependencies:
-      react: ^15.0.1 || ^16.0.1
-      react-dom: ^15.0.1 || ^16.0.1
+      react: ^17.0.2
+      react-dom: ^17.0.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -22615,7 +22611,6 @@ packages:
       cxs: 6.2.0
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-      react-fast-compare: 2.0.4
       react-motion: 0.5.2_react@18.1.0
     dev: true
 
