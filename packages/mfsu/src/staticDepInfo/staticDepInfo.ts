@@ -20,7 +20,7 @@ interface IOpts {
   mfsu: MFSU;
   absSrcPath: string;
   cachePath: string;
-  preDeps?: string[];
+  safeList?: string[];
 }
 
 export type Match = ReturnType<typeof checkMatch> & { version: string };
@@ -66,13 +66,7 @@ export class StaticDepInfo {
     this.cachePath = opts.cachePath;
     this.mfsu = opts.mfsu;
 
-    console.log('caching at ', opts.cachePath);
-    this.safeList = opts.preDeps || [
-      'react',
-      'react-error-overlay',
-      'react/jsx-dev-runtime',
-      '@umijs/utils/compiled/strip-ansi',
-    ];
+    this.safeList = opts.safeList || [];
 
     this.opts = opts;
     this.cacheFilePath = join(
@@ -155,7 +149,7 @@ export class StaticDepInfo {
       this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
     }
 
-    this.currentDep = await this._getDependencies();
+    this.currentDep = this._getDependencies();
   }
 
   private async initFileList() {

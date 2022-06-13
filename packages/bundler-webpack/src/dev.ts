@@ -29,6 +29,7 @@ type IOpts = {
   entry: Record<string, string>;
   absSrcPath: string;
   mfsuVersion?: 'v3' | 'v4';
+  safeList?: string[];
 } & Pick<IConfigOpts, 'cache'>;
 
 export function stripUndefined(obj: any) {
@@ -51,6 +52,7 @@ export async function dev(opts: IOpts) {
     }
     mfsu = new MFSU({
       version: opts.mfsuVersion || 'v3',
+      safeList: opts.safeList || [],
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,
       depBuildConfig: {

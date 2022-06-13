@@ -53,6 +53,7 @@ interface IOpts {
   depBuildConfig: any;
   absSrcPath: string;
   version?: 'v4' | 'v3';
+  safeList?: string[];
 }
 
 export class MFSU {

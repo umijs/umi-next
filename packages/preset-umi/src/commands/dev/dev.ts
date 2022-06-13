@@ -31,6 +31,13 @@ const bundlerWebpack: typeof import('@umijs/bundler-webpack') =
 const bundlerVite: typeof import('@umijs/bundler-vite') =
   lazyImportFromCurrentPkg('@umijs/bundler-vite');
 
+const MFSU4_SAFE_LIST = [
+  'react',
+  'react-error-overlay',
+  'react/jsx-dev-runtime',
+  '@umijs/utils/compiled/strip-ansi',
+];
+
 export default (api: IApi) => {
   api.describe({
     enableBy() {
@@ -87,6 +94,7 @@ PORT=8888 umi dev
           },
         });
       }
+
       await generate({
         isFirstTime: true,
       });
@@ -242,8 +250,6 @@ PORT=8888 umi dev
       const opts = {
         config: api.config,
         cwd: api.cwd,
-        // fixme mfsu4  use current directory as default?
-        absSrcPath: api.paths.absSrcPath,
         rootDir: process.cwd(),
         entry: {
           umi: join(api.paths.absTmpPath, 'umi.ts'),
@@ -290,6 +296,11 @@ PORT=8888 umi dev
             api.service.configManager!.mainConfigFile || '',
           ].filter(Boolean),
         },
+        absSrcPath: api.paths.absSrcPath,
+        safeList: lodash.union([
+          ...MFSU4_SAFE_LIST,
+          ...(api.config.mfsu?.safeList || []),
+        ]),
       };
       if (enableVite) {
         await bundlerVite.dev(opts);
