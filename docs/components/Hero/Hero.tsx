@@ -10,6 +10,7 @@ export default () => {
   //  采用 stale-while-revalidate 的策略
   return (
     <div className={styles.normal}>
+      <div className={styles.bg} />
       <div className={styles.wrapper}>
         <div className={styles.left}>
           <div className={styles.bigLogo} />

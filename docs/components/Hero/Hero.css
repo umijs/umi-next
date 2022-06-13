@@ -1,14 +1,29 @@
 .normal {
+  height: 640px;
+  position: relative;
+}
+
+.bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
   background: url(https://img.alicdn.com/imgextra/i4/O1CN01Ri0dNS26K5UcRKrrU_!!6000000007642-2-tps-280-1400.png) repeat-x;
   background-position: 0 -40px;
   background-size: 140px 700px;
   height: 640px;
+  z-index: 1;
+}
+:global(.dark) .bg {
+  opacity: .1;
 }
 
 .wrapper {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
+  z-index: 2;
 }
 
 .left {
@@ -53,6 +68,9 @@
   background: url(https://img.alicdn.com/imgextra/i2/O1CN01etxdfJ20MTs3YbLVu_!!6000000006835-2-tps-48-48.png) no-repeat 0 center;
   background-size: 24px 24px;
 }
+:global(.dark) .githubStar {
+  color: rgba(255, 255, 255, .7);
+}
 
 .right {
   width: 400px;
@@ -84,6 +102,9 @@
 .slogan strong {
   color: #0273DC;
   font-weight: normal;
+}
+:global(.dark) .slogan {
+  color: rgba(255, 255, 255, .8);
 }
 
 .bow {

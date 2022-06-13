@@ -9,6 +9,10 @@
   margin-bottom: 16px;
 }
 
+:global(.dark) .normal p {
+  color: rgba(255, 255, 255, .8);
+}
+
 .normal p a {
   color: #0273DC;
 }

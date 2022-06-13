@@ -13,6 +13,10 @@
 
 }
 
+:global(.dark) .normal li {
+  background: rgba(255, 255, 255, .9);
+}
+
 .normal li img {
   width: 224px;
   height: 73px;

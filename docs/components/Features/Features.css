@@ -55,8 +55,14 @@
   margin-bottom: 12px;
   text-align: center;
 }
+:global(.dark) .feature h3 {
+  color: rgba(255, 255, 255, .8);
+}
 
 .feature p {
   font-size: 18px;
   color: #4A5E71;
+}
+:global(.dark) .feature p {
+  color: rgba(255, 255, 255, .6);
 }
