@@ -32,6 +32,12 @@ export default () => {
             <TextLoop>
               <strong>React</strong>
               <strong>Vue</strong>
+              <strong>PC</strong>
+              <strong>Mobile</strong>
+              <strong>SPA</strong>
+              <strong>SSR</strong>
+              <strong>CSR</strong>
+              <strong>中后台</strong>
             </TextLoop>{' '}
             应用
           </div>

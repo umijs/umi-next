@@ -86,8 +86,9 @@
 }
 
 .right {
-  width: 400px;
+  width: 460px;
   padding-top: 90px;
+  margin-right: 40px;
 }
 
 .bigSlogan1 {
@@ -110,7 +111,7 @@
   font-size: 25px;
   color: #708293;
   text-align: center;
-  width: 400px;
+  width: 460px;
 }
 .slogan strong {
   color: #0273DC;

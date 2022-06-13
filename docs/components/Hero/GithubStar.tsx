@@ -9,8 +9,10 @@ export default () => {
     (async () => {
       const res = await fetch('https://api.github.com/repos/umijs/umi');
       const count = (await res.json()).stargazers_count;
-      setCount(count);
-      localStorage.setItem(LS_KEY, count);
+      if (count) {
+        setCount(count);
+        localStorage.setItem(LS_KEY, count);
+      }
     })();
   }, []);
 
