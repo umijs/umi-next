@@ -1,0 +1,14 @@
+.normal {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+}
+
+.normal p {
+  font-size: 18px;
+  color: #4A5E71;
+  margin-bottom: 16px;
+}
+
+.normal p a {
+  color: #0273DC;
+}

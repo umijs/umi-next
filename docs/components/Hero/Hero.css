@@ -1,0 +1,91 @@
+.normal {
+  background: url(https://img.alicdn.com/imgextra/i4/O1CN01Ri0dNS26K5UcRKrrU_!!6000000007642-2-tps-280-1400.png) repeat-x;
+  background-position: 0 -40px;
+  background-size: 140px 700px;
+  height: 640px;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.left {
+  flex: 1;
+  padding-top: 130px;
+  padding-left: 90px;
+}
+
+.bigLogo {
+  width: 460px;
+  height: 213px;
+  background: url(https://img.alicdn.com/imgextra/i4/O1CN01Gk5nSa1nkDO5AjXlN_!!6000000005127-2-tps-920-426.png) no-repeat;
+  background-size: 460px 213px;
+}
+
+.actions {
+  margin-top: 87px;
+  display: flex;
+}
+
+.button {
+  background-image: linear-gradient(224deg, #0071DA 0%, #1890FF 100%, #1890FF 100%);
+  width: 180px;
+  height: 54px;
+  line-height: 54px;
+  text-align: center;
+  color: #fff;
+  font-size: 22px;
+  margin-left: 27px;
+}
+
+.githubStar {
+  font-size: 18px;
+  color: #4A5E71;
+  margin-left: 40px;
+  line-height: 54px;
+  padding-left: 28px;
+  background: url(https://img.alicdn.com/imgextra/i2/O1CN01etxdfJ20MTs3YbLVu_!!6000000006835-2-tps-48-48.png) no-repeat 0 center;
+  background-size: 24px 24px;
+}
+
+.right {
+  width: 400px;
+  padding-top: 90px;
+}
+
+.bigSlogan1 {
+  background: url(https://img.alicdn.com/imgextra/i4/O1CN01AYMMmi1d4P4hiTpYK_!!6000000003682-2-tps-468-152.png) no-repeat;
+  width: 234px;
+  height: 76px;
+  background-size: 234px 76px;
+  margin: 0 auto 6px;
+}
+
+.bigSlogan2 {
+  background: url(https://img.alicdn.com/imgextra/i4/O1CN011JiaU21wvVhMqXI4G_!!6000000006370-2-tps-700-116.png) no-repeat;
+  width: 350px;
+  height: 58px;
+  background-size: 350px 58px;
+  margin: 0 auto 14px;
+}
+
+.slogan {
+  font-size: 25px;
+  color: #708293;
+  text-align: center;
+  width: 400px;
+}
+.slogan strong {
+  color: #0273DC;
+  font-weight: normal;
+}
+
+.bow {
+  background: url(https://img.alicdn.com/imgextra/i3/O1CN01L7phqd1ud4WehHiRc_!!6000000006059-2-tps-760-386.png) no-repeat;
+  width: 380px;
+  height: 193px;
+  background-size: 380px 193px;
+  margin: 8px auto 0;
+}

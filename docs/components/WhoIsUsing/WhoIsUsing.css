@@ -1,0 +1,19 @@
+.normal {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+}
+
+.normal ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.normal li {
+
+}
+
+.normal li img {
+  width: 224px;
+  height: 73px;
+}
