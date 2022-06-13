@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-ignore
 import { Link } from 'umi';
 import NewsLetterForm from './NewsLetterForm';
 // @ts-ignore
