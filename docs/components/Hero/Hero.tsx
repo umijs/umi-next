@@ -1,5 +1,6 @@
 import React from 'react';
 import TextLoop from 'react-text-loop';
+import GithubStar from './GithubStar';
 // @ts-ignore
 import { Link } from 'umi';
 // @ts-ignore
@@ -18,7 +19,9 @@ export default () => {
             <Link to="/docs/tutorials/getting-started">
               <div className={styles.button}>快速上手 →</div>
             </Link>
-            <div className={styles.githubStar}>12K+ Github Stars</div>
+            <div className={styles.githubStar}>
+              <GithubStar />
+            </div>
           </div>
         </div>
         <div className={styles.right}>
