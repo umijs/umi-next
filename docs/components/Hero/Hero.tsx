@@ -1,4 +1,5 @@
 import React from 'react';
+import TextLoop from 'react-text-loop';
 // @ts-ignore
 import { Link } from 'umi';
 // @ts-ignore
@@ -23,7 +24,14 @@ export default () => {
           <div className={styles.bigSlogan1}></div>
           <div className={styles.bigSlogan2}></div>
           <div className={styles.slogan}>
-            用 Umi 构建你的下一个 <strong>React</strong> 应用
+            用 Umi 构建你的下一个{' '}
+            <strong>
+              <TextLoop>
+                <span>React</span>
+                <span>Vue</span>
+              </TextLoop>
+            </strong>{' '}
+            应用
           </div>
           <div className={styles.slogan}>
             带给你<strong>简单</strong>而<strong>愉悦</strong>的 Web 开发体验
