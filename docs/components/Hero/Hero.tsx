@@ -29,12 +29,10 @@ export default () => {
           <div className={styles.bigSlogan2}></div>
           <div className={styles.slogan}>
             用 Umi 构建你的下一个{' '}
-            <strong>
-              <TextLoop>
-                <span>React</span>
-                <span>Vue</span>
-              </TextLoop>
-            </strong>{' '}
+            <TextLoop>
+              <strong>React</strong>
+              <strong>Vue</strong>
+            </TextLoop>{' '}
             应用
           </div>
           <div className={styles.slogan}>

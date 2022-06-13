@@ -114,3 +114,6 @@
   background-size: 380px 193px;
   margin: 8px auto 0;
 }
+:global(.dark) .bow {
+  opacity: .8;
+}

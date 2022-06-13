@@ -6,13 +6,13 @@ export default {
   description: '插件化的企业级前端应用框架',
   logo: UmiLogo,
   github: 'https://github.com/umijs/umi',
-  i18n: [
-    { locale: 'en-US', text: 'English' },
-    { locale: 'zh-CN', text: '简体中文' },
-  ],
+  // i18n: [
+  //   { locale: 'en-US', text: 'English' },
+  //   { locale: 'zh-CN', text: '简体中文' },
+  // ],
   searchHotKey: {
-    macos: '⌘+k',
-    windows: 'ctrl+k',
+    macos: '⌘+K',
+    windows: 'trl+k',
   },
   navs: [
     {
