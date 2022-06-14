@@ -191,7 +191,7 @@ promise new Promise(resolve => {
         try {
           return window['${mfName}'].init(arg);
         } catch(e) {
-          console.log(remote container already initialized');
+          console.log('remote container already initialized');
         }
       }
     }
