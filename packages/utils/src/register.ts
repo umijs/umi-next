@@ -20,10 +20,10 @@ function transform(opts: { code: string; filename: string; implementor: any }) {
       // https://github.com/umijs/umi-next/pull/729
       target: 'es2019',
       format: 'cjs',
+      logLevel: 'error'
     }).code;
   } catch (error: any) {
-    logger.error(`[${filename}] Errors:`);
-    logger.error(error.errors);
+    logger.error(`Errors for [${filename}]`);
     throw Error(error);
   }
 }
@@ -33,6 +33,7 @@ export function register(opts: { implementor: any; exts?: string[] }) {
   if (!registered) {
     revert = addHook(
       (code, filename) =>
+
         transform({ code, filename, implementor: opts.implementor }),
       {
         ext: opts.exts || HOOK_EXTS,
