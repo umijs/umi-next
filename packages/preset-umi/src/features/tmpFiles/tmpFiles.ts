@@ -48,7 +48,7 @@ export default (api: IApi) => {
             module: 'esnext',
             moduleResolution: 'node',
             importHelpers: true,
-            jsx: 'react-jsx',
+            jsx: api.appData.framework === 'vue' ? 'preserve' : 'react-jsx',
             esModuleInterop: true,
             sourceMap: true,
             baseUrl,
