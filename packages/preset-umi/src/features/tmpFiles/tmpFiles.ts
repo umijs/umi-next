@@ -33,6 +33,7 @@ export default (api: IApi) => {
     const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
     const umiTempDir = `${srcPrefix}.umi`;
     const baseUrl = api.appData.hasSrcDir ? '../../' : '../';
+
     api.writeTmpFile({
       noPluginDir: true,
       path: 'tsconfig.json',
@@ -54,6 +55,22 @@ export default (api: IApi) => {
             strict: true,
             resolveJsonModule: true,
             allowSyntheticDefaultImports: true,
+
+            // Enforce using `import type` instead of `import` for types
+            importsNotUsedAsValues: 'error',
+
+            // Supported by vue only
+            ...(api.appData.framework === 'vue'
+              ? {
+                  // TODO Actually, it should be vite mode, but here it is written as vue only
+                  // Required in Vite https://vitejs.dev/guide/features.html#typescript
+                  isolatedModules: true,
+                  // For `<script setup>`
+                  // See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
+                  preserveValueImports: true,
+                }
+              : {}),
+
             paths: {
               '@/*': [`${srcPrefix}*`],
               '@@/*': [`${umiTempDir}/*`],
