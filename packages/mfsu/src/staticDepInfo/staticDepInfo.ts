@@ -5,7 +5,6 @@ import {
 } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
 import { fsExtra, lodash, logger } from '@umijs/utils';
-import { watch } from 'chokidar';
 import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 // @ts-ignore
@@ -14,6 +13,10 @@ import { dirname, extname, join, relative } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu/mfsu';
+import {
+  AutoUpdateFolderCache,
+  FileChangeEvent,
+} from './AutoUpdateFolderCache';
 import createPluginImport from './simulations/babel-plugin-import';
 
 interface IOpts {
@@ -25,26 +28,19 @@ interface IOpts {
 
 export type Match = ReturnType<typeof checkMatch> & { version: string };
 
-type FileChangeEvent = { event: 'unlink' | 'change'; path: string };
-
 type Matched = Record<string, Match>;
 
 export class StaticDepInfo {
   private opts: IOpts;
   private readonly cacheFilePath: string;
-  private fileList: string[] = [];
   private readonly srcPath: string;
   private readonly cachePath: string;
 
-  private fileContentCache: Record<string, string> = {};
   private mfsu: MFSU;
   private readonly safeList: string[];
   private currentDep: Record<string, Match> = {};
   private builtWithDep: Record<string, Match> = {};
 
-  public readonly debouchedHandleChanges: () => Promise<void> | undefined;
-
-  pendingChanges: FileChangeEvent[] = [];
   private produced: { changes: FileChangeEvent[] }[] = [];
   private readonly cwd: string;
   private readonly runtimeSimulations: {
@@ -60,6 +56,8 @@ export class StaticDepInfo {
       handleConfig?: T,
     ) => Match[];
   }[];
+  // @ts-ignore
+  private readonly folderCache: AutoUpdateFolderCache;
 
   constructor(opts: IOpts) {
     this.srcPath = opts.absSrcPath;
@@ -86,7 +84,41 @@ export class StaticDepInfo {
       },
     ];
 
-    this.debouchedHandleChanges = lodash.debounce(this.handleEvents, 500);
+    this.folderCache = new AutoUpdateFolderCache({
+      cwd: this.srcPath,
+      exts: ['ts', 'js', 'jsx', 'tsx'],
+      ignored: [
+        '**/*.d.ts',
+        '**/*.test.{js,ts,jsx,tsx}',
+        // fixme respect to environment
+        '**/.umi-production/**',
+        '**/node_modules/**',
+        '**/.git/**',
+      ],
+      debouncedTimeout: 500,
+      filesLoader: async (files: string[]) => {
+        const loaded: Record<string, string> = {};
+        await this.batchProcess(files);
+
+        for (const f of files) {
+          let newFile = join(this.cachePath, relative(this.srcPath, f));
+
+          // fixme ensure the last one
+          newFile = newFile.replace(extname(newFile), '.js');
+
+          loaded[f] = readFileSync(newFile, 'utf-8');
+        }
+        return loaded;
+      },
+      onCacheUpdate: (cache, events) => {
+        const bigCodeString = Object.values(cache).join('\n');
+        this.currentDep = this._getDependencies(bigCodeString);
+
+        this.produced.push({
+          changes: events,
+        });
+      },
+    });
   }
 
   getProducedEvent() {
@@ -97,62 +129,21 @@ export class StaticDepInfo {
     this.produced = [];
   }
 
-  private handleEvents = async () => {
-    const modifiedFiles = [];
-    const handledEvents = [];
-
-    while (this.pendingChanges.length > 0) {
-      const c = this.pendingChanges.pop()!;
-      handledEvents.push(c);
-
-      if (c.event === 'unlink') {
-        console.log('unlink ', c.path);
-        delete this.fileContentCache[c.path];
-      }
-      if (c.event === 'change') {
-        modifiedFiles.push(c.path);
-      }
-    }
-
-    await this.batchProcess(modifiedFiles);
-    for (const f of modifiedFiles) {
-      let newFile = join(this.cachePath, relative(this.srcPath, f));
-
-      // fixme ensure the last one
-      newFile = newFile.replace(extname(newFile), '.js');
-
-      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
-    }
-
-    this.currentDep = this._getDependencies();
-
-    this.produced.push({
-      changes: handledEvents,
-    });
-  };
-
   async init() {
-    await Promise.all([
+    const [files] = await Promise.all([
       this.initFileList(),
       this.initFileWatch(),
       esModuleLexerInit,
     ]);
 
-    await this.batchProcess(this.fileList);
+    await this.folderCache.loadFiles(files);
+    const cache = this.folderCache.getFileCache();
+    const bigCodeString = Object.values(cache).join('\n');
 
-    for (const f of this.fileList) {
-      let newFile = join(this.cachePath, relative(this.srcPath, f));
-
-      // fixme ensure the last one
-      newFile = newFile.replace(extname(newFile), '.js');
-
-      this.fileContentCache[f] = readFileSync(newFile, 'utf-8');
-    }
-
-    this.currentDep = this._getDependencies();
+    this.currentDep = this._getDependencies(bigCodeString);
   }
 
-  private async initFileList() {
+  private async initFileList(): Promise<string[]> {
     console.time('fast-glob');
     const files = await fg(join(this.srcPath, '**', '*.{ts,js,jsx,tsx}'), {
       dot: true,
@@ -165,55 +156,12 @@ export class StaticDepInfo {
         '**/.git/**',
       ],
     });
-    this.fileList = files;
     console.timeEnd('fast-glob');
+    return files;
   }
 
   private async initFileWatch() {
-    console.time('chodidar');
-    const dirWatcher = watch('./**/*.{ts,js,jsx,tsx}', {
-      ignored: [
-        '**/*.d.ts',
-        '**/*.test.{js,ts,jsx,tsx}',
-        // fixme respect to environment
-        '**/.umi-production/**',
-        '**/node_modules/**',
-        '**/.git/**',
-      ],
-      cwd: this.srcPath,
-      ignoreInitial: true,
-      ignorePermissionErrors: true,
-    });
-
-    const p = new Promise<void>((resolve) => {
-      dirWatcher.on('ready', () => {
-        resolve();
-      });
-    });
-    await p;
-    console.timeEnd('chodidar'); // it seems chodidar is faster than fast-glob
-
-    dirWatcher.on('all', (event, path) => {
-      switch (event) {
-        case 'change':
-        case 'add':
-          this.pendingChanges.push({
-            event: 'change',
-            path: join(this.srcPath, path),
-          });
-          this.debouchedHandleChanges();
-          break;
-        case 'unlink':
-          this.pendingChanges.push({
-            event: 'unlink',
-            path: join(this.srcPath, path),
-          });
-          this.debouchedHandleChanges();
-          break;
-        default:
-        // ignore all others;
-      }
-    });
+    await this.folderCache.init();
   }
 
   shouldBuild() {
@@ -279,14 +227,10 @@ export class StaticDepInfo {
     return this.currentDep;
   }
 
-  private _getDependencies(): Record<string, Match> {
+  private _getDependencies(bigCodeString: string): Record<string, Match> {
     console.time('_getDependencies');
 
     const cwd = this.mfsu.opts.cwd!;
-
-    const bigCodeString = Object.keys(this.fileContentCache)
-      .map((k) => this.fileContentCache[k])
-      .join('\n');
 
     const [imports] = parse(bigCodeString);
 
