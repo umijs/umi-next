@@ -33,4 +33,7 @@ module.exports = {
   template: () => require('@babel/template'),
   traverse: () => require('@babel/traverse'),
   types: () => require('@babel/types'),
+
+  // vue jsx
+  vueJsx: () => require('@vue/babel-plugin-jsx')
 };

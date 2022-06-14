@@ -101,7 +101,9 @@
         "webpack",
         "eslint",
         "stylelint",
-        "redux"
+        "redux",
+        "vite",
+        "@babel/core"
       ]
     }
   },

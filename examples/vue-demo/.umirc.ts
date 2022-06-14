@@ -1,4 +1,5 @@
 export default {
+  base: '/foo',
   deadCode: {},
   https: {},
   headScripts: [`console.log('head script')`],

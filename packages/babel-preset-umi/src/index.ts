@@ -36,7 +36,8 @@ export default (_context: any, opts: IOpts) => {
           ...opts.presetEnv,
         },
       ],
-      [
+      // vue 模式支持 tsx 需要移除这个依赖
+      opts.presetReact && [
         require.resolve('@umijs/bundler-utils/compiled/babel/preset-react'),
         {
           runtime: 'automatic',
@@ -61,7 +62,7 @@ export default (_context: any, opts: IOpts) => {
           ...opts.presetTypeScript,
         },
       ],
-    ],
+    ].filter(Boolean),
     plugins: [
       // TC39 Proposals
       // class-static-block
