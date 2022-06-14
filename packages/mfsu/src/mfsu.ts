@@ -123,6 +123,8 @@ export class MFSU {
           const realEntry = tryPaths([
             join(entry, 'index.tsx'),
             join(entry, 'index.ts'),
+            join(entry, 'index.jsx'),
+            join(entry, 'index.js'),
           ]);
           assert(
             realEntry,
@@ -189,7 +191,7 @@ promise new Promise(resolve => {
         try {
           return window['${mfName}'].init(arg);
         } catch(e) {
-          console.log('remote container already initialized');
+          console.log(remote container already initialized');
         }
       }
     }
