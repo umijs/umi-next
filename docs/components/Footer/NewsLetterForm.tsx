@@ -6,9 +6,19 @@ export default () => {
   return (
     <div className={styles.normal}>
       <h2>订阅 Umi 的最新动态</h2>
-      <form action="">
-        <input type="text" placeholder="请输入电子邮箱地址" />
-        <button type="submit">订阅</button>
+      <form
+        action="http://newsletter.sorrycc.com//add_subscriber"
+        method="post"
+        target="_blank"
+      >
+        <input
+          type="text"
+          name="member[email]"
+          placeholder="请输入电子邮箱地址"
+        />
+        <button type="submit" name="member[subscribe]">
+          订阅
+        </button>
       </form>
     </div>
   );
