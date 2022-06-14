@@ -72,7 +72,7 @@ import { Link, useLocation, useNavigate, Outlet, useAppData, useRouteData, match
 import { useMemo } from 'react';
 import  {
   ProLayout,
-} from "${pkgHasDep || '@ant-design/pro-layout'}";
+} from "${pkgPath || '@ant-design/pro-layout'}";
 import './Layout.less';
 import Logo from './Logo';
 import Exception from './Exception';
@@ -202,7 +202,7 @@ const { formatMessage } = useIntl();
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-    import { BasicLayoutProps } from '@ant-design/pro-layout';
+    import { BasicLayoutProps } from "${pkgPath || '@ant-design/pro-layout'}";
     ${
       hasInitialStatePlugin
         ? `import { Models } from '@@/plugin-model/useModel';
