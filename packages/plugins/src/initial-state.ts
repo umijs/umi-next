@@ -66,8 +66,12 @@ export default function InitialStateProvider(props: any) {
 import { useState, useEffect, useCallback } from 'react';
 import { getInitialState } from '@/app';
 
+type ThenArg<T> = T extends Promise<infer U> ? U : T;
+
+type InitialStateType = ThenArg<ReturnType<typeof getInitialState>> | undefined;
+
 const initState = {
-  initialState: undefined,
+  initialState: InitialStateType,
   loading: true,
   error: undefined,
 };
@@ -82,8 +86,6 @@ export default () => {
     } catch (e) {
       setState((s) => ({ ...s, error: e, loading: false }));
     }
-    // [?]
-    // await sleep(10);
   }, []);
 
   const setInitialState = useCallback(async (initialState) => {
@@ -93,8 +95,6 @@ export default () => {
       }
       return { ...s, initialState, loading: false };
     });
-    // [?]
-    // await sleep(10)
   }, []);
 
   useEffect(() => {
