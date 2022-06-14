@@ -1,0 +1,9 @@
+{
+  "name": "@example/x-design",
+  "private": true,
+  "main": "./src/index.tsx",
+  "scripts": {
+    "start": "npm run dev"
+  },
+  "dependencies": {}
+}

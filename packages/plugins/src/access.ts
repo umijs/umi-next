@@ -60,7 +60,7 @@ export function accessProvider(container) {
     api.writeTmpFile({
       path: 'index.tsx',
       content: `
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { AccessContext } from './context';
 import type { IRoute } from 'umi';
 
@@ -72,7 +72,7 @@ export interface AccessProps {
   accessible: boolean;
   fallback?: React.ReactNode;
 }
-export const Access: React.FC<AccessProps> = (props) => {
+export const Access: React.FC<PropsWithChildren<AccessProps>> = (props) => {
   if (process.env.NODE_ENV === 'development' && typeof props.accessible !== 'boolean') {
     throw new Error('[access] the \`accessible\` property on <Access /> should be a boolean');
   }
@@ -91,7 +91,7 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
 
       // check access code
       if (typeof accessCode === 'string') {
-        const detector = access[route.access];
+        const detector = access[accessCode];
 
         if (typeof detector === 'function') {
           route.unaccessible = !detector(route);
@@ -103,8 +103,8 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
       }
 
       // check children access code
-      if (route.routes) {
-        const isNoAccessibleChild = !route.routes.reduce((hasAccessibleChild, child) => {
+      if (route.children?.length) {
+        const isNoAccessibleChild = !route.children.reduce((hasAccessibleChild, child) => {
           process(child, accessCode);
 
           return hasAccessibleChild || !child.unaccessible;

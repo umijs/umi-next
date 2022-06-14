@@ -58,7 +58,7 @@
 
 **max 提供的的配置项**如下 `config/config.ts` ：
 
-> 需要注意的是，之前的一些插件约定开启的规则，在 `umi@4` 中几乎都要通过显示的配置开启，因为希望在 `umi@4` 中有更少的“黑盒”。
+> 需要注意的是，之前的一些插件约定开启的规则，在 `umi@4` 中几乎都要通过显式的配置开启，因为希望在 `umi@4` 中有更少的“黑盒”。
 
 ```typescript
 import { defineConfig, utils } from 'umi';
@@ -135,6 +135,34 @@ export default function Layout(props) {
 +      <Outlet />
     </div>
   );
+}
+```
+
+使用了 `React.cloneElement` 方式渲染的路由组件改造，示例
+
+```diff
+import React from 'react';
++ import { Outlet } from 'umi';
+
+export default function RouteComponent(props) {
+  return (
+    <div>
+-      { React.cloneElement(props.children, { someProp: 'p1' }) }
++      <Outlet context={{ someProp: 'p1' }} />
+    </div>
+  );
+}
+```
+组件改成从 `useOutletContext` 取值
+```diff
+import React from 'react';
++ import { useOutletContext } from 'umi';
+
+- export function Comp(props){
++ export function Comp() {
++   const props = useOutletContext();
+
+  return props.someProp;
 }
 ```
 

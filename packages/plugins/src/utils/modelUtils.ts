@@ -4,7 +4,7 @@ import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { basename, extname, join } from 'path';
+import { basename, dirname, extname, format, join, relative } from 'path';
 import { IApi } from 'umi';
 import { glob, winPath } from 'umi/plugin-utils';
 import { getIdentifierDeclaration } from './astUtils';
@@ -14,13 +14,36 @@ interface IOpts {
   astTest?: (opts: { node: t.Node; content: string }) => Boolean;
 }
 
+export function getNamespace(absFilePath: string, absSrcPath: string) {
+  const relPath = winPath(relative(winPath(absSrcPath), winPath(absFilePath)));
+  const parts = relPath.split('/');
+  const dirs = parts.slice(0, -1);
+  const file = parts[parts.length - 1];
+  // src/pages/foo/models/bar > foo/bar
+  const validDirs = dirs.filter(
+    (dir) => !['src', 'pages', 'models'].includes(dir),
+  );
+  let normalizedFile = file;
+  normalizedFile = basename(file, extname(file));
+  // foo.model > foo
+  if (normalizedFile.endsWith('.model')) {
+    normalizedFile = normalizedFile.split('.').slice(0, -1).join('.');
+  }
+  return [...validDirs, normalizedFile].join('.');
+}
+
 export class Model {
   file: string;
   namespace: string;
   id: string;
   exportName: string;
   deps: string[];
-  constructor(file: string, sort: {} | undefined, id: number) {
+  constructor(
+    file: string,
+    absSrcPath: string,
+    sort: {} | undefined,
+    id: number,
+  ) {
     let namespace;
     let exportName;
     const [_file, meta] = file.split('#');
@@ -31,7 +54,7 @@ export class Model {
     }
     this.file = _file;
     this.id = `model_${id}`;
-    this.namespace = namespace || basename(file, extname(file));
+    this.namespace = namespace || getNamespace(_file, absSrcPath);
     this.exportName = exportName || 'default';
     this.deps = sort ? this.findDeps(sort) : [];
   }
@@ -98,7 +121,12 @@ export class ModelUtils {
       }),
       ...opts.extraModels,
     ].map((file: string) => {
-      return new Model(file, opts.sort, this.count++);
+      return new Model(
+        file,
+        this.api.paths.absSrcPath,
+        opts.sort,
+        this.count++,
+      );
     });
     // check duplicate
     const namespaces = models.map((model) => model.namespace);
@@ -220,12 +248,18 @@ export class ModelUtils {
     const imports: string[] = [];
     const modelProps: string[] = [];
     models.forEach((model) => {
+      const fileWithoutExt = winPath(
+        format({
+          dir: dirname(model.file),
+          base: basename(model.file, extname(model.file)),
+        }),
+      );
       if (model.exportName !== 'default') {
         imports.push(
-          `import { ${model.exportName} as ${model.id} } from '${model.file}';`,
+          `import { ${model.exportName} as ${model.id} } from '${fileWithoutExt}';`,
         );
       } else {
-        imports.push(`import ${model.id} from '${model.file}';`);
+        imports.push(`import ${model.id} from '${fileWithoutExt}';`);
       }
       modelProps.push(
         `${model.id}: { namespace: '${model.namespace}', model: ${model.id} },`,
@@ -236,6 +270,6 @@ ${imports.join('\n')}
 
 export const models = {
 ${modelProps.join('\n')}
-}`;
+} as const`;
   }
 }

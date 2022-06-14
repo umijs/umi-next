@@ -153,7 +153,7 @@ export async function clientLoader() {
 ```js
 // 不识别 components 和 models 目录下的文件为路由
 conventionRoutes: {
-  exclude: [/\/components\//, /\/models\//];
+  exclude: [/\/components\//, /\/models\//],
 }
 ```
 
@@ -537,6 +537,8 @@ https: {
 - 默认值：`{ modifyVars: userConfig.theme, javascriptEnabled: true }`
 
 设置 less-loader 的 Options。具体参考参考 [less-loader 的 Options](https://github.com/webpack-contrib/less-loader#lessoptions)。
+
+> 默认是用 less@4 版本，如果需要兼容 less@3 请配置使用[less-options-math](https://lesscss.org/usage/#less-options-math)。
 
 ## links
 
