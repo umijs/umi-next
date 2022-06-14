@@ -31,6 +31,7 @@ export default (api: IApi) => {
 
     // tsconfig.json
     const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
+    const umiTempDir = `${srcPrefix}.umi`;
     const baseUrl = api.appData.hasSrcDir ? '../../' : '../';
     api.writeTmpFile({
       noPluginDir: true,
@@ -53,10 +54,10 @@ export default (api: IApi) => {
             strict: true,
             paths: {
               '@/*': [`${srcPrefix}*`],
-              '@@/*': [`${srcPrefix}.umi/*`],
+              '@@/*': [`${umiTempDir}/*`],
               [`${api.appData.umi.importSource}`]: [umiDir],
               [`${api.appData.umi.importSource}/typings`]: [
-                `${umiDir}/typings`,
+                `${umiTempDir}/typings`,
               ],
               ...(api.config.vite
                 ? {
