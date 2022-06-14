@@ -73,6 +73,7 @@
     "prettier-plugin-packagejson": "^2.2.17",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-text-loop-next": "0.0.3",
     "regenerator-runtime": "^0.13.9",
     "resolve": "^1.22.0",
     "rimraf": "^3.0.2",
@@ -84,7 +85,7 @@
     "umi-scripts": "workspace:*",
     "zx": "^4.3.0"
   },
-  "packageManager": "pnpm@6.20.0",
+  "packageManager": "pnpm@6.32.0",
   "engines": {
     "node": ">=14",
     "pnpm": ">=6.20.0"
@@ -103,5 +104,6 @@
         "redux"
       ]
     }
-  }
+  },
+  "_local": "This flag is used to check if the development in local, Please do not delete."
 }

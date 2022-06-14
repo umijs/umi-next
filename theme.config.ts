@@ -6,12 +6,12 @@ export default {
   description: '插件化的企业级前端应用框架',
   logo: UmiLogo,
   github: 'https://github.com/umijs/umi',
-  i18n: [
-    { locale: 'en-US', text: 'English' },
-    { locale: 'zh-CN', text: '简体中文' },
-  ],
+  // i18n: [
+  //   { locale: 'en-US', text: 'English' },
+  //   { locale: 'zh-CN', text: '简体中文' },
+  // ],
   searchHotKey: {
-    macos: '⌘+k',
+    macos: '⌘+K',
     windows: 'ctrl+k',
   },
   navs: [
@@ -75,8 +75,7 @@ export default {
         {
           title: 'Umi Max',
           children: [
-            'max/api',
-            'max/config',
+            'max/introduce',
             'max/layout-menu',
             'max/antd',
             'max/charts',
@@ -86,7 +85,8 @@ export default {
             'max/i18n',
             'max/micro-frontend',
             'max/dva',
-            'max/bacon',
+            // 暂不支持
+            // 'max/bacon',
           ],
         },
       ],
@@ -108,8 +108,4 @@ export default {
     },
   ],
   themeSwitch: {},
-  announcement: {
-    title: 'Umi4 即将推出!!!',
-    link: 'https://github.com/umijs/umi-next',
-  },
 };

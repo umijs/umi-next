@@ -43,8 +43,6 @@ function createClientRoute(opts: {
   const { route } = opts;
   const { redirect, ...props } = route;
   return {
-    children: [],
-    routes: [],
     element: redirect ? (
       <Navigate to={redirect} />
     ) : (
