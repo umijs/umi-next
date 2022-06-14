@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { chokidar, lodash, logger, register } from '@umijs/utils';
+import { chokidar, lodash, register } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -164,13 +164,7 @@ export class Config {
           implementor: esbuild,
         });
         register.clearFiles();
-        try {
-          config = lodash.merge(config, require(configFile).default);
-        } catch (error: any) {
-          logger.error(`[${configFile}] Errors:`);
-          logger.error(error.errors);
-          throw Error(error);
-        }
+        config = lodash.merge(config, require(configFile).default);
         for (const file of register.getFiles()) {
           delete require.cache[file];
         }

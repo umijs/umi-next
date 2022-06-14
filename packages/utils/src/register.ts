@@ -1,4 +1,5 @@
 import { extname } from 'path';
+import { logger } from '.';
 import { addHook } from '../compiled/pirates';
 
 const COMPILE_EXTS = ['.ts', '.tsx', '.js', '.jsx'];
@@ -12,13 +13,19 @@ function transform(opts: { code: string; filename: string; implementor: any }) {
   const { code, filename, implementor } = opts;
   files.push(filename);
   const ext = extname(filename);
-  return implementor.transformSync(code, {
-    loader: ext.slice(1),
-    // consistent with `tsconfig.base.json`
-    // https://github.com/umijs/umi-next/pull/729
-    target: 'es2019',
-    format: 'cjs',
-  }).code;
+  try {
+    return implementor.transformSync(code, {
+      loader: ext.slice(1),
+      // consistent with `tsconfig.base.json`
+      // https://github.com/umijs/umi-next/pull/729
+      target: 'es2019',
+      format: 'cjs',
+    }).code;
+  } catch (error: any) {
+    logger.error(`[${filename}] Errors:`);
+    logger.error(error.errors);
+    throw Error(error);
+  }
 }
 
 export function register(opts: { implementor: any; exts?: string[] }) {
