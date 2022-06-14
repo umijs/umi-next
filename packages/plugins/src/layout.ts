@@ -206,13 +206,13 @@ const { formatMessage } = useIntl();
     ${
       hasInitialStatePlugin
         ? `import { Models } from '@@/plugin-model/useModel';
-           type initDataType = Models<'@@initialState'>;
+           type InitDataType  = Models<'@@initialState'>;
         `
-        : 'type initDataType = any;'
+        : 'type InitDataType  = any;'
     }
     
     export type RunTimeLayoutConfig = (
-      initData: initDataType,
+      initData: InitDataType ,
     ) => BasicLayoutProps & {
       childrenRender?: (dom: JSX.Element, props: BasicLayoutProps) => React.ReactNode,
       unAccessible?: JSX.Element,
