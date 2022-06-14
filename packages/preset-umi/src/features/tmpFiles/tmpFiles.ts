@@ -361,14 +361,17 @@ export default function EmptyRoute() {
     });
 
     // history.ts
-    api.writeTmpFile({
-      noPluginDir: true,
-      path: 'core/history.ts',
-      tplPath: join(TEMPLATES_DIR, 'history.tpl'),
-      context: {
-        rendererPath,
-      },
-    });
+    // 仅 react 框架生成 history.ts, vue 这里生成会导致 vue vite 模式触发 page reload .umi/core/history.ts, 导致页面变更刷新页面(热更新不生效)
+    if (api.appData.framework === 'react') {
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: 'core/history.ts',
+        tplPath: join(TEMPLATES_DIR, 'history.tpl'),
+        context: {
+          rendererPath,
+        },
+      });
+    }
   });
 
   function checkMembers(opts: {
