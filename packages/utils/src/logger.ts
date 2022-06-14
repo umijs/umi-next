@@ -1,11 +1,8 @@
 import { join } from 'path';
-import pino from 'pino';
+import pino, { type Logger } from 'pino';
 import chalk from '../compiled/chalk';
 import fsExtra from '../compiled/fs-extra';
 
-const loggerDir = join(process.cwd(), 'node_modules/.cache/logger');
-const loggerPath = join(loggerDir, 'umi.log');
-fsExtra.mkdirpSync(loggerDir);
 const customLevels = {
   ready: 31,
   event: 32,
@@ -14,24 +11,33 @@ const customLevels = {
   // 这里不加会不生成到 umi.log，transport 的 level 配置没有生效，原因不明
   debug: 30,
 };
-const logger = pino(
-  {
-    customLevels,
-  },
-  pino.transport({
-    targets: [
-      {
-        target: require.resolve('pino/file'),
-        options: {
-          destination: loggerPath,
-        },
-        level: 'trace',
-      },
-    ],
-  }),
-);
 
-export const prefixes = {
+let logger: Logger<{ customLevels: typeof customLevels }>;
+const loggerDir = join(process.cwd(), 'node_modules/.cache/logger');
+const loggerPath = join(loggerDir, 'umi.log');
+
+const initLogger = () => {
+  if (logger) return;
+  fsExtra.mkdirpSync(loggerDir);
+  logger = pino(
+    {
+      customLevels,
+    },
+    pino.transport({
+      targets: [
+        {
+          target: require.resolve('pino/file'),
+          options: {
+            destination: loggerPath,
+          },
+          level: 'trace',
+        },
+      ],
+    }),
+  );
+};
+
+const prefixesBase = {
   wait: chalk.cyan('wait') + '  -',
   error: chalk.red('error') + ' -',
   fatal: chalk.red('fatal') + ' -',
@@ -41,6 +47,12 @@ export const prefixes = {
   event: chalk.magenta('event') + ' -',
   debug: chalk.gray('debug') + ' -',
 };
+const prefixes = new Proxy(prefixesBase, {
+  get(target, key, receiver) {
+    initLogger();
+    return Reflect.get(target, key, receiver);
+  },
+});
 
 export function wait(...message: any[]) {
   console.log(prefixes.wait, ...message);
