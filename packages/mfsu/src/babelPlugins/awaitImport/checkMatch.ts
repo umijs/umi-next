@@ -12,7 +12,7 @@ const RE_NODE_MODULES = /node_modules/;
 function isUmiLocalDev(path: string) {
   const rootPath = isLocalDev();
   return rootPath
-    ? winPath(path).startsWith(join(rootPath, './packages'))
+    ? winPath(path).startsWith(winPath(join(rootPath, './packages')))
     : false;
 }
 
