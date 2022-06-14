@@ -12,7 +12,7 @@ export default {
   // ],
   searchHotKey: {
     macos: '⌘+K',
-    windows: 'trl+k',
+    windows: 'ctrl+k',
   },
   navs: [
     {
