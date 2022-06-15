@@ -274,6 +274,7 @@ export type {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
+  IRequestOptions as RequestOptions,
 };
 
 `;
