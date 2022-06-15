@@ -120,10 +120,10 @@ export function renderClient(opts: {
     );
 
     const handleRouteChange = useCallback(
-      (p: string) => {
+      (id: string, isFirst?: boolean) => {
         // Patched routes has to id
         const matchedRouteIds = (
-          matchRoutes(clientRoutes, p)?.map(
+          matchRoutes(clientRoutes, id)?.map(
             // @ts-ignore
             (route) => route.route.id,
           ) || []
@@ -159,7 +159,7 @@ export function renderClient(opts: {
             }
           }
           // server loader
-          if (opts.routes[id].hasServerLoader) {
+          if (!isFirst && opts.routes[id].hasServerLoader) {
             fetch('/__serverLoader?route=' + id)
               .then((d) => d.json())
               .then((data) => {
@@ -184,7 +184,7 @@ export function renderClient(opts: {
     );
 
     useEffect(() => {
-      handleRouteChange(window.location.pathname);
+      handleRouteChange(window.location.pathname, true);
       return opts.history.listen((e) => {
         handleRouteChange(e.location.pathname);
       });

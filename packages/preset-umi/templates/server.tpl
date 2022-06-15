@@ -9,6 +9,7 @@ const routesWithServerLoader = {
 {{/routesWithServerLoader}}
 };
 
+// TODO: support runtime plugins
 export function getPlugins() {
   return [];
 }
