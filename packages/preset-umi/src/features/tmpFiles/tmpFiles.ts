@@ -374,7 +374,6 @@ export default function EmptyRoute() {
       const routesWithServerLoader = Object.keys(routes).reduce<
         { id: string; path: string }[]
       >((memo, id) => {
-        console.log('>', id, routes[id]);
         if (routes[id].hasServerLoader) {
           memo.push({
             id,

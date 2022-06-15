@@ -1,7 +1,7 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
 import { dirname } from 'path';
-import { IApi } from '../../types';
+import { IApi } from '../../../types';
 
 function cssLoader(
   api: IApi,

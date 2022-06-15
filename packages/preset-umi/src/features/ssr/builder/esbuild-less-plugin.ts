@@ -2,7 +2,7 @@ import esbuild, { PartialMessage } from '@umijs/bundler-utils/compiled/esbuild';
 import less from '@umijs/bundler-utils/compiled/less';
 import { readFileSync } from 'fs';
 import { basename, dirname, extname, relative, resolve } from 'path';
-import { IApi } from '../../types';
+import { IApi } from '../../../types';
 
 export const lessLoader = (
   api: IApi,
