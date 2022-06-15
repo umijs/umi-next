@@ -66,7 +66,7 @@ export default function InitialStateProvider(props: any) {
 import { useState, useEffect, useCallback } from 'react';
 import { getInitialState } from '@/app';
 
-type InitialStateType = Awaited<ReturnType<typeof getInitialState>> | undefined;
+export type InitialStateType = Awaited<ReturnType<typeof getInitialState>> | undefined;
 
 const initState = {
   initialState: InitialStateType,
