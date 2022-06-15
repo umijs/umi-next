@@ -1,9 +1,8 @@
 import { lodash, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readdirSync } from 'fs';
-import { basename, dirname, join, resolve } from 'path';
+import { basename, dirname, join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
-import { getRouteLoaders } from '../ssr/utils';
 import { getModuleExports } from './getModuleExports';
 import { importsToStr } from './importsToStr';
 import { getRouteComponents, getRoutes } from './routes';
@@ -27,6 +26,12 @@ export default (api: IApi) => {
         initialValue: dirname(
           require.resolve('@umijs/renderer-react/package.json'),
         ),
+      }),
+    );
+    const serverRendererPath = winPath(
+      await api.applyPlugins({
+        key: 'modifyServerRendererPath',
+        initialValue: join(rendererPath, 'dist/server.js'),
       }),
     );
 
@@ -283,7 +288,7 @@ export default function EmptyRoute() {
     });
 
     // route.ts
-    let routes;
+    let routes: any;
     if (opts.isFirstTime) {
       routes = api.appData.routes;
     } else {
@@ -364,19 +369,33 @@ export default function EmptyRoute() {
 
     // server.ts
     if (api.config.ssr) {
+      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
+      const umiServerPath = winPath(require.resolve('@umijs/server/dist/ssr'));
+      const routesWithServerLoader = Object.keys(routes).reduce<
+        { id: string; path: string }[]
+      >((memo, id) => {
+        console.log('>', id, routes[id]);
+        if (routes[id].hasServerLoader) {
+          memo.push({
+            id,
+            path: routes[id].__absFile,
+          });
+        }
+        return memo;
+      }, []);
       api.writeTmpFile({
         noPluginDir: true,
-        path: join('server.ts'),
+        path: 'umi.server.ts',
         tplPath: join(TEMPLATES_DIR, 'server.tpl'),
         context: {
           routes: JSON.stringify(clonedRoutes, null, 2).replace(
             /"component": "await import\((.*)\)"/g,
             '"component": await import("$1")',
           ),
-          routeLoaders: await getRouteLoaders(api, 'serverLoader'),
-          pluginPath: resolve(require.resolve('umi'), '../client/plugin.js'),
-          serverRendererPath: join(rendererPath, 'dist/server.js'),
-          umiServerPath: resolve(require.resolve('@umijs/server'), '../ssr.js'),
+          routesWithServerLoader,
+          umiPluginPath,
+          serverRendererPath,
+          umiServerPath,
           validKeys,
         },
       });

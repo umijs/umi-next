@@ -1,13 +1,12 @@
 import { getClientRootComponent } from '{{{ serverRendererPath }}}';
 import { getRoutes } from './core/route';
-import { PluginManager } from '{{{ pluginPath }}}';
+import { PluginManager } from '{{{ umiPluginPath }}}';
 import createRequestHandler from '{{{ umiServerPath }}}';
-import { resolve } from 'path';
 
-const routeLoaders = {
-{{#routeLoaders}}
-  '{{{ name }}}': () => import('{{{ path }}}'),
-{{/routeLoaders}}
+const routesWithServerLoader = {
+{{#routesWithServerLoader}}
+  '{{{ id }}}': () => import('{{{ path }}}'),
+{{/routesWithServerLoader}}
 };
 
 export function getPlugins() {
@@ -19,7 +18,7 @@ export function getValidKeys() {
 }
 
 const requestHandler = createRequestHandler({
-  routeLoaders,
+  routesWithServerLoader,
   PluginManager,
   getPlugins,
   getValidKeys,

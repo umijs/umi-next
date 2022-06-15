@@ -7,7 +7,7 @@ interface RouteLoaders {
 }
 
 interface CreateRequestHandlerOptions {
-  routeLoaders: RouteLoaders;
+  routesWithServerLoader: RouteLoaders;
   PluginManager: any;
   manifest: { [key: string]: string };
   getPlugins: () => any;
@@ -20,12 +20,17 @@ export default function createRequestHandler(
   opts: CreateRequestHandlerOptions,
 ) {
   return async function (req: any, res: any, next: any) {
-    const { routeLoaders, PluginManager, getPlugins, getValidKeys, getRoutes } =
-      opts;
+    const {
+      routesWithServerLoader,
+      PluginManager,
+      getPlugins,
+      getValidKeys,
+      getRoutes,
+    } = opts;
 
     // 切换路由场景下，会通过此 API 执行 server loader
     if (req.url.startsWith('/__serverLoader') && req.query.route) {
-      const data = await executeLoader(req.query.route, routeLoaders);
+      const data = await executeLoader(req.query.route, routesWithServerLoader);
       res.status(200).json(data);
       return;
     }
@@ -48,7 +53,10 @@ export default function createRequestHandler(
         .map(
           (match: string) =>
             new Promise<void>(async (resolve) => {
-              loaderData[match] = await executeLoader(match, routeLoaders);
+              loaderData[match] = await executeLoader(
+                match,
+                routesWithServerLoader,
+              );
               resolve();
             }),
         ),
@@ -117,8 +125,11 @@ function createClientRoute(route: any) {
   };
 }
 
-async function executeLoader(routeKey: string, routeLoaders: RouteLoaders) {
-  const mod = await routeLoaders[routeKey]();
+async function executeLoader(
+  routeKey: string,
+  routesWithServerLoader: RouteLoaders,
+) {
+  const mod = await routesWithServerLoader[routeKey]();
   if (!mod.serverLoader || typeof mod.serverLoader !== 'function') {
     return;
   }
