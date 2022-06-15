@@ -1,10 +1,23 @@
 import React from 'react';
 // @ts-ignore
 import { useServerLoaderData } from 'umi';
+// @ts-ignore
+import bigImage from '../assets/big_image.jpg';
+// @ts-ignore
+import fooStyles from './foo.less';
+// @ts-ignore
+import barStyles from './bar.less';
 
 export default function HomePage() {
   const { message } = useServerLoaderData();
-  return <div>Home Page {message}</div>;
+  return (
+    <div>
+      <div className={`${fooStyles.foo} ${barStyles.bar}`}>
+        Home Page {message}
+      </div>
+      <img src={bigImage} alt="" />
+    </div>
+  );
 }
 
 export async function serverLoader() {

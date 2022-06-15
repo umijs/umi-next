@@ -29,8 +29,11 @@ export default (api: IApi) => {
       parseInt(api.appData.react.version.split('.')[0], 10) || 0;
     if (reactVersion < 18) {
       throw new Error(
-        `SSR requires React version >= 18.0.0, but got ${reactVersion}`,
+        `SSR requires React version >= 18.0.0, but got ${reactVersion}.`,
       );
+    }
+    if (!api.config.manifest) {
+      throw new Error(`SSR requires manifest config.`);
     }
   });
 
