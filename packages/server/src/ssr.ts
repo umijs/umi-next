@@ -107,10 +107,6 @@ function createClientRoutes(opts: any) {
       if (children.length > 0) {
         // @ts-ignore
         route.children = children;
-        // TODO: remove me
-        // compatible with @ant-design/pro-layout
-        // @ts-ignore
-        route.routes = children;
       }
       return route;
     });
@@ -119,9 +115,9 @@ function createClientRoutes(opts: any) {
 function createClientRoute(route: any) {
   const { id, path, index } = route;
   return {
-    id: id,
-    path: path,
-    index: index,
+    id,
+    path,
+    index,
   };
 }
 

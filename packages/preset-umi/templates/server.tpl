@@ -24,7 +24,7 @@ const requestHandler = createRequestHandler({
   getValidKeys,
   getRoutes,
   manifest: __WEBPACK_MANIFEST__,
-  getClientRootComponent
+  getClientRootComponent,
 });
 
 export default requestHandler;

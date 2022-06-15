@@ -23,6 +23,7 @@ export async function build(opts: {
   logger.info('[ssr] build server');
 
   // TODO: 支持通用的 alias
+  // TODO: external all import from package.json.dependencies
   await esbuild.build({
     format: 'cjs',
     platform: 'node',
