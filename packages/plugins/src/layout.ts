@@ -202,19 +202,19 @@ const { formatMessage } = useIntl();
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-    import { BasicLayoutProps } from "${pkgPath || '@ant-design/pro-layout'}";
+    import { ProLayoutProps } from "${pkgPath || '@ant-design/pro-layout'}";
     ${
       hasInitialStatePlugin
         ? `import { Models } from '@@/plugin-model/useModel';
-           type InitDataType  = Models<'@@initialState'>;
+           type InitDataType = Models<'@@initialState'>;
         `
-        : 'type InitDataType  = any;'
+        : 'type InitDataType = any;'
     }
     
     export type RunTimeLayoutConfig = (
-      initData: InitDataType ,
+      initData: InitDataType,
     ) => BasicLayoutProps & {
-      childrenRender?: (dom: JSX.Element, props: BasicLayoutProps) => React.ReactNode,
+      childrenRender?: (dom: JSX.Element, props: ProLayoutProps) => React.ReactNode,
       unAccessible?: JSX.Element,
       noFound?: JSX.Element,
     };`,
