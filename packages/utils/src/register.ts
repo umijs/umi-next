@@ -23,7 +23,7 @@ function transform(opts: { code: string; filename: string; implementor: any }) {
       logLevel: 'error'
     }).code;
   } catch (error: any) {
-    logger.error(`Errors for [${filename}]`);
+    logger.error(`can't parse file: [${filename}]`);
     throw Error(error);
   }
 }
