@@ -23,8 +23,12 @@ export async function build(opts: { api: IApi; watch?: boolean }) {
     inject: [resolve(api.paths.absTmpPath, 'ssr/react-shim.js')],
     watch: watch
       ? {
-          onRebuild() {
+          onRebuild(err) {
+            logger.info('[ssr] rebuild server');
             delete require.cache[absServerBuildPath(api)];
+            if (err) {
+              logger.error(err);
+            }
           },
         }
       : false,

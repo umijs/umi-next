@@ -1,3 +1,4 @@
+import type { Compiler } from '@umijs/bundler-webpack/compiled/webpack';
 import { EnableBy } from '@umijs/core/dist/types';
 import { existsSync } from 'fs';
 import type { IApi } from '../../types';
@@ -67,7 +68,21 @@ export { React };
     });
   });
 
+  const pluginName = 'ProcessAssetsPlugin';
+  class ProcessAssetsPlugin {
+    apply(compiler: Compiler) {
+      compiler.hooks.compilation.tap(pluginName, (compilation) => {
+        compilation.hooks.afterProcessAssets.tap(pluginName, () => {
+          const modulePath = absServerBuildPath(api);
+          delete require.cache[modulePath];
+        });
+      });
+    }
+  }
+
   api.modifyWebpackConfig((config) => {
+    config.plugins!.push(new ProcessAssetsPlugin());
+
     // Limit the number of css chunks to 1.
     config.optimization = {
       ...config.optimization,
