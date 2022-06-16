@@ -60,7 +60,7 @@
 }
 
 .feature p {
-  font-size: 18px;
+  font-size: 16px;
   color: #4A5E71;
 }
 :global(.dark) .feature p {
