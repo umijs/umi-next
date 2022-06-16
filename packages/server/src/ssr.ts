@@ -9,7 +9,9 @@ interface RouteLoaders {
 interface CreateRequestHandlerOptions {
   routesWithServerLoader: RouteLoaders;
   PluginManager: any;
-  manifest: (() => Record<string, string>) | Record<string, string>;
+  manifest:
+    | (() => { assets: Record<string, string> })
+    | { assets: Record<string, string> };
   getPlugins: () => any;
   getValidKeys: () => any;
   getRoutes: (PluginManager: any) => any;
@@ -76,7 +78,7 @@ export default function createRequestHandler(
     const jsx = await opts.getClientRootComponent(context);
 
     const stream = renderToPipeableStream(jsx, {
-      bootstrapScripts: [manifest['umi.js'] || '/umi.js'],
+      bootstrapScripts: [manifest.assets['umi.js'] || '/umi.js'],
       onShellReady() {
         res.setHeader('Content-type', 'text/html');
         stream.pipe(res);

@@ -69,8 +69,8 @@ function Html({ children, loaderData, manifest }: any) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="favicon.ico" />
-        {manifest['umi.css'] && (
-          <link rel="stylesheet" href={manifest['umi.css']} />
+        {manifest.assets['umi.css'] && (
+          <link rel="stylesheet" href={manifest.assets['umi.css']} />
         )}
       </head>
       <body>
