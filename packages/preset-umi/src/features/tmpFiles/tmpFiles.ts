@@ -31,7 +31,9 @@ export default (api: IApi) => {
 
     // tsconfig.json
     const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
+    const umiTempDir = `${srcPrefix}.umi`;
     const baseUrl = api.appData.hasSrcDir ? '../../' : '../';
+
     api.writeTmpFile({
       noPluginDir: true,
       path: 'tsconfig.json',
@@ -46,17 +48,35 @@ export default (api: IApi) => {
             module: 'esnext',
             moduleResolution: 'node',
             importHelpers: true,
-            jsx: 'react-jsx',
+            jsx: api.appData.framework === 'vue' ? 'preserve' : 'react-jsx',
             esModuleInterop: true,
             sourceMap: true,
             baseUrl,
             strict: true,
+            resolveJsonModule: true,
+            allowSyntheticDefaultImports: true,
+
+            // Enforce using `import type` instead of `import` for types
+            importsNotUsedAsValues: 'error',
+
+            // Supported by vue only
+            ...(api.appData.framework === 'vue'
+              ? {
+                  // TODO Actually, it should be vite mode, but here it is written as vue only
+                  // Required in Vite https://vitejs.dev/guide/features.html#typescript
+                  isolatedModules: true,
+                  // For `<script setup>`
+                  // See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
+                  preserveValueImports: true,
+                }
+              : {}),
+
             paths: {
               '@/*': [`${srcPrefix}*`],
-              '@@/*': [`${srcPrefix}.umi/*`],
+              '@@/*': [`${umiTempDir}/*`],
               [`${api.appData.umi.importSource}`]: [umiDir],
               [`${api.appData.umi.importSource}/typings`]: [
-                `${umiDir}/typings`,
+                `${umiTempDir}/typings`,
               ],
               ...(api.config.vite
                 ? {
@@ -64,7 +84,6 @@ export default (api: IApi) => {
                   }
                 : {}),
             },
-            allowSyntheticDefaultImports: true,
           },
         },
         null,
