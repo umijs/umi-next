@@ -66,6 +66,7 @@ jobs:
 
       - name: Jest coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
+        continue-on-error: true
         with:
           test-script:  pnpm run test -- --ci --json --coverage --testLocationInResults --outputFile=report.json
           package-manager: pnpm
