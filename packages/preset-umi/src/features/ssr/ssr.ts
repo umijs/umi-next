@@ -6,9 +6,7 @@ import { build } from './builder/builder';
 import {
   absServerBuildPath,
   readAssetsManifestFromCache,
-  readCssManifestFromCache,
   saveAssetsManifestToCache,
-  saveCssManifestToCache,
 } from './utils';
 
 export default (api: IApi) => {
@@ -69,51 +67,42 @@ export { React };
     });
   });
 
-  api.onDevCompileDone(
-    async ({ isFirstCompile, cssManifest, assetsManifest }) => {
-      if (!isFirstCompile) return;
+  api.onDevCompileDone(async ({ isFirstCompile, assetsManifest }) => {
+    if (!isFirstCompile) return;
 
-      // TODO: 如果有 webpack fs cache，manifest 会数据不全
-      await readCssManifestFromCache(api, cssManifest);
-      await readAssetsManifestFromCache(api, assetsManifest);
+    // TODO: 如果有 webpack fs cache，manifest 会数据不全
+    await readAssetsManifestFromCache(api, assetsManifest);
+    saveAssetsManifestToCache(api, assetsManifest);
 
-      saveCssManifestToCache(api, cssManifest);
-      saveAssetsManifestToCache(api, assetsManifest);
-
-      await build({
-        api,
-        cssManifest,
-        assetsManifest,
-        watch: true,
-      });
-    },
-  );
+    await build({
+      api,
+      assetsManifest,
+      watch: true,
+    });
+  });
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
-  api.onBuildComplete(
-    async ({ err, cssManifest, assetsManifest, webpackManifest }) => {
-      if (err) return;
+  api.onBuildComplete(async ({ err, assetsManifest, webpackManifest }) => {
+    if (err) return;
 
-      const webpackManifestObject: { [key: string]: string } = {};
-      if (webpackManifest) {
-        webpackManifest.forEach((value, key) => {
-          webpackManifestObject[key] = value;
-        });
-      }
-      // webpack-manifest.js is for esbuild to build umi.server.js
-      // TODO: 改成 api.writeTmpFile
-      writeFileSync(
-        join(api.paths.absTmpPath, 'ssr/webpack-manifest.js'),
-        `export let __WEBPACK_MANIFEST__ = ${JSON.stringify(
-          webpackManifestObject,
-        )}`,
-      );
-
-      await build({
-        api,
-        cssManifest,
-        assetsManifest,
+    const webpackManifestObject: { [key: string]: string } = {};
+    if (webpackManifest) {
+      webpackManifest.forEach((value, key) => {
+        webpackManifestObject[key] = value;
       });
-    },
-  );
+    }
+    // webpack-manifest.js is for esbuild to build umi.server.js
+    // TODO: 改成 api.writeTmpFile
+    writeFileSync(
+      join(api.paths.absTmpPath, 'ssr/webpack-manifest.js'),
+      `export let __WEBPACK_MANIFEST__ = ${JSON.stringify(
+        webpackManifestObject,
+      )}`,
+    );
+
+    await build({
+      api,
+      assetsManifest,
+    });
+  });
 };

@@ -62,15 +62,6 @@ function getSSRCacheDir(api: IApi) {
   return join(nodeModulesPath, '.cache/.umi/ssr');
 }
 
-export function saveCssManifestToCache(
-  api: IApi,
-  cssManifest: Map<string, string> | undefined,
-) {
-  if (!cssManifest) return;
-  const cssManifestCachePath = join(getSSRCacheDir(api), 'css-manifest.json');
-  return saveMapToFile(cssManifest, cssManifestCachePath);
-}
-
 export function saveAssetsManifestToCache(
   api: IApi,
   assetsManifest: Map<string, string> | undefined,
@@ -81,14 +72,6 @@ export function saveAssetsManifestToCache(
     'assets-manifest.json',
   );
   return saveMapToFile(assetsManifest, assetsManifestCachePath);
-}
-
-export async function readCssManifestFromCache(
-  api: IApi,
-  cssManifest: Map<string, string> | undefined,
-) {
-  const cssManifestCachePath = join(getSSRCacheDir(api), 'css-manifest.json');
-  if (cssManifest) await readMapFromFile(cssManifest, cssManifestCachePath);
 }
 
 export async function readAssetsManifestFromCache(

@@ -73,10 +73,6 @@ export async function dev(opts: IOpts) {
     });
   }
 
-  // The cssManifest records the mapping between
-  // the css module name in source and the output name with hash.
-  const cssManifest = new Map<string, string>();
-
   // The assetsManifest records the mapping between
   // the external assets' path and the output name with hash.
   const assetsManifest = new Map<string, string>();
@@ -104,7 +100,6 @@ export async function dev(opts: IOpts) {
     hmr: true,
     analyze: process.env.ANALYZE,
     cache: opts.cache,
-    cssManifest,
     assetsManifest,
   });
 
@@ -128,7 +123,6 @@ export async function dev(opts: IOpts) {
       ),
     },
     assetsManifest,
-    cssManifest,
   });
 
   webpackConfig.resolve!.alias ||= {};
@@ -174,7 +168,6 @@ export async function dev(opts: IOpts) {
     afterMiddlewares: [...(opts.afterMiddlewares || [])],
     onDevCompileDone: opts.onDevCompileDone,
     onProgress: opts.onProgress,
-    cssManifest,
     assetsManifest,
   });
 }

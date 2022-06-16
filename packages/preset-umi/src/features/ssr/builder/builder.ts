@@ -6,20 +6,18 @@ import {
   absServerBuildPath,
   esbuildUmiPlugin,
   saveAssetsManifestToCache,
-  saveCssManifestToCache,
 } from '../utils';
 import assetsLoader from './assets-loader';
-import cssLoader from './css-loader';
-import { lessLoader } from './esbuild-less-plugin';
+import { cssLoader } from './css-loader';
+import { lessLoader } from './less-loader';
 import svgLoader from './svg-loader';
 
 export async function build(opts: {
   api: IApi;
-  cssManifest: any;
   assetsManifest: any;
   watch?: boolean;
 }) {
-  const { api, cssManifest, assetsManifest, watch } = opts;
+  const { api, assetsManifest, watch } = opts;
   logger.info('[ssr] build server');
 
   // TODO: 支持通用的 alias
@@ -37,7 +35,6 @@ export async function build(opts: {
     watch: watch
       ? {
           onRebuild() {
-            saveCssManifestToCache(api, cssManifest);
             saveAssetsManifestToCache(api, assetsManifest);
             delete require.cache[absServerBuildPath(api)];
           },
@@ -47,8 +44,8 @@ export async function build(opts: {
     entryPoints: [resolve(api.paths.absTmpPath, 'umi.server.ts')],
     plugins: [
       esbuildUmiPlugin(api),
-      lessLoader(api, cssManifest),
-      cssLoader(api, cssManifest),
+      lessLoader({ cwd: api.cwd }),
+      cssLoader({ cwd: api.cwd }),
       svgLoader(assetsManifest),
       assetsLoader(assetsManifest),
     ],
@@ -56,7 +53,7 @@ export async function build(opts: {
   });
 }
 
-const loader: { [ext: string]: esbuild.Loader } = {
+export const loader: { [ext: string]: esbuild.Loader } = {
   '.aac': 'file',
   '.css': 'text',
   '.less': 'text',

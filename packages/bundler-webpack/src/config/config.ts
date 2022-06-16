@@ -27,6 +27,7 @@ import { addMiniCSSExtractPlugin } from './miniCSSExtractPlugin';
 import { addNodePolyfill } from './nodePolyfill';
 import { addProgressPlugin } from './progressPlugin';
 import { addSpeedMeasureWebpackPlugin } from './speedMeasureWebpackPlugin';
+import addSSRPlugin from './ssrPlugin';
 import { addSVGRules } from './svgRules';
 
 export interface IOpts {
@@ -52,7 +53,6 @@ export interface IOpts {
     buildDependencies?: string[];
     cacheDirectory?: string;
   };
-  cssManifest?: Map<string, string>;
   assetsManifest?: Map<string, string>;
   webpackManifest?: Map<string, string>;
 }
@@ -80,7 +80,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     useHash,
     staticPathPrefix:
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
-    cssManifest: opts.cssManifest,
     assetsManifest: opts.assetsManifest,
     webpackManifest: opts.webpackManifest,
   };
@@ -190,6 +189,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
   }
+  // ssr
+  await addSSRPlugin(applyOpts);
   // compress
   await addCompressPlugin(applyOpts);
   // purgecss

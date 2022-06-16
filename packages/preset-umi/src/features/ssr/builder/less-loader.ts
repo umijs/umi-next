@@ -1,26 +1,21 @@
 import esbuild, { PartialMessage } from '@umijs/bundler-utils/compiled/esbuild';
 import less from '@umijs/bundler-utils/compiled/less';
+import { winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
-import { basename, dirname, extname, relative, resolve } from 'path';
-import { IApi } from '../../../types';
+import { basename, dirname, extname, join, resolve } from 'path';
+import { ensureLastSlash, getClassNames, hashString } from './css-loader';
 
-export const lessLoader = (
-  api: IApi,
-  manifest: Map<string, string> | undefined,
-  options: Less.Options = {},
-): esbuild.Plugin => {
+export const lessLoader = (opts: {
+  cwd: string;
+  lessOptions?: Less.Options;
+}): esbuild.Plugin => {
+  const { lessOptions = {} } = opts;
   return {
     name: 'less-loader',
     setup: (build) => {
-      if (!manifest) return;
-
       // Resolve *.less files with namespace
       build.onResolve({ filter: /\.less$/, namespace: 'file' }, (args) => {
-        const filePath = resolve(
-          process.cwd(),
-          relative(process.cwd(), args.resolveDir),
-          args.path,
-        );
+        const filePath = join(args.resolveDir, args.path);
         return {
           path: filePath,
           watchFiles: !!build.initialOptions.watch
@@ -34,29 +29,29 @@ export const lessLoader = (
         const content = readFileSync(args.path, 'utf-8');
         const dir = dirname(args.path);
         const filename = basename(args.path);
+        const relFilename = winPath(args.path).replace(
+          ensureLastSlash(winPath(opts.cwd)),
+          '',
+        );
         try {
           const result = await less.render(content, {
             filename,
             rootpath: dir,
-            ...options,
-            paths: [...(options.paths || []), dir],
+            ...lessOptions,
+            paths: [...(lessOptions.paths || []), dir],
           });
 
-          const cssClassNames = result.css
-            .replace(/{[^{]*?}/g, '')
-            .split('\n')
-            .filter(Boolean);
-
-          const cssModuleObject: { [key: string]: string } = {};
-          cssClassNames.map((className) => {
-            const cssFilePath = args.path.replace(api.cwd, '');
-            const nameFromWebpack = manifest.get(
-              cssFilePath + className.replace(/^\./, '@').trim(),
-            );
-            if (!nameFromWebpack) return;
-            cssModuleObject[className.replace(/^\./, '').trim()] =
-              nameFromWebpack;
-          });
+          const classNames = getClassNames(
+            Buffer.from(result.css),
+            filename,
+          ).sort();
+          const cssModuleObject = classNames.reduce<Record<string, string>>(
+            (memo, key) => {
+              memo[key] = `${key}___${hashString(`${relFilename}@${key}`)}`;
+              return memo;
+            },
+            {},
+          );
           return {
             contents: `export default ${JSON.stringify(cssModuleObject)};`,
             loader: 'js',

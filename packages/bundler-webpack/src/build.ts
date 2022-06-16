@@ -20,10 +20,6 @@ type IOpts = {
 } & Pick<IConfigOpts, 'cache'>;
 
 export async function build(opts: IOpts): Promise<webpack.Stats> {
-  // The cssManifest records the mapping between
-  // the css module name in source and the output name with hash.
-  const cssManifest = new Map<string, string>();
-
   // The assetsManifest records the mapping between
   // the external assets' path and the output name with hash.
   const assetsManifest = new Map<string, string>();
@@ -53,7 +49,6 @@ export async function build(opts: IOpts): Promise<webpack.Stats> {
     chainWebpack: opts.chainWebpack,
     modifyWebpackConfig: opts.modifyWebpackConfig,
     cache: opts.cache,
-    cssManifest,
     assetsManifest,
     webpackManifest,
   });
@@ -67,7 +62,6 @@ export async function build(opts: IOpts): Promise<webpack.Stats> {
         stats,
         isFirstCompile,
         time: stats ? stats.endTime - stats.startTime : null,
-        cssManifest,
         assetsManifest,
         webpackManifest,
       });

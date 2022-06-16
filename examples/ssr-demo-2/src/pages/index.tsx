@@ -6,13 +6,15 @@ import bigImage from '../assets/big_image.jpg';
 // @ts-ignore
 import fooStyles from './foo.less';
 // @ts-ignore
-import barStyles from './bar.less';
+import barStyles from './bar.css';
 
 export default function HomePage() {
   const { message } = useServerLoaderData();
   return (
     <div>
-      <div className={`${fooStyles.foo} ${barStyles.bar}`}>
+      <div
+        className={`${fooStyles.foo} ${fooStyles.foo2} ${fooStyles.foo3} ${barStyles.bar}`}
+      >
         Home Page {message}
       </div>
       <img src={bigImage} alt="" />

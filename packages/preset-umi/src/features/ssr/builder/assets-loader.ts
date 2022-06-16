@@ -1,6 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { join } from 'path';
 
 function assetsLoader(
   webpackAssetsManifest: Map<string, string> | undefined,
@@ -14,7 +14,7 @@ function assetsLoader(
       // 帮静态资源打上 staticAssets 的 namespace，然后 onLoad 的时候一起处理
       build.onResolve({ filter: assetsFilter }, (args) => {
         return {
-          path: resolve(args.resolveDir, args.path),
+          path: join(args.resolveDir, args.path),
           namespace: 'staticAssets',
         };
       });
