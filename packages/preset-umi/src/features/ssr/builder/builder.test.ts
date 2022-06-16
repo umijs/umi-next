@@ -47,6 +47,6 @@ test('assets-loader', async () => {
   const cwd = join(fixtures, 'assets-loader');
   await build({ cwd });
   const code = readFileSync(join(cwd, 'dist/index.js'), 'utf-8');
-  expect(code).toContain(`var foo_default = window.g_assets["assets/foo.png"]`);
+  expect(code).toContain(`var foo_default = g_getAssets("assets/foo.png")`);
   expect(code).toContain(`var umi_default = "data:image/png;base64,`);
 });

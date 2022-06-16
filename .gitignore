@@ -20,6 +20,7 @@
 /packages/*/src/**/fixtures/*/.umi
 /packages/*/src/**/fixtures/*/.umi-production
 /packages/plugin-docs/client/theme-doc/tailwind.out.css
+/packages/preset-umi/fixtures/**/dist
 /packages/preset-umi/devToolApp/.umi
 /packages/preset-umi/devToolApp/.umi-production
 /packages/preset-umi/devToolApp/node_modules
