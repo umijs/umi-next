@@ -10,7 +10,6 @@ import { RuntimePublicPathPlugin } from '../plugins/RuntimePublicPathPlugin';
 import { Env, IConfig } from '../types';
 import { getBrowsersList } from '../utils/browsersList';
 import { addAssetRules } from './assetRules';
-import addWebpackAssetsMappingPlugin from './assetsPlugin';
 import { addBundleAnalyzerPlugin } from './bundleAnalyzerPlugin';
 import { addCompressPlugin } from './compressPlugin';
 import { addCopyPlugin } from './copyPlugin';
@@ -53,8 +52,6 @@ export interface IOpts {
     buildDependencies?: string[];
     cacheDirectory?: string;
   };
-  assetsManifest?: Map<string, string>;
-  webpackManifest?: Map<string, string>;
 }
 
 export async function getConfig(opts: IOpts): Promise<Configuration> {
@@ -80,8 +77,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     useHash,
     staticPathPrefix:
       opts.staticPathPrefix !== undefined ? opts.staticPathPrefix : 'static/',
-    assetsManifest: opts.assetsManifest,
-    webpackManifest: opts.webpackManifest,
   };
 
   // mode
@@ -183,8 +178,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   await addCopyPlugin(applyOpts);
   // manifest
   await addManifestPlugin(applyOpts);
-  // assets-mapping (for esbuild in SSR)
-  await addWebpackAssetsMappingPlugin(applyOpts);
   // hmr
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(webpack.HotModuleReplacementPlugin);
@@ -282,26 +275,6 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
       env: opts.env,
       webpack,
     });
-  }
-
-  // If ssr is enabled, we limit the number of css chunks to 1.
-  if (opts.userConfig.ssr) {
-    webpackConfig.optimization = {
-      ...webpackConfig.optimization,
-      splitChunks: {
-        ...webpackConfig.optimization?.splitChunks,
-        cacheGroups: {
-          styles: {
-            name: 'styles',
-            test: /\.(less|css|scss|sass)$/,
-            chunks: 'all',
-            minChunks: 1,
-            reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      },
-    };
   }
 
   return webpackConfig;

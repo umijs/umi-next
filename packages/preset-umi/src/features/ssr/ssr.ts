@@ -1,13 +1,8 @@
 import { EnableBy } from '@umijs/core/dist/types';
-import { existsSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { existsSync } from 'fs';
 import type { IApi } from '../../types';
 import { build } from './builder/builder';
-import {
-  absServerBuildPath,
-  readAssetsManifestFromCache,
-  saveAssetsManifestToCache,
-} from './utils';
+import { absServerBuildPath } from './utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -29,9 +24,6 @@ export default (api: IApi) => {
       throw new Error(
         `SSR requires React version >= 18.0.0, but got ${reactVersion}.`,
       );
-    }
-    if (!api.config.manifest) {
-      throw new Error(`SSR requires manifest config.`);
     }
   });
 
@@ -57,52 +49,43 @@ export default (api: IApi) => {
 export { React };
 `,
     });
-
-    // webpack-manifest.js is for esbuild to build umi.server.js
-    api.writeTmpFile({
-      noPluginDir: true,
-      path: 'ssr/webpack-manifest.js',
-      // 开发阶段 __WEBPACK_MANIFEST__ 为空
-      content: `export let __WEBPACK_MANIFEST__ = {}`,
-    });
   });
 
-  api.onDevCompileDone(async ({ isFirstCompile, assetsManifest }) => {
+  api.onDevCompileDone(async ({ isFirstCompile }) => {
     if (!isFirstCompile) return;
-
-    // TODO: 如果有 webpack fs cache，manifest 会数据不全
-    await readAssetsManifestFromCache(api, assetsManifest);
-    saveAssetsManifestToCache(api, assetsManifest);
-
     await build({
       api,
-      assetsManifest,
       watch: true,
     });
   });
 
   // 在 webpack 完成打包以后，使用 esbuild 编译 umi.server.js
-  api.onBuildComplete(async ({ err, assetsManifest, webpackManifest }) => {
+  api.onBuildComplete(async ({ err }) => {
     if (err) return;
-
-    const webpackManifestObject: { [key: string]: string } = {};
-    if (webpackManifest) {
-      webpackManifest.forEach((value, key) => {
-        webpackManifestObject[key] = value;
-      });
-    }
-    // webpack-manifest.js is for esbuild to build umi.server.js
-    // TODO: 改成 api.writeTmpFile
-    writeFileSync(
-      join(api.paths.absTmpPath, 'ssr/webpack-manifest.js'),
-      `export let __WEBPACK_MANIFEST__ = ${JSON.stringify(
-        webpackManifestObject,
-      )}`,
-    );
-
     await build({
       api,
-      assetsManifest,
     });
+  });
+
+  api.modifyWebpackConfig((config) => {
+    // Limit the number of css chunks to 1.
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        ...config.optimization?.splitChunks,
+        cacheGroups: {
+          styles: {
+            // TODO: no umi specified
+            name: 'umi',
+            test: /\.(less|css|scss|sass)$/,
+            chunks: 'all',
+            minChunks: 1,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+        },
+      },
+    };
+    return config;
   });
 };

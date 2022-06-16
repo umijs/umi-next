@@ -9,7 +9,6 @@ interface IOpts {
   cwd: string;
   env: Env;
   browsers: any;
-  assetsManifest?: Map<string, string>;
 }
 
 export async function addCSSRules(opts: IOpts) {

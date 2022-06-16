@@ -2,22 +2,14 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { logger } from '@umijs/utils';
 import { resolve } from 'path';
 import { IApi } from '../../../types';
-import {
-  absServerBuildPath,
-  esbuildUmiPlugin,
-  saveAssetsManifestToCache,
-} from '../utils';
-import assetsLoader from './assets-loader';
+import { absServerBuildPath, esbuildUmiPlugin } from '../utils';
+import { assetsLoader } from './assets-loader';
 import { cssLoader } from './css-loader';
 import { lessLoader } from './less-loader';
 import svgLoader from './svg-loader';
 
-export async function build(opts: {
-  api: IApi;
-  assetsManifest: any;
-  watch?: boolean;
-}) {
-  const { api, assetsManifest, watch } = opts;
+export async function build(opts: { api: IApi; watch?: boolean }) {
+  const { api, watch } = opts;
   logger.info('[ssr] build server');
 
   // TODO: 支持通用的 alias
@@ -28,14 +20,10 @@ export async function build(opts: {
     target: 'esnext',
     bundle: true,
     logLevel: 'silent',
-    inject: [
-      resolve(api.paths.absTmpPath, 'ssr/react-shim.js'),
-      resolve(api.paths.absTmpPath, 'ssr/webpack-manifest.js'),
-    ],
+    inject: [resolve(api.paths.absTmpPath, 'ssr/react-shim.js')],
     watch: watch
       ? {
           onRebuild() {
-            saveAssetsManifestToCache(api, assetsManifest);
             delete require.cache[absServerBuildPath(api)];
           },
         }
@@ -46,8 +34,8 @@ export async function build(opts: {
       esbuildUmiPlugin(api),
       lessLoader({ cwd: api.cwd }),
       cssLoader({ cwd: api.cwd }),
-      svgLoader(assetsManifest),
-      assetsLoader(assetsManifest),
+      svgLoader({ cwd: api.cwd }),
+      assetsLoader({ cwd: api.cwd }),
     ],
     outfile: absServerBuildPath(api),
   });

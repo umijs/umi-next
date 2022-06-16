@@ -61,11 +61,6 @@ export async function getClientRootComponent(opts: {
 }
 
 function Html({ children, loaderData, manifest }: any) {
-  const cssFilePath: string =
-    (Object.values(manifest).find((file) =>
-      (file as string).match(/umi(.*)\.css$/),
-    ) as string) || '/umi.css';
-
   // TODO: 处理 head 标签，比如 favicon.ico 的一致性
   // TODO: root 支持配置
   return (
@@ -74,7 +69,9 @@ function Html({ children, loaderData, manifest }: any) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="favicon.ico" />
-        <link rel="stylesheet" href={cssFilePath} />
+        {manifest['umi.css'] && (
+          <link rel="stylesheet" href={manifest['umi.css']} />
+        )}
       </head>
       <body>
         <noscript

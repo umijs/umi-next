@@ -1,6 +1,7 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { assetsLoader } from './assets-loader';
 import { loader } from './builder';
 import { cssLoader } from './css-loader';
 import { lessLoader } from './less-loader';
@@ -16,7 +17,11 @@ async function build(opts: { cwd: string }) {
     entryPoints: [join(opts.cwd, 'index.ts')],
     outdir: join(opts.cwd, 'dist'),
     loader,
-    plugins: [cssLoader({ cwd: opts.cwd }), lessLoader({ cwd: opts.cwd })],
+    plugins: [
+      cssLoader({ cwd: opts.cwd }),
+      lessLoader({ cwd: opts.cwd }),
+      assetsLoader({ cwd: opts.cwd }),
+    ],
   });
 }
 
@@ -36,4 +41,12 @@ test('less-loader', async () => {
     `{ "a": "a___3NAYQ", "b": "b___3NAYg", "foo": "foo___AZm9v", "hoo": "hoo___AaG9v" };`,
   );
   expect(code).toContain(`{ "bar": "bar___GJhcg", "hoo": "hoo___Ghvbw" };`);
+});
+
+test('assets-loader', async () => {
+  const cwd = join(fixtures, 'assets-loader');
+  await build({ cwd });
+  const code = readFileSync(join(cwd, 'dist/index.js'), 'utf-8');
+  expect(code).toContain(`var foo_default = window.g_assets["assets/foo.png"]`);
+  expect(code).toContain(`var umi_default = "data:image/png;base64,`);
 });

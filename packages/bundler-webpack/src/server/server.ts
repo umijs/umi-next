@@ -23,7 +23,6 @@ interface IOpts {
   afterMiddlewares?: any[];
   onDevCompileDone?: Function;
   onProgress?: Function;
-  assetsManifest?: Map<string, string>;
 }
 
 export async function createServer(opts: IOpts) {
@@ -109,7 +108,6 @@ export async function createServer(opts: IOpts) {
         stats,
         isFirstCompile,
         time: stats.endTime - stats.startTime,
-        assetsManifest: opts.assetsManifest,
       });
       isFirstCompile = false;
     });

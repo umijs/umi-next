@@ -73,10 +73,6 @@ export async function dev(opts: IOpts) {
     });
   }
 
-  // The assetsManifest records the mapping between
-  // the external assets' path and the output name with hash.
-  const assetsManifest = new Map<string, string>();
-
   const webpackConfig = await getConfig({
     cwd: opts.cwd,
     rootDir: opts.rootDir,
@@ -100,7 +96,6 @@ export async function dev(opts: IOpts) {
     hmr: true,
     analyze: process.env.ANALYZE,
     cache: opts.cache,
-    assetsManifest,
   });
 
   const depConfig = await getConfig({
@@ -122,7 +117,6 @@ export async function dev(opts: IOpts) {
         'mfsu-deps',
       ),
     },
-    assetsManifest,
   });
 
   webpackConfig.resolve!.alias ||= {};
@@ -168,6 +162,5 @@ export async function dev(opts: IOpts) {
     afterMiddlewares: [...(opts.afterMiddlewares || [])],
     onDevCompileDone: opts.onDevCompileDone,
     onProgress: opts.onProgress,
-    assetsManifest,
   });
 }

@@ -9,7 +9,7 @@ interface RouteLoaders {
 interface CreateRequestHandlerOptions {
   routesWithServerLoader: RouteLoaders;
   PluginManager: any;
-  manifest: { [key: string]: string };
+  manifest: (() => Record<string, string>) | Record<string, string>;
   getPlugins: () => any;
   getValidKeys: () => any;
   getRoutes: (PluginManager: any) => any;
@@ -62,19 +62,21 @@ export default function createRequestHandler(
         ),
     );
 
+    const manifest =
+      typeof opts.manifest === 'function' ? opts.manifest() : opts.manifest;
     const context = {
       routes,
       routeComponents,
       pluginManager,
       location: req.url,
+      manifest,
       loaderData,
-      manifest: opts.manifest,
     };
 
     const jsx = await opts.getClientRootComponent(context);
 
     const stream = renderToPipeableStream(jsx, {
-      bootstrapScripts: [opts.manifest['umi.js'] || '/umi.js'],
+      bootstrapScripts: [manifest['umi.js'] || '/umi.js'],
       onShellReady() {
         res.setHeader('Content-type', 'text/html');
         stream.pipe(res);
