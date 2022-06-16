@@ -1,5 +1,5 @@
 // @ts-ignore
-import { useModel } from 'umi';
+import { useModel } from '@umijs/max';
 
 export default function HomePage() {
   const { todos } = useModel('todo', (model) => ({ todos: model.todos }));

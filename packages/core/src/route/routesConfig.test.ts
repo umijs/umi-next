@@ -100,27 +100,14 @@ test('wrappers', () => {
     2: {
       file: 'bar',
       id: '2',
-      parentId: '4',
-      path: '',
-      absPath: '/bar',
-    },
-    3: {
-      file: 'wrapperA',
-      id: '3',
       parentId: '1',
       path: 'bar',
       absPath: '/bar',
+      wrappers: ['wrapperA', 'wrapperB'],
     },
-    4: {
-      file: 'wrapperB',
-      id: '4',
-      parentId: '3',
-      path: '',
-      absPath: '/bar',
-    },
-    5: {
+    3: {
       file: 'foo',
-      id: '5',
+      id: '3',
       parentId: '1',
       path: 'foo',
       absPath: '/foo',

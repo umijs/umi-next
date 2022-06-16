@@ -199,6 +199,13 @@ export async function getRouteComponents(opts: {
           ? route.file
           : `${opts.prefix}${route.file}`;
 
+      if (route.wrappers?.length) {
+        return `'${key}': () => import(/* webpackChunkName: "${key.replace(
+          /[\/-]/g,
+          '_',
+        )}" */'${join('@@', 'core/wrapped', `${route.id}.tsx`)}'),`;
+      }
+
       return `'${key}': () => import(/* webpackChunkName: "${key.replace(
         /[\/-]/g,
         '_',
