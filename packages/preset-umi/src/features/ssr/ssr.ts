@@ -1,5 +1,6 @@
 import type { Compiler } from '@umijs/bundler-webpack/compiled/webpack';
 import { EnableBy } from '@umijs/core/dist/types';
+import { logger } from '@umijs/utils';
 import { existsSync } from 'fs';
 import type { IApi } from '../../types';
 import { build } from './builder/builder';
@@ -12,6 +13,7 @@ export default (api: IApi) => {
       schema(Joi) {
         return Joi.object({
           serverBuildPath: Joi.string(),
+          platform: Joi.string(),
         });
       },
     },
@@ -26,6 +28,10 @@ export default (api: IApi) => {
         `SSR requires React version >= 18.0.0, but got ${reactVersion}.`,
       );
     }
+  });
+
+  api.onStart(() => {
+    logger.warn(`ssr feature in beta, may be unstable`);
   });
 
   api.addBeforeMiddlewares(() => [

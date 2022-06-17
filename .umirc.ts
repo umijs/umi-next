@@ -6,5 +6,4 @@ export default {
   conventionRoutes: {
     exclude: [/\/components\//],
   },
-  ssr: {},
 };

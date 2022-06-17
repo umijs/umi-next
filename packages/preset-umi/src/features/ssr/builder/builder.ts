@@ -10,7 +10,8 @@ import svgLoader from './svg-loader';
 
 export async function build(opts: { api: IApi; watch?: boolean }) {
   const { api, watch } = opts;
-  logger.info('[ssr] build server');
+  logger.wait('[SSR] Compiling...');
+  const now = new Date().getTime();
 
   // TODO: 支持通用的 alias
   // TODO: external all import from package.json.dependencies
@@ -24,7 +25,7 @@ export async function build(opts: { api: IApi; watch?: boolean }) {
     watch: watch
       ? {
           onRebuild(err) {
-            logger.info('[ssr] rebuild server');
+            logger.event('[SSR] Rebuilt');
             delete require.cache[absServerBuildPath(api)];
             if (err) {
               logger.error(err);
@@ -43,6 +44,8 @@ export async function build(opts: { api: IApi; watch?: boolean }) {
     ],
     outfile: absServerBuildPath(api),
   });
+  const diff = new Date().getTime() - now;
+  logger.info(`[SSR] Compiled in ${diff}ms`);
 }
 
 export const loader: { [ext: string]: esbuild.Loader } = {
