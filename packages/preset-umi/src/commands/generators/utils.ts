@@ -93,6 +93,24 @@ export class GeneratorHelper {
   addScript(name: string, cmd: string) {
     const { api } = this;
 
+    this.addScriptToPkg(name, cmd);
+    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
+    logger.info('Write package.json');
+  }
+
+  addScripts(scripts: { [script: string]: string }) {
+    const { api } = this;
+
+    for (const [name, cmd] of Object.entries(scripts)) {
+      this.addScriptToPkg(name, cmd);
+    }
+    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
+    logger.info('Write package.json');
+  }
+
+  private addScriptToPkg(name: string, cmd: string) {
+    const { api } = this;
+
     if (api.pkg.scripts?.[name] && api.pkg.scripts?.[name] !== cmd) {
       logger.warn(
         `scripts.${name} = "${api.pkg.scripts?.[name]}" already exists, will be overwritten with "${cmd}"!`,
@@ -103,8 +121,6 @@ export class GeneratorHelper {
       ...api.pkg.scripts,
       [name]: cmd,
     };
-    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
   }
 
   installDeps() {
