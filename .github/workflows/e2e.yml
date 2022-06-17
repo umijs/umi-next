@@ -23,10 +23,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [16.x]
+        os: [ubuntu-latest, windows-latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -67,7 +68,7 @@ jobs:
 
       - run: pnpm build
 
-      - name: Build max
+      - name: Build example-max
         run: pnpx umi-scripts turbo  --cmd build --filter ./examples/max
 
       - uses: cypress-io/github-action@v4
