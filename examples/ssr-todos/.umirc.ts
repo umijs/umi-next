@@ -1,6 +1,6 @@
 export default {
   ssr: {},
-  hash: true,
+  // hash: true,
   apiRoute: {
     platform: 'vercel',
   },

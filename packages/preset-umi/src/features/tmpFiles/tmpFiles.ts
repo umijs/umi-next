@@ -396,7 +396,7 @@ export default function EmptyRoute() {
           serverRendererPath,
           umiServerPath,
           validKeys,
-          assetsPath: join(api.paths.absOutputPath, 'ssr-manifest.json'),
+          assetsPath: join(api.paths.absOutputPath, 'build-manifest.json'),
           env: JSON.stringify(api.env),
         },
       });

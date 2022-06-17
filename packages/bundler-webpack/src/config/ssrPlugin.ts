@@ -71,14 +71,14 @@ class SSRPlugin {
           this.opts.userConfig.writeToDisk
         ) {
           compilation.emitAsset(
-            'ssr-manifest.json',
+            'build-manifest.json',
             new sources.RawSource(assetsSource, false),
           );
         } else {
           const outputPath = compiler.options.output.path!;
           fsExtra.mkdirpSync(outputPath);
           writeFileSync(
-            join(outputPath, 'ssr-manifest.json'),
+            join(outputPath, 'build-manifest.json'),
             assetsSource,
             'utf-8',
           );
