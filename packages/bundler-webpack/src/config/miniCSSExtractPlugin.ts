@@ -19,7 +19,8 @@ export async function addMiniCSSExtractPlugin(opts: IOpts) {
       {
         filename: `[name]${hash}.css`,
         chunkFilename: opts.userConfig.ssr
-          ? `umi${hash}.css`
+          ? // TODO: FIXME
+            `umi${hash}.css`
           : `[name]${hash}.chunk.css`,
         ignoreOrder: true,
       },
