@@ -45,37 +45,18 @@ jobs:
         with:
           run_install: false
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-node${{ matrix.node-version }}-
-
-      # We use week in the turbo cache key to keep the cache from infinitely growing
-      - name: Get cache expires mark
-        id: get-week
-        run: echo ::set-output name=WEEK::$(date +%U)
-
       - name: Install dependencies
         run: pnpm i
 
-      - run: pnpm build
-
       - name: Build example-max
-        run: pnpx umi-scripts turbo  --cmd build --filter ./examples/max
+        run: pnpx umi-scripts turbo  --cmd build --filter ./examples/max...
 
       - uses: cypress-io/github-action@v4
         with:
-          command: npm run e2e:ci
+          start: pnpm run preview
+          wait-on: 'http://127.0.0.1:9527'
+          command: pnpm run e2e
           browser: chrome
           working-directory: ./examples/max
-          install: false
         env:
           PORT: 9527
