@@ -86,7 +86,7 @@ export class GeneratorHelper {
         ...externalDeps,
       };
       writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-      logger.info('Write package.json');
+      logger.info('Update package.json for devDependencies');
     }
   }
 
@@ -95,7 +95,7 @@ export class GeneratorHelper {
 
     this.addScriptToPkg(name, cmd);
     writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
+    logger.info('Update package.json for scripts');
   }
 
   addScripts(scripts: { [script: string]: string }) {
@@ -105,7 +105,7 @@ export class GeneratorHelper {
       this.addScriptToPkg(name, cmd);
     }
     writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
+    logger.info('Update package.json for scripts');
   }
 
   private addScriptToPkg(name: string, cmd: string) {
@@ -138,7 +138,7 @@ export class GeneratorHelper {
         const toAppend = patterns.join('\n');
 
         writeFileSync(gitIgnorePath, `${gitIgnore}\n${toAppend}`);
-        logger.info('.gitignore updated');
+        logger.info('Update .gitignore');
       }
     }
   }
