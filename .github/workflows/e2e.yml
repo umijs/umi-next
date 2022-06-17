@@ -75,5 +75,6 @@ jobs:
           command: npm run e2e:ci
           browser: chrome
           working-directory: ./examples/max
-          env: PORT=9527
           install: false
+        env:
+          PORT: 9527
