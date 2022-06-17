@@ -197,7 +197,7 @@ export function renderClient(opts: {
           routeComponents: opts.routeComponents,
           clientRoutes,
           pluginManager: opts.pluginManager,
-          rootElement: opts.rootElement,
+          rootElement: opts.rootElement!,
           basename,
           clientLoaderData,
           serverLoaderData,
