@@ -5,7 +5,7 @@ import {
   prompts,
   semver,
 } from '@umijs/utils';
-import { writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { IApi } from '../../types';
 import { set as setUmirc } from '../config/set';
@@ -121,6 +121,26 @@ export class GeneratorHelper {
       ...api.pkg.scripts,
       [name]: cmd,
     };
+  }
+
+  appendGitIgnore(patterns: string[]) {
+    const { api } = this;
+
+    const gitIgnorePath = join(api.cwd, '.gitignore');
+
+    if (existsSync(gitIgnorePath)) {
+      const gitIgnore = readFileSync(gitIgnorePath, 'utf-8');
+      const toAppendPatterns = patterns.filter(
+        (pattern) => !gitIgnore.includes(pattern),
+      );
+
+      if (toAppendPatterns.length > 0) {
+        const toAppend = patterns.join('\n');
+
+        writeFileSync(gitIgnorePath, `${gitIgnore}\n${toAppend}`);
+        logger.info('.gitignore updated');
+      }
+    }
   }
 
   installDeps() {
