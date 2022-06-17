@@ -98,7 +98,7 @@ export default (api: IApi) => {
   });
 
   api.onStart(() => {
-    logger.warn(`apiRoute feature in beta, may be unstable`);
+    logger.warn(`ApiRoute feature is in beta, may be unstable`);
   });
 
   // 生成中间产物时，将 API 路由与插件注册的中间件封装到临时文件目录下
