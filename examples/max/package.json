@@ -6,7 +6,7 @@
     "ci": "cypress run",
     "dev": "max dev",
     "e2e": "cypress run",
-    "e2e:ci": "start-server-and-test preview http://127.0.0.1:9572  e2e",
+    "e2e:ci": "start-server-and-test preview http://127.0.0.1:9527  e2e",
     "preview": "max preview --port 9527",
     "start": "npm run dev"
   },
