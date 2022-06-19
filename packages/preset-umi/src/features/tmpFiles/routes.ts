@@ -184,7 +184,7 @@ export async function getRouteComponents(opts: {
     .map((key) => {
       const route = opts.routes[key];
       if (!route.file) {
-        return `'${key}': () => import( './EmptyRoute'),`;
+        return `'${key}': () => import('./EmptyRoute'),`;
       }
       if (route.hasClientLoader) {
         route.file = join(

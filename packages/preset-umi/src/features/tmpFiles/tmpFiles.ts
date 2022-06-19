@@ -417,6 +417,11 @@ export default function EmptyRoute() {
           env: JSON.stringify(api.env),
         },
       });
+      if (opts.isFirstTime) {
+        api.applyPlugins({
+          key: 'onSSRStart',
+        });
+      }
     }
 
     // history.ts

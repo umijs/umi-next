@@ -171,6 +171,7 @@ export type IApi = PluginAPI &
       current: Record<string, any>;
       origin: Record<string, any>;
     }>;
+    onSSRStart: IEvent<{}>;
     restartServer: () => void;
     writeTmpFile: (opts: {
       content?: string;
