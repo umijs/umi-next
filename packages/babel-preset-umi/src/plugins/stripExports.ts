@@ -7,8 +7,7 @@ export default (): Babel.PluginObj => {
       Program: {
         enter(path, { opts }) {
           const expressions = path.get('body');
-          const needStrip: any[] = [];
-
+          const exports = opts?.exports || [];
           expressions.forEach((exp) => {
             if (
               !(
@@ -18,110 +17,67 @@ export default (): Babel.PluginObj => {
             )
               return;
 
-            needStrip.splice(
-              needStrip.length,
-              0,
-              ...handleExportsIndividual(exp),
-            );
-            needStrip.splice(needStrip.length, 0, ...handleExportsList(exp));
-            needStrip.splice(needStrip.length, 0, ...handleExportsDefault(exp));
+            handleExportsIndividual(exp);
+            handleExportsList(exp);
+            handleExportsDefault(exp);
           });
 
-          needStrip.forEach((exp) => exp.remove());
-
-          function handleExportsIndividual(path) {
-            const needStrip = [];
-            if (!t.isExportNamedDeclaration(path)) return needStrip;
+          function handleExportsIndividual(path: any) {
+            if (!path.node) return;
+            if (!t.isExportNamedDeclaration(path)) return;
+            if (!path.get('declaration').node) return;
 
             const declaration = path.get('declaration');
-            if (!declaration.node) return needStrip;
-
             if (t.isVariableDeclaration(declaration)) {
               const variables = declaration.get('declarations');
               variables.forEach((variable) => {
-                const namePath = variable.get('id.name');
-                opts?.exports?.includes(namePath.node) &&
-                  needStrip.push(variable);
+                exports.includes(variable.get('id.name').node) &&
+                  variable.remove();
               });
             } else {
-              const namePath = declaration.get('id.name');
-              opts?.exports?.includes(namePath.node) &&
-                needStrip.push(declaration);
+              exports.includes(declaration.get('id.name').node) &&
+                declaration.remove();
             }
-            return needStrip;
           }
 
-          function handleExportsList(path) {
-            const needStrip = [];
-            if (!t.isExportNamedDeclaration(path)) return needStrip;
+          function handleExportsList(path: any) {
+            if (!path.node) return;
+            if (!t.isExportNamedDeclaration(path)) return;
 
             const specifiers = path.get('specifiers');
-            if (!specifiers) return needStrip;
+            if (!specifiers || specifiers.length === 0) return;
 
             specifiers.forEach((specifier) => {
-              const namePath = specifier.get('exported.name');
-              console.log('namePath', namePath, namePath.node);
-              opts?.exports?.includes(namePath.node) &&
-                needStrip.push(specifier);
+              if (exports.includes(specifier.get('exported.name').node))
+                specifier.remove();
             });
-
-            return needStrip;
+            if (path.get('specifiers').length === 0) path.remove();
           }
 
-          function handleExportsDefault(path) {
-            const needStrip = [];
-            if (!t.isExportDefaultDeclaration(path)) return needStrip;
-
+          function handleExportsDefault(path: any) {
+            if (!path.node) return;
+            if (!t.isExportDefaultDeclaration(path)) return;
             const declaration = path.get('declaration');
-            if (!declaration.node) return needStrip;
-
-            const namePath = declaration.get('name');
-            opts?.exports?.includes(namePath.node) &&
-              needStrip.push(declaration);
-            return needStrip;
+            if (!declaration.node) return;
+            if (exports.includes(declaration.get('name').node))
+              declaration.remove();
           }
         },
         exit(path) {
-          console.log(path.scope);
+          // Manually reprocess the scope to ensure that the removed declarations are updated.
+          path.scope.crawl();
 
-          const unRefBindings = new Map();
+          const expressions = path.get('body');
 
-          Object.entries(path.scope.bindings).forEach(([name, binding]) => {
-            if (!binding.path.parentPath || binding.kind !== 'module') return;
+          expressions.forEach((exp) => {
+            if (!t.isImportDeclaration(exp)) return;
 
-            const source = binding.path.parentPath.get('source');
-            const importName = source.node.value;
-
-            if (!t.isStringLiteral(source)) return;
-
-            const key = `${importName}(${
-              source.node.loc && source.node.loc.start.line
-            })`;
-
-            if (!unRefBindings.has(key)) {
-              unRefBindings.set(key, binding);
-            }
-
-            if (binding.referenced) {
-              unRefBindings.set(key, null);
-            } else {
-              const nodeType = binding.path.node.type;
-              if (nodeType === 'ImportSpecifier') {
-                binding.path.remove();
-              } else if (nodeType === 'ImportDefaultSpecifier') {
-                binding.path.remove();
-              } else if (nodeType === 'ImportNamespaceSpecifier') {
-                binding.path.remove();
-              } else if (binding.path.parentPath) {
-                binding.path.parentPath.remove();
-              }
-            }
-          });
-
-          unRefBindings.forEach((binding) => {
-            if (binding && binding.path.parentPath) {
-              binding.path.parentPath.remove();
-            }
+            const specifiers = exp.get('specifiers') as any[];
+            specifiers.forEach((s) => {
+              const name = s.get('local.name').node;
+              if (!s.scope.getBinding(name).referenced) s.remove();
+            });
+            if (exp.get('specifiers').length === 0) exp.remove();
           });
         },
       },
