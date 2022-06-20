@@ -14,7 +14,7 @@ export default function autoCSSModulePlugin(): Plugin {
        * import style from './style.less';
        */
       const REG_EXP =
-        /(import [a-z]+ from ["'].+\.[css|less|sass|scss|styl|stylus]+)(["'])/;
+        /(import[\s\r\n]+(?!\d)[\w$]+[\s\r\n]+from[\s\r\n]+["'].+\.[css|less|sass|scss|styl|stylus]+)(["'])/;
 
       if (code.match(REG_EXP)) {
         // The judgment standard of cssModule in vite uses regular matching, add "?module.css" after the path to match successfully, and then cssModule of vite can be used.
