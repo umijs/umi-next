@@ -111,24 +111,6 @@ export class GeneratorHelper {
   private addScriptToPkg(name: string, cmd: string) {
     const { api } = this;
 
-    this.addScriptToPkg(name, cmd);
-    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
-  }
-
-  addScripts(scripts: { [script: string]: string }) {
-    const { api } = this;
-
-    for (const [name, cmd] of Object.entries(scripts)) {
-      this.addScriptToPkg(name, cmd);
-    }
-    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
-    logger.info('Write package.json');
-  }
-
-  private addScriptToPkg(name: string, cmd: string) {
-    const { api } = this;
-
     if (api.pkg.scripts?.[name] && api.pkg.scripts?.[name] !== cmd) {
       logger.warn(
         `scripts.${name} = "${api.pkg.scripts?.[name]}" already exists, will be overwritten with "${cmd}"!`,
@@ -144,7 +126,7 @@ export class GeneratorHelper {
   appendGitIgnore(patterns: string[]) {
     const { api } = this;
 
-    writeFileSync(api.pkgPath, JSON.stringify(api.pkg, null, 2));
+    const gitIgnorePath = join(api.cwd, '.gitignore');
 
     if (existsSync(gitIgnorePath)) {
       const gitIgnore = readFileSync(gitIgnorePath, 'utf-8');
@@ -156,7 +138,7 @@ export class GeneratorHelper {
         const toAppend = patterns.join('\n');
 
         writeFileSync(gitIgnorePath, `${gitIgnore}\n${toAppend}`);
-        logger.info('Write package.json');
+        logger.info('Update .gitignore');
       }
     }
   }

@@ -1,5 +1,5 @@
 import { GeneratorType } from '@umijs/core';
-import { logger } from '@umijs/utils';
+import { generateFile, logger } from '@umijs/utils';
 import { existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { TEMPLATES_DIR } from '../../constants';
@@ -32,7 +32,7 @@ export default (api: IApi) => {
       h.addDevDeps(basicDeps);
       h.addScripts({
         e2e: 'cypress run',
-        ci: 'cypress run',
+        'e2e:ci': 'start-server-and-test preview http://127.0.0.1:9572  e2e',
       });
       h.appendGitIgnore(['/cypress/screenshots', '/cypress/videos']);
 
