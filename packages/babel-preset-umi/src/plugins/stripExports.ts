@@ -5,7 +5,7 @@ export default (): Babel.PluginObj => {
   return {
     visitor: {
       Program: {
-        enter(path, { opts }) {
+        enter(path, { opts }: any) {
           const expressions = path.get('body');
           const exports = opts?.exports || [];
           expressions.forEach((exp) => {
@@ -17,30 +17,33 @@ export default (): Babel.PluginObj => {
             )
               return;
 
-            handleExportsIndividual(exp);
-            handleExportsList(exp);
-            handleExportsDefault(exp);
+            handleExportsIndividual(exp as any);
+            handleExportsList(exp as any);
+            handleExportsDefault(exp as any);
           });
 
-          function handleExportsIndividual(path: any) {
+          function handleExportsIndividual(
+            path: Babel.NodePath<t.ExportNamedDeclaration>,
+          ) {
             if (!path.node) return;
             if (!t.isExportNamedDeclaration(path)) return;
             if (!path.get('declaration').node) return;
-
             const declaration = path.get('declaration');
             if (t.isVariableDeclaration(declaration)) {
-              const variables = declaration.get('declarations');
+              const variables = declaration.get('declarations') as any[];
               variables.forEach((variable) => {
                 exports.includes(variable.get('id.name').node) &&
                   variable.remove();
               });
             } else {
-              exports.includes(declaration.get('id.name').node) &&
+              exports.includes((declaration.get('id.name') as any).node) &&
                 declaration.remove();
             }
           }
 
-          function handleExportsList(path: any) {
+          function handleExportsList(
+            path: Babel.NodePath<t.ExportNamedDeclaration>,
+          ) {
             if (!path.node) return;
             if (!t.isExportNamedDeclaration(path)) return;
 
@@ -48,18 +51,22 @@ export default (): Babel.PluginObj => {
             if (!specifiers || specifiers.length === 0) return;
 
             specifiers.forEach((specifier) => {
-              if (exports.includes(specifier.get('exported.name').node))
+              if (
+                exports.includes((specifier.get('exported.name') as any).node)
+              )
                 specifier.remove();
             });
             if (path.get('specifiers').length === 0) path.remove();
           }
 
-          function handleExportsDefault(path: any) {
+          function handleExportsDefault(
+            path: Babel.NodePath<t.ExportDefaultDeclaration>,
+          ) {
             if (!path.node) return;
             if (!t.isExportDefaultDeclaration(path)) return;
             const declaration = path.get('declaration');
             if (!declaration.node) return;
-            if (exports.includes(declaration.get('name').node))
+            if (exports.includes((declaration.get('name') as any).node))
               declaration.remove();
           }
         },
@@ -77,7 +84,7 @@ export default (): Babel.PluginObj => {
               const name = s.get('local.name').node;
               if (!s.scope.getBinding(name).referenced) s.remove();
             });
-            if (exp.get('specifiers').length === 0) exp.remove();
+            if ((exp.get('specifiers') as any[]).length === 0) exp.remove();
           });
         },
       },
