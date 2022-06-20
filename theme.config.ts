@@ -6,12 +6,12 @@ export default {
   description: '插件化的企业级前端应用框架',
   logo: UmiLogo,
   github: 'https://github.com/umijs/umi',
-  i18n: [
-    { locale: 'en-US', text: 'English' },
-    { locale: 'zh-CN', text: '简体中文' },
-  ],
+  // i18n: [
+  //   { locale: 'en-US', text: 'English' },
+  //   { locale: 'zh-CN', text: '简体中文' },
+  // ],
   searchHotKey: {
-    macos: '⌘+k',
+    macos: '⌘+K',
     windows: 'ctrl+k',
   },
   navs: [
@@ -70,6 +70,7 @@ export default {
             'guides/debug',
             'guides/test',
             'guides/plugins',
+            'guides/use-vue',
           ],
         },
         {
@@ -108,8 +109,4 @@ export default {
     },
   ],
   themeSwitch: {},
-  announcement: {
-    title: 'Umi4 即将推出!!!',
-    link: 'https://github.com/umijs/umi-next',
-  },
 };

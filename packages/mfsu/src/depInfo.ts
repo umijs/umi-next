@@ -62,7 +62,7 @@ export class DepInfo implements IDepInfo {
 
   loadCache() {
     if (existsSync(this.cacheFilePath)) {
-      logger.info('MFSU restore cache');
+      logger.info('[MFSU] restore cache');
       const { cacheDependency, moduleGraph } = JSON.parse(
         readFileSync(this.cacheFilePath, 'utf-8'),
       );
@@ -88,7 +88,7 @@ export class DepInfo implements IDepInfo {
       return;
     }
 
-    logger.info('MFSU write cache');
+    logger.info('[MFSU] write cache');
     writeFileSync(this.cacheFilePath, newContent, 'utf-8');
   }
 

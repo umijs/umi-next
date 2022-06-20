@@ -28,10 +28,18 @@ export default (api: IApi) => {
         ),
       }),
     );
+    const serverRendererPath = winPath(
+      await api.applyPlugins({
+        key: 'modifyServerRendererPath',
+        initialValue: join(rendererPath, 'dist/server.js'),
+      }),
+    );
 
     // tsconfig.json
     const srcPrefix = api.appData.hasSrcDir ? 'src/' : '';
+    const umiTempDir = `${srcPrefix}.umi`;
     const baseUrl = api.appData.hasSrcDir ? '../../' : '../';
+
     api.writeTmpFile({
       noPluginDir: true,
       path: 'tsconfig.json',
@@ -46,17 +54,35 @@ export default (api: IApi) => {
             module: 'esnext',
             moduleResolution: 'node',
             importHelpers: true,
-            jsx: 'react-jsx',
+            jsx: api.appData.framework === 'vue' ? 'preserve' : 'react-jsx',
             esModuleInterop: true,
             sourceMap: true,
             baseUrl,
             strict: true,
+            resolveJsonModule: true,
+            allowSyntheticDefaultImports: true,
+
+            // Enforce using `import type` instead of `import` for types
+            importsNotUsedAsValues: 'error',
+
+            // Supported by vue only
+            ...(api.appData.framework === 'vue'
+              ? {
+                  // TODO Actually, it should be vite mode, but here it is written as vue only
+                  // Required in Vite https://vitejs.dev/guide/features.html#typescript
+                  isolatedModules: true,
+                  // For `<script setup>`
+                  // See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
+                  preserveValueImports: true,
+                }
+              : {}),
+
             paths: {
               '@/*': [`${srcPrefix}*`],
-              '@@/*': [`${srcPrefix}.umi/*`],
+              '@@/*': [`${umiTempDir}/*`],
               [`${api.appData.umi.importSource}`]: [umiDir],
               [`${api.appData.umi.importSource}/typings`]: [
-                `${umiDir}/typings`,
+                `${umiTempDir}/typings`,
               ],
               ...(api.config.vite
                 ? {
@@ -64,7 +90,6 @@ export default (api: IApi) => {
                   }
                 : {}),
             },
-            allowSyntheticDefaultImports: true,
           },
         },
         null,
@@ -259,6 +284,7 @@ declare module '*.txt' {
         ).join('\n'),
         basename: api.config.base,
         historyType: api.config.history.type,
+        hydrate: !!api.config.ssr,
         loadingComponent:
           existsSync(join(api.paths.absSrcPath, 'loading.tsx')) ||
           existsSync(join(api.paths.absSrcPath, 'loading.jsx')) ||
@@ -279,7 +305,7 @@ export default function EmptyRoute() {
     });
 
     // route.ts
-    let routes;
+    let routes: any;
     if (opts.isFirstTime) {
       routes = api.appData.routes;
     } else {
@@ -357,6 +383,41 @@ export default function EmptyRoute() {
         validKeys,
       },
     });
+
+    // umi.server.ts
+    if (api.config.ssr) {
+      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
+      const umiServerPath = winPath(require.resolve('@umijs/server/dist/ssr'));
+      const routesWithServerLoader = Object.keys(routes).reduce<
+        { id: string; path: string }[]
+      >((memo, id) => {
+        if (routes[id].hasServerLoader) {
+          memo.push({
+            id,
+            path: routes[id].__absFile,
+          });
+        }
+        return memo;
+      }, []);
+      api.writeTmpFile({
+        noPluginDir: true,
+        path: 'umi.server.ts',
+        tplPath: join(TEMPLATES_DIR, 'server.tpl'),
+        context: {
+          routes: JSON.stringify(clonedRoutes, null, 2).replace(
+            /"component": "await import\((.*)\)"/g,
+            '"component": await import("$1")',
+          ),
+          routesWithServerLoader,
+          umiPluginPath,
+          serverRendererPath,
+          umiServerPath,
+          validKeys,
+          assetsPath: join(api.paths.absOutputPath, 'build-manifest.json'),
+          env: JSON.stringify(api.env),
+        },
+      });
+    }
 
     // history.ts
     api.writeTmpFile({

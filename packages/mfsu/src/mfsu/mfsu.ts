@@ -144,6 +144,8 @@ export class MFSU {
           const realEntry = tryPaths([
             join(entry, 'index.tsx'),
             join(entry, 'index.ts'),
+            join(entry, 'index.jsx'),
+            join(entry, 'index.js'),
           ]);
           assert(
             realEntry,
@@ -244,7 +246,7 @@ promise new Promise(resolve => {
   async buildDeps() {
     const shouldBuild = this.strategy.shouldBuild();
     if (!shouldBuild) {
-      logger.info('MFSU skip buildDeps');
+      logger.info('[MFSU] skip buildDeps');
       return;
     }
 
@@ -258,7 +260,7 @@ promise new Promise(resolve => {
       cwd: this.opts.cwd!,
       mfsu: this,
     });
-    logger.info(`MFSU buildDeps since ${shouldBuild}`);
+    logger.info(`[MFSU] buildDeps since ${shouldBuild}`);
     logger.debug(deps.map((dep) => dep.file).join(', '));
 
     await this.depBuilder.build({
@@ -269,7 +271,7 @@ promise new Promise(resolve => {
     this.strategy.writeCache();
 
     if (this.buildDepsAgain) {
-      logger.info('MFSU buildDepsAgain');
+      logger.info('[MFSU] buildDepsAgain');
       this.buildDepsAgain = false;
       this.buildDeps().catch((e) => {
         logger.error(e);
