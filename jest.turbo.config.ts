@@ -13,5 +13,4 @@ export default {
   ],
   transformIgnorePatterns: ['/node_modules/', '/compiled/'],
   cacheDirectory: `${cwd}/.jest-cache`,
-  transformIgnorePatterns: ['/node_modules/', '/compiled/'],
 } as Config.InitialOptions;
