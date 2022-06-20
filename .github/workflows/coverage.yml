@@ -64,13 +64,9 @@ jobs:
 
       - run: pnpm build
 
-      - name: Jest coverage report
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        continue-on-error: true
-        with:
-          test-script:  pnpm run test -- --ci --json --coverage --testLocationInResults --outputFile=report.json
-          package-manager: pnpm
-          skip-step: install
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # turn off base compare for coverage report
-          base-coverage-file: report.json
+      - name: Run tests
+        run: pnpm run cov
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+
