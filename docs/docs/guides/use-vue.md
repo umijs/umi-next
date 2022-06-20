@@ -8,13 +8,13 @@ import { Message } from 'umi';
 
 ### 安装
 
-```sh
+```bash
 pnpm add  @umijs/preset-vue -D
 ```
 
 ### 配置预设
 
-```sh
+```ts
 # .umirc.ts or config/config.ts 中
 export default {
   presets: [require.resolve('@umijs/preset-vue')],
@@ -48,7 +48,7 @@ export default {
 }
 ```
 
-要链接到一个命名的路由，可以向 router-link 组件的 to 属性传递一个对象：
+要链接到一个命名的路由，可以向 `router-link` 组件的 to 属性传递一个对象：
 
 ```html
 <router-link :to="{ name: 'user', params: { username: 'erina' }}">
@@ -56,14 +56,13 @@ export default {
 </router-link>
 ```
 
-这跟代码调用 router.push() 是一回事：
+这跟代码调用 `router.push()` 是一回事：
 
 ```ts
 router.push({ name: 'user', params: { username: 'erina' } })
 ```
 
 在这两种情况下，路由将导航到路径 /user/erina。
-
 
 #### redirect
 
