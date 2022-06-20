@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe('access', function () {
-  it('run count model', () => {
+  it('show accessible content no denied', () => {
     cy.visit('/');
     cy.contains('Allow');
     cy.get('Deny').should('not.exist');
