@@ -4,7 +4,6 @@
   "scripts": {
     "build": "max build",
     "dev": "max dev",
-    "postinstall": "max setup",
     "start": "npm run dev"
   },
   "dependencies": {
