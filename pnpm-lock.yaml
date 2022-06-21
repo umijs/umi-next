@@ -100,7 +100,7 @@ importers:
       '@ant-design/icons': 4.7.0
       '@ant-design/pro-descriptions': ^1.11.2
       '@ant-design/pro-form': ^1.69.0
-      '@ant-design/pro-layout': ^7.0.1-beta.17
+      '@ant-design/pro-layout': latest
       '@ant-design/pro-table': ^2.76.0
       '@antv/l7-react': ^2.3.9
       '@umijs/max': 4.0.0
@@ -122,7 +122,7 @@ importers:
       '@ant-design/icons': 4.7.0_react-dom@18.1.0+react@18.1.0
       '@ant-design/pro-descriptions': 1.11.6_8eddf6a10dd2f83f9acef1fb94b2f7cc
       '@ant-design/pro-form': 1.69.4_8eddf6a10dd2f83f9acef1fb94b2f7cc
-      '@ant-design/pro-layout': 7.0.1-beta.20_8eddf6a10dd2f83f9acef1fb94b2f7cc
+      '@ant-design/pro-layout': 6.38.9_8eddf6a10dd2f83f9acef1fb94b2f7cc
       '@ant-design/pro-table': 2.76.4_8eddf6a10dd2f83f9acef1fb94b2f7cc
       '@antv/l7-react': 2.3.9_react-dom@18.1.0+react@18.1.0
       '@umijs/max': link:../../packages/max
@@ -1082,7 +1082,7 @@ importers:
     specifiers:
       '@ahooksjs/use-request': ^2.0.0
       '@ant-design/icons': ^4.7.0
-      '@ant-design/pro-layout': ^7.0.1-beta.17
+      '@ant-design/pro-layout': ^7.0.1-beta.20
       '@umijs/bundler-utils': 4.0.0
       antd-dayjs-webpack-plugin: ^1.0.6
       axios: ^0.27.2
@@ -1671,8 +1671,8 @@ packages:
       use-media-antd-query: 1.1.0_react@18.1.0
     dev: false
 
-  /@ant-design/pro-layout/7.0.1-beta.20_8eddf6a10dd2f83f9acef1fb94b2f7cc:
-    resolution: {integrity: sha512-VWibSyGn4GKThKd08DSWmBHf+JQZWVzEWD3SVYImM+57UDvEr5GH1sMZXIQUnfCrQFjTRYatWDeWaKLOaeuG1w==}
+  /@ant-design/pro-layout/6.38.9_8eddf6a10dd2f83f9acef1fb94b2f7cc:
+    resolution: {integrity: sha512-iBRcyGpM6YBMX3pJs4qXc1UURrCwdFmM+dqRc0zEqVPM1gQcYGue3S3FkEXc70uCr8Uc++twi5/6mRC5D6q2xA==}
     peerDependencies:
       antd: '>=4.20.0'
       react: '>=16.9.0'
@@ -1683,10 +1683,9 @@ packages:
         optional: true
     dependencies:
       '@ant-design/icons': 4.7.0_react-dom@18.1.0+react@18.1.0
-      '@ant-design/pro-provider': 1.7.1_8eddf6a10dd2f83f9acef1fb94b2f7cc
-      '@ant-design/pro-utils': 1.42.0_8eddf6a10dd2f83f9acef1fb94b2f7cc
+      '@ant-design/pro-provider': 1.8.0_8eddf6a10dd2f83f9acef1fb94b2f7cc
+      '@ant-design/pro-utils': 1.42.2_8eddf6a10dd2f83f9acef1fb94b2f7cc
       '@babel/runtime': 7.18.3
-      '@emotion/css': 11.9.0
       '@umijs/route-utils': 2.1.1
       '@umijs/ssr-darkreader': 4.9.45
       '@umijs/use-params': 1.0.9_react@18.1.0
@@ -1704,7 +1703,6 @@ packages:
       use-media-antd-query: 1.1.0_react@18.1.0
       warning: 4.0.3
     transitivePeerDependencies:
-      - '@babel/core'
       - react-dom
     dev: false
 
@@ -1741,26 +1739,6 @@ packages:
       warning: 4.0.3
     transitivePeerDependencies:
       - '@babel/core'
-      - react-dom
-    dev: false
-
-  /@ant-design/pro-provider/1.7.1_8eddf6a10dd2f83f9acef1fb94b2f7cc:
-    resolution: {integrity: sha512-saZdp86zqG5DmJVTYcEmlgpBjOCugeCIBYXVzGRr5U6FIsg9RKgQagV/eY9oCfPb5xjnP9mKW+6AWeojS90HaA==}
-    peerDependencies:
-      antd: '>=4.20.0'
-      react: '>=16.9.0'
-    peerDependenciesMeta:
-      antd:
-        optional: true
-      react:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.18.3
-      antd: 4.20.6_react-dom@18.1.0+react@18.1.0
-      rc-util: 5.21.5_react-dom@18.1.0+react@18.1.0
-      react: 18.1.0
-      swr: 1.3.0_react@18.1.0
-    transitivePeerDependencies:
       - react-dom
     dev: false
 
@@ -1853,33 +1831,6 @@ packages:
       unstated-next: 1.1.0
       use-json-comparison: 1.0.6_react@18.1.0
       use-media-antd-query: 1.1.0_react@18.1.0
-    dev: false
-
-  /@ant-design/pro-utils/1.42.0_8eddf6a10dd2f83f9acef1fb94b2f7cc:
-    resolution: {integrity: sha512-wM+Vt3QqfLIkjYm19qoBVyDfJe/ghS9cdKTpsoziW+WC8Rqh+k5n8Z0hQ3rf2amJqKMGpTThNtz9EIYc/qiLMg==}
-    peerDependencies:
-      antd: '>=4.20.0'
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-    peerDependenciesMeta:
-      antd:
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@ant-design/icons': 4.7.0_react-dom@18.1.0+react@18.1.0
-      '@ant-design/pro-provider': 1.7.1_8eddf6a10dd2f83f9acef1fb94b2f7cc
-      '@babel/runtime': 7.18.3
-      antd: 4.20.6_react-dom@18.1.0+react@18.1.0
-      classnames: 2.3.1
-      moment: 2.29.3
-      rc-util: 5.21.5_react-dom@18.1.0+react@18.1.0
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-      react-sortable-hoc: 2.0.0_react-dom@18.1.0+react@18.1.0
-      swr: 1.3.0_react@18.1.0
     dev: false
 
   /@ant-design/pro-utils/1.42.0_react-dom@18.1.0+react@18.1.0:
