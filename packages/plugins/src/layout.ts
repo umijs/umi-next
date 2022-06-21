@@ -69,6 +69,7 @@ export default (api: IApi) => {
       path: 'Layout.tsx',
       content: `
 import { Link, useLocation, useNavigate, Outlet, useAppData, useRouteData, matchRoutes } from 'umi';
+import type { IRoute } from 'umi';
 import React, { useMemo } from 'react';
 import {
   ProLayout,
@@ -97,6 +98,27 @@ import { useIntl } from '@@/plugin-locale';
     : ''
 }
 
+const filterRoutes = (routes: IRoute[], filterFn: (route: IRoute) => boolean) => {
+  if (routes.length === 0) {
+    return []
+  }
+
+  let newRoutes = []
+  for (const route of routes) {
+    if (filterFn(route)) {
+      if (Array.isArray(route.routes)) {
+        newRoutes.push(...filterRoutes(route.routes, filterFn))
+      }
+    } else {
+      newRoutes.push(route);
+      if (Array.isArray(route.routes)) {
+        route.routes = filterRoutes(route.routes, filterFn);
+      }
+    }
+  }
+
+  return newRoutes
+}
 
 export default (props: any) => {
   const location = useLocation();
@@ -123,8 +145,11 @@ const { formatMessage } = useIntl();
       ...initialInfo
     },
   });
+
   const matchedRoute = useMemo(() => matchRoutes(clientRoutes, location.pathname).pop()?.route, [location.pathname]);
-  const [route] = useAccessMarkedRoutes(clientRoutes.filter(({ id }) => id === 'ant-design-pro-layout'));
+  const newRoutes = filterRoutes(clientRoutes.filter(route => route.id === 'ant-design-pro-layout'), (route) => route.id === '@@/global-layout')
+  const [route] = useAccessMarkedRoutes(newRoutes);
+
   return (
     <ProLayout
       route={route}
@@ -212,7 +237,7 @@ const { formatMessage } = useIntl();
         `
         : 'type InitDataType = any;'
     }
-    
+
     export type RunTimeLayoutConfig = (
       initData: InitDataType,
     ) => BasicLayoutProps & {
