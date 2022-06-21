@@ -202,13 +202,13 @@ const { formatMessage } = useIntl();
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-    import type { ProLayoutProps } from "${
+    import type { ProLayoutProps, BasicLayoutProps } from "${
       pkgPath || '@ant-design/pro-layout'
     }";
     ${
       hasInitialStatePlugin
-        ? `import { Models } from '@@/plugin-model/useModel';
-           type InitDataType = Models<'@@initialState'>;
+        ? `import { Model } from '@@/plugin-model';
+           type InitDataType = Model<'@@initialState'>;
         `
         : 'type InitDataType = any;'
     }
