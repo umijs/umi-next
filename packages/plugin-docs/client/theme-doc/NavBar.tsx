@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useThemeContext } from './context';
+import ExternalLink from './icons/link.svg';
 import useLanguage from './useLanguage';
 
 export default () => {
@@ -17,6 +18,7 @@ interface NavItemProps {
   nav: {
     path: string;
     title: string;
+    type: 'nav' | 'link';
     dropdown?: {
       title: string;
       path: string;
@@ -35,13 +37,23 @@ function NavItem(props: NavItemProps) {
       onMouseEnter={() => nav.dropdown && setExpanded(true)}
       onMouseLeave={() => nav.dropdown && setExpanded(false)}
     >
-      <components.Link
-        to={
-          lang.isFromPath ? lang.currentLanguage?.locale + nav.path : nav.path
-        }
-      >
-        {lang.render(nav.title)}
-      </components.Link>
+      {nav.type === 'link' &&
+      /(https|http):\/\/([\w.]+\/?)\S*/.test(nav.path) ? (
+        <a href={nav.path} target="_blank">
+          <span className="flex">
+            {nav.title}
+            <img src={ExternalLink} alt="ExternalLink" />
+          </span>
+        </a>
+      ) : (
+        <components.Link
+          to={
+            lang.isFromPath ? lang.currentLanguage?.locale + nav.path : nav.path
+          }
+        >
+          {lang.render(nav.title)}
+        </components.Link>
+      )}
       {nav.dropdown && (
         <div
           style={{ maxHeight: isExpanded ? nav.dropdown.length * 48 : 0 }}

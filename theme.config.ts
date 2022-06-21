@@ -107,6 +107,11 @@ export default {
         },
       ],
     },
+    {
+      path: 'https://v3.umijs.org/zh-CN/docs',
+      title: 'v3.x',
+      type: 'link',
+    },
   ],
   themeSwitch: {},
 };
