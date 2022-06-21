@@ -18,7 +18,7 @@ interface NavItemProps {
   nav: {
     path: string;
     title: string;
-    type: 'nav' | 'link';
+    type?: 'nav' | 'link';
     dropdown?: {
       title: string;
       path: string;
@@ -31,14 +31,20 @@ function NavItem(props: NavItemProps) {
   const { nav } = props;
   const lang = useLanguage();
   const [isExpanded, setExpanded] = useState(false);
+
+  const isExternalLink = (n: NavItemProps['nav']) => {
+    return (
+      n.type === 'link' && /(https|http):\/\/([\w.]+\/?)\S*/.test(nav.path)
+    );
+  };
+
   return (
     <li
       className="ml-8 dark:text-white relative"
       onMouseEnter={() => nav.dropdown && setExpanded(true)}
       onMouseLeave={() => nav.dropdown && setExpanded(false)}
     >
-      {nav.type === 'link' &&
-      /(https|http):\/\/([\w.]+\/?)\S*/.test(nav.path) ? (
+      {isExternalLink(nav) ? (
         <a href={nav.path} target="_blank">
           <span className="flex">
             {nav.title}
@@ -61,19 +67,37 @@ function NavItem(props: NavItemProps) {
        cursor-pointer shadow overflow-hidden top-8"
         >
           {nav.dropdown.map((n) => (
-            <components.Link
-              key={n.path}
-              to={
-                lang.isFromPath ? lang.currentLanguage?.locale + n.path : n.path
-              }
-            >
-              <p
-                className="p-2 bg-white dark:bg-gray-700 dark:text-white
+            <>
+              {isExternalLink(n) ? (
+                <a href={n.path} target="_blank">
+                  <span className="flex">
+                    <span
+                      className="p-2 bg-white dark:bg-gray-700 dark:text-white
             hover:bg-gray-50 transition duration-300"
-              >
-                {n.title}
-              </p>
-            </components.Link>
+                    >
+                      {nav.title}
+                    </span>
+                    <img src={ExternalLink} alt="ExternalLink" />
+                  </span>
+                </a>
+              ) : (
+                <components.Link
+                  key={n.path}
+                  to={
+                    lang.isFromPath
+                      ? lang.currentLanguage?.locale + n.path
+                      : n.path
+                  }
+                >
+                  <p
+                    className="p-2 bg-white dark:bg-gray-700 dark:text-white
+            hover:bg-gray-50 transition duration-300"
+                  >
+                    {n.title}
+                  </p>
+                </components.Link>
+              )}
+            </>
           ))}
         </div>
       )}
