@@ -38,8 +38,8 @@ export default async ({
           message: 'Pick Umi App Template',
           choices: [
             { title: 'Simple App', value: 'app' },
+            { title: 'Ant Design Pro', value: 'max' },
             { title: 'Vue Simple App', value: 'vue-app' },
-            { title: 'Enterprise App', value: 'max' },
           ],
           initial: 0,
         },
@@ -113,13 +113,14 @@ export default async ({
   const target = name ? join(cwd, name) : cwd;
   const templateName = args.plugin ? 'plugin' : appTemplate;
 
+  const version = require('../package').version;
   const generator = new BaseGenerator({
     path: join(__dirname, '..', 'templates', templateName),
     target,
     data: args.default
       ? testData
       : {
-          version: require('../package').version,
+          version: version.includes('-canary.') ? version : `^${version}`,
           npmClient,
           registry,
         },

@@ -1,5 +1,5 @@
 {
-  "name": "@example/ssr-demo-2",
+  "name": "@example/ssr-todos",
   "private": true,
   "scripts": {
     "build": "umi build",
@@ -11,6 +11,6 @@
   "dependencies": {
     "express": "4.17.3",
     "isomorphic-unfetch": "^3.1.0",
-    "umi": "workspace:^"
+    "umi": "4.0.0"
   }
 }

@@ -13,7 +13,10 @@ export default () => {
           <div className={styles.line}>
             <h3>文档和帮助</h3>
             <div>
-              <Link to="/docs/tutorials/getting-started">快速上手</Link> ·{' '}
+              <a target="_blank" href="https://feedback.umijs.org">
+                反馈和交流群
+              </a>{' '}
+              ·{' '}
               <a
                 target="_blank"
                 href="https://github.com/umijs/umi-next/issues"
@@ -21,7 +24,10 @@ export default () => {
                 给 Umi 提 Bug
               </a>{' '}
               · <Link to="/docs/introduce/contributing">向 Umi 贡献代码</Link> ·{' '}
-              <Link to="/docs/introduce/upgrade-to-umi-4">升级到 Umi 4</Link>
+              <Link to="/docs/introduce/upgrade-to-umi-4">升级到 Umi 4</Link> ·{' '}
+              <a target="_blank" href="https://v3.umijs.org">
+                V3 文档
+              </a>
             </div>
           </div>
           <div className={styles.line}>
