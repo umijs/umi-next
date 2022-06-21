@@ -1,5 +1,5 @@
 // @ts-ignore
-import { parse as _parse } from './_importParser.js';
+import { parse as _parse } from '../../vendors/importParser/_importParser.js';
 
 export default function parse(code: string): {
   from: string;
