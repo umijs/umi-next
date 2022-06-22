@@ -26,9 +26,7 @@
     "@umijs/bundler-esbuild": "4.0.0",
     "@umijs/bundler-utils": "4.0.0",
     "@umijs/utils": "4.0.0",
-    "chokidar": "^3.5.3",
     "enhanced-resolve": "5.9.3",
-    "fast-glob": "^3.2.11",
     "is-equal": "^1.6.4"
   },
   "devDependencies": {

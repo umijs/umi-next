@@ -4,6 +4,7 @@ import type {
   Request,
   Response,
 } from '@umijs/bundler-utils/compiled/express';
+import type { AutoUpdateSrcCodeCache } from '@umijs/utils';
 import { lodash, logger, tryPaths, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { readFileSync, statSync } from 'fs';
@@ -12,7 +13,6 @@ import webpack, { Configuration } from 'webpack';
 import { lookup } from '../../compiled/mrmime';
 // @ts-ignore
 import WebpackVirtualModules from '../../compiled/webpack-virtual-modules';
-
 import {
   DEFAULT_MF_NAME,
   DEFAULT_TMP_DIR_NAME,
@@ -51,9 +51,9 @@ interface IOpts {
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
-  absSrcPath: string;
   version?: 'v4' | 'v3';
   safeList?: string[];
+  srcCodeCache?: AutoUpdateSrcCodeCache;
 }
 
 export class MFSU {
@@ -85,8 +85,18 @@ export class MFSU {
     this.opts.cwd = this.opts.cwd || process.cwd();
 
     if (this.opts.version === 'v4') {
-      logger.info('MFSU4 enabled');
-      this.strategy = new StaticAnalyzeStrategy({ mfsu: this });
+      if (opts.srcCodeCache) {
+        logger.info('MFSU eager mode enabled');
+        this.strategy = new StaticAnalyzeStrategy({
+          mfsu: this,
+          srcCodeCache: opts.srcCodeCache,
+        });
+      } else {
+        logger.warn(
+          'fallback to MFSU normal mode, due to srcCache is not provided',
+        );
+        this.strategy = new StrategyCompileTime({ mfsu: this });
+      }
     } else {
       this.strategy = new StrategyCompileTime({ mfsu: this });
     }
@@ -94,10 +104,6 @@ export class MFSU {
     this.strategy.loadCache();
 
     this.depBuilder = new DepBuilder({ mfsu: this });
-  }
-
-  async init() {
-    await this.strategy.init();
   }
 
   // swc don't support top-level await
@@ -241,6 +247,8 @@ promise new Promise(resolve => {
      * depConfig
      */
     this.depConfig = opts.depConfig;
+
+    this.strategy.init();
   }
 
   async buildDeps() {
@@ -340,7 +348,7 @@ promise new Promise(resolve => {
 }
 
 export interface IMFSUStrategy {
-  init(): Promise<void>;
+  init(): void;
 
   shouldBuild(): string | boolean;
 

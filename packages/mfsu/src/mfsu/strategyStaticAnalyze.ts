@@ -1,5 +1,5 @@
+import type { AutoUpdateSrcCodeCache } from '@umijs/utils';
 import { logger } from '@umijs/utils';
-import { join } from 'path';
 import { getAliasedPathWithLoopDetect } from '../babelPlugins/awaitImport/getAliasedPath';
 import mfImport from '../babelPlugins/awaitImport/MFImport';
 import { StaticDepInfo } from '../staticDepInfo/staticDepInfo';
@@ -10,15 +10,23 @@ export class StaticAnalyzeStrategy implements IMFSUStrategy {
   private readonly mfsu: MFSU;
   private staticDepInfo: StaticDepInfo;
 
-  constructor({ mfsu }: { mfsu: MFSU }) {
+  constructor({
+    mfsu,
+    srcCodeCache,
+  }: {
+    mfsu: MFSU;
+    srcCodeCache: AutoUpdateSrcCodeCache;
+  }) {
     this.mfsu = mfsu;
-    const opts = mfsu.opts;
 
     this.staticDepInfo = new StaticDepInfo({
       mfsu,
-      cachePath: join(opts.tmpBase!, 'v4'),
-      absSrcPath: opts.absSrcPath,
+      srcCodeCache,
     });
+  }
+
+  init() {
+    this.staticDepInfo.init();
   }
 
   getDepModules() {
@@ -121,10 +129,6 @@ export class StaticAnalyzeStrategy implements IMFSUStrategy {
         // fixme if mf module finished earlier than src compile
       },
     };
-  }
-
-  init(): Promise<void> {
-    return this.staticDepInfo.init();
   }
 
   loadCache() {

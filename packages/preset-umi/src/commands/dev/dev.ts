@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@umijs/bundler-webpack';
 import {
+  AutoUpdateSrcCodeCache,
   chalk,
   lodash,
   logger,
@@ -247,6 +248,17 @@ PORT=8888 umi dev
         });
       };
       const debouncedPrintMemoryUsage = lodash.debounce(printMemoryUsage, 5000);
+
+      let srcCodeCache: AutoUpdateSrcCodeCache | undefined;
+
+      if (api.config.mfsu?.version === 'v4') {
+        srcCodeCache = new AutoUpdateSrcCodeCache({
+          cwd: api.paths.absSrcPath,
+          cachePath: join(api.paths.absNodeModulesPath, '.cache', 'mfsu', 'v4'),
+        });
+        await srcCodeCache.init();
+      }
+
       const opts = {
         config: api.config,
         cwd: api.cwd,
@@ -297,7 +309,7 @@ PORT=8888 umi dev
             api.service.configManager!.mainConfigFile || '',
           ].filter(Boolean),
         },
-        absSrcPath: api.paths.absSrcPath,
+        srcCodeCache,
         safeList: lodash.union([
           ...MFSU4_SAFE_LIST,
           ...(api.config.mfsu?.safeList || []),

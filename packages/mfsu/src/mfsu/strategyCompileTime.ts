@@ -23,7 +23,7 @@ export class StrategyCompileTime implements IMFSUStrategy {
     return this.depInfo.getCacheFilePath();
   }
 
-  async init(): Promise<void> {}
+  init() {}
 
   shouldBuild() {
     return this.depInfo.shouldBuild();

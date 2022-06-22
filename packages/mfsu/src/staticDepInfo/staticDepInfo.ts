@@ -1,28 +1,18 @@
-import {
-  ImportSpecifier,
-  init as esModuleLexerInit,
-  parse,
-} from '@umijs/bundler-utils/compiled/es-module-lexer';
-import { build as esBuild } from '@umijs/bundler-utils/compiled/esbuild';
+import { ImportSpecifier } from '@umijs/bundler-utils/compiled/es-module-lexer';
+import type { AutoUpdateSrcCodeCache } from '@umijs/utils';
 import { fsExtra, lodash, logger } from '@umijs/utils';
-import fg from 'fast-glob';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 // @ts-ignore
 import why from 'is-equal/why';
-import { dirname, extname, join, relative } from 'path';
+import { dirname, join } from 'path';
 import { checkMatch } from '../babelPlugins/awaitImport/checkMatch';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu/mfsu';
-import {
-  AutoUpdateFolderCache,
-  FileChangeEvent,
-} from './AutoUpdateFolderCache';
 import createPluginImport from './simulations/babel-plugin-import';
 
 interface IOpts {
   mfsu: MFSU;
-  absSrcPath: string;
-  cachePath: string;
+  srcCodeCache: AutoUpdateSrcCodeCache;
   safeList?: string[];
 }
 
@@ -33,15 +23,13 @@ type Matched = Record<string, Match>;
 export class StaticDepInfo {
   private opts: IOpts;
   private readonly cacheFilePath: string;
-  private readonly srcPath: string;
-  private readonly cachePath: string;
 
   private mfsu: MFSU;
   private readonly safeList: string[];
   private currentDep: Record<string, Match> = {};
   private builtWithDep: Record<string, Match> = {};
 
-  private produced: { changes: FileChangeEvent[] }[] = [];
+  private produced: { changes: unknown[] }[] = [];
   private readonly cwd: string;
   private readonly runtimeSimulations: {
     packageName: string;
@@ -56,15 +44,11 @@ export class StaticDepInfo {
       handleConfig?: T,
     ) => Match[];
   }[];
-  // @ts-ignore
-  private readonly folderCache: AutoUpdateFolderCache;
 
   constructor(opts: IOpts) {
-    this.srcPath = opts.absSrcPath;
-    this.cachePath = opts.cachePath;
     this.mfsu = opts.mfsu;
 
-    this.safeList = opts.safeList || [];
+    this.safeList = this.mfsu.opts.safeList || [];
 
     this.opts = opts;
     this.cacheFilePath = join(
@@ -73,6 +57,12 @@ export class StaticDepInfo {
     );
 
     this.cwd = this.mfsu.opts.cwd!;
+
+    opts.srcCodeCache.register((info, events) => {
+      this.produced.push({ changes: events });
+      this.currentDep = this._getDependencies(info.code, info.imports);
+    });
+
     this.runtimeSimulations = [
       {
         packageName: 'antd',
@@ -83,42 +73,6 @@ export class StaticDepInfo {
         }),
       },
     ];
-
-    this.folderCache = new AutoUpdateFolderCache({
-      cwd: this.srcPath,
-      exts: ['ts', 'js', 'jsx', 'tsx'],
-      ignored: [
-        '**/*.d.ts',
-        '**/*.test.{js,ts,jsx,tsx}',
-        // fixme respect to environment
-        '**/.umi-production/**',
-        '**/node_modules/**',
-        '**/.git/**',
-      ],
-      debouncedTimeout: 500,
-      filesLoader: async (files: string[]) => {
-        const loaded: Record<string, string> = {};
-        await this.batchProcess(files);
-
-        for (const f of files) {
-          let newFile = join(this.cachePath, relative(this.srcPath, f));
-
-          // fixme ensure the last one
-          newFile = newFile.replace(extname(newFile), '.js');
-
-          loaded[f] = readFileSync(newFile, 'utf-8');
-        }
-        return loaded;
-      },
-      onCacheUpdate: (cache, events) => {
-        const bigCodeString = Object.values(cache).join('\n');
-        this.currentDep = this._getDependencies(bigCodeString);
-
-        this.produced.push({
-          changes: events,
-        });
-      },
-    });
   }
 
   getProducedEvent() {
@@ -127,41 +81,6 @@ export class StaticDepInfo {
 
   consumeAllProducedEvents() {
     this.produced = [];
-  }
-
-  async init() {
-    const [files] = await Promise.all([
-      this.initFileList(),
-      this.initFileWatch(),
-      esModuleLexerInit,
-    ]);
-
-    await this.folderCache.loadFiles(files);
-    const cache = this.folderCache.getFileCache();
-    const bigCodeString = Object.values(cache).join('\n');
-
-    this.currentDep = this._getDependencies(bigCodeString);
-  }
-
-  private async initFileList(): Promise<string[]> {
-    console.time('fast-glob');
-    const files = await fg(join(this.srcPath, '**', '*.{ts,js,jsx,tsx}'), {
-      dot: true,
-      ignore: [
-        '**/*.d.ts',
-        '**/*.test.{js,ts,jsx,tsx}',
-        // fixme respect to environment
-        '**/.umi-production/**',
-        '**/node_modules/**',
-        '**/.git/**',
-      ],
-    });
-    console.timeEnd('fast-glob');
-    return files;
-  }
-
-  private async initFileWatch() {
-    await this.folderCache.init();
   }
 
   shouldBuild() {
@@ -227,12 +146,18 @@ export class StaticDepInfo {
     return this.currentDep;
   }
 
-  private _getDependencies(bigCodeString: string): Record<string, Match> {
+  init() {
+    const merged = this.opts.srcCodeCache.getMergedCode();
+    this.currentDep = this._getDependencies(merged.code, merged.imports);
+  }
+
+  private _getDependencies(
+    bigCodeString: string,
+    imports: readonly ImportSpecifier[],
+  ): Record<string, Match> {
     console.time('_getDependencies');
 
     const cwd = this.mfsu.opts.cwd!;
-
-    const [imports] = parse(bigCodeString);
 
     const opts = {
       exportAllMembers: this.mfsu.opts.exportAllMembers,
@@ -342,39 +267,6 @@ export class StaticDepInfo {
             cwd: this.cwd,
           }),
         };
-      }
-    }
-  }
-
-  async batchProcess(files: string[]) {
-    try {
-      await esBuild({
-        entryPoints: files,
-        bundle: false,
-        outdir: this.cachePath,
-        outbase: this.srcPath,
-        loader: {
-          // in case some js using some feature, eg: decorator
-          '.jsx': 'tsx',
-        },
-        logLevel: 'silent',
-      });
-    } catch (e) {
-      // error ignored due to user have to update code to fix then trigger another batchProcess;
-      // @ts-ignore
-      if (e.errors?.length || e.warnings?.length) {
-        logger.warn(
-          'transpile code with esbuild got ',
-          // @ts-ignore
-          e.errors?.lenght || 0,
-          'errors,',
-          // @ts-ignore
-          e.warnings?.length || 0,
-          'warnings',
-        );
-        logger.debug('esbuild transpile code with error', e);
-      } else {
-        logger.warn('transpile code with esbuild error', e);
       }
     }
   }

@@ -1035,9 +1035,7 @@ importers:
       '@umijs/bundler-esbuild': 4.0.0
       '@umijs/bundler-utils': 4.0.0
       '@umijs/utils': 4.0.0
-      chokidar: ^3.5.3
       enhanced-resolve: 5.9.3
-      fast-glob: ^3.2.11
       is-equal: ^1.6.4
       mrmime: 1.0.0
       webpack: 5.72.1
@@ -1046,9 +1044,7 @@ importers:
       '@umijs/bundler-esbuild': link:../bundler-esbuild
       '@umijs/bundler-utils': link:../bundler-utils
       '@umijs/utils': link:../utils
-      chokidar: 3.5.3
       enhanced-resolve: 5.9.3
-      fast-glob: 3.2.11
       is-equal: 1.6.4
     devDependencies:
       mrmime: 1.0.0
@@ -1308,6 +1304,7 @@ importers:
       debug: 4.3.4
       deepmerge: 4.2.2
       execa: 6.1.0
+      fast-glob: ^3.2.11
       fs-extra: 10.0.1
       glob: 8.0.1
       import-lazy: 4.0.0
@@ -1326,6 +1323,7 @@ importers:
       yargs-parser: 21.0.1
     dependencies:
       chokidar: 3.5.3
+      fast-glob: 3.2.11
       pino: 7.11.0
     devDependencies:
       '@types/color': 3.0.3
