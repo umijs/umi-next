@@ -42,7 +42,9 @@ export async function getApiRoutes(opts: { api: IApi }) {
 }
 
 // get route config
-export async function getRoutes(opts: { api: IApi }) {
+export async function getRoutes(opts: {
+  api: IApi;
+}): Promise<Record<string, any>> {
   let routes = null;
   if (opts.api.config.routes) {
     routes = getConfigRoutes({
