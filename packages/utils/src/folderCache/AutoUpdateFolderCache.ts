@@ -1,11 +1,13 @@
-import { lodash, logger } from '@umijs/utils';
 import { FSWatcher, watch } from 'chokidar';
 import { readFileSync } from 'fs';
 import { join, relative } from 'path';
+import lodash from '../../compiled/lodash';
+import * as logger from '../logger';
 
 type AbsPath = string;
 type FileContent = string;
 type FileContentCache = Record<AbsPath, FileContent>;
+
 export type FileChangeEvent = {
   event: 'unlink' | 'change' | 'add';
   path: string;
@@ -31,7 +33,7 @@ export class AutoUpdateFolderCache {
     cwd: string;
     exts: string[];
     onCacheUpdate: (cache: FileContentCache, events: FileChangeEvent[]) => void;
-    debouncedTimeout: number;
+    debouncedTimeout?: number;
     /* ([anymatch](https://github.com/micromatch/anymatch)-compatible definition array*/
     ignored: string[];
     filesLoader?: (files: string[]) => Promise<Record<string, string>>;
@@ -113,6 +115,7 @@ export class AutoUpdateFolderCache {
       }
     });
   }
+
   getFileCache() {
     return this.fileContentCache;
   }
