@@ -28,7 +28,7 @@ type IOpts = {
   rootDir?: string;
   config: IConfig;
   entry: Record<string, string>;
-  mfsuVersion?: 'v3' | 'v4';
+  mfsuStrategy?: 'eager' | 'normal';
   safeList?: string[];
   srcCodeCache?: AutoUpdateSrcCodeCache;
 } & Pick<IConfigOpts, 'cache'>;
@@ -53,7 +53,7 @@ export async function dev(opts: IOpts) {
     }
 
     mfsu = new MFSU({
-      version: opts.mfsuVersion || 'v3',
+      strategy: opts.mfsuStrategy,
       safeList: opts.safeList || [],
       srcCodeCache: opts.srcCodeCache,
       implementor: webpack as any,

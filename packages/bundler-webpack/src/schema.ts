@@ -113,7 +113,7 @@ export function getSchemas(): Record<string, (Joi: Root) => any> {
           mfName: Joi.string(),
           runtimePublicPath: Joi.boolean(),
           safeList: Joi.array().items(Joi.string()),
-          version: Joi.string().valid('v3', 'v4').default('v3'),
+          strategy: Joi.string().valid('eager', 'normal').default('normal'),
         }),
         Joi.boolean(),
       ),

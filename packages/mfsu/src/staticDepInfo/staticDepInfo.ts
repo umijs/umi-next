@@ -120,7 +120,7 @@ export class StaticDepInfo {
   loadCache() {
     if (existsSync(this.cacheFilePath)) {
       this.builtWithDep = JSON.parse(readFileSync(this.cacheFilePath, 'utf-8'));
-      logger.info('MFSU v4 restored cache');
+      logger.info('MFSU [eager] restored cache');
     }
   }
 
@@ -134,7 +134,7 @@ export class StaticDepInfo {
       return;
     }
 
-    logger.info('MFSU v4 write cache');
+    logger.info('MFSU [eager] write cache');
     writeFileSync(this.cacheFilePath, newContent, 'utf-8');
   }
 

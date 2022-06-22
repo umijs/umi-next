@@ -51,7 +51,7 @@ interface IOpts {
   implementor: typeof webpack;
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
-  version?: 'v4' | 'v3';
+  strategy?: 'eager' | 'normal';
   safeList?: string[];
   srcCodeCache?: AutoUpdateSrcCodeCache;
 }
@@ -84,16 +84,16 @@ export class MFSU {
     };
     this.opts.cwd = this.opts.cwd || process.cwd();
 
-    if (this.opts.version === 'v4') {
+    if (this.opts.strategy === 'eager') {
       if (opts.srcCodeCache) {
-        logger.info('MFSU eager mode enabled');
+        logger.info('MFSU eager strategy enabled');
         this.strategy = new StaticAnalyzeStrategy({
           mfsu: this,
           srcCodeCache: opts.srcCodeCache,
         });
       } else {
         logger.warn(
-          'fallback to MFSU normal mode, due to srcCache is not provided',
+          'fallback to MFSU normal strategy, due to srcCache is not provided',
         );
         this.strategy = new StrategyCompileTime({ mfsu: this });
       }
@@ -325,7 +325,7 @@ promise new Promise(resolve => {
   }
 
   getEsbuildLoaderHandler() {
-    if (this.opts.version === 'v4') {
+    if (this.opts.strategy === 'eager') {
       const opts = this.strategy.getBabelPlugin()[1] as any;
 
       return [getImportHandlerV4(opts)];

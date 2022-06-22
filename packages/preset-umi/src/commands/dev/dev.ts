@@ -251,7 +251,7 @@ PORT=8888 umi dev
 
       let srcCodeCache: AutoUpdateSrcCodeCache | undefined;
 
-      if (api.config.mfsu?.version === 'v4') {
+      if (api.config.mfsu?.strategy === 'eager') {
         srcCodeCache = new AutoUpdateSrcCodeCache({
           cwd: api.paths.absSrcPath,
           cachePath: join(api.paths.absNodeModulesPath, '.cache', 'mfsu', 'v4'),
@@ -302,7 +302,7 @@ PORT=8888 umi dev
           };
         },
         mfsuWithESBuild: api.config.mfsu?.esbuild,
-        mfsuVersion: api.config.mfsu?.version,
+        mfsuStrategy: api.config.mfsu?.strategy,
         cache: {
           buildDependencies: [
             api.pkgPath,
