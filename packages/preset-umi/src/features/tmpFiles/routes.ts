@@ -59,7 +59,10 @@ export async function getRoutes(opts: {
             extensions: ['.js', '.jsx', '.tsx', '.ts', '.vue'],
           }),
         );
-        component = component.replace(`${opts.api.paths.absSrcPath}/`, '@/');
+        component = component.replace(
+          winPath(`${opts.api.paths.absSrcPath}/`),
+          '@/',
+        );
         return component;
       },
     });
