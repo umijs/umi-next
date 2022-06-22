@@ -147,7 +147,10 @@ export async function getRoutes(opts: {
     })
   ).map((layout: { file: string }) => {
     // prune local path prefix, avoid mix in outputs
-    layout.file = layout.file.replace(new RegExp(`^${absSrcPath}`), '@');
+    layout.file = layout.file.replace(
+      new RegExp(`^${winPath(absSrcPath)}`),
+      '@',
+    );
     return layout;
   });
   for (const layout of layouts) {
