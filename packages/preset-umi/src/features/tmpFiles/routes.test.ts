@@ -24,11 +24,11 @@ test('getRoutes', async () => {
           },
           {
             path: '/hello',
-            component: '@/pages/Hello',
+            component: '@/pages/hello',
           },
           {
             path: '/users',
-            component: '@/pages/Users/index.vue',
+            component: '@/pages/users/index',
             routes: [
               {
                 path: '/users/foo',
@@ -58,7 +58,7 @@ test('getRoutes', async () => {
   expect(routes[2].parentId).toBe('@@/global-layout');
 
   // vue 文件测试
-  expect(routes[3].file).toBe('@/pages/Hello/index.vue');
+  expect(routes[3].file).toBe('@/pages/hello/index.vue');
   expect(routes[3].parentId).toBe('@@/global-layout');
 
   // __absFile 是具体的路径, 快照测试通不过
