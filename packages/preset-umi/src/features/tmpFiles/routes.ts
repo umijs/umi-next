@@ -134,6 +134,9 @@ export async function getRoutes(opts: { api: IApi }) {
         absLayoutPath && {
           id: '@@/global-layout',
           file: winPath(absLayoutPath),
+          test(route: any) {
+            return route.layout !== false;
+          },
         },
       ].filter(Boolean),
     })
@@ -151,6 +154,7 @@ export async function getRoutes(opts: { api: IApi }) {
         file: layout.file,
         parentId: undefined,
         absPath: '/',
+        isLayout: true,
       },
       routes,
       test: layout.test,

@@ -98,6 +98,7 @@ import { useIntl } from '@@/plugin-locale';
     : ''
 }
 
+// 过滤出需要显示的路由, 这里的filterFn 指 不希望显示的层级
 const filterRoutes = (routes: IRoute[], filterFn: (route: IRoute) => boolean) => {
   if (routes.length === 0) {
     return []
@@ -117,7 +118,7 @@ const filterRoutes = (routes: IRoute[], filterFn: (route: IRoute) => boolean) =>
     }
   }
 
-  return newRoutes
+  return newRoutes;
 }
 
 export default (props: any) => {
@@ -147,7 +148,9 @@ const { formatMessage } = useIntl();
   });
 
   const matchedRoute = useMemo(() => matchRoutes(clientRoutes, location.pathname).pop()?.route, [location.pathname]);
-  const newRoutes = filterRoutes(clientRoutes.filter(route => route.id === 'ant-design-pro-layout'), (route) => route.id === '@@/global-layout')
+  const newRoutes = filterRoutes(clientRoutes.filter(route => route.id === 'ant-design-pro-layout'), (route) => {
+    return !!route.isLayout && route.id !== 'ant-design-pro-layout';
+  })
   const [route] = useAccessMarkedRoutes(newRoutes);
 
   return (
