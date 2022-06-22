@@ -45,8 +45,8 @@ $ mkdir myapp && cd myapp
 通过官方工具创建项目，
 
 ```bash
-$ pnpm dlx create-umi@next
-✔ Install the following package: create-umi@next? (Y/n) · true
+$ pnpm dlx create-umi
+✔ Install the following package: create-umi? (Y/n) · true
 ✔ Pick Npm Client › pnpm
 ✔ Pick Npm Registry › taobao
 Write: .gitignore
@@ -75,7 +75,7 @@ event - compiled successfully in 1121 ms (388 modules)
 event - MFSU compiled successfully in 1308 ms (875 modules)
 ```
 
-在浏览器里打开 http://localhost:8000/，能看到以下界面，
+在浏览器里打开 [http://localhost:8000/](http://localhost:8000/)，能看到以下界面，
 
 ![](https://img.alicdn.com/imgextra/i2/O1CN01ufcj8M1Lpt1yXd8sy_!!6000000001349-2-tps-1372-1298.png)
 
