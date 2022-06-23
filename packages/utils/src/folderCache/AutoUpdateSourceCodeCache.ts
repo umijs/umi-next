@@ -17,12 +17,10 @@ import {
 export type MergedCodeInfo = {
   code: string;
   imports: readonly ImportSpecifier[];
+  events: FileChangeEvent[];
 };
 
-export type Listener = (
-  info: MergedCodeInfo,
-  events: FileChangeEvent[],
-) => void;
+export type Listener = (info: MergedCodeInfo) => void;
 
 export class AutoUpdateSrcCodeCache {
   private readonly srcPath: string;
@@ -62,8 +60,9 @@ export class AutoUpdateSrcCodeCache {
       },
       onCacheUpdate: (_cache, events) => {
         const merged = this.getMergedCode();
+        const info = { ...merged, events };
 
-        this.listeners.forEach((l) => l(merged, events));
+        this.listeners.forEach((l) => l(info));
       },
     });
   }

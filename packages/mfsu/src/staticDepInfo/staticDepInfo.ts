@@ -58,8 +58,8 @@ export class StaticDepInfo {
 
     this.cwd = this.mfsu.opts.cwd!;
 
-    opts.srcCodeCache.register((info, events) => {
-      this.produced.push({ changes: events });
+    opts.srcCodeCache.register((info) => {
+      this.produced.push({ changes: info.events });
       this.currentDep = this._getDependencies(info.code, info.imports);
     });
 
