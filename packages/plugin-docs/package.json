@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "keymaster": "1.6.2",
+    "pathe": "^0.3.0",
     "react-helmet": "^6.1.0",
     "rehype-pretty-code": "^0.3.1",
     "shiki": "^0.10.1"

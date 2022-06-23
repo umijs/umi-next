@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 
 const root = join(__dirname, '../../../');
 const rootPkg = join(root, './package.json');

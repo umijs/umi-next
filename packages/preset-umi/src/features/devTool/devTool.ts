@@ -1,6 +1,6 @@
 import { cheerio } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 
 const devToolAppDist = join(__dirname, '../../../devToolAppDist');

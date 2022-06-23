@@ -2,7 +2,7 @@ import type { Compiler } from '@umijs/bundler-webpack/compiled/webpack';
 import { EnableBy } from '@umijs/core/dist/types';
 import { fsExtra, logger } from '@umijs/utils';
 import { existsSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import type { IApi } from '../../types';
 import { build } from './builder/builder';
 import { absServerBuildPath } from './utils';

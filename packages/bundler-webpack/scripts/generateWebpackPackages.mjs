@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 
 const base = join(__dirname, '../bundles/webpack/');
 const files = require(join(base, 'packages/deepImports.json'));

@@ -1,6 +1,6 @@
 import { Env, Service } from '@umijs/core';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 
 const fixtures = join(__dirname, '../../../fixtures');
 const cwd = join(fixtures, 'config');

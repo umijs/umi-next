@@ -1,6 +1,6 @@
 // vite cannot specific less implementation path, link less to bundler-utils to make sure it can be resolved
 const fs = require('fs');
-const path = require('path');
+const path = require('pathe');
 const target = path.dirname(require.resolve('@umijs/bundler-utils/compiled/less/package.json'));
 const installDir = path.join(__dirname, '../node_modules');
 const symlink = path.join(installDir, 'less');

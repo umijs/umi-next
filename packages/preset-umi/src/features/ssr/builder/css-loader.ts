@@ -2,7 +2,7 @@ import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { parcelCSS } from '@umijs/bundler-webpack';
 import { winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 
 export function ensureLastSlash(path: string) {
   return path.endsWith('/') ? path : path + '/';

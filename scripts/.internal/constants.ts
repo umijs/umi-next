@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 
 const ROOT = join(__dirname, '../../');
 export const PATHS = {

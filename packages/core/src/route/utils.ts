@@ -1,5 +1,5 @@
 import { winPath } from '@umijs/utils';
-import { extname } from 'path';
+import { extname } from 'pathe';
 
 export function createRouteId(file: string) {
   return winPath(stripFileExtension(file));

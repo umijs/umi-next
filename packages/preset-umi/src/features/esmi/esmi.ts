@@ -1,6 +1,6 @@
 import { parse as parseImports } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import MagicString from 'magic-string';
-import { join } from 'path';
+import { join } from 'pathe';
 import type { Plugin, ResolvedConfig } from 'vite';
 import { createResolver } from '../../libs/scan';
 import type { IApi } from '../../types';

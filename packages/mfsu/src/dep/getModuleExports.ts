@@ -1,6 +1,6 @@
 import { init, parse } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { transform } from '@umijs/bundler-utils/compiled/esbuild';
-import { extname } from 'path';
+import { extname } from 'pathe';
 import { getCJSExports } from './getCJSExports';
 
 export async function getModuleExports({

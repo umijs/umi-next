@@ -1,6 +1,6 @@
 import { execa } from '@umijs/utils/compiled/execa';
 import { ensureDir, existsSync, readFile, remove, writeFile } from 'fs-extra';
-import { dirname, join, resolve } from 'path';
+import { dirname, join, resolve } from 'pathe';
 
 export function createUmi(opts: { name: string; cwd: string }) {
   const projectRoot = resolve(opts.cwd, opts.name);

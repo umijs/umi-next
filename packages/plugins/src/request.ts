@@ -1,6 +1,6 @@
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import { IApi } from 'umi';
-import { Mustache, winPath } from 'umi/plugin-utils';
+import { Mustache } from 'umi/plugin-utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -281,10 +281,10 @@ export type {
 `;
 
   api.onGenerateFiles(() => {
-    const umiRequestPath = winPath(
-      dirname(require.resolve('@ahooksjs/use-request/package.json')),
+    const umiRequestPath = dirname(
+      require.resolve('@ahooksjs/use-request/package.json'),
     );
-    const axiosPath = winPath(dirname(require.resolve('axios/package.json')));
+    const axiosPath = dirname(require.resolve('axios/package.json'));
     let dataField = api.config.request?.dataField;
     if (dataField === undefined) dataField = 'data';
     const formatResult =

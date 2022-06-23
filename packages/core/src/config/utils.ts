@@ -1,4 +1,4 @@
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from 'pathe';
 
 export function addExt(opts: { file: string; ext: string }) {
   const index = opts.file.lastIndexOf('.');

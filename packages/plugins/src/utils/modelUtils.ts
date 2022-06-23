@@ -4,7 +4,7 @@ import traverse from '@umijs/bundler-utils/compiled/babel/traverse';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { Loader, transformSync } from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { basename, dirname, extname, format, join, relative } from 'path';
+import { basename, dirname, extname, format, join, relative } from 'pathe';
 import { IApi } from 'umi';
 import { glob, winPath } from 'umi/plugin-utils';
 import { getIdentifierDeclaration } from './astUtils';
@@ -15,7 +15,7 @@ interface IOpts {
 }
 
 export function getNamespace(absFilePath: string, absSrcPath: string) {
-  const relPath = winPath(relative(winPath(absSrcPath), winPath(absFilePath)));
+  const relPath = relative(absSrcPath, absFilePath);
   const parts = relPath.split('/');
   const dirs = parts.slice(0, -1);
   const file = parts[parts.length - 1];
@@ -248,12 +248,10 @@ export class ModelUtils {
     const imports: string[] = [];
     const modelProps: string[] = [];
     models.forEach((model) => {
-      const fileWithoutExt = winPath(
-        format({
-          dir: dirname(model.file),
-          base: basename(model.file, extname(model.file)),
-        }),
-      );
+      const fileWithoutExt = format({
+        dir: dirname(model.file),
+        base: basename(model.file, extname(model.file)),
+      });
       if (model.exportName !== 'default') {
         imports.push(
           `import { ${model.exportName} as ${model.id} } from '${fileWithoutExt}';`,

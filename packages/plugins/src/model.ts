@@ -1,6 +1,6 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from 'umi';
 import { winPath } from 'umi/plugin-utils';
 import { ModelUtils } from './utils/modelUtils';

@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { getConventionRoutes } from './routesConvention';
 
 const fixtures = join(__dirname, '../../fixtures/route');

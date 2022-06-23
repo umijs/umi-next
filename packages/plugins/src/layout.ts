@@ -1,6 +1,6 @@
 import * as allIcons from '@ant-design/icons';
 import { existsSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { IApi } from 'umi';
 import { lodash, Mustache, winPath } from 'umi/plugin-utils';
 import { withTmpPath } from './utils/withTmpPath';
@@ -240,9 +240,7 @@ const { formatMessage } = useIntl();
       return memo;
     }, {});
     const icons = Object.keys(iconsMap);
-    const antIconsPath = winPath(
-      dirname(require.resolve('@ant-design/icons/package')),
-    );
+    const antIconsPath = dirname(require.resolve('@ant-design/icons/package'));
     api.writeTmpFile({
       path: 'icons.tsx',
       content: `

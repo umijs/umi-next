@@ -44,6 +44,7 @@
     "es5-imcompatible-versions": "^0.1.73",
     "jest-worker": "27.5.1",
     "node-libs-browser": "2.2.1",
+    "pathe": "^0.3.0",
     "postcss": "^8.4.13",
     "postcss-preset-env": "7.5.0",
     "react-error-overlay": "6.0.9"

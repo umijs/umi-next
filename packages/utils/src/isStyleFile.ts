@@ -1,4 +1,4 @@
-import { extname } from 'path';
+import { extname } from 'pathe';
 
 export const AUTO_CSS_MODULE_EXTS = [
   '.css',

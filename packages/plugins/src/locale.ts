@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { IApi } from 'umi';
-import { lodash, Mustache, winPath } from 'umi/plugin-utils';
+import { lodash, Mustache } from 'umi/plugin-utils';
 import {
   exactLocalePaths,
   getAntdLocale,
@@ -60,9 +60,7 @@ export default (api: IApi) => {
     enableBy: api.EnableBy.config,
   });
 
-  const reactIntlPkgPath = winPath(
-    dirname(require.resolve('react-intl/package')),
-  );
+  const reactIntlPkgPath = dirname(require.resolve('react-intl/package'));
 
   // polyfill
   api.addEntryImportsAhead(() =>
@@ -109,12 +107,10 @@ export default (api: IApi) => {
     );
     // moment2dayjs
     const resolveKey = api.config.moment2dayjs ? 'dayjs' : 'moment';
-    const momentPkgPath = winPath(
-      dirname(require.resolve(`${resolveKey}/package.json`)),
+    const momentPkgPath = dirname(
+      require.resolve(`${resolveKey}/package.json`),
     );
-    const EventEmitterPkg = winPath(
-      dirname(require.resolve('event-emitter/package')),
-    );
+    const EventEmitterPkg = dirname(require.resolve('event-emitter/package'));
 
     const { baseSeparator, baseNavigator, antd, title, useLocalStorage } = {
       ...defaultConfig,
@@ -201,7 +197,7 @@ export default (api: IApi) => {
         })),
         Antd: !!antd,
         DefaultLocale: JSON.stringify(defaultLocale),
-        warningPkgPath: winPath(dirname(require.resolve('warning/package'))),
+        warningPkgPath: dirname(require.resolve('warning/package')),
         reactIntlPkgPath,
       }),
     });

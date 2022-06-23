@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { getASTByFilePath } from '../getASTByFilePath/getASTByFilePath';
 import { generate } from '../utils/generate';
 import { removeConfigByName } from './removeConfigByName';

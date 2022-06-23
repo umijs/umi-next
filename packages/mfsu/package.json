@@ -25,7 +25,8 @@
     "@umijs/bundler-esbuild": "4.0.0",
     "@umijs/bundler-utils": "4.0.0",
     "@umijs/utils": "4.0.0",
-    "enhanced-resolve": "5.9.3"
+    "enhanced-resolve": "5.9.3",
+    "pathe": "^0.3.0"
   },
   "devDependencies": {
     "mrmime": "1.0.0",

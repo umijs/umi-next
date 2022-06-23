@@ -1,7 +1,7 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { winPath } from '@umijs/utils';
 import { existsSync, readFileSync, statSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { ensureLastSlash } from './css-loader';
 
 const NAMESPACE = 'staticAssets';

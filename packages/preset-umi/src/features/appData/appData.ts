@@ -1,7 +1,7 @@
 import { parseModule } from '@umijs/bundler-utils';
 import { getNpmClient } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve } from 'pathe';
 import { parse } from '../../../compiled/ini';
 import { osLocale } from '../../../compiled/os-locale';
 import { expandCSSPaths, expandJSPaths } from '../../commands/dev/watch';

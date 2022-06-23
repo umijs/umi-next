@@ -1,7 +1,7 @@
 import { generate, getASTByFilePath, setConfigByName } from '@umijs/ast';
 import prettier from '@umijs/utils/compiled/prettier';
 import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 
 export function set(api: IApi, name: string, value: any) {

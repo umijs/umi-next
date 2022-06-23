@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { basename, join } from 'path';
+import { basename, join } from 'pathe';
 import { glob, lodash, winPath } from 'umi/plugin-utils';
 
 export type IAddAntdLocales = (args: {
@@ -93,15 +93,15 @@ export const getLocaleList = async (
 
   const localeFiles = glob
     .sync('*.{ts,js,json}', {
-      cwd: winPath(join(absSrcPath, localeFolder)),
+      cwd: join(absSrcPath, localeFolder),
     })
-    .map((name) => winPath(join(absSrcPath, localeFolder, name)))
+    .map((name) => join(absSrcPath, localeFolder, name))
     .concat(
       glob
         .sync(`**/${localeFolder}/*.{ts,js,json}`, {
           cwd: absPagesPath,
         })
-        .map((name) => winPath(join(absPagesPath, name))),
+        .map((name) => join(absPagesPath, name)),
     )
     .filter((p) => localeFileMath.test(basename(p)) && existsSync(p))
     .map((fullName) => {

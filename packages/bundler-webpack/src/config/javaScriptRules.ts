@@ -1,7 +1,7 @@
 import type { Program } from '@swc/core';
 import { autoCssModulesHandler, esbuildLoader } from '@umijs/mfsu';
 import { chalk } from '@umijs/utils';
-import { dirname, isAbsolute } from 'path';
+import { dirname, isAbsolute } from 'pathe';
 import { ProvidePlugin } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';

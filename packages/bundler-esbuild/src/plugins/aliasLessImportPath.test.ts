@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { aliasLessImportPath } from './less';
 
 const importer = join(__dirname, '../fixtures/x-plugins-less');

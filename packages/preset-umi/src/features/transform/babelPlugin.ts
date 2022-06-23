@@ -1,7 +1,7 @@
 import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
 import { winPath } from '@umijs/utils';
-import { join } from 'path';
+import { join } from 'pathe';
 
 function isModuleExports(node: t.Node): boolean {
   return (
@@ -32,7 +32,7 @@ export default function () {
       if (
         cache.has(filename) &&
         !filename.includes('bundler-webpack/client') &&
-        !filename.startsWith(winPath(join(opts.cwd, 'node_modules')))
+        !filename.startsWith(join(opts.cwd, 'node_modules'))
       ) {
         opts.onCheckCode({
           args: {

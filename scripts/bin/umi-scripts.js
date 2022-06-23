@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { join } = require('path')
+const { join } = require('pathe')
 const { existsSync } = require('fs')
 const { sync } = require('@umijs/utils/compiled/cross-spawn')
 const chalk = require('@umijs/utils/compiled/chalk').default

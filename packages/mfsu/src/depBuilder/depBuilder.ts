@@ -1,7 +1,7 @@
 import { build } from '@umijs/bundler-esbuild';
 import { fsExtra, lodash, logger } from '@umijs/utils';
 import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { MF_DEP_PREFIX, MF_VA_PREFIX, REMOTE_FILE_FULL } from '../constants';
 import { Dep } from '../dep/dep';
 import { MFSU } from '../mfsu';

@@ -8,7 +8,7 @@ import {
   addNamespace,
 } from '@umijs/bundler-utils/compiled/babel/helper-module-imports';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { basename, extname } from 'path';
+import { basename, extname } from 'pathe';
 import { IOpts } from './lowImport';
 
 interface IPluginOpts {

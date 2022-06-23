@@ -1,6 +1,6 @@
 import { lodash, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readdirSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join } from 'pathe';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
 import { getModuleExports } from './getModuleExports';
@@ -386,7 +386,7 @@ export default function EmptyRoute() {
 
     // umi.server.ts
     if (api.config.ssr) {
-      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
+      const umiPluginPath = join(umiDir, 'client/client/plugin.js');
       const umiServerPath = winPath(require.resolve('@umijs/server/dist/ssr'));
       const routesWithServerLoader = Object.keys(routes).reduce<
         { id: string; path: string }[]
@@ -485,7 +485,7 @@ export default function EmptyRoute() {
       );
       // umi/client/client/plugin
       exports.push('// umi/client/client/plugin');
-      const umiPluginPath = winPath(join(umiDir, 'client/client/plugin.js'));
+      const umiPluginPath = join(umiDir, 'client/client/plugin.js');
       exports.push(
         `export { ${(
           await getExportsAndCheck({
@@ -535,8 +535,9 @@ export default function EmptyRoute() {
         });
         if (pluginExports.length) {
           exports.push(
-            `export { ${pluginExports.join(', ')} } from '${winPath(
-              join(api.paths.absTmpPath, plugin),
+            `export { ${pluginExports.join(', ')} } from '${join(
+              api.paths.absTmpPath,
+              plugin,
             )}';`,
           );
         }
@@ -544,7 +545,7 @@ export default function EmptyRoute() {
       // plugins types.ts
       exports.push('// plugins types.d.ts');
       for (const plugin of plugins) {
-        const file = winPath(join(api.paths.absTmpPath, plugin, 'types.d.ts'));
+        const file = join(api.paths.absTmpPath, plugin, 'types.d.ts');
         if (existsSync(file)) {
           // 带 .ts 后缀的声明文件 会导致声明失效
           const noSuffixFile = file.replace(/\.ts$/, '');

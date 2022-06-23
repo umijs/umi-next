@@ -3,7 +3,7 @@ import {
   Loader as EsbuildLoader,
   transform as transformInternal,
 } from '@umijs/bundler-utils/compiled/esbuild';
-import { extname } from 'path';
+import { extname } from 'pathe';
 import type { LoaderContext } from 'webpack';
 import type { IEsbuildLoaderOpts } from '../types';
 

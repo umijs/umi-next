@@ -1,6 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'pathe';
 
 // esbuild plugin for umi.server.js bundler to handle svg assets
 function svgLoader(opts: { cwd: string }): esbuild.Plugin {

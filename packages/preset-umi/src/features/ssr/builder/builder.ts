@@ -1,6 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { logger } from '@umijs/utils';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 import { IApi } from '../../../types';
 import { absServerBuildPath, esbuildUmiPlugin } from '../utils';
 import { assetsLoader } from './assets-loader';

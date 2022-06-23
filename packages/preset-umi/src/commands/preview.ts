@@ -5,7 +5,7 @@ import { chalk, logger, portfinder } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import http from 'http';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 // @ts-ignore
 import sirv from '../../compiled/sirv';
 import { createMockMiddleware } from '../features/mock/createMockMiddleware';

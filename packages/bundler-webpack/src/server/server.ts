@@ -8,7 +8,7 @@ import { chalk, logger } from '@umijs/utils';
 import cors from 'cors';
 import { createReadStream, existsSync } from 'fs';
 import http from 'http';
-import { extname, join } from 'path';
+import { extname, join } from 'pathe';
 import { MESSAGE_TYPE } from '../constants';
 import { IConfig } from '../types';
 import { createWebSocketServer } from './ws';

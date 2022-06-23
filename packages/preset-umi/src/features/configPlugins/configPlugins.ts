@@ -1,7 +1,7 @@
 import { getSchemas as getViteSchemas } from '@umijs/bundler-vite/dist/schema';
 import { getSchemas as getWebpackSchemas } from '@umijs/bundler-webpack/dist/schema';
 import { resolve } from '@umijs/utils';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { IApi } from '../../types';
 import { getSchemas as getExtraSchemas } from './schema';
 

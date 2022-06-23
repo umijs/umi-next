@@ -1,4 +1,4 @@
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from 'pathe';
 
 export function getCwd() {
   const cwd = process.cwd();

@@ -30,6 +30,7 @@
     "eslint-plugin-jest": "26.1.5",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.5.0",
+    "pathe": "^0.3.0",
     "postcss": "^8.4.13",
     "postcss-syntax": "0.36.2",
     "stylelint-config-standard": "25.0.0"

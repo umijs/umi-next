@@ -1,5 +1,5 @@
 import { getCorejsVersion } from '@umijs/utils';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import autoCSSModules from './plugins/autoCSSModules';
 import dynamicImportNode from './plugins/dynamicImportNode';
 import lockCoreJS from './plugins/lockCoreJS';

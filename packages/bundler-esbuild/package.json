@@ -27,6 +27,7 @@
     "@umijs/bundler-utils": "4.0.0",
     "@umijs/utils": "4.0.0",
     "enhanced-resolve": "5.9.3",
+    "pathe": "^0.3.0",
     "postcss": "^8.4.13",
     "postcss-flexbugs-fixes": "5.0.2",
     "postcss-preset-env": "7.5.0"

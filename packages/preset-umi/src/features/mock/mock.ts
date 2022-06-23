@@ -1,5 +1,5 @@
 import { logger } from '@umijs/utils';
-import path from 'path';
+import * as path from 'pathe';
 import { watch } from '../../commands/dev/watch';
 import { IApi } from '../../types';
 import { createMockMiddleware } from './createMockMiddleware';

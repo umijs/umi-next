@@ -1,6 +1,6 @@
 import { fsExtra, installWithNpmClient } from '@umijs/utils';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 
 export default (api: IApi) => {

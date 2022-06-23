@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { Env } from '../types';
 import { Service } from './service';
 

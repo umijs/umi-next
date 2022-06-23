@@ -2,7 +2,7 @@ import type { Compiler } from '@umijs/bundler-webpack/compiled/webpack';
 import { sources } from '@umijs/bundler-webpack/compiled/webpack';
 import { fsExtra } from '@umijs/utils';
 import { writeFileSync } from 'fs';
-import { extname, join } from 'path';
+import { extname, join } from 'pathe';
 import Config from '../../compiled/webpack-5-chain';
 import { MFSU_NAME } from '../constants';
 import { Env, IConfig } from '../types';

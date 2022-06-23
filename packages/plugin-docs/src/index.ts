@@ -1,8 +1,8 @@
 import { parseModuleSync } from '@umijs/bundler-utils';
-import { winPath } from '@umijs/utils';
 import fs, { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from 'umi';
+import { winPath } from 'umi/plugin-utils';
 import { parseTitle } from './markdown';
 
 export default (api: IApi) => {
@@ -89,7 +89,7 @@ export default (api: IApi) => {
     }
     theme = winPath(theme);
 
-    const themeConfigPath = winPath(join(api.cwd, 'theme.config.ts'));
+    const themeConfigPath = join(api.cwd, 'theme.config.ts');
     const themeExists = existsSync(themeConfigPath);
 
     // 将 docs/locales 目录下的 json 文件注入到 themeConfig.locales 中

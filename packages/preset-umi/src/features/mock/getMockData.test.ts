@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { getMockData } from './getMockData';
 
 const fixtures = join(__dirname, './fixtures');

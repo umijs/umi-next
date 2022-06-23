@@ -1,6 +1,5 @@
 import { isDepPath } from '@umijs/bundler-utils';
-import { winPath } from '@umijs/utils';
-import { dirname, relative } from 'path';
+import { dirname, relative } from 'pathe';
 import type { IApi } from '../types';
 
 /**
@@ -90,7 +89,7 @@ export default function transformIEAR(
   return content.replace(IEAR_REG_EXP, (_, prefix, quote, absPath) => {
     if (absPath.startsWith(api.paths.absTmpPath)) {
       // transform .umi absolute imports
-      absPath = winPath(relative(dirname(path), absPath)).replace(
+      absPath = relative(dirname(path), absPath).replace(
         // prepend ./ for same or sub level imports
         /^(?!\.\.\/)/,
         './',
@@ -100,7 +99,7 @@ export default function transformIEAR(
       // why @fs
       // 由于我们临时文件下大量绝对路径的引用，而绝对路径的引用不会被 Vite 预编译
       // 增加@fs后绝对路径会导致ts 提示失效, 这里转为相对路径解决
-      absPath = `@fs/${winPath(relative(api.cwd, absPath))}`;
+      absPath = `@fs/${relative(api.cwd, absPath)}`;
     }
 
     return `${prefix}${quote}${absPath}${quote}`;

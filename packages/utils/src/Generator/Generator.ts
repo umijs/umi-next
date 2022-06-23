@@ -1,5 +1,5 @@
 import { copyFileSync, readFileSync, statSync, writeFileSync } from 'fs';
-import { dirname, join, relative } from 'path';
+import { dirname, join, relative } from 'pathe';
 import chalk from '../../compiled/chalk';
 import fsExtra from '../../compiled/fs-extra';
 import glob from '../../compiled/glob';

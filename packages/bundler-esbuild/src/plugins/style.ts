@@ -6,7 +6,7 @@ import esbuild, {
 } from '@umijs/bundler-utils/compiled/esbuild';
 import { resolve } from '@umijs/utils';
 import fs from 'fs';
-import path from 'path';
+import * as path from 'pathe';
 import { IConfig } from '../types';
 import { postcssProcess } from '../utils/postcssProcess';
 

@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { dirname, extname, isAbsolute, join } from 'path';
+import { dirname, extname, isAbsolute, join } from 'pathe';
 
 const FILE_EXT_NAMES = ['.tsx', '.ts', '.jsx', '.mjs', '.js'];
 

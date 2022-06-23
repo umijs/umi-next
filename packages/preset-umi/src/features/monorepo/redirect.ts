@@ -2,7 +2,7 @@ import { isLocalDev, logger } from '@umijs/utils';
 import { pkgUp } from '@umijs/utils/compiled/pkg-up';
 import assert from 'assert';
 import { existsSync, statSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 // @ts-ignore
 import { getPackages } from '../../../compiled/@manypkg/get-packages';
 import type { IApi } from '../../types';

@@ -25,7 +25,8 @@
     "test": "umi-scripts jest-turbo"
   },
   "dependencies": {
-    "@umijs/utils": "4.0.0"
+    "@umijs/utils": "4.0.0",
+    "pathe": "^0.3.0"
   },
   "publishConfig": {
     "access": "public"

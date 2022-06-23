@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 
 /** esbuild plugin for resolving umi imports */
