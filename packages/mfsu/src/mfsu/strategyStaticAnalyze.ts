@@ -80,7 +80,7 @@ export class StaticAnalyzeStrategy implements IMFSUStrategy {
     const mfsu = this.mfsu;
     return {
       beforeCompile: async () => {
-        logger.event(`[mfsu4] start build deps`);
+        logger.event(`[MFSU][eager] start build deps`);
         if (mfsu.depBuilder.isBuilding) {
           mfsu.buildDepsAgain = true;
         } else {

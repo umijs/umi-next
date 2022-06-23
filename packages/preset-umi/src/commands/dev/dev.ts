@@ -32,7 +32,7 @@ const bundlerWebpack: typeof import('@umijs/bundler-webpack') =
 const bundlerVite: typeof import('@umijs/bundler-vite') =
   lazyImportFromCurrentPkg('@umijs/bundler-vite');
 
-const MFSU4_SAFE_LIST = [
+const MFSU_EAGER_DEFAULT_INCLUDE = [
   'react',
   'react-error-overlay',
   'react/jsx-dev-runtime',
@@ -313,9 +313,9 @@ PORT=8888 umi dev
           ].filter(Boolean),
         },
         srcCodeCache,
-        safeList: lodash.union([
-          ...MFSU4_SAFE_LIST,
-          ...(api.config.mfsu?.safeList || []),
+        mfsuInclude: lodash.union([
+          ...MFSU_EAGER_DEFAULT_INCLUDE,
+          ...(api.config.mfsu?.include || []),
         ]),
       };
       if (enableVite) {

@@ -29,7 +29,7 @@ type IOpts = {
   config: IConfig;
   entry: Record<string, string>;
   mfsuStrategy?: 'eager' | 'normal';
-  safeList?: string[];
+  mfsuInclude?: string[];
   srcCodeCache?: AutoUpdateSrcCodeCache;
 } & Pick<IConfigOpts, 'cache'>;
 
@@ -54,7 +54,7 @@ export async function dev(opts: IOpts) {
 
     mfsu = new MFSU({
       strategy: opts.mfsuStrategy,
-      safeList: opts.safeList || [],
+      include: opts.mfsuInclude || [],
       srcCodeCache: opts.srcCodeCache,
       implementor: webpack as any,
       buildDepWithESBuild: opts.config.mfsu?.esbuild,

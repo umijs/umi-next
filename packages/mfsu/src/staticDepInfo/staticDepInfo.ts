@@ -25,7 +25,7 @@ export class StaticDepInfo {
   private readonly cacheFilePath: string;
 
   private mfsu: MFSU;
-  private readonly safeList: string[];
+  private readonly include: string[];
   private currentDep: Record<string, Match> = {};
   private builtWithDep: Record<string, Match> = {};
 
@@ -48,7 +48,7 @@ export class StaticDepInfo {
   constructor(opts: IOpts) {
     this.mfsu = opts.mfsu;
 
-    this.safeList = this.mfsu.opts.safeList || [];
+    this.include = this.mfsu.opts.include || [];
 
     this.opts = opts;
     this.cacheFilePath = join(
@@ -89,8 +89,8 @@ export class StaticDepInfo {
     } else {
       if (process.env.DEBUG_UMI) {
         const reason = why(this.builtWithDep, this.currentDep);
-        logger.debug(
-          'mfsu4: isEqual(oldDep,newDep) === false, because ',
+        logger.info(
+          '[MFSU][eager]: isEqual(oldDep,newDep) === false, because ',
           reason,
         );
       }
@@ -120,7 +120,7 @@ export class StaticDepInfo {
   loadCache() {
     if (existsSync(this.cacheFilePath)) {
       this.builtWithDep = JSON.parse(readFileSync(this.cacheFilePath, 'utf-8'));
-      logger.info('MFSU [eager] restored cache');
+      logger.info('[MFSU][eager] restored cache');
     }
   }
 
@@ -134,7 +134,7 @@ export class StaticDepInfo {
       return;
     }
 
-    logger.info('MFSU [eager] write cache');
+    logger.info('[MFSU][eager] write cache');
     writeFileSync(this.cacheFilePath, newContent, 'utf-8');
   }
 
@@ -216,7 +216,7 @@ export class StaticDepInfo {
 
     this.simulateRuntimeTransform(matched, groupedMockImports, bigCodeString);
 
-    this.appendSafeList(matched, opts);
+    this.appendIncludeList(matched, opts);
 
     console.timeEnd('_getDependencies');
     return matched;
@@ -251,8 +251,8 @@ export class StaticDepInfo {
     }
   }
 
-  private appendSafeList(matched: Matched, opts: any) {
-    for (const p of this.safeList) {
+  private appendIncludeList(matched: Matched, opts: any) {
+    for (const p of this.include) {
       const match = checkMatch({
         value: p,
         depth: 1,

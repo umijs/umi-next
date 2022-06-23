@@ -52,7 +52,7 @@ interface IOpts {
   buildDepWithESBuild?: boolean;
   depBuildConfig: any;
   strategy?: 'eager' | 'normal';
-  safeList?: string[];
+  include?: string[];
   srcCodeCache?: AutoUpdateSrcCodeCache;
 }
 
