@@ -12,6 +12,7 @@ export function createClientRoutes(opts: {
 }) {
   const { routesById, parentId, routeComponents } = opts;
   return Object.keys(routesById)
+
     .filter((id) => routesById[id].parentId === parentId)
     .map((id) => {
       const route = createClientRoute({
