@@ -202,7 +202,7 @@ const { formatMessage } = useIntl();
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-    import type { ProLayoutProps } from "${
+    import type { ProLayoutProps, BasicLayoutProps } from "${
       pkgPath || '@ant-design/pro-layout'
     }";
     ${
