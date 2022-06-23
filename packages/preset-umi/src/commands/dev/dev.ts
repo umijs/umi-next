@@ -257,6 +257,9 @@ PORT=8888 umi dev
           cachePath: join(api.paths.absNodeModulesPath, '.cache', 'mfsu', 'v4'),
         });
         await srcCodeCache.init();
+        addUnWatch(() => {
+          srcCodeCache!.unwatch();
+        });
       }
 
       const opts = {
@@ -336,6 +339,7 @@ PORT=8888 umi dev
     fn() {
       logger.info(`Restart dev server with port ${api.appData.port}...`);
       unwatch();
+
       process.send?.({
         type: 'RESTART',
         payload: {

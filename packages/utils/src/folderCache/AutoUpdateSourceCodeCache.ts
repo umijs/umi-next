@@ -145,4 +145,8 @@ export class AutoUpdateSrcCodeCache {
       this.listeners.splice(i, 1);
     };
   }
+
+  unwatch() {
+    return this.folderCache.unwatch();
+  }
 }

@@ -82,6 +82,10 @@ export class AutoUpdateFolderCache {
     }, opts.debouncedTimeout);
   }
 
+  unwatch() {
+    return this.watcher.close();
+  }
+
   async init() {
     await this.readyPromise;
   }
