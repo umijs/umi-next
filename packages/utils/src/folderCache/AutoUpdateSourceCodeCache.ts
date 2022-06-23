@@ -74,7 +74,7 @@ export class AutoUpdateSrcCodeCache {
   }
 
   private async initFileList(): Promise<string[]> {
-    console.time('fast-glob');
+    const start = Date.now();
     const files = await fg(join(this.srcPath, '**', '*.{ts,js,jsx,tsx}'), {
       dot: true,
       ignore: [
@@ -86,7 +86,8 @@ export class AutoUpdateSrcCodeCache {
         '**/.git/**',
       ],
     });
-    console.timeEnd('fast-glob');
+    logger.debug('[MFSU][eager] fast-glob costs', Date.now() - start);
+
     return files;
   }
 

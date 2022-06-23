@@ -155,7 +155,7 @@ export class StaticDepInfo {
     bigCodeString: string,
     imports: readonly ImportSpecifier[],
   ): Record<string, Match> {
-    console.time('_getDependencies');
+    const start = Date.now();
 
     const cwd = this.mfsu.opts.cwd!;
 
@@ -218,7 +218,7 @@ export class StaticDepInfo {
 
     this.appendIncludeList(matched, opts);
 
-    console.timeEnd('_getDependencies');
+    logger.debug('[MFSU][eager] _getDependencies costs', Date.now() - start);
     return matched;
   }
 
