@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 
 export type NpmClient = 'npm' | 'cnpm' | 'tnpm' | 'yarn' | 'pnpm';
 export const npmClients = ['pnpm', 'tnpm', 'cnpm', 'yarn', 'npm'];

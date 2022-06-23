@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 import deepmerge from '../compiled/deepmerge';
 import prettier from '../compiled/prettier';
 

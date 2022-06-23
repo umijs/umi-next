@@ -1,5 +1,5 @@
 import { copyFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 
 const FAVICON_FILES = [

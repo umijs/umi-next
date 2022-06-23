@@ -7,7 +7,7 @@
 //
 //    require("@rushstack/eslint-patch/modern-module-resolution");
 //
-const path = require('path');
+const path = require('pathe');
 const fs = require('fs');
 const isModuleResolutionError = (ex) => typeof ex === 'object' && !!ex && 'code' in ex && ex.code === 'MODULE_NOT_FOUND';
 // ==== @umijs/lint fork start ====

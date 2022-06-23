@@ -1,4 +1,4 @@
-import { extname } from 'path';
+import { extname } from 'pathe';
 import { addHook } from '../compiled/pirates';
 
 const COMPILE_EXTS = ['.ts', '.tsx', '.js', '.jsx'];

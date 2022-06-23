@@ -4,7 +4,7 @@ import {
   prompts,
   yParser,
 } from '@umijs/utils';
-import { join } from 'path';
+import { join } from 'pathe';
 
 const testData = {
   name: 'umi-plugin-demo',

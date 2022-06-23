@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { join, resolve } from 'path';
+import { join, resolve } from 'pathe';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {

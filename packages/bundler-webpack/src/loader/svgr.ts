@@ -6,7 +6,7 @@ import jsx from '@svgr/plugin-jsx';
 // @ts-ignore
 import svgo from '@svgr/plugin-svgo';
 import { transform as defaultEsbuildTransform } from '@umijs/bundler-utils/compiled/esbuild';
-import { normalize } from 'path';
+import { normalize } from 'pathe';
 import { callbackify } from 'util';
 import type { LoaderContext } from '../../compiled/webpack';
 

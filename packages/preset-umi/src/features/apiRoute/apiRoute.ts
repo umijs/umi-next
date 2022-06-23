@@ -1,7 +1,7 @@
 import { IRoute } from '@umijs/core';
-import { logger, winPath } from '@umijs/utils';
+import { logger } from '@umijs/utils';
 import fs from 'fs';
-import { basename, join, resolve } from 'path';
+import { basename, join, resolve } from 'pathe';
 import { watch } from '../../commands/dev/watch';
 import { TEMPLATES_DIR } from '../../constants';
 import type { IApi, IApiMiddleware } from '../../types';
@@ -115,11 +115,9 @@ export default (api: IApi) => {
         path: join('api', apiRoute.file),
         tplPath: join(TEMPLATES_DIR, 'apiRoute.tpl'),
         context: {
-          adapterPath: winPath(resolve(__dirname, '../apiRoute/index.js')),
-          apiRootDirPath: winPath(join(api.paths.absTmpPath, 'api')),
-          handlerPath: winPath(
-            join(api.paths.absSrcPath, 'api', apiRoute.file),
-          ),
+          adapterPath: resolve(__dirname, '../apiRoute/index.js'),
+          apiRootDirPath: join(api.paths.absTmpPath, 'api'),
+          handlerPath: join(api.paths.absSrcPath, 'api', apiRoute.file),
           apiRoutes: JSON.stringify(apiRoutes),
         },
       });

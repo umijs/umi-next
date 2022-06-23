@@ -7,7 +7,7 @@ import type {
 import { lodash, logger, tryPaths, winPath } from '@umijs/utils';
 import assert from 'assert';
 import { readFileSync, statSync } from 'fs';
-import { extname, join } from 'path';
+import { extname, join } from 'pathe';
 import webpack, { Configuration } from 'webpack';
 import { lookup } from '../compiled/mrmime';
 // @ts-ignore

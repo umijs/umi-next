@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'pathe';
 import visualizer from 'rollup-plugin-visualizer';
 import type { IConfigProcessor } from '.';
 import copy from '../../../compiled/rollup-plugin-copy';

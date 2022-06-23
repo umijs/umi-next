@@ -1,4 +1,4 @@
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import { resolve } from 'umi/plugin-utils';
 
 export function resolveProjectDep(opts: {

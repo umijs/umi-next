@@ -1,8 +1,7 @@
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { winPath } from '@umijs/utils';
-import { join, relative } from 'path';
+import { join, relative } from 'pathe';
 import { IApi } from 'umi';
-import { chalk } from 'umi/plugin-utils';
+import { chalk, winPath } from 'umi/plugin-utils';
 import { Model, ModelUtils } from './utils/modelUtils';
 import { withTmpPath } from './utils/withTmpPath';
 

@@ -1,6 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { assetsLoader } from './assets-loader';
 import { loader } from './builder';
 import { cssLoader } from './css-loader';

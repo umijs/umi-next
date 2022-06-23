@@ -1,6 +1,6 @@
 import { fsExtra, lodash, logger } from '@umijs/utils';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { MFSU } from './mfsu';
 import { ModuleGraph } from './moduleGraph';
 

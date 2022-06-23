@@ -1,7 +1,7 @@
 import * as logger from '@umijs/utils/src/logger';
 import { existsSync } from 'fs';
 import getGitRepoInfo from 'git-repo-info';
-import { join } from 'path';
+import { join } from 'pathe';
 import rimraf from 'rimraf';
 import 'zx/globals';
 import { PATHS } from './.internal/constants';

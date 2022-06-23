@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from 'umi';
 import { withTmpPath } from './utils/withTmpPath';
 

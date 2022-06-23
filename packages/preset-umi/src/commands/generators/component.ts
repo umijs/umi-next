@@ -1,6 +1,6 @@
 import { GeneratorType } from '@umijs/core';
 import { generateFile, lodash } from '@umijs/utils';
-import { join, parse } from 'path';
+import { join, parse } from 'pathe';
 import { TEMPLATES_DIR } from '../../constants';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';

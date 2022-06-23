@@ -1,4 +1,4 @@
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import type { IApi } from 'umi';
 import { resolveProjectDep } from '../utils/resolveProjectDep';
 

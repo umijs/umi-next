@@ -1,4 +1,4 @@
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 
 export default {
   mfsu: {

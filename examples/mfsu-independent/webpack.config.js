@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('pathe');
 const webpack = require('webpack');
 const { MFSU } = require('@umijs/mfsu');
 

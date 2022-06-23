@@ -1,7 +1,7 @@
 import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
 import { isLocalDev, winPath } from '@umijs/utils';
 import assert from 'assert';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from 'pathe';
 import type { IOpts } from './awaitImport';
 import { getAliasedPath } from './getAliasedPath';
 import { isExternals } from './isExternals';

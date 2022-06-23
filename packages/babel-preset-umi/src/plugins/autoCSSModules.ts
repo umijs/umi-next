@@ -1,6 +1,6 @@
 import * as Babel from '@umijs/bundler-utils/compiled/babel/core';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { extname } from 'path';
+import { extname } from 'pathe';
 
 const CSS_EXT_NAMES = ['.css', '.less', '.sass', '.scss', '.stylus', '.styl'];
 

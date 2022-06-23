@@ -6,7 +6,7 @@ import {
   semver,
 } from '@umijs/utils';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 import { set as setUmirc } from '../config/set';
 

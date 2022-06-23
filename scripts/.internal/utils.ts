@@ -2,7 +2,7 @@ import spawn from '@umijs/utils/compiled/cross-spawn';
 import * as logger from '@umijs/utils/src/logger';
 import type { SpawnSyncOptions } from 'child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { PATHS } from './constants';
 
 export function getPkgs(opts?: { base?: string }): string[] {

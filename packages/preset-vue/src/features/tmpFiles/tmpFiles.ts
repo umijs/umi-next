@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import type { IApi } from 'umi';
 import { winPath } from 'umi/plugin-utils';
 import { TEMPLATES_DIR } from '../../constants';

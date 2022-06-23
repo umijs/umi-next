@@ -1,6 +1,6 @@
 import { Service as CoreService } from '@umijs/core';
 import { existsSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { DEFAULT_CONFIG_FILES, FRAMEWORK_NAME } from '../constants';
 import { getCwd } from './cwd';
 

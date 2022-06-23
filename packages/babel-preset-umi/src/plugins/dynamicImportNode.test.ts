@@ -1,5 +1,5 @@
 import { transform } from '@umijs/bundler-utils/compiled/babel/core';
-import { basename } from 'path';
+import { basename } from 'pathe';
 
 interface IOpts {
   code: string;

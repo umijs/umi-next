@@ -2,7 +2,7 @@ import { init } from '@umijs/bundler-utils/compiled/es-module-lexer';
 import { fsExtra, lodash, Mustache } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync, readFileSync, statSync, writeFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { IApi } from './types';
 import { isTypeScriptFile } from './utils/isTypeScriptFile';
 import transformIEAR from './utils/transformIEAR';

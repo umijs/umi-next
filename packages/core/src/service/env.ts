@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { parse } from '../../compiled/dotenv';
 
 export function loadEnv(opts: { cwd: string; envFile: string }) {

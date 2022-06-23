@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { join, resolve } from 'pathe';
 import webpack, { Configuration } from '../../compiled/webpack';
 import Config from '../../compiled/webpack-5-chain';
 import {
@@ -121,22 +121,22 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
   config.resolve
     .set('symlinks', true)
     .modules
-      .add('node_modules')
-      .end()
+    .add('node_modules')
+    .end()
     .alias
-      .merge(userConfig.alias || {})
-      .end()
+    .merge(userConfig.alias || {})
+    .end()
     .extensions
-      .merge([
-        '.wasm',
-        '.mjs',
-        '.js',
-        '.jsx',
-        '.ts',
-        '.tsx',
-        '.json'
-      ])
-      .end();
+    .merge([
+      '.wasm',
+      '.mjs',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.json'
+    ])
+    .end();
 
   // externals
   config.externals(userConfig.externals || []);

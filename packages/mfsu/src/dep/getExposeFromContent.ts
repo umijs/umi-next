@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { basename } from 'path';
+import { basename } from 'pathe';
 import { Dep } from './dep';
 import { getModuleExports } from './getModuleExports';
 

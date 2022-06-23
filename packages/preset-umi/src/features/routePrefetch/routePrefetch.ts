@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import type { IApi } from '../../types';
 
 export default (api: IApi) => {

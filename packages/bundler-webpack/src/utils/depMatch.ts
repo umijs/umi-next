@@ -1,5 +1,5 @@
-import { pkgUp, semver, winPath } from '@umijs/utils';
-import { dirname } from 'path';
+import { pkgUp, semver } from '@umijs/utils';
+import { dirname } from 'pathe';
 
 const cache = new Map<string, boolean>();
 
@@ -12,7 +12,7 @@ export function isMatch(opts: {
   pkgs: Record</*name*/ string, /*version*/ string[]>;
 }): boolean {
   // cache by dir, 命中率会更高
-  const dir = winPath(dirname(opts.path));
+  const dir = dirname(opts.path);
   if (cache.has(dir)) {
     return !!cache.get(dir);
   } else {

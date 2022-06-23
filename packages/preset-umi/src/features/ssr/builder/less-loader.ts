@@ -2,7 +2,7 @@ import esbuild, { PartialMessage } from '@umijs/bundler-utils/compiled/esbuild';
 import less from '@umijs/bundler-utils/compiled/less';
 import { winPath } from '@umijs/utils';
 import { readFileSync } from 'fs';
-import { basename, dirname, extname, join, resolve } from 'path';
+import { basename, dirname, extname, join, resolve } from 'pathe';
 import { ensureLastSlash, getClassNames, hashString } from './css-loader';
 
 export const lessLoader = (opts: {

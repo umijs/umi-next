@@ -2,7 +2,7 @@ import { pkgUp, winPath } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from 'pathe';
 import { MF_VA_PREFIX } from '../constants';
 import { MFSU } from '../mfsu';
 import { trimFileContent } from '../utils/trimFileContent';

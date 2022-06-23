@@ -1,7 +1,7 @@
 import { getMarkup } from '@umijs/server';
 import { chalk, logger, rimraf } from '@umijs/utils';
 import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../types';
 import { lazyImportFromCurrentPkg } from '../utils/lazyImportFromCurrentPkg';
 import { getAssetsMap } from './dev/getAssetsMap';

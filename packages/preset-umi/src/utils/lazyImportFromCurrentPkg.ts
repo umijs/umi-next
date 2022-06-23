@@ -1,5 +1,5 @@
 import { importLazy } from '@umijs/utils';
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 
 /**
  * lazy require dep from current package position (preset-umi)

@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@umijs/bundler-webpack';
-import { join } from 'path';
+import { join } from 'pathe';
 
 export const faviconMiddleware: RequestHandler = (req, res, next) => {
   if (req.path === '/favicon.ico') {

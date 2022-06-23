@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'fs';
-import { extname, join } from 'path';
+import { extname, join } from 'pathe';
 import { build } from './build';
 import { CSSMinifier, JSMinifier } from './types';
 

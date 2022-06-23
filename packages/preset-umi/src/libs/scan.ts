@@ -6,7 +6,7 @@ import { pkgUp } from '@umijs/utils';
 import assert from 'assert';
 import enhancedResolve from 'enhanced-resolve';
 import { readFileSync } from 'fs';
-import { dirname, extname } from 'path';
+import { dirname, extname } from 'pathe';
 
 enum ImportType {
   import = 'import',

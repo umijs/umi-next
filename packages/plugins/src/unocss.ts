@@ -1,8 +1,7 @@
 import { exec } from 'child_process';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from 'umi';
-import { winPath } from 'umi/plugin-utils';
 
 export default (api: IApi) => {
   api.describe({
@@ -46,7 +45,7 @@ export default (api: IApi) => {
 
   /** 将生成的 css 文件加入到 import 中 */
   api.addEntryImports(() => {
-    const generatedPath = winPath(join(api.paths.absTmpPath, outputPath));
+    const generatedPath = join(api.paths.absTmpPath, outputPath);
     return [{ source: generatedPath }];
   });
 };

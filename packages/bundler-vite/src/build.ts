@@ -1,6 +1,6 @@
 import { cheerio } from '@umijs/utils';
 import fs from 'fs';
-import path from 'path';
+import * as path from 'pathe';
 import { build as viteBuilder, mergeConfig } from '../compiled/vite';
 import { getConfig } from './config/config';
 import deleteOutputFiles from './plugins/deleteOutputFiles';

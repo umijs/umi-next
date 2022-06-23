@@ -1,5 +1,5 @@
 var SourceMapConsumer = require('source-map').SourceMapConsumer;
-var path = require('path');
+var path = require('pathe');
 
 var fs;
 try {

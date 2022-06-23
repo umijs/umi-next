@@ -1,7 +1,7 @@
 import { GeneratorType } from '@umijs/core';
 import { logger } from '@umijs/utils';
 import { existsSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 import { GeneratorHelper } from './utils';
 

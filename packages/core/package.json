@@ -28,7 +28,8 @@
     "@hapi/joi": "17.1.1",
     "@types/hapi__joi": "17.1.8",
     "dotenv": "16.0.0",
-    "just-diff": "5.0.1"
+    "just-diff": "5.0.1",
+    "pathe": "^0.3.0"
   },
   "publishConfig": {
     "access": "public"

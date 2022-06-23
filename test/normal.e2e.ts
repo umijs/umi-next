@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { createUmi } from 'test-utils';
 
 const fixtures = join(__dirname, 'fixtures');

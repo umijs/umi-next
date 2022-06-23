@@ -1,4 +1,4 @@
-import { normalize } from 'path';
+import { normalize } from 'pathe';
 import { PageGenerator } from './page';
 
 describe('page generator', function () {

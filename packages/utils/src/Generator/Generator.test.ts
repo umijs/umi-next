@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { rimraf } from '../index';
 import Generator from './Generator';
 

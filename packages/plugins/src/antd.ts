@@ -1,4 +1,4 @@
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import { IApi } from 'umi';
 import { Mustache } from 'umi/plugin-utils';
 import { resolveProjectDep } from './utils/resolveProjectDep';

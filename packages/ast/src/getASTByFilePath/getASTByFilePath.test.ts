@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import { getASTByFilePath } from './getASTByFilePath';
 
 const fixtures = join(__dirname, '../../fixtures');

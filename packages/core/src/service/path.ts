@@ -1,10 +1,9 @@
-import { winPath } from '@umijs/utils';
 import { existsSync, statSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { Env } from '../types';
 
 function winJoin(...args: string[]) {
-  return winPath(join(...args));
+  return join(...args);
 }
 
 export function getPaths(opts: { cwd: string; prefix: string; env: Env }) {

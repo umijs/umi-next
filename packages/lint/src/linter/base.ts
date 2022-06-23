@@ -1,5 +1,5 @@
 import { fork } from 'child_process';
-import path from 'path';
+import * as path from 'pathe';
 import type { ILintArgs, ILinterOpts } from '../types';
 
 /**

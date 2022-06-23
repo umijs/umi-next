@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import rimraf from '../../compiled/rimraf';
 import generateFile from './generateFile';
 

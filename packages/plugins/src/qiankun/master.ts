@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join } from 'pathe';
 import { IApi } from 'umi';
-import { winPath } from 'umi/plugin-utils';
 import { withTmpPath } from '../utils/withTmpPath';
 import {
   defaultHistoryType,
@@ -130,7 +129,7 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
         if (!api.config.qiankun.externalQiankun) {
           content = content.replace(
             /from 'qiankun'/g,
-            `from '${winPath(dirname(require.resolve('qiankun/package')))}'`,
+            `from '${dirname(require.resolve('qiankun/package'))}'`,
           );
         }
 
@@ -145,7 +144,7 @@ export const setMasterOptions = (newOpts) => options = ({ ...options, ...newOpts
             )
             .replace(
               /from 'lodash\//g,
-              `from '${winPath(dirname(require.resolve('lodash/package')))}/`,
+              `from '${dirname(require.resolve('lodash/package'))}/`,
             ),
         });
       }

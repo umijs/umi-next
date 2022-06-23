@@ -5,7 +5,7 @@ import {
 } from '@umijs/core';
 import { resolve, tryPaths, winPath } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from 'pathe';
 import { IApi } from '../../types';
 import { getModuleExports } from './getModuleExports';
 

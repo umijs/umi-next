@@ -8,7 +8,7 @@ import {
   winPath,
 } from '@umijs/utils';
 import { readFileSync } from 'fs';
-import { basename, join } from 'path';
+import { basename, join } from 'pathe';
 import { DEFAULT_HOST, DEFAULT_PORT } from '../../constants';
 import { IApi } from '../../types';
 import { lazyImportFromCurrentPkg } from '../../utils/lazyImportFromCurrentPkg';

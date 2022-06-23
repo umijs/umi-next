@@ -1,4 +1,4 @@
-import { normalize } from 'path';
+import { normalize } from 'pathe';
 import { ComponentGenerator } from './component';
 
 test('generate component with single name', async () => {

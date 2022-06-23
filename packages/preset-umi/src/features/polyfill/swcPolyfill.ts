@@ -1,5 +1,5 @@
 import { Transpiler } from '@umijs/bundler-webpack/dist/types';
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import { IApi } from '../../types';
 
 export default (api: IApi) => {

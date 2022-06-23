@@ -2,7 +2,7 @@ import { Plugin } from '@umijs/bundler-utils/compiled/esbuild';
 import less from '@umijs/bundler-utils/compiled/less';
 import enhancedResolve from 'enhanced-resolve';
 import { promises as fs } from 'fs';
-import path from 'path';
+import * as path from 'pathe';
 import { IConfig } from '../types';
 import { postcssProcess } from '../utils/postcssProcess';
 import { sortByAffix } from '../utils/sortByAffix';

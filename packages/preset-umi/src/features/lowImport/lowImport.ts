@@ -2,7 +2,7 @@
 // - https://github.com/google/zx
 // - https://github.com/antfu/unplugin-auto-import
 import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { IApi } from '../../types';
 import babelPlugin from './babelPlugin';
 

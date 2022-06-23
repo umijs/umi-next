@@ -1,5 +1,5 @@
 import { copyFileSync, statSync } from 'fs';
-import { dirname } from 'path';
+import { dirname } from 'pathe';
 import fsExtra from '../../compiled/fs-extra';
 import prompts from '../../compiled/prompts';
 import Generator from '../Generator/Generator';

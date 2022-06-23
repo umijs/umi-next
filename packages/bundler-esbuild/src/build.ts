@@ -3,8 +3,8 @@ import {
   Format,
   Plugin,
 } from '@umijs/bundler-utils/compiled/esbuild';
-import { rimraf, winPath } from '@umijs/utils';
-import { join } from 'path';
+import { rimraf } from '@umijs/utils';
+import { join } from 'pathe';
 import alias from './plugins/alias';
 import externals from './plugins/externals';
 import less from './plugins/less';
@@ -75,7 +75,7 @@ export async function build(opts: IOpts) {
 function addCwdPrefix(obj: Record<string, string>, cwd: string) {
   Object.keys(obj).forEach((key) => {
     if (obj[key].startsWith('.')) {
-      obj[key] = winPath(join(cwd, obj[key]));
+      obj[key] = join(cwd, obj[key]);
     }
   });
   return obj;

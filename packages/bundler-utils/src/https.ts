@@ -1,7 +1,7 @@
 import { chalk, execa, logger } from '@umijs/utils';
 import { existsSync, readFileSync } from 'fs';
 import { RequestListener } from 'http';
-import { join } from 'path';
+import { join } from 'pathe';
 import spdy from 'spdy';
 import { HttpsServerOptions } from './types';
 

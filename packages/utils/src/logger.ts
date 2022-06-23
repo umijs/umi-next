@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'pathe';
 import pino from 'pino';
 import chalk from '../compiled/chalk';
 import fsExtra from '../compiled/fs-extra';

@@ -1,6 +1,6 @@
 import { winPath } from '@umijs/utils';
 import { existsSync, lstatSync, readdirSync, statSync } from 'fs';
-import { extname, relative, resolve } from 'path';
+import { extname, relative, resolve } from 'pathe';
 import { defineRoutes } from './defineRoutes';
 import {
   byLongestFirst,

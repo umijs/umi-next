@@ -1,6 +1,6 @@
 import Config from '@umijs/bundler-webpack/compiled/webpack-5-chain';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join } from 'pathe';
 import { Env, IConfig } from '../types';
 
 interface IOpts {

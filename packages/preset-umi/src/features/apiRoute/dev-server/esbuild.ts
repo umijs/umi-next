@@ -1,6 +1,6 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
 import { logger } from '@umijs/utils';
-import { join, resolve } from 'path';
+import { join, resolve } from 'pathe';
 import type { IApi, IRoute } from '../../../types';
 import { OUTPUT_PATH } from '../constants';
 import { esbuildIgnorePathPrefixPlugin } from '../utils';
