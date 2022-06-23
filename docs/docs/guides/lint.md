@@ -57,14 +57,15 @@ module.exports = {
 }
 ```
 
-在配置文件创建完毕后，我们其实已经可以通过 `eslint`、`stylelint` 命令来执行 lint 了，但我们仍然推荐使用 `umi lint` 命令，以获得更便捷的体验。
+在配置文件创建完毕后，我们其实已经可以通过 `eslint`、`stylelint` 命令来执行 lint 了，但我们仍然推荐使用 `umi lint` 命令(如果使用了 Umi Max，请使用 `max lint`)，以获得更便捷的体验。
 
 ### CLI
 
-`umi lint` 命令的用法如下：
+`umi lint` / `max lint` 命令的用法如下：
 
 ```bash
 $ umi lint [glob] [--fix] [--eslint-only] [--stylelint-only] [--cssinjs]
+$ max lint [glob] [--fix] [--eslint-only] [--stylelint-only] [--cssinjs]
 ```
 
 参数说明：
@@ -77,15 +78,15 @@ $ umi lint [glob] [--fix] [--eslint-only] [--stylelint-only] [--cssinjs]
   --cssinjs: 可选，为 Stylelint 启用 CSS-in-JS 支持
 ```
 
-通常来说，直接执行 `umi lint` 应该就能满足大部分情况。
+通常来说，直接执行 `umi lint`(或者 `max lint`) 应该就能满足大部分情况。
 
 ## 与 Git 工作流结合
 
-我们也推荐使用 [lint-staged](https://github.com/okonet/lint-staged#readme) 和 [Husky](https://typicode.github.io/husky/)，将 `umi lint` 与 Git 工作流结合使用，以便在**提交代码时**自动 lint **本次变更**的代码。
+我们也推荐使用 [lint-staged](https://github.com/okonet/lint-staged#readme) 和 [Husky](https://typicode.github.io/husky/)，将 `umi lint`(或者 `max lint`) 与 Git 工作流结合使用，以便在**提交代码时**自动 lint **本次变更**的代码。
 
 ### lint-staged
 
-lint-staged 用来驱动 `umi lint` 命令，每次仅将变更的内容交给 `umi lint` 进行检查。
+lint-staged 用来驱动 `umi lint`(或者 `max lint`) 命令，每次仅将变更的内容交给 `umi lint`(或者 `max lint`) 进行检查。
 
 安装方式：
 
@@ -107,6 +108,18 @@ $ pnpm add lint-staged -D
 }
 ```
 
+Umi Max 用户请使用:
+
+```diff
+{
++   "lint-staged": {
++     "*.{js,jsx,ts,tsx,css,less}": [
++       "max lint"
++     ]
++   }
+}
+```
+
 此时如果执行 `git add sample.js` 后，再执行 `npx lint-staged`，就能实现仅检查 `sample.js` 本次的变更了。
 
 ### Husky
@@ -123,11 +136,11 @@ Husky 用来绑定 Git Hooks、在指定时机（例如 `pre-commit`）执行我
 + npx lint-staged
 ```
 
-至此大功告成，每次执行 `git commit` 命令的时候，`umi lint` 就能自动对本次变更的代码进行检查，在确保编码质量的同时也能确保执行效率。
+至此大功告成，每次执行 `git commit` 命令的时候，`umi lint`(或者 `max lint`) 就能自动对本次变更的代码进行检查，在确保编码质量的同时也能确保执行效率。
 
 ## Prettier
 
-在启用 `umi lint` 的基础上，我们也建议与 [Prettier](https://prettier.io/docs/en/install.html) 一同使用，以确保团队的代码风格是基本一致的。
+在启用 `umi lint`(或者 `max lint`) 的基础上，我们也建议与 [Prettier](https://prettier.io/docs/en/install.html) 一同使用，以确保团队的代码风格是基本一致的。
 
 可参考 Prettier 文档将其配置到 lint-staged 中：https://prettier.io/docs/en/install.html#git-hooks
 
