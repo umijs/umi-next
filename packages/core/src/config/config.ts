@@ -1,5 +1,5 @@
 import esbuild from '@umijs/bundler-utils/compiled/esbuild';
-import { chokidar, lodash, register } from '@umijs/utils';
+import { chokidar, lodash, logger, register } from '@umijs/utils';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -88,24 +88,31 @@ export class Config {
       'all',
       lodash.debounce((event, path) => {
         const { config: origin } = this.prevConfig;
-        const { config: updated, files } = this.getConfig({
-          schemas: opts.schemas,
-        });
-        watcher.add(files);
-        const data = Config.diffConfigs({
-          origin,
-          updated,
-          onChangeTypes: opts.onChangeTypes,
-        });
-        opts
-          .onChange({
-            data,
-            event,
-            path,
-          })
-          .catch((e) => {
-            throw new Error(e);
+        try {
+          const { config: updated, files } = this.getConfig({
+            schemas: opts.schemas,
           });
+          watcher.add(files);
+          const data = Config.diffConfigs({
+            origin,
+            updated,
+            onChangeTypes: opts.onChangeTypes,
+          });
+          opts
+            .onChange({
+              data,
+              event,
+              path,
+            })
+            .then(() => {
+              logger.info('Config file update successful');
+            })
+            .catch((e) => {
+              throw new Error(e);
+            });
+        } catch (e) {
+          logger.error(e);
+        }
       }, WATCH_DEBOUNCE_STEP),
     );
     return () => watcher.close();
