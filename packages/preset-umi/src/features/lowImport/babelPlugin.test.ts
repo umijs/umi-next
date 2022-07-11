@@ -4,7 +4,7 @@ interface IOpts {
   code: string;
   filename?: string;
   opts?: any;
-  css?: string;
+  css?: string | boolean;
   umiImportItems?: string[];
   reactImportItems?: string[];
 }
@@ -17,7 +17,7 @@ function doTransform(opts: IOpts): string {
         require.resolve('./babelPlugin.ts'),
         {
           opts: opts.opts?.opts,
-          css: opts.css || 'less',
+          css: opts.css === false ? opts.css : opts.css || 'less',
           umiImportItems: opts.umiImportItems,
           reactImportItems: opts.reactImportItems,
         },
@@ -192,6 +192,19 @@ test('import styles css', () => {
       css: 'css',
     }),
   ).toEqual(`import _styles from "./index.css";\n_styles.btn;`);
+});
+
+test('disable styles css', () => {
+  expect(
+    doTransform({
+      code: `styles.btn`,
+      opts: {
+        opts: { withObjs: {} },
+      },
+      filename: 'index.tsx',
+      css: false,
+    }),
+  ).toEqual(`styles.btn;`);
 });
 
 test('import umi', () => {
